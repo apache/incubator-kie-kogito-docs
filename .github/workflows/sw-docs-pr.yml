@@ -3,6 +3,11 @@ name: Serverless Workflow Docs
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+    branches: [ main ]
+      paths-ignore:
+        - '.gitignore'
+        - 'LICENSE'
+        - 'README*'
 jobs:
   build_site:
     name: "Building Serverless Workflow Documentation with Antora"
