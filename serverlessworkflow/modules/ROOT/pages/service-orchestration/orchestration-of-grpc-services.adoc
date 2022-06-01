@@ -67,7 +67,7 @@ The flow defines an RPC link:https://github.com/serverlessworkflow/specification
 ----
 
 The `operation` property is composed of three tokens separated by #: the URI of the proto file, the name of the service, and the name of the method. Kogito supports three URI schemes: `http`, `file`, and `classpath`, the latter being the default. 
-Therefore, in this case, the flow declares that `greeting.proto` is expected to be found in the project classpath, that the service to be used is `Greeter` and the method name is `sayHello` 
+Therefore, in this case, the flow declares that `greeting.proto` is expected to be found in the project classpath, that the service to be used is `Greeter` and that the method name is `sayHello` 
 
 The flow execution consists of a single link:https://github.com/serverlessworkflow/specification/blob/main/specification.md#operation-state[operation] state, composed of one https://github.com/serverlessworkflow/specification/blob/main/specification.md#action-definition[action].
 
@@ -100,11 +100,11 @@ quarkus.grpc.clients.Greeter.port=50051
 Internally, the Kogito Serverless Workflow implementation uses the same set of properties as link:https://quarkus.io/guides/grpc-service-consumption#client-configuration[Quarkus gRPC client].
 The "client-name" used by Kogito is the service name declared in the proto file. `Greeter` in this case.
 
-Why is port 50051? In the same repo as the workflow application, a link:https://github.com/kiegroup/kogito-examples/tree/main/kogito-quarkus-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-server-rpc-quarkus[maven project] is available, which provides a simple implementation of the greeter service. By default, this gRPC server runs on port 50051, hence the value for the port property. 
+Why is port 50051? In the same GitHub repository as the workflow application, a link:https://github.com/kiegroup/kogito-examples/tree/main/kogito-quarkus-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-server-rpc-quarkus[maven project] which provides a simple implementation of the greeter service is available. By default, this gRPC server runs on port 50051, hence the value for the port property. 
 
 === Maven POM 
 
-gRPC functionality is built within link:https://github.com/kiegroup/kogito-runtimes/tree/main/quarkus/extensions/kogito-quarkus-serverless-workflow-extension[Serverless Workflow Quarkus extension], which means that there is no need to include specific dependencies for gRPC to work with Serverless Workflow. 
+gRPC functionality is included within link:https://github.com/kiegroup/kogito-runtimes/tree/main/quarkus/extensions/kogito-quarkus-serverless-workflow-extension[Serverless Workflow Quarkus extension], which means that there is no need to add specific dependencies for gRPC to work with Serverless Workflow. 
 The same set of dependencies included for the Hello Workflow example will work. 
 
 One section of the pom.xml file that needs attention is this one:
