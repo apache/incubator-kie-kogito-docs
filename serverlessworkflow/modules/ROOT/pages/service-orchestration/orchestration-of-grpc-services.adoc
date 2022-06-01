@@ -20,7 +20,7 @@ link:https://github.com/kiegroup/kogito-examples/tree/main/kogito-quarkus-exampl
 
 == Architecture
 
-There are the following main components of this workflow application:
+There are the following main files in this workflow application:
 
 * link:https://github.com/kiegroup/kogito-examples/blob/main/kogito-quarkus-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-server-rpc-quarkus/src/main/proto/greeting.proto[grpc proto file]
 * link:https://github.com/kiegroup/kogito-examples/blob/main/kogito-quarkus-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreet.sw.json[worfklow definition file]
@@ -66,7 +66,8 @@ The flow defines a RPC link:https://github.com/serverlessworkflow/specification/
   ]
 ----
 
-The `operation` property is composed of three tokens separated by #: the URI of the proto file, the name of the service, and the name of the method. Kogito supports three URI schemes: `http`, `file`, and `classpath`, the latter being the default. Therefore, in this case, the flow declares that `greeting.proto` is expected to be found in the project classpath.
+The `operation` property is composed of three tokens separated by #: the URI of the proto file, the name of the service, and the name of the method. Kogito supports three URI schemes: `http`, `file`, and `classpath`, the latter being the default. 
+Therefore, in this case, the flow declares that `greeting.proto` is expected to be found in the project classpath, that the service to be used is `Greeter` and the method name is `sayHello` 
 
 The flow execution consists of a single link:https://github.com/serverlessworkflow/specification/blob/main/specification.md#operation-state[operation] state, composed of one https://github.com/serverlessworkflow/specification/blob/main/specification.md#action-definition[action].
 
@@ -118,9 +119,9 @@ One section of the pom.xml file that deserves mention is this one:
 </resource>
 ----
 
-Remember that the URI of the proto file specified in the workflow is expecting the proto file to be in the project's classpath. Therefore, this snippet ensures the proto file defined in the gRPC server project is included in the classpath of the workflow application. 
+Remember that the proto file, because the URI specified for it does not have any scheme, is expected to be accessible in the project's classpath. Therefore, this snippet ensures the proto file defined in the gRPC server project is included in the classpath of the workflow application. 
 
-Note that it is very unlikely you need to do that in a real production environment. The reason is that the file proto will be either within the project directory structure or can be downloaded from a remote server (in which case the URI will include the `http` scheme).   
+Note that it is very unlikely you will be doing that in a real production environment. The reason is that the proto file will be either within the project directory structure (you manually copy the proto file in a directory which is included by default in the classpath) or can be download from a remote server (in which case the URI will include the `http` scheme). The `file` scheme cover the cases in which proto files are stored in a shared directory which full path is known by the application. 
 
 == Running the Application
 
@@ -146,7 +147,7 @@ Once started, you run a workflow instance through `curl`, specifying as body the
 curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://localhost:8080/jsongreet
 ----
 
-The response should be similar to:
+The response should be similar (`id` will be different for every execution) to:
 
 [source,shell]
 ----
