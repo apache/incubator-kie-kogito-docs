@@ -7,9 +7,9 @@ Learn how to invoke a gRPC service from a Kogito Serverless Workflow running wit
 
 == Prerequisites
 
-It's expected that you have read how to link:create-your-first-workflow-service.html[Create Your First Workflow] guide. 
+It's expected that you have read the how to link:create-your-first-workflow-service.html[Create Your First Workflow] guide. 
 
-It's assumed you are familiar with the main link:https://grpc.io/docs/what-is-grpc/core-concepts/[gRPC] concepts. 
+To get familiar with gRPC concepts please visit this link:https://grpc.io/docs/what-is-grpc/core-concepts/[gRPC] link 
 
 == Solution
 
@@ -23,7 +23,7 @@ link:https://github.com/kiegroup/kogito-examples/tree/main/kogito-quarkus-exampl
 There are the following main files in this workflow application:
 
 * link:https://github.com/kiegroup/kogito-examples/blob/main/kogito-quarkus-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-server-rpc-quarkus/src/main/proto/greeting.proto[grpc proto file]
-* link:https://github.com/kiegroup/kogito-examples/blob/main/kogito-quarkus-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreet.sw.json[worfklow definition file]
+* link:https://github.com/kiegroup/kogito-examples/blob/main/kogito-quarkus-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreet.sw.json[workflow definition file]
 * link:https://github.com/kiegroup/kogito-examples/blob/main/kogito-quarkus-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/pom.xml[Maven POM]
 * link:https://github.com/kiegroup/kogito-examples/blob/main/kogito-quarkus-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/application.properties[Application properties]
 
@@ -53,7 +53,7 @@ message HelloReply {
 
 === Workflow definition file
 
-The flow defines a RPC link:https://github.com/serverlessworkflow/specification/blob/main/specification.md#using-functions-for-rpc-service-invocations[function]. 
+The flow defines an RPC link:https://github.com/serverlessworkflow/specification/blob/main/specification.md#using-functions-for-rpc-service-invocations[function]. 
 [source,json]
 ----
 
@@ -107,7 +107,7 @@ Why is port 50051? In the same repo as the workflow application, a link:https://
 gRPC functionality is built within link:https://github.com/kiegroup/kogito-runtimes/tree/main/quarkus/extensions/kogito-quarkus-serverless-workflow-extension[Serverless Workflow Quarkus extension], which means that there is no need to include specific dependencies for gRPC to work with Serverless Workflow. 
 The same set of dependencies included for the Hello Workflow example will work. 
 
-One section of the pom.xml file that deserves mention is this one:
+One section of the pom.xml file that needs attention is this one:
 
 [source,xml]
 ----
@@ -119,9 +119,9 @@ One section of the pom.xml file that deserves mention is this one:
 </resource>
 ----
 
-Remember that the proto file, because the URI specified for it does not have any scheme, is expected to be accessible in the project's classpath. Therefore, this snippet ensures the proto file defined in the gRPC server project is included in the classpath of the workflow application. 
+Remember that the proto file, because the URI specified for it does not have any scheme, is expected to be accessible in the project's classpath. Therefore, this snippet ensures the proto file defined in the gRPC server project is included in the workflow application's classpath. 
 
-Note that it is very unlikely you will be doing that in a real production environment. The reason is that the proto file will be either within the project directory structure (you manually copy the proto file in a directory which is included by default in the classpath) or can be download from a remote server (in which case the URI will include the `http` scheme). The `file` scheme cover the cases in which proto files are stored in a shared directory which full path is known by the application. 
+Note that it is very unlikely you will be doing that in a real production environment. The reason is that the proto file will be either within the project directory structure (you manually copy the proto file in a directory which is included by default in the classpath) or can be downloaded from a remote server (in which case the URI will include the `http` scheme). The `file` scheme cover the cases in which proto files are stored in a shared directory which full path is known by the application. 
 
 == Running the Application
 
@@ -140,7 +140,7 @@ Then, to run the workflow application, use:
 mvn clean quarkus:dev
 ----
 
-Once started, you run a workflow instance through `curl`, specifying as body the name and language used in the gRPC service call.
+Once started, you can invoke the workflow instance with any http client, e.g. `curl`, specifying as body the name and language used in the gRPC service call.
 
 [source,shell]
 ----
@@ -161,4 +161,4 @@ Now, you can try greeting in a different language:
 curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "Javi", "language": "Spanish"}}' http://localhost:8080/jsongreet
 ----
 
-And enjoy the greet in Spanish ;)
+And enjoy the greeting in Spanish ;)
