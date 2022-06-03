@@ -1,55 +1,42 @@
-= Create your first workflow service
+= Creating your first Serverless Workflow service
 
-Learn how to create a Hello World Serverless Workflow application. This guide covers:
+As a developer, you can use Serverless Workflow and create a `Hello World` application, which includes the following procedures:
 
-* Bootstrapping an application
-* Creating a workflow
-* Running the application
-* Testing the application
+* <<boostrapping-the-project,Bootstrapping a project>>
+* <<creating-workflow,Creating a workflow>>
+* <<running-application,Running your Serverless Workflow application>>
+* <<testing-application,Testing your Serverless Workflow application>>
 
-== Prerequisites
+Also, you can directly access an example application by cloning `kogito-quarkus-examples/serverless-workflow-hello-world` from the https://github.com/hbelmiro/kogito-examples/tree/main/kogito-quarkus-examples/serverless-workflow-hello-world[GitHub repository].
 
-To complete this guide, you need:
+This guide describes how to create a Serverless Workflow application that serves a `hello_world` endpoint. The workflow contains the following two states:
 
-* Roughly 10 minutes
-* https://adoptium.net/[JDK 11+] installed with `JAVA_HOME` configured appropriately
-* https://maven.apache.org/install.html[Apache Maven] {required_maven_version}
-* https://quarkus.io/guides/cli-tooling[Quarkus CLI] (Optional)
+* `Inject Hello World`: Injects a `Hello World` message into the response
+* `Inject Mantra`: Injects a `Mantra` message into the response
 
-To edit your workflows:
-
-* Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.java[Red Hat Java Extension]
-and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor]
-installed (Optional)
-
-It's recommended that you take a look at
-xref:getting-started/getting-familiar-with-our-tooling.adoc[this guide] to get familiar with our tooling and the required dependencies.
-
-== Architecture
-
-In this guide, we'll create a Serverless Workflow application that serves a `hello_world` endpoint.
-The workflow comprises two states:
-
-. `Inject Hello World` - Injects a `Hello World` message into the response
-. `Inject Mantra` - Injects a `Mantra` message into the response
-
+.Example Hello World workflow
 image::getting-started/hello-world-workflow.png[]
 
-== Solution
-We recommend that you follow the instructions from <<boostrapping-the-project,Bootstrapping the Project>>
-and onwards to create the application step by step.
+.Prerequisites
+* https://adoptium.net/[JDK 11+] is installed with `JAVA_HOME` configured appropriately.
+* https://maven.apache.org/install.html[Apache Maven] is installed.
+* https://quarkus.io/guides/cli-tooling[Quarkus CLI] is installed.
+* Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.java[Red Hat Java Extension]
+and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
 
-However, you can go right to the completed example by cloning the git repository:
-
-The solution is located in the `kogito-quarkus-examples/serverless-workflow-hello-world`
-https://github.com/kiegroup/kogito-examples/tree/main/kogito-quarkus-examples/serverless-workflow-hello-world[directory].
+For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[tooling guide].
 
 [[boostrapping-the-project]]
-== Bootstrapping the Project
+== Bootstrapping a project
 
-Run the following command in a terminal window to create the project skeleton:
+To create your Serverless Workflow service, first you need to bootstrap a project.
 
-.Using Quarkus CLI
+.Procedure
+
+. In a command terminal, enter the following command to create a project:
++
+--
+.Create a project using Quarkus CLI
 [source,shell]
 ----
 quarkus create app \
@@ -60,7 +47,16 @@ quarkus create app \
     org.kie.kogito.examples:serverless-workflow-hello-world:1.0
 ----
 
-.Using Maven
+The previous command creates a Maven Quarkus project in the `serverless-workflow-hello-world` directory containing the required Kogito dependencies, including:
+
+* `kogito-quarkus-serverless-workflow`: Adds support for Serverless Workflow
+* `quarkus-container-image-jib`: Adds support for Container Image Builds
+* `quarkus-resteasy-jackson`: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request
+* `quarkus-smallrye-openapi`: Adds support for Swagger documentation when you run the application in development mode
+
+The SwaggerUI is available at `http://localhost:8080/q/swagger-ui/` when you run the application.
+
+.Create a project using Maven
 [source,shell,subs="attributes"]
 ----
 mvn io.quarkus.platform:quarkus-maven-plugin:{quarkus_version}:create \
@@ -70,37 +66,35 @@ mvn io.quarkus.platform:quarkus-maven-plugin:{quarkus_version}:create \
 cd getting-started
 ----
 
-`org.kie.kogito.examples`, `serverless-workflow-hello-world` and `1.0` are respectively the group id, artifact id,
-and version of your project.
+In the previous command, `org.kie.kogito.examples`, `serverless-workflow-hello-world`, and `1.0` is group id, artifact id, and version of your project respectively.
+--
 
-This command will create a Maven Quarkus project in the `serverless-workflow-hello-world` directory with all the
-required Kogito dependencies.
-
-* `kogito-quarkus-serverless-workflow` - Adds support for Serverless Workflow
-* `quarkus-container-image-jib` - Adds support for Container Image Builds
-* `quarkus-resteasy-jackson` - Adds support for RESTEasy, which is required by the generated REST
-resources that are used to start the flow process through an HTTP request.
-* `quarkus-smallrye-openapi` - Adds support for Swagger documentation when you run the application in development mode
-The SwaggerUI will be available at `http://localhost:8080/q/swagger-ui/` when you run the application.
-
-Next, to make sure everything is working fine, try to compile the project with:
-
-.Using Quarkus CLI
+. To verify that project is created, compile the project using the following command:
++
+--
+.Compile your project using Quarkus CLI
 [source,shell]
 ----
 quarkus build
 ----
 
-.Using Maven
+.Compile your project using Maven
 [source,shell]
 ----
 mvn clean package
 ----
+--
 
-=== Creating Your First Workflow
+[[creating-workflow]]
+== Creating a workflow
 
-Create a file named `hello.sw.json` in the `src/main/resources` directory with the following content:
+After bootstrapping a project, you need to create a workflow. In the following procedure, a workflow named Hello World Workflow is created.
 
+.Procedure
+. Create a file named `hello.sw.json` in the `src/main/resources` directory with the following content:
++
+--
+.Example content for `hello.sw.json` file
 [source,json]
 ----
 {
@@ -130,26 +124,26 @@ Create a file named `hello.sw.json` in the `src/main/resources` directory with t
   ]
 }
 ----
-<1> The `id` field is the unique identifier of the workflow. Kogito will generate the REST endpoints based on this
-identifier.
+In the previous example:
 
-<2> Defines the states of the workflow. Our workflow has two states: `Inject Hello World` and `Inject Mantra`.
+<1> `id` field is the unique identifier of the workflow. Kogito generates the REST endpoints based on this
+unique identifier.
 
-<3> The `start` field defines the state in which the workflow will start.
+<2> `states` defines the states of the workflow. In the Hello World example, the workflow contains two states, such as `Inject Hello World` and `Inject Mantra`.
 
-<4> Defines the type of the state. In this case, the state is an `inject` state.
-Inject state can be used to inject static data into state data input.
+<3> `start` field defines the state in which the workflow starts.
 
-<5> Defines the data that will be injected into the state.
-In this case, we're injecting a `greeting` with the value `Hello World`.
+<4> `type` defines the type of the state. In the previous example, the state is `inject`. The `inject` state can be used to inject static data into state data input.
 
-<6> The `transition` field defines the next state that will be reached after this state is completed.
+<5> `data` defines the data that is injected into the state. In the previous example, `greeting` is injected with the `Hello World` value.
+
+<6> `transition` field defines the next state that will be reached after the current state is completed.
 
 <7> Injects a `mantra` with the value `Serverless Workflow is awesome!` into the workflow data.
 
-<8> The `end` field defines that this state is the end of the workflow.
-When the workflow reaches this state, it will stop and the REST endpoint will return the workflow data
-that will be:
+<8> `end` field defines that the current state is the end of the workflow. When the workflow reaches the end state, the workflow stops and the REST endpoint returns the workflow data, such as:
+
+.Example workflow data
 [source,json]
 ----
 {
@@ -163,23 +157,30 @@ that will be:
 The workflow definition follows the CNCF Serverless Workflow specification. For more information, see
 xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow Specification Support].
 ====
+--
 
-== Running the Application
+[[running-application]]
+== Running your Serverless Workflow application
 
-Now we are ready to run our application:
+After creating a workflow, you can run your Serverless Workflow application.
 
-.Using Quarkus CLI
+.Procedure
+. Enter the following command to run your Serverless Workflow application:
++
+--
+.Run your Serverless Workflow application using Quarkus CLI
 [source,shell]
 ----
 quarkus dev
 ----
 
-.Using Maven
+.Run your Serverless Workflow application using Maven
 [source,shell]
 ----
 mvn clean quarkus:dev
 ----
 
+.Example response
 [source,shell,subs="attributes"]
 ----
 [INFO] ------< org.kie.kogito.examples:serverless-workflow-hello-world >-------
@@ -190,9 +191,7 @@ mvn clean quarkus:dev
 [INFO] Invoking org.apache.maven.plugins:maven-resources-plugin:2.6:resources) @ serverless-workflow-hello-world
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
 [INFO] Copying 3 resources
-
 ...more output...
-
 __  ____  __  _____   ___  __ ____  ______
  --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
  -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
@@ -207,9 +206,7 @@ __  ____  __  _____   ___  __ ____  ______
 2022-05-25 14:38:12,879 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: --\___\_\____/_/ |_/_/|_/_/|_|\____/___/
 2022-05-25 14:38:12,879 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:09,692 INFO  [io.zon.tes.db.pos.emb.EmbeddedPostgres] (main) Detected a Linux x86_64 system
 2022-05-25 14:38:12,880 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:09,705 INFO  [io.zon.tes.db.pos.emb.DefaultPostgresBinaryResolver] (main) Detected distribution: 'Red Hat Enterprise Linux'
-
 ...more output...
-
 2022-05-25 14:38:12,889 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,332 INFO  [io.zon.tes.db.pos.emb.EmbeddedPostgres] (postgres:pid(90)) 2022-05-25 17:38:12.332 UTC [99] LOG:  incomplete startup packet
 2022-05-25 14:38:12,890 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,405 INFO  [io.zon.tes.db.pos.emb.EmbeddedPostgres] (main) 5df1ed6e-7a15-4091-bcfb-e293aa293bfe postmaster startup finished in 00:00:00.180
 2022-05-25 14:38:12,890 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,405 INFO  [org.kie.kog.per.inm.pos.run.InmemoryPostgreSQLRecorder] (main) Embedded Postgres started at port "44729" with database "postgres", user "postgres" and password "postgres"
@@ -221,23 +218,28 @@ __  ____  __  _____   ___  __ ____  ______
 2022-05-25 14:38:13,379 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,182 INFO  [io.quarkus] (main) Profile prod activated.
 2022-05-25 14:38:13,380 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,182 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, inmemory-postgres, jdbc-postgresql, narayana-jta, oidc, reactive-routes, rest-client-reactive, rest-client-reactive-jackson, security, smallrye-context-propagation, smallrye-graphql-client, smallrye-health, smallrye-metrics, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx, vertx-graphql]
 ----
+--
 
-Once started, you can request the provided endpoint:
-
+. Once your Serverless Workflow application is started, you send a request for the provided endpoint:
++
+--
+.Example request
 [source,shell]
 ----
 curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_world
 ----
 
-The response should be similar to:
-
+.Example response
 [source,shell]
 ----
 {"id":"efb59bfa-ad9c-4062-a6d2-2d9184dd4b3d","workflowdata":{"greeting":"Hello World","mantra":"Serverless Workflow is awesome!"}}
 ----
+--
 
-Now, without restarting the application, update your workflow with a new `mantra` value.
-
+. You can update your workflow with a new `mantra` value without restarting the application.
++
+--
+.Update your workflow
 [source,json]
 ----
 {
@@ -249,38 +251,32 @@ Now, without restarting the application, update your workflow with a new `mantra
   "end": true
 }
 ----
-<1> New `mantra` value.
+<1> New `mantra` value
 
-Send a new request:
-
+.Example request
 [source,shell]
 ----
 curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_world
 ----
 
-The response should be similar to:
-
+.Example response
 [source,shell]
 ----
 {"id":"efb59bfa-ad9c-4062-a6d2-2d9184dd4b3d","workflowdata":{"greeting":"Hello World","mantra":"Serverless Workflow is amazing!"}}
 ----
 
-Note that the `mantra` value has been updated without restarting the application.
-That is because Kogito leverages the Quarkus live coding feature.
+Note that the `mantra` value is updated without restarting the application, because Kogito leverages the Quarkus live coding feature.
+--
 
-Hit `CTRL+C` to stop the application.
+. To stop the application, press `CTRL+C`.
 
-== Testing
+[[testing-application]]
+== Testing your Serverless Workflow application
 
-To test your application, you can follow the instructions in the
+To test your Serverless Workflow application, you can follow the instructions in the
 xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Basic Integration Test with RestAssured] guide.
 
-== What's next?
-
-This guide covered the creation of a Serverless Workflow application using Kogito.
-However, there is much more. We recommend continuing the journey with:
+== Additional resources
 
 * xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting Familiar With Our Tooling].
 * xref:service-orchestration/orchestration-of-opnapi-based-services.adoc[Orchestration of OpenAPI Based Services].
-
-Also, you can go to the Cloud category from here to understand how to deploy your application in the cloud.
