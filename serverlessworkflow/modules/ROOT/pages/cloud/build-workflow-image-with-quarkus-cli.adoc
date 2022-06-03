@@ -1,13 +1,173 @@
-include::../_common-attributes/document-attributes.adoc[]
-
 Building Workflow Images locally with Quarkus CLI
 =================================================
 Author Name <fspolti@redhat.com>
-v1.0, 06-04-2022
+v1.0, 06-03-2022
 :compat-mode!:
 // Metadata:
-:description: The description of this page.
+:description: Build Serverless Application with Quarkus CLI
 :keywords: kogito, workflow, quarkus, serverless, quarkus-cli
+// links
+:quarkus-kogito-examples: https://github.com/kiegroup/kogito-examples/tree/stable/kogito-quarkus-examples
+:example-project: https://github.com/kiegroup/kogito-examples/tree/stable/kogito-quarkus-examples/serverless-workflow-greeting-quarkus
+:quarkus-cli: https://quarkus.io/guides/cli-tooling
+:quarkus-container-images: https://quarkus.io/guides/container-image
 
 
-Quarkus version is {QUARKUS_VERSION}
+On this guild you will learn how to build a Serverless Application using *Quarkus CLI*.
+
+== Pre Requisites
+
+Before starting make sure you have the needed dependencies installed.
+For this tutorial we assume that you already have your Serverless Workflow ready to be built inside
+a container image. If not, you can use some of the {quarkus-kogito-examples}[examples], for this tutorial we will be using the {example-project}[serverless-workflow-greeting-quarkus].
+
+What will you need:
+
+- Docker - recommended to use always the latest version.
+    * if you don't have it installed or can't install it, don't worry, `JiB` allows you to build Container images wihtouth having the client tooling to build containers, however, it will require the push the built image to a registry, which is described in the following lines.
+- {quarkus-cli}[Quarkus CLI] {quarkus_version}
+- Java {java_min_version}
+- Maven {maven_min_version}
+- GraalVM {graalvm_min_version}: Note that, GraalVM is option if you already have the expected version installed locally.
+
+
+== Getting started
+
+First, let's clone the {kogito-examples}[kogito-examples] repository and access the {example-project}[serverless-workflow-greeting-quarkus] example.
+
+.Cloning Kogito Examples
+[source,shell]
+----
+$ git clone --branch stable {kogito-examples} && kogito-examples/kogito-quarkus-examples/serverless-workflow-greeting-quarkus
+----
+
+If you wish to run the example beforehand, follow the steps described on the example.
+
+With the example in place, let's visit {quarkus-cli}[Quarkus CLI], follow the installation instructions based on your preferred tool. Make sure you have the following Quarkus version installed:
+
+=== Checking Quarkus CLI
+
+[source,shell]
+----
+$ quarkus version
+----
+
+Quarkus provides a few different extensions to build Container Images, like `JiB`, `docker`, `s2i` and `buildpacks`.
+For this guide we will use `JiB`. If you already use another extension or have curiosity to know how it works, please visit this {quarkus-container-images}[Quarkus' guide].
+
+The Kogito Examples does not include the needed extensions, we'll need to add it using the Quarkus CLI:
+
+
+.Adding the JiB extension
+[source,shell]
+----
+$ quarkus extension add 'container-image-jib'
+----
+
+If you inspect the pom.xml, you can check the new dependency added:
+.Checkin the JiB extension
+[source,xml,subs="attributes+"]
+----
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-container-image-jib</artifactId>
+</dependency>
+----
+
+=== Building the Serverless Application
+
+[source,shell]
+----
+$ quarkus build -Dquarkus.container-image.build=true \
+    -Dquarkus.container-image.group=spolti \
+    -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
+    -Dquarkus.container-image.tag=1.0 \
+    -Dquarkus.container-image.registry=quay.io
+----
+
+Note that JiB caches the `target/lib`, that, depending on how big your project is, it can speed up the rebuilds.
+If you want to push it to a registry, make sure to set the following properties accordingly your needs:
+
+- quarkus.container-image.registry: registry address, e.g. _quay.io_.
+- quarkus.container-image.group: registry _context/namespace_ or if on k8s or ocp the _namespace/project_.
+- quarkus.container-image.push: needs to be set to `true`, identify whether to push or not the image, defaults to `false`.
+
+.Example on pushing the built Application to Quay.io
+[source,shell]
+----
+$ quarkus build -Dquarkus.container-image.build=true \
+    -Dquarkus.container-image.group=spolti \
+    -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
+    -Dquarkus.container-image.tag=1.0 \
+    -Dquarkus.container-image.registry=quay.io \
+    -Dquarkus.container-image.push=true
+----
+
+The command above will result on the following Container image: `quay.io/spolti/serverless-workflow-greeting-quarkus:1.0`
+
+
+==== Building the Serverless Application with Native Image
+
+And what about native builds? When we talk about Serverless we do expect small startup footprint which can be better when using Native Builds. Quarkus CLI allows you to do it by passing the _--native_ flag:
+
+.Build Native Image
+[source,shell]
+----
+$ quarkus build --native -Dquarkus.container-image.build=true \
+    -Dquarkus.container-image.group=spolti \
+    -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
+    -Dquarkus.container-image.tag=1.0-native \
+    -Dquarkus.container-image.registry=quay.io \
+    -Dquarkus.native.container-build=true
+----
+
+The command above will result on the following Container image: `quay.io/spolti/serverless-workflow-greeting-quarkus:1.0-native`
+
+If you don't have GraalVM installed, you can specify the _**quarkus.native.container-build=true**_ system properties. This property will create a Linux executable. Notice that, Native builds take longer than usual java builds.
+
+=== Testing the built Container Image
+
+If you do have Docker installed, the image will also be pushed to Docker's local registry:
+
+.JVM image
+[source,shell]
+----
+$ docker run -it -p 8080:8080 quay.io/spolti/serverless-workflow-greeting-quarkus:1.0
+...
+INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final on JVM (powered by Quarkus 2.9.2.Final) started in 1.302s
+----
+
+.Native Image
+[source,shell]
+----
+$ docker run -it -p 8080:8080 quay.io/spolti/serverless-workflow-greeting-quarkus:1.0-native
+...
+INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final native (powered by Quarkus 2.9.2.Final) started in 0.039s
+----
+
+Notice that the Native image startup is more than 1 second faster than the first one.
+Let's invoke the application:
+
+With the native image started, execute the following command:
+
+[source,shell]
+----
+$ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://localhost:8080/jsongreet
+----
+
+As output, the following response will be returned:
+[source,json]
+----
+{
+    "id": "2acf710d-7e4a-481d-925c-dfd85a369987",
+    "workflowdata": {
+        "name": "John",
+        "language": "English",
+        "greeting": "Hello from JSON Workflow, "
+    }
+}
+----
+
+To deploy the built Container Image on a running Kubernetes cluster please refer to xref:cloud/deploying-on-kubernetes-cluster.adoc[this section] for more information.
+
+include::../../pages/_common-content/report-issue.adoc[]
