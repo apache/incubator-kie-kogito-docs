@@ -3,11 +3,11 @@ name: Serverless Workflow Guides
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    branches: [ main ]
-      paths-ignore:
-        - '.gitignore'
-        - 'LICENSE'
-        - 'README*'
+    branches: [main]
+    paths-ignore:
+      - '.gitignore'
+      - 'LICENSE'
+      - 'README*'
 jobs:
   build_site:
     name: "Building Serverless Workflow Documentation with Antora"
@@ -21,5 +21,4 @@ jobs:
       - run: export DOCSEARCH_ENGINE=lunr
       - run: export NODE_PATH="$(npm -g root)"
       - run: npm -v
-      - run: npm i -g @antora/cli @antora/site-generator @antora/lunr-extension
-      - run: antora --extension @antora/lunr-extension --fetch serverlessworkflow/antora-playbook.yml --stacktrace
+      - run: npm run install-build
