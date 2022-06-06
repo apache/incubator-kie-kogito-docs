@@ -1,1 +1,282 @@
-= Create your first workflow service
+= Creating your first Serverless Workflow service
+
+As a developer, you can use Serverless Workflow and create a `Hello World` application, which includes the following procedures:
+
+* <<boostrapping-the-project,Bootstrapping a project>>
+* <<creating-workflow,Creating a workflow>>
+* <<running-application,Running your Serverless Workflow application>>
+* <<testing-application,Testing your Serverless Workflow application>>
+
+Also, you can directly access an example application by cloning `kogito-quarkus-examples/serverless-workflow-hello-world` from the https://github.com/hbelmiro/kogito-examples/tree/main/kogito-quarkus-examples/serverless-workflow-hello-world[GitHub repository].
+
+This guide describes how to create a Serverless Workflow application that serves a `hello_world` endpoint. The workflow contains the following two states:
+
+* `Inject Hello World`: Injects a `Hello World` message into the response
+* `Inject Mantra`: Injects a `Mantra` message into the response
+
+.Example Hello World workflow
+image::getting-started/hello-world-workflow.png[]
+
+.Prerequisites
+* https://adoptium.net/[JDK 11+] is installed with `JAVA_HOME` configured appropriately.
+* https://maven.apache.org/install.html[Apache Maven] is installed.
+* https://quarkus.io/guides/cli-tooling[Quarkus CLI] is installed.
+* Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.java[Red Hat Java Extension]
+and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
+
+For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[tooling guide].
+
+[[boostrapping-the-project]]
+== Bootstrapping a project
+
+To create your Serverless Workflow service, first you need to bootstrap a project.
+
+.Procedure
+
+. In a command terminal, enter the following command to create a project:
++
+--
+.Create a project using Quarkus CLI
+[source,shell]
+----
+quarkus create app \
+    -x=kogito-quarkus-serverless-workflow \
+    -x=quarkus-container-image-jib \
+    -x=quarkus-resteasy-jackson \
+    -x=quarkus-smallrye-openapi \
+    org.kie.kogito.examples:serverless-workflow-hello-world:1.0
+----
+
+The previous command creates a Maven Quarkus project in the `serverless-workflow-hello-world` directory containing the required Kogito dependencies, including:
+
+* `kogito-quarkus-serverless-workflow`: Adds support for Serverless Workflow
+* `quarkus-container-image-jib`: Adds support for Container Image Builds
+* `quarkus-resteasy-jackson`: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request
+* `quarkus-smallrye-openapi`: Adds support for Swagger documentation when you run the application in development mode
+
+The SwaggerUI is available at `http://localhost:8080/q/swagger-ui/` when you run the application.
+
+.Create a project using Maven
+[source,shell,subs="attributes"]
+----
+mvn io.quarkus.platform:quarkus-maven-plugin:{quarkus_version}:create \
+    -DprojectGroupId=org.kie.kogito.examples \
+    -DprojectArtifactId=serverless-workflow-hello-world \
+    -Dextensions="kogito-quarkus-serverless-workflow,quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi"
+cd serverless-workflow-hello-world
+----
+
+In the previous command, `org.kie.kogito.examples`, `serverless-workflow-hello-world`, and `1.0` is group id, artifact id, and version of your project respectively.
+--
+
+. To verify that project is created, compile the project using the following command:
++
+--
+.Compile your project using Quarkus CLI
+[source,shell]
+----
+quarkus build
+----
+
+.Compile your project using Maven
+[source,shell]
+----
+mvn clean package
+----
+--
+
+[[creating-workflow]]
+== Creating a workflow
+
+After bootstrapping a project, you need to create a workflow. In the following procedure, a workflow named Hello World Workflow is created.
+
+.Procedure
+. Create a file named `hello.sw.json` in the `src/main/resources` directory with the following content:
++
+--
+.Example content for `hello.sw.json` file
+[source,json]
+----
+{
+  "id": "hello_world", <1>
+  "version": "1.0",
+  "specVersion": "0.8",
+  "name": "Hello World Workflow",
+  "description": "JSON based hello world workflow",
+  "start": "Inject Hello World", <3>
+  "states": [ <2>
+    {
+      "name": "Inject Hello World",
+      "type": "inject", <4>
+      "data": { <5>
+        "greeting": "Hello World"
+      },
+      "transition": "Inject Mantra" <6>
+    },
+    {
+      "name": "Inject Mantra",
+      "type": "inject",
+      "data": {
+        "mantra": "Serverless Workflow is awesome!" <7>
+      },
+      "end": true <8>
+    }
+  ]
+}
+----
+In the previous example:
+
+<1> `id` field is the unique identifier of the workflow. Kogito generates the REST endpoints based on this
+unique identifier.
+
+<2> `states` defines the states of the workflow. In the Hello World example, the workflow contains two states, such as `Inject Hello World` and `Inject Mantra`.
+
+<3> `start` field defines the state in which the workflow starts.
+
+<4> `type` defines the type of the state. In the previous example, the state is `inject`. The `inject` state can be used to inject static data into state data input.
+
+<5> `data` defines the data that is injected into the state. In the previous example, `greeting` is injected with the `Hello World` value.
+
+<6> `transition` field defines the next state that will be reached after the current state is completed.
+
+<7> Injects a `mantra` with the value `Serverless Workflow is awesome!` into the workflow data.
+
+<8> `end` field defines that the current state is the end of the workflow. When the workflow reaches the end state, the workflow stops and the REST endpoint returns the workflow data, such as:
+
+.Example workflow data
+[source,json]
+----
+{
+  "greeting": "Hello World",
+  "mantra": "Serverless Workflow is awesome!"
+}
+----
+
+[NOTE]
+====
+The workflow definition follows the CNCF Serverless Workflow specification. For more information, see
+xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow Specification Support].
+====
+--
+
+[[running-application]]
+== Running your Serverless Workflow application
+
+After creating a workflow, you can run your Serverless Workflow application.
+
+.Procedure
+. Enter the following command to run your Serverless Workflow application:
++
+--
+.Run your Serverless Workflow application using Quarkus CLI
+[source,shell]
+----
+quarkus dev
+----
+
+.Run your Serverless Workflow application using Maven
+[source,shell]
+----
+mvn clean quarkus:dev
+----
+
+.Example response
+[source,shell,subs="attributes"]
+----
+[INFO] ------< org.kie.kogito.examples:serverless-workflow-hello-world >-------
+[INFO] Building serverless-workflow-hello-world 1.0
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- quarkus-maven-plugin:{quarkus_version}:dev (default-cli) @ serverless-workflow-hello-world ---
+[INFO] Invoking org.apache.maven.plugins:maven-resources-plugin:2.6:resources) @ serverless-workflow-hello-world
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 3 resources
+...more output...
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2022-05-25 14:38:09,741 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (Quarkus Main Thread) Registered Kogito CloudEvent extension
+2022-05-25 14:38:09,840 INFO  [io.quarkus] (Quarkus Main Thread) serverless-workflow-hello-world 1.0 on JVM (powered by Quarkus {quarkus_version}) started in 6.470s. Listening on: http://localhost:8080
+2022-05-25 14:38:09,843 INFO  [io.quarkus] (Quarkus Main Thread) Profile dev activated. Live Coding activated.
+2022-05-25 14:38:09,843 INFO  [io.quarkus] (Quarkus Main Thread) Installed features: [cache, cdi, jackson-jq, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-openapi, smallrye-reactive-messaging, smallrye-reactive-messaging-http, swagger-ui, vertx]
+2022-05-25 14:38:12,877 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: __  ____  __  _____   ___  __ ____  ______
+2022-05-25 14:38:12,878 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT:  --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+2022-05-25 14:38:12,879 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT:  -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+2022-05-25 14:38:12,879 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: --\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2022-05-25 14:38:12,879 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:09,692 INFO  [io.zon.tes.db.pos.emb.EmbeddedPostgres] (main) Detected a Linux x86_64 system
+2022-05-25 14:38:12,880 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:09,705 INFO  [io.zon.tes.db.pos.emb.DefaultPostgresBinaryResolver] (main) Detected distribution: 'Red Hat Enterprise Linux'
+...more output...
+2022-05-25 14:38:12,889 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,332 INFO  [io.zon.tes.db.pos.emb.EmbeddedPostgres] (postgres:pid(90)) 2022-05-25 17:38:12.332 UTC [99] LOG:  incomplete startup packet
+2022-05-25 14:38:12,890 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,405 INFO  [io.zon.tes.db.pos.emb.EmbeddedPostgres] (main) 5df1ed6e-7a15-4091-bcfb-e293aa293bfe postmaster startup finished in 00:00:00.180
+2022-05-25 14:38:12,890 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,405 INFO  [org.kie.kog.per.inm.pos.run.InmemoryPostgreSQLRecorder] (main) Embedded Postgres started at port "44729" with database "postgres", user "postgres" and password "postgres"
+2022-05-25 14:38:12,890 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,636 WARN  [io.qua.run.con.ConfigRecorder] (main) Build time property cannot be changed at runtime:
+2022-05-25 14:38:12,891 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT:  - quarkus.jib.base-jvm-image is set to 'ba-docker-registry.usersys.redhat.com:5000/fabric8/java-alpine-openjdk11-jre' but it is build time fixed to 'fabric8/java-alpine-openjdk11-jre'. Did you change the property quarkus.jib.base-jvm-image after building the application?
+2022-05-25 14:38:13,375 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,105 INFO  [org.kie.kog.per.pro.ProtobufService] (main) Registering Kogito ProtoBuffer file: kogito-index.proto
+2022-05-25 14:38:13,377 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,132 INFO  [org.kie.kog.per.pro.ProtobufService] (main) Registering Kogito ProtoBuffer file: kogito-types.proto
+2022-05-25 14:38:13,378 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,181 INFO  [io.quarkus] (main) data-index-service-inmemory 1.22.0.Final on JVM (powered by Quarkus 2.9.0.Final) started in 4.691s. Listening on: http://0.0.0.0:8080
+2022-05-25 14:38:13,379 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,182 INFO  [io.quarkus] (main) Profile prod activated.
+2022-05-25 14:38:13,380 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,182 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, inmemory-postgres, jdbc-postgresql, narayana-jta, oidc, reactive-routes, rest-client-reactive, rest-client-reactive-jackson, security, smallrye-context-propagation, smallrye-graphql-client, smallrye-health, smallrye-metrics, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx, vertx-graphql]
+----
+--
+
+. Once your Serverless Workflow application is started, you can send a request for the provided endpoint:
++
+--
+.Example request
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_world
+----
+
+.Example response
+[source,shell]
+----
+{"id":"efb59bfa-ad9c-4062-a6d2-2d9184dd4b3d","workflowdata":{"greeting":"Hello World","mantra":"Serverless Workflow is awesome!"}}
+----
+--
+
+. You can update your workflow with a new `mantra` value without restarting the application.
++
+--
+.Update your workflow
+[source,json]
+----
+{
+  "name": "Inject Mantra",
+  "type": "inject",
+  "data": {
+    "mantra": "Serverless Workflow is amazing!" <1>
+  },
+  "end": true
+}
+----
+<1> New `mantra` value
+
+.Example request
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_world
+----
+
+.Example response
+[source,shell]
+----
+{"id":"efb59bfa-ad9c-4062-a6d2-2d9184dd4b3d","workflowdata":{"greeting":"Hello World","mantra":"Serverless Workflow is amazing!"}}
+----
+
+Note that the `mantra` value is updated without restarting the application, because Kogito leverages the Quarkus live coding feature.
+--
+
+. To stop the application, press `CTRL+C`.
+
+[[testing-application]]
+== Testing your Serverless Workflow application
+
+To test your Serverless Workflow application, you can follow the instructions in the
+xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Basic Integration Test with RestAssured] guide.
+
+== Additional resources
+
+* xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting Familiar With Our Tooling].
+* xref:service-orchestration/orchestration-of-opnapi-based-services.adoc[Orchestration of OpenAPI Based Services].
