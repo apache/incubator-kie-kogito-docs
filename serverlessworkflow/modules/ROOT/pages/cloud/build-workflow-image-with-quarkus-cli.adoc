@@ -10,6 +10,8 @@ v1.0, 06-03-2022
 :example-project: https://github.com/kiegroup/kogito-examples/tree/stable/kogito-quarkus-examples/serverless-workflow-greeting-quarkus
 :quarkus-cli: https://quarkus.io/guides/cli-tooling
 :quarkus-container-images: https://quarkus.io/guides/container-image
+:quarkus-native-builds: https://quarkus.io/guides/building-native-image
+:google-jib: https://github.com/GoogleContainerTools/jib
 
 
 This guide will teach you how to build a Serverless Application Container Image using the *Quarkus CLI*.
@@ -23,7 +25,8 @@ a container image for this tutorial. If not, you can follow the Getting Started 
 What will you need:
 
 - Docker - recommended to use always the latest version.
-    * if you don't have it installed or can't install it, don't worry, `JiB` allows you to build Container images wihtouth having the client tooling to build containers, however, it will require the push the built image to a registry, which is described in the following lines.
+    * It's not a problem if you don't have Docker installed or can't install it. {google_jib}[JiB] allows you to build container images without having the client tooling to build containers. However, Docker is required to build GraalVM native image using the Quarkus Native Builder image.
+
 - {quarkus-cli}[Quarkus CLI] {quarkus_version}
 - Java {java_min_version}
 - Maven {maven_min_version}
@@ -120,7 +123,7 @@ $ quarkus build --native -Dquarkus.container-image.build=true \
 
 The command above will result in the following container image: `quay.io/kogito/serverless-workflow-greeting-quarkus:1.0-native`
 
-If you don't have GraalVM installed, you can specify the _**quarkus.native.container-build=true**_ system properties. This property will create a Linux executable. Notice that, Native builds take longer than usual java builds.
+If you don't have GraalVM installed, you can specify the _**quarkus.native.container-build=true**_ system properties. This property will create a Linux executable. Notice that, Native builds take longer than usual java builds. For more information about native builds please visit this {quarkus-native-builds}[guide].
 
 === Testing the built Container Image
 
