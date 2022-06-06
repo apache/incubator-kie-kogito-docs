@@ -105,6 +105,32 @@ $ quarkus build -Dquarkus.container-image.build=true \
 
 The command above will result in the following container image: `quay.io/kogito/serverless-workflow-greeting-quarkus:1.0`.
 
+Alternatively, you can create a maven profile to build the container image that can be triggered just by setting the target profile.
+
+.Maven Profile Example
+[source,xml]
+----
+<profile>
+  <id>build-container</id>
+  <properties>
+    <quarkus.container-image.build>true</quarkus.container-image.build>
+    <quarkus.container-image.group>kogito</quarkus.container-image.group>
+    <quarkus.container-image.name>serverless-workflow-greeting-quarkus</quarkus.container-image.name>
+    <quarkus.container-image.tag>1.0</quarkus.container-image.tag>
+    <quarkus.container-image.registry>quay.io</quarkus.container-image.registry>
+    <quarkus.container-image.push>true</quarkus.container-image.push>
+  </properties>
+</profile>
+----
+
+If using profiles, a new extension can be added to the target profile by setting profile name like the example below:
+
+.Using Quarkus CLI with Maven profile
+[source,shell]
+----
+$ quarkus build -- -Pbuild-container
+----
+
 
 ==== Building the Serverless Workflow Application with Native Image
 
