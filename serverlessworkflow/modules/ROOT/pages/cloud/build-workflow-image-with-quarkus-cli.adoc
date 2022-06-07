@@ -33,17 +33,24 @@ What will you need:
 
 == Getting started
 
-First, you need to clone the {kogito-examples}[kogito-examples] repository and go to the {example-project}[serverless-workflow-greeting-quarkus] example.
+First, you need to clone the {kogito_examples}[kogito-examples] repository and go to the {example-project}[serverless-workflow-greeting-quarkus] example.
 
 .Cloning Kogito Examples
-[source,shell]
+[source,shell,subs="attributes+"]
 ----
-$ git clone --branch stable {kogito-examples} && kogito-examples/kogito-quarkus-examples/serverless-workflow-greeting-quarkus
+$ git clone --branch stable {kogito_examples} && cd kogito-examples/kogito-quarkus-examples/serverless-workflow-greeting-quarkus
 ----
 
 If you wish to run the example beforehand, follow the steps described in the Getting Started guide.
 
 With the example in place, let's visit {quarkus-cli}[Quarkus CLI], follow the installation instructions based on your preferred tool. Make sure you have the following Quarkus version installed:
+
+.Adding the Jib extension
+[source,shell,subs="attributes+"]
+----
+$ quarkus version
+{quarkus_version}
+----
 
 === Quarkus Container Extensions
 
@@ -64,7 +71,7 @@ $ quarkus extension add 'container-image-jib'
 If you inspect the pom.xml, you can check the newly added dependency.
 
 .Checkin the Jib extension
-[source,xml,subs="attributes+"]
+[source,xml]
 ----
 <dependency>
   <groupId>io.quarkus</groupId>
