@@ -6,11 +6,10 @@ v1.0, 06-03-2022
 :description: Build Serverless Application with Quarkus CLI
 :keywords: kogito, workflow, quarkus, serverless, quarkus-cli
 // links
-:example-project: https://github.com/kiegroup/kogito-examples/tree/stable/kogito-quarkus-examples/serverless-workflow-greeting-quarkus
-
-:quarkus-container-images: https://quarkus.io/guides/container-image
-:quarkus-native-builds: https://quarkus.io/guides/building-native-image
-:google-jib: https://github.com/GoogleContainerTools/jib
+:example_project_url: https://github.com/kiegroup/kogito-examples/tree/stable/kogito-quarkus-examples/serverless-workflow-greeting-quarkus
+:quarkus_container_images_url: https://quarkus.io/guides/container-image
+:quarkus_native_builds_url: https://quarkus.io/guides/building-native-image
+:google_jib_url: https://github.com/GoogleContainerTools/jib
 
 
 This guide will teach you how to build a Serverless Application Container Image using the {quarkus-cli}[Quarkus CLI].
@@ -27,18 +26,18 @@ What will you need:
 - Java {java_min_version}
 - Maven {maven_min_version}
 - Docker - recommended to use always the latest version. +
-* It's not a problem if you don't have Docker installed or can't install it. {google-jib}[Jib] allows you to build container images without having the client tooling to build containers. However, Docker is required to build GraalVM native image using the Quarkus Native Builder image.
+* It's not a problem if you don't have Docker installed or can't install it. {google_jib_url}[Jib] allows you to build container images without having the client tooling to build containers. However, Docker is required to build GraalVM native image using the Quarkus Native Builder image.
 - GraalVM {graalvm_min_version}: Note that, GraalVM is not a required dependency, if you don't have it installed you can use the Quarkus Native Builder image to perform a local build, however, it will require to have the Docker tool installed.
 
 
 == Getting started
 
-First, you need to clone the {kogito_examples}[kogito-examples] repository and go to the {example-project}[serverless-workflow-greeting-quarkus] example.
+First, you need to clone the {kogito_examples_url}[kogito-examples] repository and go to the {example-project}[serverless-workflow-greeting-quarkus] example.
 
 .Cloning Kogito Examples
 [source,shell,subs="attributes+"]
 ----
-$ git clone --branch stable {kogito_examples} && cd kogito-examples/kogito-quarkus-examples/serverless-workflow-greeting-quarkus
+$ git clone --branch stable {kogito_examples_url} && cd kogito-examples/kogito-quarkus-examples/serverless-workflow-greeting-quarkus
 ----
 
 If you wish to run the example beforehand, follow the steps described in the Getting Started guide.
@@ -57,7 +56,7 @@ $ quarkus version
 At this point it is assumed that you already have the Quarkus tooling installed. If that is not the case, please visit: xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with our tooling].
 
 Quarkus provides a few extensions to build container images, like `Jib`, `docker`, `s2i`, and `buildpacks`.
-For this guide, we use `Jib`. However, if you already use another extension or want to know how it works, please visit this {quarkus-container-images}[Quarkus' guide].
+For this guide, we use `Jib`. However, if you already use another extension or want to know how it works, please visit this {quarkus_container_images_url}[Quarkus' guide].
 
 The Kogito Examples do not include the needed extension by default. We will add it using the Quarkus CLI:
 
@@ -155,7 +154,7 @@ $ quarkus build --native -Dquarkus.container-image.build=true \
 
 The command above will result in the following container image: `quay.io/kogito/serverless-workflow-greeting-quarkus:1.0-native`
 
-NOTE: If you don't have GraalVM installed, you can specify the _**quarkus.native.container-build=true**_ system properties. This property will create a Linux executable. Notice that, Native builds take longer than usual java builds. For more information about native builds please visit this {quarkus-native-builds}[guide].
+NOTE: If you don't have GraalVM installed, you can specify the _**quarkus.native.container-build=true**_ system properties. This property will create a Linux executable. Notice that, Native builds take longer than usual java builds. For more information about native builds please visit this {quarkus_native_builds_url}[guide].
 
 === Testing the built Container Image
 
