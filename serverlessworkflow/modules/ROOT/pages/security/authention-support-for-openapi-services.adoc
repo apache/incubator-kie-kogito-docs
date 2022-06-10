@@ -1,4 +1,8 @@
 = Authentication support for OpenAPI services
+// Referenced documentation pages.
+:orchestration-of-opnapi-based-services: xref:service-orchestration/orchestration-of-opnapi-based-services.adoc
+:configuring-openapi-services-endpoints: xref:service-orchestration/configuring-openapi-services-endpoints.adoc
+:orchestrating-third-party-services-with-oauth2: xref:security/orchestrating-third-party-services-with-oauth2.adoc
 
 This guide presents the authentication types that are supported to access the OpenAPI service operations used by Kogito Serverless Workflows, and how to configure them.
 
@@ -6,8 +10,8 @@ This guide presents the authentication types that are supported to access the Op
 
 Before proceeding, it is recommended to read the following guides:
 
-* xref:service-orchestration/orchestration-of-opnapi-based-services.adoc[Orchestration of OpenAPI based services]
-* xref:service-orchestration/configuring-openapi-services-endpoints.adoc[Configuring OpenAPI services endpoints in different environments]
+* {orchestration-of-opnapi-based-services}[Orchestration of OpenAPI based services]
+* {configuring-openapi-services-endpoints}[Configuring OpenAPI services endpoints in different environments]
 
 == Introduction
 
@@ -33,8 +37,10 @@ The following OpenAPI specification fragment shows an example of these schemes d
     }
 ----
 
-In general, to configure the credentials for accessing the secured operations, and other security parameters, means to configure application properties related to those security schemes.
-For that, we will use configuration keys that are composed using this pattern:
+To configure the credentials to access the secured operations and other related parameters, you must use application properties related to the security schemes.
+
+The configuration keys that are composed using this pattern:
+
 [source, properties]
 ----
 quarkus.openapi-generator.[filename].[security_scheme_name].auth.[auth_property_name]
@@ -52,10 +58,10 @@ To sanitize these names we follow the https://github.com/eclipse/microprofile-co
 
 [IMPORTANT]
 ====
-The security schemes defined in an OpenAPI specification are global to all the operations on that file, which means that the configurations made for a particular security scheme apply the other secured operations as well..
+The security schemes defined in an OpenAPI specification are global to all the operations on that file, which means that the configurations made for a particular security scheme apply the other secured operations as well.
 ====
 
-After reading this guide you can find an end-to-end example in the xref:security/orchestrating-third-party-services-with-oauth2.adoc[Orchestrating third party services with OAuth2 authentication] guide.
+After reading this guide you can find an end-to-end example in the {orchestrating-third-party-services-with-oauth2}[Orchestrating third party services with OAuth2 authentication] guide.
 
 == Basic HTTP Authentication
 
