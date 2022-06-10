@@ -1,0 +1,164 @@
+Custom Functions Support
+========================
+v1.0, 06-10-2022
+:compat-mode!:
+// Metadata:
+:description: Custom Functions Support
+:keywords: kogito, workflow, serverless, cncf, specification, functions, java
+
+The CNCF Specification {spec_doc_url}#defining-custom-function-types[supports the `custom` function type], allowing implementations to extend the function definition capability.
+
+Kogito supports the custom types `java` and `sysout`.
+
+WARNING: The specification does not support these functions officially. Thus it might not be portable across other implementations.
+
+[#func_sysout]
+== Sysout Custom Function
+
+You can use this `custom` function type for debugging reasons or quick demonstrations:
+
+.sysout function definition
+[source,json]
+----
+{
+  "functions": [
+    {
+      "name": "printMessage",
+      "type": "custom",
+      "operation": "sysout"
+    }
+  ]
+}
+----
+
+Later in the `state` definition, you can call it this way:
+
+.Example of a function reference within a state
+[source,json]
+----
+{
+  "states": [
+    {
+      "name": "myState",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "printAction",
+          "functionRef": {
+            "refName": "printMessage",
+            "arguments": {
+              "message": "."
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+----
+
+You should see the data output in the console.
+
+WARNING: You should avoid using this function in production environments since it can keep spamming unnecessary data in the application's log.
+
+[#func_java]
+== Java Custom Function
+
+Kogito supports calling Java functions within the Maven project, in which you define the workflow. For example, you can declare your functions like this:
+
+.Example of a Java function declaration
+[source,json]
+----
+{
+  "functions": [
+    {
+      "name": "myFunction", <1>
+      "type": "custom", <2>
+      "operation": "service:java:com.acme.MyInterfaceOrClass::myMethod" <3>
+    }
+  ]
+}
+----
+
+1. The function name
+2. The `custom` function type
+3. The Kogito custom operation definition. `service` is the reserved operation keyword followed by the other keyword `java`. The next portion is the FQDN (Fully Qualified Domain Name) of the interface or implementation class, followed by the method name.
+
+Your method's interface *must* receive a https://github.com/FasterXML/jackson[Jackson's] `JsonNode` object and return either `void` or another `JsonNode`. For example:
+
+.Example of a Java function implementation
+[source,java]
+----
+public class MyInterfaceOrClass {
+
+    public void myMethod(JsonNode workflowData) {
+        // do whatever I want with the JsonNode:
+        // { "workflowdata": {} }
+    }
+    
+    public JsonNode myMethod(JsonNode workflowData) {
+        // do whatever I want with the JsonNode:
+        // { "workflowdata": {} }
+        // return the modified content:
+        return workflowData;
+    }
+}
+----
+
+To call this function within your workflow, you can extract the JSON value you need via a xref:core/understanding-jq-expressions.adoc[`jq` expression] or pass it without any arguments. In this case, the caller sends the whole payload. For example:
+
+.Example of a reference to a Java function in the Operation state
+[source,json]
+----
+{
+  "states": [
+    {
+      "name": "myState",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "callJavaFunctionAction",
+          "functionRef": {
+            "refName": "myFunction"
+          }
+        }
+      ]
+    }
+  ]
+}
+----
+
+Alternatively, you can only pass the necessary data:
+
+.Example of a reference to a Java function in the Operation state passing manipulated data
+[source,json]
+----
+{
+  "states": [
+    {
+      "name": "myState",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "callJavaFunctionAction",
+          "functionRef": {
+            "refName": "myFunction",
+            "arguments": {
+              "data": "${ .my.expression.to.data }"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+----
+
+The `JsonNode` that the function returns will be the new payload from this point of the workflow execution.
+
+WARNING: Refrain from using only Java functions because it can turn the workflow into a monolithic runtime application.
+
+== What's Next?
+
+- xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow Specification Support]
+- xref:core/understanding-jq-expressions.adoc[Understanding JQ Expressions].

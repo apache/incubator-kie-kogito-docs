@@ -13,7 +13,23 @@ In this guide, you can learn the details about the Kogito implementation of the 
 
 == Current Status
 
-Currently, Kogito implements version {spec_doc_url}[{spec_version}] of the specification. The table below classifies the current implementation status for each specification feature. {spec_doc_url}#Retry-Definition[Retries] are the only feature that Kogito does not support yet.
+Currently, Kogito implements version {spec_doc_url}[{spec_version}] of the specification. The table below classifies the current implementation status for each specification feature. {spec_doc_url}#Retry-Definition[Retries], {spec_doc_url}#sleep-state[Sleep State], and {spec_doc_url}#workflow-timeouts[Timeouts] are the only features that Kogito does not support yet.
+
+.Iconography Legend
+[cols="1,1"]
+|===
+| Icon | Description
+
+| emoji:full_moon[]
+| Fully implemented and compliant with the specification.
+
+| emoji:last_quarter_moon[] 
+| Partially implemented. The guide explains the details.
+
+| emoji:construction[]
+| Not yet implemented.
+
+|===
 
 .Current implementation status of the specification features
 [cols="1,1,1"]
@@ -70,7 +86,11 @@ The following sections describe the current status of the supported features.
 [#states]
 === Workflow Model - States
 
-Kogito supports every state described in the specification {spec_version} version.
+Kogito hasn't implemented the {spec_doc_url}#sleep-state[Sleep State] yet, but it's a feature on the project's roadmap.
+
+The {spec_doc_url}#parallel-state[Parallel State] behaves in a single thread internally, meaning it doesn't create one thread per branch, simulating an actual parallel behavior. It's an enhancement in the project's roadmap.
+
+Kogito supports all the remaining states described in the specification {spec_version} version.
 
 .Workflow States implementation status detail
 [cols="1,1,1"]
@@ -89,12 +109,12 @@ Kogito supports every state described in the specification {spec_version} versio
 | emoji:full_moon[] 
 | {spec_doc_url}#Switch-State[Switch State]
 
-| Delay
-| emoji:full_moon[] 
-| {spec_doc_url}#Delay-State[Delay State]
+| Sleep
+| emoji:construction[] 
+| {spec_doc_url}#sleep-state[Sleep State]
 
 | Parallel
-| emoji:full_moon[] 
+| emoji:last_quarter_moon[] 
 | {spec_doc_url}#Parallel-State[Parallel State]
 
 | Inject
@@ -115,7 +135,7 @@ Kogito supports every state described in the specification {spec_version} versio
 
 The table below illustrates the current status of the functions Kogito supports. 
 
-For additional functions, the specification supports the `custom` type. Therefore, Kogito added support for `sysout` and `java` tyes. See <<func_sysout>> and <<func_java>> sections for more information.
+For additional functions, the specification supports the `custom` type. Therefore, Kogito supports a few new ones. See the guide "xref:core/custom-functions-support.adoc[Custom Functions Support]" for more details.
 
 .Workflow Functions implementation status detail
 [cols="1,1,1"]
@@ -148,160 +168,20 @@ For additional functions, the specification supports the `custom` type. Therefor
 
 | custom
 | emoji:full_moon[]
-| {spec_doc_url}#defining-custom-function-types[Defining custom function types]. Kogito supports `java` and `sysout` custom functions.
+| {spec_doc_url}#defining-custom-function-types[Defining custom function types].
 |===
-
-[#func_sysout]
-==== Sysout Custom Function
-
-You can use this `custom` function type for debugging reasons or quick demonstrations:
-
-.sysout function definition
-[source,json]
-----
-{
-  "functions": [
-    {
-      "name": "printMessage",
-      "type": "custom",
-      "operation": "sysout"
-    }
-  ]
-}
-----
-
-Later in the `state` definition, you can call it this way:
-
-.Example of a function reference within a state
-[source,json]
-----
-{
-  "states": [
-    {
-      "name": "myState",
-      "type": "operation",
-      "actions": [
-        {
-          "name": "printAction",
-          "functionRef": {
-            "refName": "printMessage",
-            "arguments": {
-              "message": "."
-            }
-          }
-        }
-      ]
-    }
-  ]
-}
-----
-
-You should see the data output in the console.
-
-[#func_java]
-==== Java Custom Function
-
-Kogito supports calling Java functions within the Maven project, in which you define the workflow. For example, you can declare your functions like this:
-
-.Example of a Java function declaration
-[source,json]
-----
-{
-  "functions": [
-    {
-      "name": "myFunction", <1>
-      "type": "custom", <2>
-      "operation": "service:java:com.acme.MyInterfaceOrClass::myMethod" <3>
-    }
-  ]
-}
-----
-
-1. The function name
-2. The `custom` function type
-3. The Kogito custom operation definition. `service` is the reserved operation keyword followed by the other keyword `java`. The next portion is the FQDN of the interface or implementation class, followed by the method name.
-
-Your method's interface *must* receive a https://github.com/FasterXML/jackson[Jackson's] `JsonNode` object and return either `void` or another `JsonNode`. For example:
-
-.Example of a Java function implementation
-[source,java]
-----
-public class MyInterfaceOrClass {
-
-    public void myMethod(JsonNode workflowData) {
-        // do whatever I want with the JsonNode:
-        // { "workflowdata": {} }
-    }
-    
-    public JsonNode myMethod(JsonNode workflowData) {
-        // do whatever I want with the JsonNode:
-        // { "workflowdata": {} }
-        // return the modified content:
-        return workflowData;
-    }
-}
-----
-
-To call this function within your workflow, you can extract the JSON value you need via a xref:core/understanding-jq-expressions.adoc[`jq` expression] or pass it without any arguments. In this case, the caller sends the whole payload. For example:
-
-.Example of a reference to a Java function in the Operation state
-[source,json]
-----
-{
-  "states": [
-    {
-      "name": "myState",
-      "type": "operation",
-      "actions": [
-        {
-          "name": "callJavaFunctionAction",
-          "functionRef": {
-            "refName": "myFunction"
-          }
-        }
-      ]
-    }
-  ]
-}
-----
-
-Alternatively, you can only pass the necessary data:
-
-.Example of a reference to a Java function in the Operation state passing manipulated data
-[source,json]
-----
-{
-  "states": [
-    {
-      "name": "myState",
-      "type": "operation",
-      "actions": [
-        {
-          "name": "callJavaFunctionAction",
-          "functionRef": {
-            "refName": "myFunction",
-            "arguments": {
-              "data": "${ .my.expression.to.data }"
-            }
-          }
-        }
-      ]
-    }
-  ]
-}
-----
 
 [#events]
 === Workflow Model - Events
 
-Kogito supports the capabilities of the event according to the {spec_doc_url}#Event-Definition[specification defition of an event]. However, event `correlation` has limited support as per specification definition.
+Kogito supports the capabilities of the event according to the {spec_doc_url}#Event-Definition[specification definition of an event]. However, event `correlation` has limited support as per specification definition.
 
 For more details about the event correlation feature that Kogito supports, see the guide xref:eventing/event-correlation-with-workflows.adoc[Event Correlation with Workflows].
 
 [#workflow_data]
 === Workflow Data
 
-Kogito has the full implementation of the data manipulation feature via either `jq` (default) or `jsonpath`.
+Kogito has the full implementation of the data manipulation feature via either `jq` (default) or `jsonpath` expressions.
 
 JSON Path can have some limitations in specific scenarios, mainly when the use case requires complex data manipulation. See the {spec_doc_url}#workflow-data[Workflow Data] chapter in the specification.
 
@@ -364,5 +244,5 @@ See the guide "xref:core/accessing-workflow-metainformation-in-runtime.adoc[Acce
 
 == What's Next?
 
-- xref:getting-started/cncf-serverless-workflow-specification-support.adoc[Creating your first Serverless Workflow service]
+- xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
 - xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with our tooling].
