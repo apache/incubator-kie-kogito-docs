@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating your first Serverless Workflow service :: Serverless Workflow Guides</title>
+    <meta name="generator" content="Antora 3.0.1">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../../_/../../">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="main">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="create-your-first-workflow-service.html">Create your first workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="getting-familiar-with-our-tooling.html">Getting familiar with our tooling</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow Specification support</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-jq-expressions.html">Understanding JQ expressions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-workflow-error-handling.html">Understanding workflow error handling</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/working-with-parallelism.html">Working with parallelism</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/accessing-workflow-metainformation-in-runtime.html">Accessing workflow metainformation in runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/state-data-filtering.html">State data filtering</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/defining-an-input-schema-for-workflows.html">Defining an input schema for your workflows</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/tooling.html">Tooling</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-opnapi-based-services.html">Orchestration of OpenAPI based services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Configuring OpenAPI services endpoints in different environments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Eventing</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/handling-events-on-workflows.html">Handling events on workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events with Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event correlation with workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/working-with-callbacks.html">Working with callbacks</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">Authentication support for OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">Orchestrating third party services with OAuth2 authentication</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink with Wiremock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-opnapi-services-with-wiremock.html">Mocking OpenAPI Services with Wiremock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Basic Integration Test with RestAssured</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/debugging-workflow-execution-runtime.html">Debugging the workflow execution in runtime</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Integration Test with PostgreSQL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/development-tools-for-troubleshooting.html">Development tools for troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Persistence with PostgresSQL databases</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/workflow-database-for-db-admins.html">Workflows database for DB admins</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/data-consistency.html">Data consistency</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cloud</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Workflow Images locally with Quarkus CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/build-workflow-images-with-kn-cli.html">Building Workflow Images locally with KN CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/build-workflow-images-with-tekton.html">Building Workflow Images with Tekton Pipelines</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/deploying-on-kubernetes-cluster.html">Deploying on Kubernetes Clusters</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/versioning-workflows-in-knative.html">Versioning workflows in Knative</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing the workflow base metrics to Prometheus</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/camel-k-integration.html">Integrating with Camel-K</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow runtime data in serverless dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Orchestration-based SAGA pattern</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/newsletter-subscription-example.html">Newsletter subscription example</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Serverless Workflow Guides</span>
+    <span class="version">main</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">main</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Serverless Workflow Guides</a></li>
+    <li>Getting Started</li>
+    <li><a href="create-your-first-workflow-service.html">Create your first workflow service</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/getting-started/create-your-first-workflow-service.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Creating your first Serverless Workflow service</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>As a developer, you can use Serverless Workflow and create a <code>Hello World</code> application, which includes the following procedures:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#boostrapping-the-project">Bootstrapping a project</a></p>
+</li>
+<li>
+<p><a href="#creating-workflow">Creating a workflow</a></p>
+</li>
+<li>
+<p><a href="#running-application">Running your Serverless Workflow application</a></p>
+</li>
+<li>
+<p><a href="#testing-application">Testing your Serverless Workflow application</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Also, you can directly access an example application by cloning <code>kogito-quarkus-examples/serverless-workflow-hello-world</code> from the <a href="https://github.com/hbelmiro/kogito-examples/tree/main/kogito-quarkus-examples/serverless-workflow-hello-world">GitHub repository</a>.</p>
+</div>
+<div class="paragraph">
+<p>This guide describes how to create a Serverless Workflow application that serves a <code>hello_world</code> endpoint. The workflow contains the following two states:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Inject Hello World</code>: Injects a <code>Hello World</code> message into the response</p>
+</li>
+<li>
+<p><code>Inject Mantra</code>: Injects a <code>Mantra</code> message into the response</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/getting-started/hello-world-workflow.png" alt="hello world workflow">
+</div>
+<div class="title">Figure 1. Example Hello World workflow</div>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p><a href="https://adoptium.net/">JDK 11+</a> is installed with <code>JAVA_HOME</code> configured appropriately.</p>
+</li>
+<li>
+<p><a href="https://maven.apache.org/install.html">Apache Maven</a> is installed.</p>
+</li>
+<li>
+<p><a href="https://quarkus.io/guides/cli-tooling">Quarkus CLI</a> is installed.</p>
+</li>
+<li>
+<p>Visual Studio Code with <a href="https://marketplace.visualstudio.com/items?itemName=redhat.java">Red Hat Java Extension</a>
+and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor">Red Hat Serverless Workflow Editor</a> is installed to edit your workflows.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For more information about the tooling and the required dependencies, see <a href="getting-familiar-with-our-tooling.html" class="xref page">tooling guide</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="boostrapping-the-project"><a class="anchor" href="#boostrapping-the-project"></a>Bootstrapping a project</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To create your Serverless Workflow service, first you need to bootstrap a project.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In a command terminal, enter the following command to create a project:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Create a project using Quarkus CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus create app \
+    -x=kogito-quarkus-serverless-workflow \
+    -x=quarkus-container-image-jib \
+    -x=quarkus-resteasy-jackson \
+    -x=quarkus-smallrye-openapi \
+    org.kie.kogito.examples:serverless-workflow-hello-world:1.0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The previous command creates a Maven Quarkus project in the <code>serverless-workflow-hello-world</code> directory containing the required Kogito dependencies, including:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>kogito-quarkus-serverless-workflow</code>: Adds support for Serverless Workflow</p>
+</li>
+<li>
+<p><code>quarkus-container-image-jib</code>: Adds support for Container Image Builds</p>
+</li>
+<li>
+<p><code>quarkus-resteasy-jackson</code>: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request</p>
+</li>
+<li>
+<p><code>quarkus-smallrye-openapi</code>: Adds support for Swagger documentation when you run the application in development mode</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The SwaggerUI is available at <code><a href="http://localhost:8080/q/swagger-ui/" class="bare">http://localhost:8080/q/swagger-ui/</a></code> when you run the application.</p>
+</div>
+<div class="listingblock">
+<div class="title">Create a project using Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn io.quarkus.platform:quarkus-maven-plugin:2.9.1.Final:create \
+    -DprojectGroupId=org.kie.kogito.examples \
+    -DprojectArtifactId=serverless-workflow-hello-world \
+    -Dextensions="kogito-quarkus-serverless-workflow,quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi"
+cd serverless-workflow-hello-world</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous command, <code>org.kie.kogito.examples</code>, <code>serverless-workflow-hello-world</code>, and <code>1.0</code> is group id, artifact id, and version of your project respectively.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>To verify that project is created, compile the project using the following command:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Compile your project using Quarkus CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Compile your project using Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean package</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-workflow"><a class="anchor" href="#creating-workflow"></a>Creating a workflow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After bootstrapping a project, you need to create a workflow. In the following procedure, a workflow named Hello World Workflow is created.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Create a file named <code>hello.sw.json</code> in the <code>src/main/resources</code> directory with the following content:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example content for <code>hello.sw.json</code> file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "hello_world", <i class="conum" data-value="1"></i><b>(1)</b>
+  "version": "1.0",
+  "specVersion": "0.8",
+  "name": "Hello World Workflow",
+  "description": "JSON based hello world workflow",
+  "start": "Inject Hello World", <i class="conum" data-value="3"></i><b>(3)</b>
+  "states": [ <i class="conum" data-value="2"></i><b>(2)</b>
+    {
+      "name": "Inject Hello World",
+      "type": "inject", <i class="conum" data-value="4"></i><b>(4)</b>
+      "data": { <i class="conum" data-value="5"></i><b>(5)</b>
+        "greeting": "Hello World"
+      },
+      "transition": "Inject Mantra" <i class="conum" data-value="6"></i><b>(6)</b>
+    },
+    {
+      "name": "Inject Mantra",
+      "type": "inject",
+      "data": {
+        "mantra": "Serverless Workflow is awesome!" <i class="conum" data-value="7"></i><b>(7)</b>
+      },
+      "end": true <i class="conum" data-value="8"></i><b>(8)</b>
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example:</p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>id</code> field is the unique identifier of the workflow. Kogito generates the REST endpoints based on this
+unique identifier.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>states</code> defines the states of the workflow. In the Hello World example, the workflow contains two states, such as <code>Inject Hello World</code> and <code>Inject Mantra</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>start</code> field defines the state in which the workflow starts.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>type</code> defines the type of the state. In the previous example, the state is <code>inject</code>. The <code>inject</code> state can be used to inject static data into state data input.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code>data</code> defines the data that is injected into the state. In the previous example, <code>greeting</code> is injected with the <code>Hello World</code> value.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><code>transition</code> field defines the next state that will be reached after the current state is completed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Injects a <code>mantra</code> with the value <code>Serverless Workflow is awesome!</code> into the workflow data.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><code>end</code> field defines that the current state is the end of the workflow. When the workflow reaches the end state, the workflow stops and the REST endpoint returns the workflow data, such as:</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example workflow data</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "greeting": "Hello World",
+  "mantra": "Serverless Workflow is awesome!"
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The workflow definition follows the CNCF Serverless Workflow specification. For more information, see
+<a href="cncf-serverless-workflow-specification-support.html" class="xref page">CNCF Serverless Workflow Specification Support</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="running-application"><a class="anchor" href="#running-application"></a>Running your Serverless Workflow application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After creating a workflow, you can run your Serverless Workflow application.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Enter the following command to run your Serverless Workflow application:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Run your Serverless Workflow application using Quarkus CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus dev</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Run your Serverless Workflow application using Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean quarkus:dev</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">[INFO] ------< org.kie.kogito.examples:serverless-workflow-hello-world >-------
+[INFO] Building serverless-workflow-hello-world 1.0
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- quarkus-maven-plugin:2.9.1.Final:dev (default-cli) @ serverless-workflow-hello-world ---
+[INFO] Invoking org.apache.maven.plugins:maven-resources-plugin:2.6:resources) @ serverless-workflow-hello-world
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 3 resources
+...more output...
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2022-05-25 14:38:09,741 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (Quarkus Main Thread) Registered Kogito CloudEvent extension
+2022-05-25 14:38:09,840 INFO  [io.quarkus] (Quarkus Main Thread) serverless-workflow-hello-world 1.0 on JVM (powered by Quarkus 2.9.1.Final) started in 6.470s. Listening on: http://localhost:8080
+2022-05-25 14:38:09,843 INFO  [io.quarkus] (Quarkus Main Thread) Profile dev activated. Live Coding activated.
+2022-05-25 14:38:09,843 INFO  [io.quarkus] (Quarkus Main Thread) Installed features: [cache, cdi, jackson-jq, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-openapi, smallrye-reactive-messaging, smallrye-reactive-messaging-http, swagger-ui, vertx]
+2022-05-25 14:38:12,877 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: __  ____  __  _____   ___  __ ____  ______
+2022-05-25 14:38:12,878 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT:  --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+2022-05-25 14:38:12,879 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT:  -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+2022-05-25 14:38:12,879 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: --\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2022-05-25 14:38:12,879 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:09,692 INFO  [io.zon.tes.db.pos.emb.EmbeddedPostgres] (main) Detected a Linux x86_64 system
+2022-05-25 14:38:12,880 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:09,705 INFO  [io.zon.tes.db.pos.emb.DefaultPostgresBinaryResolver] (main) Detected distribution: 'Red Hat Enterprise Linux'
+...more output...
+2022-05-25 14:38:12,889 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,332 INFO  [io.zon.tes.db.pos.emb.EmbeddedPostgres] (postgres:pid(90)) 2022-05-25 17:38:12.332 UTC [99] LOG:  incomplete startup packet
+2022-05-25 14:38:12,890 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,405 INFO  [io.zon.tes.db.pos.emb.EmbeddedPostgres] (main) 5df1ed6e-7a15-4091-bcfb-e293aa293bfe postmaster startup finished in 00:00:00.180
+2022-05-25 14:38:12,890 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,405 INFO  [org.kie.kog.per.inm.pos.run.InmemoryPostgreSQLRecorder] (main) Embedded Postgres started at port "44729" with database "postgres", user "postgres" and password "postgres"
+2022-05-25 14:38:12,890 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,636 WARN  [io.qua.run.con.ConfigRecorder] (main) Build time property cannot be changed at runtime:
+2022-05-25 14:38:12,891 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT:  - quarkus.jib.base-jvm-image is set to 'ba-docker-registry.usersys.redhat.com:5000/fabric8/java-alpine-openjdk11-jre' but it is build time fixed to 'fabric8/java-alpine-openjdk11-jre'. Did you change the property quarkus.jib.base-jvm-image after building the application?
+2022-05-25 14:38:13,375 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,105 INFO  [org.kie.kog.per.pro.ProtobufService] (main) Registering Kogito ProtoBuffer file: kogito-index.proto
+2022-05-25 14:38:13,377 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,132 INFO  [org.kie.kog.per.pro.ProtobufService] (main) Registering Kogito ProtoBuffer file: kogito-types.proto
+2022-05-25 14:38:13,378 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,181 INFO  [io.quarkus] (main) data-index-service-inmemory 1.22.0.Final on JVM (powered by Quarkus 2.9.0.Final) started in 4.691s. Listening on: http://0.0.0.0:8080
+2022-05-25 14:38:13,379 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,182 INFO  [io.quarkus] (main) Profile prod activated.
+2022-05-25 14:38:13,380 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,182 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, inmemory-postgres, jdbc-postgresql, narayana-jta, oidc, reactive-routes, rest-client-reactive, rest-client-reactive-jackson, security, smallrye-context-propagation, smallrye-graphql-client, smallrye-health, smallrye-metrics, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx, vertx-graphql]</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Once your Serverless Workflow application is started, you can send a request for the provided endpoint:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_world</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"efb59bfa-ad9c-4062-a6d2-2d9184dd4b3d","workflowdata":{"greeting":"Hello World","mantra":"Serverless Workflow is awesome!"}}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>You can update your workflow with a new <code>mantra</code> value without restarting the application.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Update your workflow</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "name": "Inject Mantra",
+  "type": "inject",
+  "data": {
+    "mantra": "Serverless Workflow is amazing!" <i class="conum" data-value="1"></i><b>(1)</b>
+  },
+  "end": true
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>New <code>mantra</code> value</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_world</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"efb59bfa-ad9c-4062-a6d2-2d9184dd4b3d","workflowdata":{"greeting":"Hello World","mantra":"Serverless Workflow is amazing!"}}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that the <code>mantra</code> value is updated without restarting the application, because Kogito leverages the Quarkus live coding feature.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>To stop the application, press <code>CTRL+C</code>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="testing-application"><a class="anchor" href="#testing-application"></a>Testing your Serverless Workflow application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To test your Serverless Workflow application, you can follow the instructions in the
+<a href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html" class="xref page">Basic Integration Test with RestAssured</a> guide.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="getting-familiar-with-our-tooling.html" class="xref page">Getting Familiar With Our Tooling</a>.</p>
+</li>
+<li>
+<p><a href="../service-orchestration/orchestration-of-opnapi-based-services.html" class="xref page">Orchestration of OpenAPI Based Services</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>
