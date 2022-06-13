@@ -82,7 +82,7 @@ Kogito supports calling Java functions within the Maven project, in which you de
 
 1. The function name
 2. The `custom` function type
-3. The Kogito custom operation definition. `service` is the reserved operation keyword followed by the other keyword `java`. The next portion is the FQDN (Fully Qualified Domain Name) of the interface or implementation class, followed by the method name.
+3. The Kogito custom operation definition. `service` is the reserved operation keyword followed by the other keyword `java`. The next portion is the FQCN (Fully Qualified Class Name) of the interface or implementation class, followed by the method name.
 
 Your method's interface *must* receive a https://github.com/FasterXML/jackson[Jackson's] `JsonNode` object and return either `void` or another `JsonNode`. For example:
 
@@ -156,7 +156,7 @@ Alternatively, you can only pass the necessary data:
 
 The `JsonNode` that the function returns will be the new payload from this point of the workflow execution.
 
-WARNING: Refrain from using only Java functions because it can turn the workflow into a monolithic runtime application.
+WARNING: Refrain from using **only** Java functions or use them to call external services. Try to use the xref:service-orchestration/orchestration-of-opnapi-based-services.adoc[the services orchestration features instead].
 
 == What's Next?
 
