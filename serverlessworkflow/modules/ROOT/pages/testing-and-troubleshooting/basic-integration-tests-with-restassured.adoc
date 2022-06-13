@@ -3,24 +3,10 @@
 :description: Basic Integration Test with REST Assured
 :keywords: kogito, workflow, quarkus, serverless, quarkus-cli, test, restassured
 
-As a developer, you can use https://rest-assured.io/[REST Assured] to test your Serverless Workflow application,
-which includes the following procedures:
+As a developer, you can use https://rest-assured.io/[REST Assured] to test your Serverless Workflow application.
 
-* <<boostrapping-the-project,Bootstrapping a project>>
-* <<creating-workflow,Creating a workflow>>
-* <<testing-application,Testing your Serverless Workflow application>>
-
-Also, you can directly access an example application by cloning `kogito-quarkus-examples/serverless-workflow-testing-with-rest-assured`
+You can directly access an example application by cloning `kogito-quarkus-examples/serverless-workflow-testing-with-rest-assured`
 from the https://github.com/kiegroup/kogito-examples.git[Kogito Examples] GitHub repository.
-
-.Prerequisites
-* https://adoptium.net/[JDK {java_min_version}] is installed with `JAVA_HOME` configured appropriately.
-* https://maven.apache.org/install.html[Apache Maven] is installed.
-* https://quarkus.io/guides/cli-tooling[Quarkus CLI] is installed.
-* Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.java[Red Hat Java Extension]
-and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
-
-For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[tooling guide].
 
 This guide describes how to test the Serverless Workflow application that exposes the `hello` endpoint.
 The endpoint expects a `name` as a parameter and returns a `greeting`.
@@ -48,67 +34,10 @@ The endpoint should return a response with a body similar to:
 }
 ----
 
-[[boostrapping-the-project]]
-== Bootstrapping a project
-
-To create your Serverless Workflow service you need to bootstrap a project. The example below is just to illustrate the testing example. Please see the xref:getting-started/create-your-first-workflow-service.adoc[Create Your First Serverless Workflow Service guide] for more information.
-
-.Procedure
-
-. In a command terminal, enter the following command to create a project:
-+
---
-.Create a project using Quarkus CLI
-[source,shell]
-----
-quarkus create app \
-    -x=kogito-quarkus-serverless-workflow \
-    -x=quarkus-resteasy-jackson \
-    org.kie.kogito.examples:serverless-workflow-testing-with-rest-assured:1.0
-----
---
-
-[[creating-workflow]]
-== Creating a workflow
-
-The next step is to add a workflow to the project. Follow the procedure below to create the `Hellow workflow` workflow.
-
-.Procedure
-. Create a file named `hello.sw.json` in the `src/main/resources` directory with the following content:
-+
---
-.Example content for `hello.sw.json` file
-[source,json]
-----
-{
-  "id": "hello",
-  "version": "1.0",
-  "name": "Hello workflow",
-  "description": "JSON based hello workflow",
-  "start": "Hello",
-  "states": [
-    {
-      "name": "Hello",
-      "type": "inject",
-      "data": {
-        "hello": "Hello, "
-      },
-      "stateDataFilter": {
-        "output": "${ {greeting: .hello+.name} }"
-      },
-      "end": true
-    }
-  ]
-}
-----
---
-
-The engine creates an endpoint at the `/hello` path. The path naming is the same as the workflow `id` in the definition file.
-
 [[testing-application]]
 == Testing the Serverless Workflow application
 
-After creating the workflow, you're ready to test the application. Follow the procedure below to create a test to check if the `hello` endpoint returns the proper greeting for a given `name`.
+Follow the procedure below to create a test to check if the `hello` endpoint returns the proper greeting for a given `name`.
 
 .Procedure
 . Before creating the test, check if the `pom.xml` contains the required dependencies:
@@ -129,11 +58,6 @@ After creating the workflow, you're ready to test the application. Follow the pr
 </dependency>
 ----
 --
-. Remove the files that were auto-generated when you created the project:
-
-* `src/main/java/org/kie/kogito/examples/GreetingResource.java`
-* `src/test/java/org/kie/kogito/examples/GreetingResourceTest.java`
-* `src/test/java/org/kie/kogito/examples/NativeGreetingResourceIT.java`
 
 . Create a test class named `HelloTest` in the `src/test/java/org/kie/kogito/examples/`
 directory with the following content:
