@@ -1,2 +1,48 @@
 Orchestration of OpenAPI based services
 =======================================
+
+This document describes how to call REST services via an {open_api_spec_url}[OpenAPI] descriptor file.
+
+The examples in this document assume that you have the Quarkus tooling installed. For more information about the tooling, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Using Serverless Workflow tooling].
+
+.Prerequisites
+* You have created a Quarkus project. For more information about creating your first project, see xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
+
+== About the OpenAPI support
+
+Kogito follows the {spec_doc_url}#using-functions-for-restful-service-invocations[CNCF Serverless Workflow specification convention] to make calls to remote REST services using an OpenAPI descriptor. This descriptor has all the necessary information required to make REST calls to a service.
+
+An OpenAPI function definition looks like this:
+
+.An example of an OpenAPI function definition
+[source,json]
+----
+{
+   "functions":[
+      {
+         "name":"myFunction1",
+         "operation":"file:///home/users/kogito/myopenapi-file.yaml#myFunction1"
+      }
+   ]
+}
+----
+
+The `operation` attribute is a URI composed by:
+
+1. `file:` is the URI scheme that the engine uses to locate the descriptor file
+2. The next portion of the URI is the path where the resource is located
+3. After the `#` symbol, the operation identifier found in the OpenAPI descriptor file.
+
+Kogito supports the following URI schemes:
+
+* `classpath` for files located in the application project under the `src/main/resources` folder. This is the default when the scheme is not provided in the URI. For example `classpath:/myopenapifile.yaml` or `/myopenapifile.yaml`. In this example, the file is located in `src/main/resources/myopenapifile.yaml` path
+* `file` for descriptor files located in the filesystem
+* `http` or `https` for remote located files
+
+IMPORTANT: these files must be available only on build time. During runtime, Kogito leverages its internal code generation feature to make the remote calls.
+
+
+
+== Additional resources
+
+include::../../pages/_common-content/report-issue.adoc[]
