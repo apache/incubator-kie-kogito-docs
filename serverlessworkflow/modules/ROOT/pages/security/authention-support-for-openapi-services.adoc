@@ -45,7 +45,7 @@ The following OpenAPI specification fragment shows an example of these schemes d
 
 To configure the credentials to access the secured operations and other related parameters, you must use application properties related to the security schemes.
 
-The configuration keys that are composed using this pattern:
+The configuration keys are composed using this pattern:
 
 [source, properties]
 ----
@@ -65,6 +65,11 @@ To sanitize these names we follow the https://github.com/eclipse/microprofile-co
 [IMPORTANT]
 ====
 The security schemes defined in an OpenAPI specification are global to all the operations on that file, which means that the configurations made for a particular security scheme apply the other secured operations as well.
+====
+
+[TIP]
+====
+To configure these properties you can use all the alternatives covered in the https://quarkus.io/guides/config-reference[Quarkus configuration reference guide]. A common usage is to define https://quarkus.io/guides/config-reference#environment-variables[environment] variables to set the authentication secrets.
 ====
 
 After reading this guide you can find an end-to-end example in the {orchestrating-third-party-services-with-oauth2}[Orchestrating third party services with OAuth2 authentication] guide.
@@ -298,7 +303,7 @@ The following example shows a `security-example.json` file that defines a `sayHe
 
 **These are the supported configurations:**
 
-Unlike the `http basic`, `http bearer` and `apiKey` security schemes, the Oauth2 authentication is relied on the https://quarkus.io/guides/security-openid-connect-client[Quarkus OpenId Connect and Oauth2 Clients and Filters].
+Unlike the `http basic`, `http bearer` and `apiKey` security schemes, the Oauth2 authentication relies on the https://quarkus.io/guides/security-openid-connect-client[Quarkus OpenId Connect and Oauth2 Clients and Filters].
 
 By using a simple naming convention, the token management operations will be delegated to a Quarkus `OidcClient`.
 
@@ -329,6 +334,13 @@ For this to work you **must** add the https://quarkus.io/guides/security-openid-
 </dependency>
 ----
 
+[TIP]
+====
+You can add the extension using the Quarkus CLI:
+[source, bash]
+$ quarkus extension add quarkus-oidc-client-filter
+====
+
 == Authorization Token Propagation
 
 The authorization token propagation can be used with OpenAPI operations that are secured with a security scheme of type `oauth2` or `http bearer`.
@@ -350,7 +362,7 @@ Enables the token propagation for all the operations that are secured with the `
 | `quarkus.openapi-generator.[filename].auth.[security_scheme_name].header-name=[http_header_name]`
 | `quarkus.openapi-generator.security_example_json.auth.oauth_example.header-name=MyHeaderName` +
  +
-Stays that the authorization token to propagate will be read from the HTTP header `MyHeaderName` instead of the standard HTTP `Authorization` header.
+States that the authorization token to propagate will be read from the HTTP header `MyHeaderName` instead of the standard HTTP `Authorization` header.
 
 |===
 
@@ -359,12 +371,12 @@ Stays that the authorization token to propagate will be read from the HTTP heade
 The authorization tokens are propagated as long the Serverless Workflow doesn't reach a "waiting" state, for example to wait for an event to arrive. When the Serverless Workflow is resumed the tokens will be no longer propagated.
 ====
 
-== Going further
-
-The Serverless Workflows OpenAPI support is based on the https://github.com/quarkiverse/quarkus-openapi-generator[Quarkus OpenAPI Generator] extension. While not mandatory, it could be an interesting reading if you want to know more details or even other usages not related to the Serverless Workflows.
-
 == What's next?
 
 This guide covered the authentication types that are supported to access the OpenAPI service operations and the respective configurations.
 
 We recommend continuing the journey with the {orchestrating-third-party-services-with-oauth2}[Orchestrating third party services with OAuth2 authentication] guide.
+
+== Going further
+
+The Serverless Workflows OpenAPI support is based on the https://github.com/quarkiverse/quarkus-openapi-generator[Quarkus OpenAPI Generator] extension. While not mandatory, it could be an interesting reading if you want to know more details or even other usages not related to the Serverless Workflows.
