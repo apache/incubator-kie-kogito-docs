@@ -1,5 +1,6 @@
-CNCF Serverless Workflow Specification Support
-==============================================
+= CNCF Serverless Workflow specification
+
+//// 
 v1.0, 06-08-2022
 :compat-mode!:
 // Metadata:
@@ -7,190 +8,196 @@ v1.0, 06-08-2022
 :keywords: kogito, workflow, serverless, cncf, specification
 // links
 :quarkus_config_guide_url: https://quarkus.io/guides/config-reference
+////
 
+This document describes the information about Kogito implementation of the link:{spec_website_url}[Cloud Native Computing Foundation (CNCF) Serverless Workflow] specification.
 
-In this guide, you can learn the details about the Kogito implementation of the {spec_website_url}[CNCF Serverless Workflow] specification.
+Kogito implements version link:{spec_doc_url}[{spec_version}] of the Serverless Workflow specification. 
 
-== Current Status
+The following table shows the implementation status for each Serverless Workflow specification feature. 
 
-Currently, Kogito implements version {spec_doc_url}[{spec_version}] of the specification. The table below classifies the current implementation status for each specification feature. {spec_doc_url}#Retry-Definition[Retries], {spec_doc_url}#sleep-state[Sleep State], and {spec_doc_url}#workflow-timeouts[Timeouts] are the only features that Kogito does not support yet.
+[NOTE]
+====
+Kogito does not support link:{spec_doc_url}#Retry-Definition[Retries], link:{spec_doc_url}#sleep-state[Sleep State], and link:{spec_doc_url}#workflow-timeouts[Timeouts] features of Serverless Workflow specification.
+====
 
-.Iconography Legend
-[cols="1,1"]
+.Implementation status icons
+[cols="50%,50%", options="header"]
 |===
 | Icon | Description
 
 | emoji:full_moon[]
-| Fully implemented and compliant with the specification.
+| Fully implemented feature and compliant with the Serverless Workflow specification
 
 | emoji:last_quarter_moon[] 
-| Partially implemented. The guide explains the details.
+| Partially implemented feature
 
 | emoji:construction[]
-| Not yet implemented.
+| Not implemented
 
 |===
 
-.Current implementation status of the specification features
-[cols="1,1,1"]
+.Implementation status of the Serverless Workflow specification features
+[cols="35%,30%,35%", options="header"]
 |===
-| Feature | Status | Spec Reference
+| Feature | Status | Reference
 
 | <<states>>
 | emoji:full_moon[]  
-| {spec_doc_url}#workflow-states[Workflow States]
+| link:{spec_doc_url}#workflow-states[Workflow States]
 
 | <<functions>>
 | emoji:last_quarter_moon[] 
-| {spec_doc_url}#Function-Definition[Function Definition]
+| link:{spec_doc_url}#Function-Definition[Function Definition]
 
 | <<events>>
 | emoji:last_quarter_moon[] 
-| {spec_doc_url}#Event-Definition[Event Definition]
+| link:{spec_doc_url}#Event-Definition[Event Definition]
 
 | <<workflow_data>>
 | emoji:full_moon[]  
-| {spec_doc_url}#Workflow-Data[Workflow Data]
+| link:{spec_doc_url}#Workflow-Data[Workflow Data]
 
 | <<expressions>>
 | emoji:full_moon[] 
-| {spec_doc_url}#Workflow-Expressions[Workflow Expressions]
+| link:{spec_doc_url}#Workflow-Expressions[Workflow Expressions]
 
 | <<error_handling>>
 | emoji:full_moon[] 
-| {spec_doc_url}#Workflow-Error-Handling[Workflow Error Handling]
+| link:{spec_doc_url}#Workflow-Error-Handling[Workflow Error Handling]
 
 | <<retries>>
 | emoji:construction[]
-| {spec_doc_url}#Retry-Definition[Retry Definition]
+| link:{spec_doc_url}#Retry-Definition[Retry Definition]
 
 | <<timeouts>>
 | emoji:construction[]
-| {spec_doc_url}#workflow-timeouts[Workflow Timeouts]
+| link:{spec_doc_url}#workflow-timeouts[Workflow Timeouts]
 
 | <<compensation>>
 | emoji:full_moon[]
-| {spec_doc_url}#Workflow-Compensation[Workflow Compensation]
+| link:{spec_doc_url}#Workflow-Compensation[Workflow Compensation]
 
 | <<constants>>
 | emoji:full_moon[]
-| {spec_doc_url}#workflow-constants[Workflow Constants]
+| link:{spec_doc_url}#workflow-constants[Workflow Constants]
 
 | <<secrets>>
 | emoji:full_moon[]
-| {spec_doc_url}#workflow-secrets[Workflow Secrets]
+| link:{spec_doc_url}#workflow-secrets[Workflow Secrets]
 |===
 
-The following sections describe the current status of the supported features.
+[[states]]
+== States
 
-[#states]
-=== Workflow Model - States
+The link:{spec_doc_url}#parallel-state[Parallel State] of the workflow states feature works in a single thread. This means that a Parallel State does not create one thread per branch, simulating an actual paraller behavior.
 
-Kogito hasn't implemented the {spec_doc_url}#sleep-state[Sleep State] yet, but it's a feature on the project's roadmap.
+[NOTE]
+====
+Kogito does not support the link:{spec_doc_url}#sleep-state[Sleep State] feature. However, this feature will be supported in a future release.
+====
 
-The {spec_doc_url}#parallel-state[Parallel State] behaves in a single thread internally, meaning it doesn't create one thread per branch, simulating an actual parallel behavior. It's an enhancement in the project's roadmap.
+The following table shows all the workflow states that Kogito supports in the Serverless Workflow specification {spec_version} version:
 
-Kogito supports all the remaining states described in the specification {spec_version} version.
-
-.Workflow States implementation status detail
-[cols="1,1,1"]
+.Workflow States implementation status
+[cols="35%,30%,35%", options="header"]
 |===
-| State | Status | Spec Reference
+| State | Status | Reference
 
 | Event
 | emoji:full_moon[] 
-| {spec_doc_url}#Event-State[Event State]
+| link:{spec_doc_url}#Event-State[Event State]
 
 | Operation
 | emoji:full_moon[] 
-| {spec_doc_url}#Operation-State[Operation State]
+| link:{spec_doc_url}#Operation-State[Operation State]
 
 | Switch
 | emoji:full_moon[] 
-| {spec_doc_url}#Switch-State[Switch State]
+| link:{spec_doc_url}#Switch-State[Switch State]
 
 | Sleep
 | emoji:construction[] 
-| {spec_doc_url}#sleep-state[Sleep State]
+| link:{spec_doc_url}#sleep-state[Sleep State]
 
 | Parallel
 | emoji:last_quarter_moon[] 
-| {spec_doc_url}#Parallel-State[Parallel State]
+| link:{spec_doc_url}#Parallel-State[Parallel State]
 
 | Inject
 | emoji:full_moon[] 
-| {spec_doc_url}#Inject-State[Inject State]
+| link:{spec_doc_url}#Inject-State[Inject State]
 
 | ForEach
 | emoji:full_moon[]  
-| {spec_doc_url}#ForEach-State[ForEach State]
+| link:{spec_doc_url}#ForEach-State[ForEach State]
 
 | Callback
 | emoji:full_moon[] 
-| {spec_doc_url}#Callback-State[Callback State]
+| link:{spec_doc_url}#Callback-State[Callback State]
 |===
 
-[#functions]
-=== Workflow Model - Functions
+[[functions]]
+== Functions
 
-The table below illustrates the current status of the functions Kogito supports. 
+The following table shows the status of the workflow functions that Kogito supports:
 
-For additional functions, the specification supports the `custom` type. Therefore, Kogito supports a few new ones. See the guide "xref:core/custom-functions-support.adoc[Custom Functions Support]" for more details.
-
-.Workflow Functions implementation status detail
-[cols="1,1,1"]
+.Workflow Functions implementation status
+[cols="35%,30%,35%", options="header"]
 |===
-| Function | Status | Spec Reference
+| Function | Status | Reference
 
-| rest
+| REST
 | emoji:full_moon[]
-| {spec_doc_url}#using-functions-for-restful-service-invocations[Using Functions for RESTful Service Invocations]
+| link:{spec_doc_url}#using-functions-for-restful-service-invocations[Using Functions for RESTful Service Invocations]
 
-| rpc
+| RPC
 | emoji:full_moon[]
-| {spec_doc_url}#using-functions-for-rpc-service-invocations[Using Functions for RPC Service Invocations]
+| link:{spec_doc_url}#using-functions-for-rpc-service-invocations[Using Functions for RPC Service Invocations]
 
-| expression
+| Expression
 | emoji:full_moon[]
-| {spec_doc_url}#using-functions-for-expression-evaluation[Using Functions for Expression Evaluation]
+| link:{spec_doc_url}#using-functions-for-expression-evaluation[Using Functions for Expression Evaluation]
 
-| asyncapi
+| Async API
 | emoji:construction[]
-| {spec_doc_url}#using-functions-for-async-api-service-invocations[Using Functions for Async API Service Invocations]
+| link:{spec_doc_url}#using-functions-for-async-api-service-invocations[Using Functions for Async API Service Invocations]
 
-| graphql
+| GraphQL
 | emoji:construction[]
-| {spec_doc_url}#using-functions-for-graphql-service-invocations[Using Functions for GraphQL Service Invocations]
+| link:{spec_doc_url}#using-functions-for-graphql-service-invocations[Using Functions for GraphQL Service Invocations]
 
-| odata
+| OData
 | emoji:construction[]
-| {spec_doc_url}#using-functions-for-odata-service-invocations[Using Functions for OData Service Invocations]
+| link:{spec_doc_url}#using-functions-for-odata-service-invocations[Using Functions for OData Service Invocations]
 
-| custom
+| Custom
 | emoji:full_moon[]
-| {spec_doc_url}#defining-custom-function-types[Defining custom function types].
+| link:{spec_doc_url}#defining-custom-function-types[Defining custom function types]
 |===
 
-[#events]
-=== Workflow Model - Events
+For additional functions, the Serverless Workflow specification support the `custom` function type, such as `sysout` and `java`. For more information about these custom function types, see xref:core/custom-functions-support.adoc[Custom functions for your Serverless Workflow service].
 
-Kogito supports the capabilities of the event according to the {spec_doc_url}#Event-Definition[specification definition of an event]. However, event `correlation` has limited support as per specification definition.
+[[events]]
+== Events
 
-For more details about the event correlation feature that Kogito supports, see the guide xref:eventing/event-correlation-with-workflows.adoc[Event Correlation with Workflows].
+Kogito supports events of the Workflow model as defined in the link:{spec_doc_url}#Event-Definition[Serverless Workflow specification definition]. However, `correlation` events has limited support. 
 
-[#workflow_data]
-=== Workflow Data
+For more information about the events feature, see xref:eventing/event-correlation-with-workflows.adoc[Event correlation with Serverless Workflows].
 
-Kogito has the full implementation of the data manipulation feature via either `jq` (default) or `jsonpath` expressions.
+[[workflow_data]]
+== Serverless Workflow data
 
-JSONPath can have some limitations in specific scenarios, mainly when the use case requires complex data manipulation. See the {spec_doc_url}#workflow-data[Workflow Data] chapter in the specification.
+Kogito supports the implementation of the data manipulation feature using `jq` (default) or `jsonpath` expressions.
 
-Kogito also supports xref:core/state-data-filtering[data filtering]. For more information, check the section {spec_doc_url}#state-data-filters[State Data Filters] in the specification documentation.
+`jsonpath` expressions can have limitations in specific scenarios of complex data manipulation. For more information, see link:{spec_doc_url}#workflow-data[Workflow Data] section in the Serverless Workflow specification documentation.
 
-[#expressions]
-=== Expressions
+Kogito also supports data filtering. For more information about the data filtering, see link:{spec_doc_url}#state-data-filters[State data filters] section in the Serverless Workflow specification documentation.
 
-Kogito supports either `jq` or `jsonpath` to define workflow expressions. As the {spec_doc_url}#workflow-expressions[specification defines], `jq` is the default expression language. If you want to use `jsonpath` instead, set the attribute `expressionLang` in the workflow definition:
+[[expressions]]
+== Expressions
+
+Kogito supports `jq` or `jsonpath` to define the Serverless Workflow expressions. `jq` is the default expression language, however, if you want to use `jsonpath`, set the `expressionLang` attribute in the workflow definition as shown in the following example:
 
 .Example of changing the default expression language
 [source,json]
@@ -204,47 +211,58 @@ Kogito supports either `jq` or `jsonpath` to define workflow expressions. As the
 }
 ----
 
-WARNING: using `jsonpath` is not recommended because of the limitations of the language for data manipulation. `jq` is more powerful, hence you can use it in a more variety of use cases. 
+[WARNING]
+====
+`jsonpath` expression is not recommended because of the limitations of the language for data manipulation. Instead, you can use `jq` in various use cases. 
+====
 
-[#error_handling]
-=== Error Handling
 
-Kogito supports the error handling feature {spec_doc_url}#workflow-error-handling[according to the specification]. See the guide "xref:core/understanding-workflow-error-handling.adoc[Understanding Workflow Error Handling]" for more information.
+[[error_handling]]
+== Error handling
 
-[#retries]
-=== Retries
+Kogito supports the error handling feature as described in the link:{spec_doc_url}#workflow-error-handling[Serverless Workflow specification definition]. 
 
-Kogito hasn't implemented Retries yet, but it's in the projects' roadmap for the future versions.
+For more information about error handling, see xref:core/understanding-workflow-error-handling.adoc[Serverless Workflow Error Handling].
 
-Alternatively to Retries, you can use the xref:core/understanding-workflow-error-handling.adoc[error handling feature].
+[[retries]]
+== Retries
 
-[#timeouts]
-=== Workflow Timeouts
+Kogito does not support Retries feature, however, it will be implemented in a future release.
 
-Kogito hasn't implemented workflows Timeouts yet, but it's in the projects' roadmap for the future versions.
+Alternatively, you can use xref:core/understanding-workflow-error-handling.adoc[Serverless Workflow Error Handling].
 
-[#compensation]
-=== Compensantion
+[[timeouts]]
+== Timeouts
 
-Kogito supports workflow compensation according to the {spec_doc_url}#Workflow-Compensation[specification definition]. The use case "xref:use-cases/orchestration-based-saga-pattern.adoc[Orchestration-based SAGA pattern]" guide has more details about compensations.
+Kogito does not support Timeouts feature, however, it will be implemented in a future release.
 
-[#constants]
-=== Workflow Constants
+[[compensation]]
+== Compensantion
 
-Kogito supports workflow constants according to the {spec_doc_url}#workflow-constants[specification definition].
+Kogito supports workflow compensation as described in the link:{spec_doc_url}#Workflow-Compensation[Serverless Workflow specification definition]. 
 
-[#secrets]
-=== Workflow Secrets
+For more information about compensations, see xref:use-cases/orchestration-based-saga-pattern.adoc[Orchestration-based SAGA pattern].
 
-Kogito supports workflow secrets according to the {spec_doc_url}#workflow-secrets[specification definition].
+[[constants]]
+== Constants
 
-IMPORTANT: Secrets are tied to the {quarkus_config_guide_url}[Quarkus Configuration] module. Meaning that any form of configuration that Quarkus supports, it is also available in Kogito.
+Kogito supports workflow constants as described in the link:{spec_doc_url}#workflow-constants[Serverless Workflow specification definition].
 
-See the guide "xref:core/accessing-workflow-metainformation-in-runtime.adoc[Accessing Workflow Metainformation]" for more details.
+[secrets]
+== Secrets
 
-== What's Next?
+Kogito supports workflow secrets as described in the link:{spec_doc_url}#workflow-secrets[Serverless Workflow specification definition].
 
-- xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
-- xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with our tooling].
+[IMPORTANT]
+====
+Secrets are associated with the link:{quarkus_config_guide_url}[Quarkus Configuration] module. This means that any form of configuration that Quarkus supports is also supported in Kogito.
+====
+
+For more information, see xref:core/accessing-workflow-metainformation-in-runtime.adoc[Accessing Serverless Workflow Metainformation].
+
+== Additional resources
+
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
+* xref:getting-started/getting-familiar-with-our-tooling.adoc[Using Serverless Workflow tooling].
 
 include::../../pages/_common-content/report-issue.adoc[]

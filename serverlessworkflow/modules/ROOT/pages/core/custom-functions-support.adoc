@@ -1,23 +1,29 @@
-Custom Functions Support
-========================
+= Custom functions for your Serverless Workflow service
+
+//// 
 v1.0, 06-10-2022
 :compat-mode!:
 // Metadata:
 :description: Custom Functions Support
 :keywords: kogito, workflow, serverless, cncf, specification, functions, java
+////
 
-The CNCF Specification {spec_doc_url}#defining-custom-function-types[supports the `custom` function type], allowing implementations to extend the function definition capability.
+The Cloud Native Computing Foundation (CNCF) specification link:{spec_doc_url}#defining-custom-function-types[supports the `custom` function type], which enables the implementations to extend the function definition capability.
 
-Kogito supports the custom types `java` and `sysout`.
+Kogito supports the `java` and `sysout` custom types.
 
-WARNING: The specification does not support these functions officially. Thus it might not be portable across other implementations.
+[WARNING]
+====
+The CNCF specification does not support `java` and `sysout` functions. Therefore, these functions might not be portable across other implementations.
+====
 
-[#func_sysout]
-== Sysout Custom Function
 
-You can use this `custom` function type for debugging reasons or quick demonstrations:
+[[con-func-sysout]]
+== `sysout` custom function
 
-.sysout function definition
+You can use the `sysout` function for debugging or for quick demonstrations as shown in the following example:
+
+.Example of `sysout` function definition
 [source,json]
 ----
 {
@@ -31,9 +37,9 @@ You can use this `custom` function type for debugging reasons or quick demonstra
 }
 ----
 
-Later in the `state` definition, you can call it this way:
+In the `state` definition, you can call the same `sysout` function as shown in the following example:
 
-.Example of a function reference within a state
+.Example of a `sysout` function reference within a `state`
 [source,json]
 ----
 {
@@ -57,16 +63,19 @@ Later in the `state` definition, you can call it this way:
 }
 ----
 
-You should see the data output in the console.
+[WARNING]
+====
+You must avoid using the `sysout` function in a production environment since it can spam the unnecessary data in the application log.
+====
 
-WARNING: You should avoid using this function in production environments since it can keep spamming unnecessary data in the application's log.
+[[con-func-java]]
+== `java` custom function
 
-[#func_java]
-== Java Custom Function
+Kogito supports the `java` functions within an Apache Maven project, in which you define your Serverless Workflow service.
 
-Kogito supports calling Java functions within the Maven project, in which you define the workflow. For example, you can declare your functions like this:
+The following example shows the declaration of a `java` function:
 
-.Example of a Java function declaration
+.Example of a `java` function declaration
 [source,json]
 ----
 {
@@ -80,13 +89,13 @@ Kogito supports calling Java functions within the Maven project, in which you de
 }
 ----
 
-1. The function name
-2. The `custom` function type
-3. The Kogito custom operation definition. `service` is the reserved operation keyword followed by the other keyword `java`. The next portion is the FQCN (Fully Qualified Class Name) of the interface or implementation class, followed by the method name.
+<1> `myFunction` is the function name
+<2> `custom` is the function type
+<3> `service:java:com.acme.MyInterfaceOrClass::myMethod` is the Kogito custom operation definition. In the custom operation definition, `service` is the reserved operation keyword followed by the `java` keyword. `com.acme.MyInterfaceOrClass` is the FQCN (Fully Qualified Class Name) of the interface or implementation class followed by the method name (`myMethod`).
 
-Your method's interface *must* receive a https://github.com/FasterXML/jackson[Jackson's] `JsonNode` object and return either `void` or another `JsonNode`. For example:
+Your method interface must receive a link:https://github.com/FasterXML/jackson[Jackson's] `JsonNode` object and return either `void` or another `JsonNode` as shown in the following example:
 
-.Example of a Java function implementation
+.Example of a `java` function implementation
 [source,java]
 ----
 public class MyInterfaceOrClass {
@@ -105,9 +114,11 @@ public class MyInterfaceOrClass {
 }
 ----
 
-To call this function within your workflow, you can extract the JSON value you need via a xref:core/understanding-jq-expressions.adoc[`jq` expression] or pass it without any arguments. In this case, the caller sends the whole payload. For example:
+To call the function shown in the previous example within your Serverless Workflow service, you can extract the required JSON value using xref:core/understanding-jq-expressions.adoc[`jq` expression] or pass the JSON value without using arguments.
 
-.Example of a reference to a Java function in the Operation state
+In the following example, the caller sends the entire payload:
+
+.Example of a `java` function reference within a `state`
 [source,json]
 ----
 {
@@ -128,9 +139,9 @@ To call this function within your workflow, you can extract the JSON value you n
 }
 ----
 
-Alternatively, you can only pass the necessary data:
+Alternatively, you can pass the necessary data as shown in the following example:
 
-.Example of a reference to a Java function in the Operation state passing manipulated data
+.Example of a `java` function reference within a `state` passing the necessary data
 [source,json]
 ----
 {
@@ -154,13 +165,16 @@ Alternatively, you can only pass the necessary data:
 }
 ----
 
-The `JsonNode` that the function returns will be the new payload from this point of the workflow execution.
+In the previous example, the `JsonNode` that the `java` function returns is the new payload in the Serverless Workflow execution.
 
-WARNING: Refrain from using **only** Java functions or use them to call external services. Try to use the xref:service-orchestration/orchestration-of-opnapi-based-services.adoc[the services orchestration features instead].
+[WARNING]
+====
+Avoid using only `java` functions or you can use the `java` functions to call the external services. Also, you can use the xref:service-orchestration/orchestration-of-opnapi-based-services.adoc[services orchestration features].
+====
 
-== What's Next?
+== Additional resources
 
-- xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow Specification Support]
+- xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow Specification]
 - xref:core/understanding-jq-expressions.adoc[Understanding JQ Expressions].
 
 include::../../pages/_common-content/report-issue.adoc[]
