@@ -1,18 +1,24 @@
 Orchestration of OpenAPI based services
 =======================================
+// links:
+:swagger_inspector_url: https://swagger.io/docs/swagger-inspector/how-to-create-an-openapi-definition-using-swagger/
+:quarkus_swagger_url: https://quarkus.io/guides/openapi-swaggerui
+:spring_swagger_url: https://springdoc.org/#Introduction
+:go_swagger_url: https://goswagger.io/
+:python_flasgger_url: https://github.com/flasgger/flasgger
+:dotnet_swagger_url: https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?view=aspnetcore-6.0
+:npm_swagger_url: https://www.npmjs.com/package/swagger-ui-express
+:php_swagger_url: https://github.com/zircote/swagger-php
 
-This document describes how to call REST services via an {open_api_spec_url}[OpenAPI] descriptor file.
+This document describes how to call REST services via an link:{open_api_spec_url}[OpenAPI] specification file.
 
-The examples in this document assume that you have the Quarkus tooling installed. For more information about the tooling, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Using Serverless Workflow tooling].
+The examples in this document assume that you have the Quarkus tooling installed and have created a Serverless Workflow project. 
 
-.Prerequisites
-* You have created a Quarkus project. For more information about creating your first project, see xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
+For more information about the tooling, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Using Serverless Workflow tooling]. To create a new project, see xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service].
 
-== About the OpenAPI support
+== The OpenAPI Function Definition
 
-Kogito follows the {spec_doc_url}#using-functions-for-restful-service-invocations[CNCF Serverless Workflow specification convention] to make calls to remote REST services using an OpenAPI descriptor. This descriptor has all the necessary information required to make REST calls to a service.
-
-An OpenAPI function definition looks like this:
+Kogito follows the {spec_doc_url}#using-functions-for-restful-service-invocations[CNCF Serverless Workflow specification function definition] to make calls to remote REST services using an OpenAPI specification reference, as shown in the following example:
 
 .An example of an OpenAPI function definition
 [source,json]
@@ -29,19 +35,191 @@ An OpenAPI function definition looks like this:
 
 The `operation` attribute is a URI composed by:
 
-1. `file:` is the URI scheme that the engine uses to locate the descriptor file
-2. The next portion of the URI is the path where the resource is located
-3. After the `#` symbol, the operation identifier found in the OpenAPI descriptor file.
+1. The URI scheme that the engine uses to locate the specification file
+2. The path where the resource is located
+3. The operation identifier (`operationId`) found in the link:{open_api_spec_url}#fixed-fields-7[OpenAPI specification file].
 
 Kogito supports the following URI schemes:
 
-* `classpath` for files located in the application project under the `src/main/resources` folder. This is the default when the scheme is not provided in the URI. For example `classpath:/myopenapifile.yaml` or `/myopenapifile.yaml`. In this example, the file is located in `src/main/resources/myopenapifile.yaml` path
-* `file` for descriptor files located in the filesystem
+* `classpath` for files located in the application project under the `src/main/resources` folder. This is the default scheme when the scheme is not provided in the URI. For example `classpath:/myopenapifile.yaml` or `/myopenapifile.yaml`. In this example, the file is located in `src/main/resources/myopenapifile.yaml` path
+* `file` for files located in the filesystem
 * `http` or `https` for remote located files
 
-IMPORTANT: these files must be available only on build time. During runtime, Kogito leverages its internal code generation feature to make the remote calls.
+[IMPORTANT]
+====
+The OpenAPI specification files must be available only on build time. During runtime, Kogito leverages its internal code generation feature to make the REST calls. This means that xref:cloud/build-workflow-image-with-quarkus-cli.adoc[once you build your application image], the Kogito engine won't access the files anymore.
+====
 
+== Getting Access to the OpenAPI Specification Files
 
+To get started, you must locate the REST services OpenAPI specification files.
+
+Usually, REST services expose their interface via the OpenAPI specification. For example, see the link:https://petstore3.swagger.io/api/v3/openapi.json[Petstore API].
+
+If the service you want to add to the workflow don't have the specification file, you can either generate one or update the service to generate and expose it.
+
+The vast majority of the popular REST frameworks already have support for OpenAPI specification generator. For example:
+
+* Java
+** link:{quarkus_swagger_url}[Quarkus Swagger]
+** link:{spring_swagger_url}[Spring Boot Docs]
+* Go
+** link:{go_swagger_url}[Go Swagger]
+* Python
+** link:{python_flasgger_url}[Flasgger]
+* .NET
+** link:{dotnet_swagger_url}[ASP.NET Core web API documentation with Swagger / OpenAPI]
+* TypeScript
+** link:{npm_swagger_url}[Swagger UI Express]
+* PHP
+** link:{php_swagger_url}[Swagger PHP]
+
+If you don't have access to the REST service to add the OpenAPI specification generator, you can use the link:{swagger_inspector_url}[Swagger Inspector] to generate the file for you. This tool will generate the specification file based on HTTP traffic.
+
+== Making REST Calls based on the OpenAPI Specification
+
+To make REST calls using OpenAPI specification files you need to first define the function references, and then use these functions in the workflow states.
+
+=== Defining the OpenAPI functions
+
+Once you have access to the OpenAPI specification files, you can create the function definitions in the workflow. You can use the link:{kogito_examples_base_url}/serverless-workflow-temperature-conversion[serverless-workflow-temperature-conversion] example application as a reference.
+
+.Procedure
+Copy the subtraction and multiplication OpenAPI specification files from the example into your Kogito workflow service directory `src/main/resources/specs`.
+
+The files were extracted from the running multiplication and subtraction services. They are regular REST Quarkus applications that expose their OpenAPI specification files via the link:{quarkus_swagger_url}[Quarkus Swagger extension].
+
+The `operationId` is necessary to add a reference to the right operation you want to make the REST invocation.
+
+In the Multiplication REST Service OpenAPI specification you can locate the `operationId` attribute in the `paths` section, as shown in the example:
+
+.Location of the `operationId` attribute
+[source,yaml]
+----
+openapi: 3.0.3
+info:
+  title: Generated API
+  version: "1.0"
+paths:
+  /:
+    post:
+     operationId: doOperation <1>
+     parameters:
+        - in: header
+          name: notUsed
+          schema: 
+            type: string
+          required: false
+     requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiplicationOperation'
+     responses:
+        "200":
+          description: OK
+          content: 
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  product:
+                    format: float
+                    type: number
+components:
+  schemas:
+    MultiplicationOperation: <2>
+      type: object
+      properties:
+        leftElement:
+          format: float
+          type: number
+        rightElement:
+          format: float
+          type: number
+----
+
+<1> The `operationId` of the REST operation
+<2> The data structure of the REST operation
+
+Use the `operationId` to compose the final URI in the function definition, as shown in the example:
+
+.OpenAPI Functions definition in the Temperature Conversion example
+[source,json]
+----
+{
+   "functions": [
+    {
+      "name": "multiplication",
+      "operation": "specs/multiplication.yaml#doOperation" <1>
+    },
+    {
+      "name": "subtraction",
+      "operation": "specs/subtraction.yaml#doOperation" <2>
+    }
+  ]
+}
+----
+
+<1> The OpenAPI function definition of the multiplication function
+<2> The OpenAPI function definition of the subtraction function
+
+=== Acessing the Functions in the Workflow States
+
+The next step is to use the functions definitions in the workflow states. In the example application, the functions are called sequentially in an link:{spec_doc_url}#operation-state[Operation State]:
+
+[source,json]
+----
+{
+   "states": [
+    {
+      "name": "SetConstants",
+      "type": "inject",
+      "data": {
+        "subtractValue": 32.0,
+        "multiplyValue": 0.5556
+      },
+      "transition": "Computation"
+    },
+    {
+      "name": "Computation",
+      "actionMode": "sequential",
+      "type": "operation", <1>
+      "actions": [
+        {
+          "name": "subtract",
+          "functionRef": {
+            "refName": "subtraction", <2> 
+            "arguments": { <3>
+              "leftElement": ".fahrenheit", 
+              "rightElement": ".subtractValue" 
+            }
+          }
+        },
+        {
+          "name": "multiply",
+          "functionRef": {
+            "refName": "multiplication", <4> 
+            "arguments": { <5> 
+               "leftElement": ".difference",
+               "rightElement": ".multiplyValue"
+            }
+          }
+        }
+      ],
+      "end": {
+        "terminate": "true"
+      }
+    }
+  ]
+}
+----
+
+<1> The Operation State definition
+<2> Reference to the `subtraction` function
+<3> Definition of the `subtraction` function arguments
+<4> Reference to the `multiplication` function
+<5> Definition of the `multiplication` function arguments
 
 == Additional resources
 
