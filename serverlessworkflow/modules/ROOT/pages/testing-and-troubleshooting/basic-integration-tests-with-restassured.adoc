@@ -1,18 +1,18 @@
-= Basic Integration Test with REST Assured
+Testing your Serverless Workflow application using REST Assured
+===============================================================
 // Metadata:
 :description: Basic Integration Test with REST Assured
 :keywords: kogito, workflow, quarkus, serverless, quarkus-cli, test, restassured
 
-As a developer, you can use https://rest-assured.io/[REST Assured] to test your Serverless Workflow application.
+This document describes how to test your Serverless Workflow application using REST Assured. 
 
-You can directly access an example application by cloning `serverless-workflow-examples/serverless-workflow-testing-with-rest-assured`
-from the https://github.com/kiegroup/kogito-examples.git[Kogito Examples] GitHub repository.
+Rest Assured enables you to test REST APIs using Java libraries and integrates with Apache Maven. For more information about REST Assured, see link:https://rest-assured.io/[REST Assured page].
 
-This guide describes how to test the Serverless Workflow application that exposes the `hello` endpoint.
-The endpoint expects a `name` as a parameter and returns a `greeting`.
+The testing procedure in this document is based on the `serverless-workflow-examples/serverless-workflow-testing-with-rest-assured` example application. You can access this example application in link:https://github.com/kiegroup/kogito-examples.git[Kogito Examples] GitHub repository 
 
-Example: For a request with the given body:
+The following procedure describes how to test a Serverless Workflow application that exposes the `hello` endpoint, which expects a `name` as a request parameter and returns `greeting` value:
 
+.Example request body
 [source,json]
 ----
 {
@@ -22,8 +22,7 @@ Example: For a request with the given body:
 }
 ----
 
-The endpoint should return a response with a body similar to:
-
+.Example response
 [source,json]
 ----
 {
@@ -34,16 +33,13 @@ The endpoint should return a response with a body similar to:
 }
 ----
 
-[[testing-application]]
-== Testing the Serverless Workflow application
-
-Follow the procedure below to create a test to check if the `hello` endpoint returns the proper greeting for a given `name`.
-
-.Procedure
-. Before creating the test, check if the `pom.xml` contains the required dependencies:
+.Prerequites
+* You have cloned the `serverless-workflow-testing-with-rest-assured` example application from the link:https://github.com/kiegroup/kogito-examples.git[GitHub repository].
+* The `pom.xml` file contains the required dependencies:
 +
 --
 
+.Dependencies in `pom.xml` file
 [source,xml]
 ----
 <dependency>
@@ -59,11 +55,12 @@ Follow the procedure below to create a test to check if the `hello` endpoint ret
 ----
 --
 
+.Procedure
 . Create a test class named `HelloTest` in the `src/test/java/org/kie/kogito/examples/`
-directory with the following content:
+directory, containing the following content:
 +
 --
-.src/test/java/org/kie/kogito/examples/HelloTest.java
+.Example `HelloTest.java` file
 [source,java]
 ----
 package org.kie.kogito.examples;
@@ -102,25 +99,25 @@ class HelloTest {
 
 <1> Enables logging of the request and response when the test fails.
 <2> Defines JSON as the content type of the request.
-<3> Specifies the `accept` header of the request. This is a shortcut for: `header("Accept", "application/json")`.
-<4> Defines the request body as: `{"workflowdata": {"name": "John Doe"}}`.
-<5> Specifies the request as a POST to the `/hello` URL.
+<3> Specifies the `accept` header of the request. This is an alternative for `header("Accept", "application/json")`.
+<4> Defines the request body as `{"workflowdata": {"name": "John Doe"}}`.
+<5> Specifies the request as a POST method to the `/hello` URL.
 <6> Defines `201` as the expected response status code.
 <7> Defines that `Hello, John Doe` is expected in the `workflowdata.greeting` JSON path.
 
 --
 
-. Run your test by running the following Maven command:
+. To run your test, execute the following command:
 
 +
 --
+.Command to run a test
 [source,shell]
 ----
 mvn clean verify
 ----
 
-You should see an output similar to:
-
+.Example output
 [source,shell]
 ----
 [INFO] -------------------------------------------------------
@@ -156,12 +153,16 @@ You should see an output similar to:
 [INFO] Finished at: 2022-06-03T16:36:19-03:00
 [INFO] ------------------------------------------------------------------------
 ----
+
+If you see a similar output, this means your test is executed successfully.
 --
 
 == Additional resources
 
-* xref:testing-and-troubleshooting/mocking-opnapi-services-with-wiremock.adoc[Mocking OpenAPI services with WireMock]
-* xref:testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc[Mocking HTTP CloudEvents with WireMock]
-* xref:testing-and-troubleshooting/integration-tests-with-postgresql.adoc[Integration tests with PostgreSQL]
-* link:https://quarkus.io/guides/getting-started-testing[Testing a Quarkus Application].
-* link:https://rest-assured.io/#docs[REST Assured Documentation].
+* xref:testing-and-troubleshooting/mocking-opnapi-services-with-wiremock.adoc[Mocking OpenAPI services using WireMock]
+* xref:testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc[Mocking HTTP CloudEvents using WireMock]
+* xref:testing-and-troubleshooting/integration-tests-with-postgresql.adoc[Testing your Serverless Workflow application using PostgreSQL]
+* link:https://quarkus.io/guides/getting-started-testing[Testing a Quarkus application]
+* link:https://rest-assured.io/#docs[REST Assured Documentation]
+
+include::../../pages/_common-content/report-issue.adoc[]
