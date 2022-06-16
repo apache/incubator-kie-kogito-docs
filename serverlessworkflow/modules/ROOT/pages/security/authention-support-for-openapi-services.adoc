@@ -1,5 +1,5 @@
-Authentication support for OpenAPI services
-===========================================
+Authentication for OpenAPI services in Serverless Workflow
+==========================================================
 v1.0, 06-08-2022
 :compat-mode!:
 // Metadata:
@@ -10,24 +10,28 @@ v1.0, 06-08-2022
 :configuring-openapi-services-endpoints: xref:service-orchestration/configuring-openapi-services-endpoints.adoc
 :orchestrating-third-party-services-with-oauth2: xref:security/orchestrating-third-party-services-with-oauth2.adoc
 
-This guide presents the authentication types that are supported to access the OpenAPI service operations used by Kogito Serverless Workflows, and how to configure them.
+This document describes the supported authentication types and how to configure them to access the OpenAPI service operations that are used in Serverless Workflows.
 
-== Prerequisites
+For information about orchestrating and configuring the OpenAPI based services, you must see the following documents:
 
-Before proceeding, it is recommended to read the following guides:
+* link:{orchestration-of-opnapi-based-services}[Orchestrating OpenAPI based services]
+* link:{configuring-openapi-services-endpoints}[Configuring OpenAPI services endpoints in different environments]
 
-* {orchestration-of-opnapi-based-services}[Orchestration of OpenAPI based services]
-* {configuring-openapi-services-endpoints}[Configuring OpenAPI services endpoints in different environments]
+[NOTE]
+====
+The OpenAPI support for Serverless Workflow is based on the Quarkus OpenAPI generator extension. For more information about Quarkus OpenAPI generator, see link:https://github.com/quarkiverse/quarkus-openapi-generator[Quarkus - OpenAPI Generator].
+====
 
-== Introduction
+[[con-openapi-services-authentication]]
+== Overview of OpenAPI services authentication
 
-According to the OpenAPI specification, a service operation can be secured by using a security scheme.
-When used, these schemes are declared in the https://spec.openapis.org/oas/v3.1.0#security-scheme-object[securitySchemes] definitions of the OpenAPI specification files.
-This information is used every time a Serverless Workflow invokes that operation, and depending on the security scheme type being used, different configurations might be required.
+According to the OpenAPI specification, you can secure an OpenAPI service operation by using a security scheme. These security schemes are defined in the link:https://spec.openapis.org/oas/v3.1.0#security-scheme-object[Security Scheme Object] definitions of the OpenAPI specification file.
 
-The following OpenAPI specification fragment shows an example of these schemes definitions in the file `security-example.json`.
+The security scheme type defined for an OpenAPI service operation is used to identify the required configuration, when a Serverless Workflow invokes the same operation.
 
-.security-example.json
+The following shows the example of security scheme definitions:
+
+.Example `security-example.json` file
 [source, json]
 ----
     "securitySchemes": {
@@ -43,42 +47,42 @@ The following OpenAPI specification fragment shows an example of these schemes d
     }
 ----
 
-To configure the credentials to access the secured operations and other related parameters, you must use application properties related to the security schemes.
+To configure the credentials that are used to access the secured OpenAPI service operations and related parameters, you must use the application properties that are related to the security schemes.
 
-The configuration keys are composed using this pattern:
+To compose the configuration keys, use the following format:
 
+.Format for configuration keys
 [source, properties]
 ----
 quarkus.openapi-generator.[filename].[security_scheme_name].auth.[auth_property_name]
 ----
-where:
 
-- `filename` is the sanitized name of the file containing the OpenAPI specification, for example `security_example_json`.
-- `security_scheme_name` is the sanitized name of the security scheme object definition in the OpenAPI file, for example `http_basic_example` or `api_key_example`.
-- `auth_property_name` is name of the property to configure and depends on the security scheme type, for example `username`.
+The previous format includes the following parameters:
+
+* `filename` is the name of the file containing the OpenAPI specification, such as `security_example.json`.
+* `security_scheme_name` is the name of the security scheme object definition in the OpenAPI specification file, such as `http_basic_example` or `api_key_example`.
+* `auth_property_name` is name of the property to configure, such as `username`. This property depends on the defined security scheme type.
 
 [NOTE#sanitize_note]
 ====
-To sanitize these names we follow the https://github.com/eclipse/microprofile-config/blob/master/spec/src/main/asciidoc/configsources.asciidoc#environment-variables-mapping-rules[Environment Variables Mapping Rules] from Microprofile Configuration. Any non-alphabetic characters are replaced by an underscore `_`.
+To sanitize the previous parameters, you can follow the link:https://github.com/eclipse/microprofile-config/blob/master/spec/src/main/asciidoc/configsources.asciidoc#environment-variables-mapping-rules[Environment Variables Mapping Rules] from Microprofile Configuration. In the mapping rules, any non-alphabetic character is replaced by an underscore (`_`).
 ====
 
 [IMPORTANT]
 ====
-The security schemes defined in an OpenAPI specification are global to all the operations on that file, which means that the configurations made for a particular security scheme apply the other secured operations as well.
+The security schemes defined in an OpenAPI specification file are global to all the operations that are available in the same file. This means that the configurations set for a particular security scheme also apply to the other secured operations.
 ====
 
-[TIP]
-====
-To configure these properties you can use all the alternatives covered in the https://quarkus.io/guides/config-reference[Quarkus configuration reference guide]. A common usage is to define https://quarkus.io/guides/config-reference#environment-variables[environment] variables to set the authentication secrets.
-====
+You can use the alternatives defined in the link:https://quarkus.io/guides/config-reference[Quarkus configuration reference guide] to configure the required properties. A common usage is to define link:https://quarkus.io/guides/config-reference#environment-variables[environment variables] to set the authentication secrets.
 
-After reading this guide you can find an end-to-end example in the {orchestrating-third-party-services-with-oauth2}[Orchestrating third party services with OAuth2 authentication] guide.
+For a complete example, see link:{orchestrating-third-party-services-with-oauth2}[Orchestrating third party services using OAuth2 authentication].
 
-== Basic HTTP Authentication
+[[ref-example-http-authentication]]
+== Example of basic HTTP authentication
 
-The following example shows a `security-example.json` file that defines a `sayHelloBasic` operation that is secured with the `http-basic-example` scheme, and the supported configurations for that scheme type.
+The following example shows `security-example.json` file, defining a `sayHelloBasic` operation, which is secured using the `http-basic-example` security scheme and supported configurations:
 
-.security-example.json
+.Example `security-example.json` file for HTTP authentication
 [source, json]
 ----
 {
@@ -118,11 +122,12 @@ The following example shows a `security-example.json` file that defines a `sayHe
 }
 ----
 
-**These are the supported configurations:**
+The following table shows the supported configurations that are used to secure the `sayHelloBasic` operation in the previous example:
 
-[frame=all]
+.Supported configuration examples for HTTP authentication
+[cols="20%,40%,40%", options="header"]
 |===
-|Description |Property Key |Example
+|Description |Property key |Example
 
 |Username credentials
 |`quarkus.openapi-generator.[filename].auth.[security_scheme_name].username`
@@ -134,11 +139,12 @@ The following example shows a `security-example.json` file that defines a `sayHe
 
 |===
 
-== Bearer Token Authentication
+[[ref-example-bearer-authentication]]
+== Example of Bearer Token authentication
 
-The following example shows a `security-example.json` file that defines a `sayHelloBearer` operation secured with the `http-bearer-example` scheme, and the supported configurations for that scheme type.
+The following example shows `security-example.json` file, defining a `sayHelloBearer` operation, which is secured using the `http-bearer-example` security scheme and supported configurations:
 
-.security-example.json
+.Example `security-example.json` file for Bearer Token authentication
 [source, json]
 ----
 {
@@ -178,11 +184,12 @@ The following example shows a `security-example.json` file that defines a `sayHe
 }
 ----
 
-**These are the supported configurations:**
+The following table shows the supported configurations that are used to secure the `sayHelloBearer` operation in the previous example:
 
-[frame=all]
+.Supported configuration examples for Bearer Token authentication
+[cols="20%,40%,40%", options="header"]
 |===
-|Description |Property Key |Example
+|Description |Property key |Example
 
 |Bearer Token
 |`quarkus.openapi-generator.[filename].auth.[security_scheme_name].bearer-token`
@@ -190,11 +197,12 @@ The following example shows a `security-example.json` file that defines a `sayHe
 
 |===
 
-== API Key Authentication
+[[ref-example-api-key-authentication]]
+== Example of API key authentication
 
-The following example shows a `security-example.json` file that defines a `sayHelloApiKey` operation secured with the `api-key-example` scheme, and the supported configurations for that scheme type.
+The following example shows `security-example.json` file, defining a `sayHelloApiKey` operation, which is secured using the `api-key-example` security scheme and supported configurations:
 
-.security-example.json
+.Example `security-example.json` file for API key authentication
 [source, json]
 ----
 {
@@ -235,11 +243,12 @@ The following example shows a `security-example.json` file that defines a `sayHe
 }
 ----
 
-**These are the supported configurations:**
+The following table shows the supported configurations that are used to secure the `sayHelloApiKey` operation in the previous example:
 
-[frame=all]
+.Supported configuration examples for API key authentication
+[cols="20%,40%,40%", options="header"]
 |===
-|Description |Property Key |Example
+|Description |Property key |Example
 
 |API Key
 |`quarkus.openapi-generator.[filename].auth.[security_scheme_name].api-key`
@@ -247,14 +256,16 @@ The following example shows a `security-example.json` file that defines a `sayHe
 
 |===
 
-The API Key scheme has an additional property `name` that specifies where to add the API Key in the request token: _header_, _cookie_ or _query_.
-However, it is automatically managed and no additional configurations are required. Following the above example the API Key will be passed as a http request parameter `api-key-name`.
+The API key scheme contains an additional `name` property, specifying where to add the API key in the request token, such as _header_, _cookie_, or _query_.
 
+However, adding the API key is automatically managed without additional configurations. Following the previous example, the API key is passed as an `http` request parameter, such as `api-key-name`.
 
-== OAuth2 Authentication
+[[ref-example-oauth-authentication]]
+== Example of OAuth2 authentication
 
-The following example shows a `security-example.json` file that defines a `sayHelloOauth2` operation secured with the `oauth-example` scheme, and the supported configurations for that scheme type.
+The following example shows `security-example.json` file, defining a `sayHelloOauth2` operation, which is secured using the `oauth-example` security scheme and supported configurations:
 
+.Example `security-example.json` file for OAuth2 authentication
 [source, json]
 ----
 {
@@ -301,16 +312,33 @@ The following example shows a `security-example.json` file that defines a `sayHe
 }
 ----
 
-**These are the supported configurations:**
+Unlike the `http basic`, `http bearer`, and `apiKey` security schemes, the Oauth2 authentication relies on the link:https://quarkus.io/guides/security-openid-connect-client[Quarkus OpenId Connect (OIDC) and Oauth2 Clients and Filters]. Therefore, you must add link:https://quarkus.io/guides/security-openid-connect-client#oidc-client-filter[Quarkus OIDC Client Filter Extension] to your project as shown in the following example:
 
-Unlike the `http basic`, `http bearer` and `apiKey` security schemes, the Oauth2 authentication relies on the https://quarkus.io/guides/security-openid-connect-client[Quarkus OpenId Connect and Oauth2 Clients and Filters].
+.Example of adding Quarkus OIDC client filter extension
+[source, xml]
+----
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-oidc-client-filter</artifactId>
+</dependency>
+----
 
-By using a simple naming convention, the token management operations will be delegated to a Quarkus `OidcClient`.
+[TIP]
+====
+You can also add the Quarkus OIDC client filter extension using the Quarkus CLI as shown in the following example:
 
-For the example above, the token management operations for accessing the `sayHelloOauth2` operation will be delegated to the OidcClient `oauth_example`.
+.Add Quarkus OIDC client filter extension
+[source, bash]
+$ quarkus extension add quarkus-oidc-client-filter
+====
 
-You can configure this `OidcClient` as:
+The token management operations are delegated to a Quarkus `OidcClient` using a simple naming convention.
 
+In the previous example, the token management operations that are used to access the `sayHelloOauth2` operation are delegated to the `OidcClient` that is `oauth_example`.
+
+You can configure the `OidcClient` as shown in the following example:
+
+.Example of configuring an `OidcClient`
 [source, properties]
 ----
 quarkus.oidc-client.oauth_example.auth-server-url=https://example.com/oauth
@@ -322,61 +350,91 @@ quarkus.oidc-client.oauth_example.credentials.client-secret.method=basic
 quarkus.oidc-client.oauth_example.credentials.client-secret.value=secret
 ----
 
-The configuration suffix `quarkus.oidc-client.oauth_example` is exclusive for the schema defined in the specification file and the scheme name is sanitized by applying the rules described <<sanitize_note, above>>.
+The suffix (`quarkus.oidc-client.oauth_example`) used in the previous configuration example is exclusive for the security scheme defined in the OpenAPI service specification file and the scheme name is sanitized using the <<sanitize_note, mapping rules>>.
 
-For this to work you **must** add the https://quarkus.io/guides/security-openid-connect-client#oidc-client-filter[Quarkus OIDC Client Filter Extension] to your project:
+[[ref-authorization-token-propagation]]
+== Example of authorization token propagation
 
-[source, xml]
+You can use the authorization token propagation with OpenAPI operations that are secured using the `oauth2` or `http bearer` security scheme type. When the configuration is set, you can propagate the authorization tokens that are passed to your Serverless Workflow during the workflow creation. Along with the authorization token, you can pass the OpenAPI invocations that are executed by the same OpenAPI service.
+
+The propagations must be configured individually for each security scheme, which enables you to configure the invocations properly that require the propagation.
+
+Similar to other security scheme configurations, the token propagation applies to all the OpenAPI operations that are secured using the same security scheme.
+
+The following example shows `security-example.json` file, defining a `sayHelloOauth2` operation, which is secured using the `oauth-example` security scheme and supported configurations:
+
+.Example `security-example.json` file for authorization token propagation
+[source, json]
 ----
-<dependency>
-  <groupId>io.quarkus</groupId>
-  <artifactId>quarkus-oidc-client-filter</artifactId>
-</dependency>
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Oauth2 Scheme Example",
+    "version": "1.0"
+  },
+  "paths": {
+    "/hello-with-oauth2": {
+      "get": {
+        "operationId": "sayHelloOauth2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [{"oauth-example" : []}]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauth-example": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "authorizationUrl": "https://example.com/oauth",
+            "tokenUrl": "https://example.com/oauth/token",
+            "scopes": {
+            }
+          }
+        }
+      }
+    }
+  }
+}
 ----
+The following table shows the supported configurations that are used to secure the `sayHelloOauth2` operation in the previous example:
 
-[TIP]
-====
-You can add the extension using the Quarkus CLI:
-[source, bash]
-$ quarkus extension add quarkus-oidc-client-filter
-====
-
-== Authorization Token Propagation
-
-The authorization token propagation can be used with OpenAPI operations that are secured with a security scheme of type `oauth2` or `http bearer`.
-When configured, you can propagate the authorization tokens passed to your Serverless Workflow at the time it was created, along the OpenAPI invocations executed by that service.
-These propagations must be configured individually for each of the corresponding security schemes, in that way, you can do a fine-tuned configuration of which invocations require the propagation.
-Similarly to the other security scheme configurations, the token propagation apply to all the operations secured with the same scheme.
-
-Following the <<_oauth2_authentication>> example presented above, these are the supported configurations:
-
-[frame=all]
+.Supported configuration examples for token propagation
+[cols="50%,50%", options="header"]
 |===
-|Property Key |Example
+|Property key |Example
 
 | `quarkus.openapi-generator.[filename].auth.[security_scheme_name].token-propagation=[true,false]`
-| `quarkus.openapi-generator.security_example_json.auth.oauth_example.token-propagation=true` +
+a| `quarkus.openapi-generator.security_example_json.auth.oauth_example.token-propagation=true` +
  +
-Enables the token propagation for all the operations that are secured with the `oauth-example` scheme in the `security-example.json` file. By default, the standard HTTP Authorization header is propagated.
+Enables the token propagation for all the operations that are secured using the `oauth-example` scheme in the `security-example.json` file. By default, the standard HTTP authorization header is propagated.
 
 | `quarkus.openapi-generator.[filename].auth.[security_scheme_name].header-name=[http_header_name]`
-| `quarkus.openapi-generator.security_example_json.auth.oauth_example.header-name=MyHeaderName` +
+a| `quarkus.openapi-generator.security_example_json.auth.oauth_example.header-name=MyHeaderName` +
  +
-States that the authorization token to propagate will be read from the HTTP header `MyHeaderName` instead of the standard HTTP `Authorization` header.
+States that the authorization token is read from the `MyHeaderName` header instead of the standard HTTP authorization header.
 
 |===
 
 [IMPORTANT]
 ====
-The authorization tokens are propagated as long the Serverless Workflow doesn't reach a "waiting" state, for example to wait for an event to arrive. When the Serverless Workflow is resumed the tokens will be no longer propagated.
+The authotization tokens are propagated till the Serverless Workflow does not reach its waiting state. When the same Serverless Workflow is resumed, the tokens will not be propagated.
 ====
 
-== What's next?
+== Additional resources
 
-This guide covered the authentication types that are supported to access the OpenAPI service operations and the respective configurations.
+* link:{orchestrating-third-party-services-with-oauth2}[Orchestrating third party services using OAuth2 authentication]
 
-We recommend continuing the journey with the {orchestrating-third-party-services-with-oauth2}[Orchestrating third party services with OAuth2 authentication] guide.
-
-== Going further
-
-The Serverless Workflows OpenAPI support is based on the https://github.com/quarkiverse/quarkus-openapi-generator[Quarkus OpenAPI Generator] extension. While not mandatory, it could be an interesting reading if you want to know more details or even other usages not related to the Serverless Workflows.
+include::../../pages/_common-content/report-issue.adoc[]
