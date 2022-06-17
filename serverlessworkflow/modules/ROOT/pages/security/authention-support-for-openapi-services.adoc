@@ -256,12 +256,11 @@ The following table shows the supported configurations that are used to secure t
 
 |===
 
-The API key scheme type contains an additional `"name"` property that configures the key name to use when the Open API service is invoked.
-And the format to pass the key depends on the value of the `"in"` property.
+The API key scheme type contains an additional `name` property that configures the key name to use when the Open API service is invoked. Also, the format to pass the key depends on the value of the `in` property.
 
-* When the value is _header_, the key will be passed as a http request parameter.
-* When the value is _cookie_, the key will be passed as a http cookie.
-* When the value is _query_, the key will be passed as a http query parameter.
+* When the value is _header_, the key is passed as an HTTP request parameter.
+* When the value is _cookie_, the key is passed as an HTTP cookie.
+* When the value is _query_, the key will be passed as an HTTP query parameter.
 
 However, this is automatically managed without additional configurations.
 
@@ -362,10 +361,9 @@ The suffix (`quarkus.oidc-client.oauth_example`) used in the previous configurat
 [[ref-authorization-token-propagation]]
 == Example of authorization token propagation
 
-You can use the authorization token propagation with OpenAPI operations that are secured using the `oauth2` or `http bearer` security scheme type.
-When the configuration is set, you can propagate the authorization tokens that are passed to your Serverless Workflow during the workflow creation.
+You can use the authorization token propagation with OpenAPI operations that are secured using the `oauth2` or `http bearer` security scheme type. When the configuration is set, you can propagate the authorization tokens that are passed to your Serverless Workflow during the workflow creation.
 
-The propagations must be configured individually for each security scheme, which enables you to configure exactly which invocations must propagate the token.
+The propagations must be configured individually for each security scheme, which enables you to configure the invocations that must propagate the token.
 
 Similar to other security scheme configurations, the token propagation applies to all the OpenAPI operations that are secured using the same security scheme.
 
