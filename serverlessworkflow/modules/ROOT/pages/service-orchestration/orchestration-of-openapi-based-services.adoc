@@ -1,5 +1,9 @@
 Orchestration of OpenAPI based services
 =======================================
+:compat-mode!:
+// Metadata:
+:description: Orchestration of OpenAPI based services
+:keywords: kogito, workflow, serverless, openapi, services, json
 // links:
 :swagger_inspector_url: https://swagger.io/docs/swagger-inspector/how-to-create-an-openapi-definition-using-swagger/
 :quarkus_swagger_url: https://quarkus.io/guides/openapi-swaggerui
@@ -9,12 +13,20 @@ Orchestration of OpenAPI based services
 :dotnet_swagger_url: https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?view=aspnetcore-6.0
 :npm_swagger_url: https://www.npmjs.com/package/swagger-ui-express
 :php_swagger_url: https://github.com/zircote/swagger-php
+// Referenced documentation pages.
+:getting-familiar-with-our-tooling: xref:getting-started/getting-familiar-with-our-tooling.adoc
+:create-your-first-workflow-service: xref:getting-started/create-your-first-workflow-service.adoc
+:build-workflow-image-with-quarkus-cli: xref:cloud/build-workflow-image-with-quarkus-cli.adoc
+:understanding-jq-expressions: xref:core/understanding-jq-expressions.adoc
+:configuring-openapi-services-endpoints: xref:service-orchestration/configuring-openapi-services-endpoints.adoc
+:camel-k-integration: xref:integrations/camel-k-integration.adoc
+:authention-support-for-openapi-services: xref:security/authention-support-for-openapi-services.adoc
 
 This document describes how to call REST services via an link:{open_api_spec_url}[OpenAPI] specification file.
 
 The examples in this document assume that you have the Quarkus tooling installed and have created a Serverless Workflow project. 
 
-For more information about the tooling, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Using Serverless Workflow tooling]. To create a new project, see xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service].
+For more information about the tooling, see {getting-familiar-with-our-tooling}[Using Serverless Workflow tooling]. To create a new project, see {create-your-first-workflow-service}[Creating your first Serverless Workflow service].
 
 == The OpenAPI Function Definition
 
@@ -47,7 +59,7 @@ Kogito supports the following URI schemes:
 
 [IMPORTANT]
 ====
-The OpenAPI specification files must be available only on build time. This is because, during runtime, Kogito leverages its internal code generation feature to make the REST calls. So xref:cloud/build-workflow-image-with-quarkus-cli.adoc[once you build your application image], the Kogito engine won't access the files anymore.
+The OpenAPI specification files must be available only on build time. This is because, during runtime, Kogito leverages its internal code generation feature to make the REST calls. So {build-workflow-image-with-quarkus-cli}[once you build your application image], the Kogito engine won't access the files anymore.
 ====
 
 == Getting Access to the OpenAPI Specification Files
@@ -223,9 +235,9 @@ The next step is to use the function definitions in the workflow states. In the 
 
 Any link:{spec_doc_url}#Action-Definition[workflow actions] can call a function definition, having a similar way of referencing the functions that you previously defined in the workflow.
 
-To map the function's arguments, refer to the parameters described in the OpenAPI specification file, link:{open_api_spec_url}##operation-object[operations section]. In this example, the parameters are part of the request body.
+To map the function's arguments, refer to the parameters described in the OpenAPI specification file, link:{open_api_spec_url}#operation-object[operations section]. In this example, the parameters are part of the request body.
 
-The Kogito engine will map the parameter naming according to the OpenAPI specification. Then, you can use xref:core/understanding-jq-expressions.adoc[JQ expressions] to extract the payload data and map it to the required parameters.
+The Kogito engine will map the parameter naming according to the OpenAPI specification. Then, you can use {understanding-jq-expressions}[JQ expressions] to extract the payload data and map it to the required parameters.
 
 See the PetStore API example:
 
@@ -380,8 +392,8 @@ Alternatively to `curl`, you can use the link:http://localhost:8080/q/swagger-ui
 
 == Additional resources
 
-- xref:service-orchestration/configuring-openapi-services-endpoints.adoc[Configuring OpenAPI Services Endpoints]
-- xref:integrations/camel-k-integration.adoc[Camel K Integration]
-- xref:security/authention-support-for-openapi-services.adoc[Authentication Support for OpenAPI Services]
+- {configuring-openapi-services-endpoints}[Configuring OpenAPI Services Endpoints]
+- {camel-k-integration}[Camel K Integration]
+- {authention-support-for-openapi-services}[Authentication Support for OpenAPI Services]
 
 include::../../pages/_common-content/report-issue.adoc[]
