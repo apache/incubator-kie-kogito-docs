@@ -14,8 +14,8 @@ This document describes the supported authentication types and how to configure 
 
 For information about orchestrating and configuring the OpenAPI based services, you must see the following documents:
 
-* link:{orchestration-of-opnapi-based-services}[Orchestrating OpenAPI based services]
-* link:{configuring-openapi-services-endpoints}[Configuring OpenAPI services endpoints in different environments]
+* {orchestration-of-opnapi-based-services}[Orchestrating OpenAPI based services]
+* {configuring-openapi-services-endpoints}[Configuring OpenAPI services endpoints in different environments]
 
 [NOTE]
 ====
@@ -59,9 +59,9 @@ quarkus.openapi-generator.[filename].[security_scheme_name].auth.[auth_property_
 
 The previous format includes the following parameters:
 
-* `filename` is the name of the file containing the OpenAPI specification, such as `security_example.json`.
-* `security_scheme_name` is the name of the security scheme object definition in the OpenAPI specification file, such as `http_basic_example` or `api_key_example`.
-* `auth_property_name` is name of the property to configure, such as `username`. This property depends on the defined security scheme type.
+* `filename` is the sanitized name of the file containing the OpenAPI specification, such as `security_example_json`.
+* `security_scheme_name` is the sanitized name of the security scheme object definition in the OpenAPI specification file, such as `http_basic_example` or `api_key_example`.
+* `auth_property_name` is the name of the property to configure, such as `username`. This property depends on the defined security scheme type.
 
 [NOTE#sanitize_note]
 ====
@@ -256,9 +256,16 @@ The following table shows the supported configurations that are used to secure t
 
 |===
 
-The API key scheme contains an additional `name` property, specifying where to add the API key in the request token, such as _header_, _cookie_, or _query_.
+The API key scheme type contains an additional `"name"` property that configures the key name to use when the Open API service is invoked.
+And the format to pass the key depends on the value of the `"in"` property.
 
-However, adding the API key is automatically managed without additional configurations. Following the previous example, the API key is passed as an `http` request parameter, such as `api-key-name`.
+* When the value is _header_, the key will be passed as a http request parameter.
+* When the value is _cookie_, the key will be passed as a http cookie.
+* When the value is _query_, the key will be passed as a http query parameter.
+
+However, this is automatically managed without additional configurations.
+
+Following the previous example, the API key is passed as an `http` request parameter, such as `api-key-name` with the value `MY_KEY`.
 
 [[ref-example-oauth-authentication]]
 == Example of OAuth2 authentication
@@ -355,9 +362,10 @@ The suffix (`quarkus.oidc-client.oauth_example`) used in the previous configurat
 [[ref-authorization-token-propagation]]
 == Example of authorization token propagation
 
-You can use the authorization token propagation with OpenAPI operations that are secured using the `oauth2` or `http bearer` security scheme type. When the configuration is set, you can propagate the authorization tokens that are passed to your Serverless Workflow during the workflow creation. Along with the authorization token, you can pass the OpenAPI invocations that are executed by the same OpenAPI service.
+You can use the authorization token propagation with OpenAPI operations that are secured using the `oauth2` or `http bearer` security scheme type.
+When the configuration is set, you can propagate the authorization tokens that are passed to your Serverless Workflow during the workflow creation.
 
-The propagations must be configured individually for each security scheme, which enables you to configure the invocations properly that require the propagation.
+The propagations must be configured individually for each security scheme, which enables you to configure exactly which invocations must propagate the token.
 
 Similar to other security scheme configurations, the token propagation applies to all the OpenAPI operations that are secured using the same security scheme.
 
@@ -430,11 +438,11 @@ States that the authorization token is read from the `MyHeaderName` header inste
 
 [IMPORTANT]
 ====
-The authotization tokens are propagated till the Serverless Workflow does not reach its waiting state. When the same Serverless Workflow is resumed, the tokens will not be propagated.
+The authorization tokens are propagated till the Serverless Workflow does not reach its waiting state. When the same Serverless Workflow is resumed, the tokens will not be propagated.
 ====
 
 == Additional resources
 
-* link:{orchestrating-third-party-services-with-oauth2}[Orchestrating third party services using OAuth2 authentication]
+* {orchestrating-third-party-services-with-oauth2}[Orchestrating third party services using OAuth2 authentication]
 
 include::../../pages/_common-content/report-issue.adoc[]
