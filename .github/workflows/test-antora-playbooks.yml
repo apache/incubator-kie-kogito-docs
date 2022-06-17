@@ -1,0 +1,13 @@
+name: Antora Playbook check
+
+on: pull_request
+jobs:
+  antora_test:
+    name: Antora Playbook check
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: run antora sync check
+      run: |
+        ./scripts/check-antora-playbooks.sh
