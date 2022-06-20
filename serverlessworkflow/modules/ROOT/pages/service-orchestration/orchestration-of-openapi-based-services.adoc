@@ -13,6 +13,9 @@ Orchestration of OpenAPI based services
 :dotnet_swagger_url: https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?view=aspnetcore-6.0
 :npm_swagger_url: https://www.npmjs.com/package/swagger-ui-express
 :php_swagger_url: https://github.com/zircote/swagger-php
+:quarkus_config_url: https://quarkus.io/guides/config-reference
+:quarkus_rest_client_url: https://quarkus.io/guides/rest-client
+:mp_config_env_vars_url: https://github.com/eclipse/microprofile-config/blob/master/spec/src/main/asciidoc/configsources.asciidoc#environment-variables-mapping-rules
 // Referenced documentation pages.
 :getting-familiar-with-our-tooling: xref:getting-started/getting-familiar-with-our-tooling.adoc
 :create-your-first-workflow-service: xref:getting-started/create-your-first-workflow-service.adoc
@@ -30,7 +33,7 @@ For more information about the tooling, see {getting-familiar-with-our-tooling}[
 
 == The OpenAPI Function Definition
 
-Kogito follows the {spec_doc_url}#using-functions-for-restful-service-invocations[CNCF Serverless Workflow specification function definition] to make calls to remote REST services using an OpenAPI specification reference, as shown in the following example:
+Kogito follows the link:{spec_doc_url}#using-functions-for-restful-service-invocations[CNCF Serverless Workflow specification function definition] to make calls to remote REST services using an OpenAPI specification reference, as shown in the following example:
 
 .An example of an OpenAPI function definition
 [source,json]
@@ -389,6 +392,27 @@ You can see the result of all the calls made by the workflow during this executi
 <5> The result of the call to the Multiplication Service
 +
 Alternatively to `curl`, you can use the link:http://localhost:8080/q/swagger-ui/#/Fahrenheit%20_to%20_celsius%20Resource/createResource_fahrenheit_to_celsius[OpenAPI Swagger UI] to make calls to the workflow application.
+
+== Configuration of the OpenAPI Services
+
+Internally, Kogito uses the link:{quarkus_openapi_gen_url}[Quarkus OpenAPI Generator extension] and the link:{quarkus_rest_client_url}[Quarkus REST Client]. All the configurations are based on these two components backed up by link:{quarkus_config_url}[Quarkus Configuration].
+
+To configure the endpoints, you must use the sanitized OpenAPI specification file name as the link:{quarkus_rest_client_url}#create-the-configuration[REST client configuration key]. For example, for a file named `subtraction.yaml`, the configuration key is `subtraction_yaml`.
+
+[TIP]
+====
+For more information about how Kogito sanitizes the file name, see link:{mp_config_env_vars_url}[Environment Variables Mapping Rules]. The key must be a valid environment variable.
+====
+
+This configuration key is used on every property related to the Quarkus REST Client. For example, to configure the URL, you can use:
+
+.Example of URL configuration
+[source,properties]
+----
+quarkus.rest-client.subtraction_yaml.url=http://myserver.com
+----
+
+For more information about endpoints and general configuration, please see {configuring-openapi-services-endpoints}[Configuring OpenAPI Services Endpoints]. 
 
 == Additional resources
 
