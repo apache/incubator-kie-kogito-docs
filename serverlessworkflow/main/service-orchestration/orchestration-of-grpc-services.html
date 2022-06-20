@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Orchestration of gRPC based services :: Serverless Workflow Guides</title>
+    <title>Orchestrating the gRPC based services :: Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -82,8 +82,11 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="orchestration-of-opnapi-based-services.html">Orchestration of OpenAPI based services</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="configuring-openapi-services-endpoints.html">Configuring OpenAPI services endpoints in different environments</a>
+  </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+    <a class="nav-link" href="orchestration-of-grpc-services.html">Orchestrating the gRPC based services</a>
   </li>
 </ul>
   </li>
@@ -146,7 +149,7 @@
   <ul>
     <li><a href="../index.html">Serverless Workflow Guides</a></li>
     <li>Service Orchestration</li>
-    <li><a href="orchestration-of-grpc-services.html">Orchestration of gRPC based services</a></li>
+    <li><a href="orchestration-of-grpc-services.html">Orchestrating the gRPC based services</a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/service-orchestration/orchestration-of-grpc-services.adoc">Edit this Page</a></div>
@@ -156,8 +159,219 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Orchestration of gRPC based services</h1>
+<h1 class="page">Orchestrating the gRPC based services</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>As a developer, you can invoke a gRPC service using a Serverless Workflow application that is run with Quarkus. This guide describes how to create a workflow that invokes a running gRPC service and how to configure properties to locate that running gRPC service.</p>
+</div>
+<div class="paragraph">
+<p>For information about gRPC concepts, see <a href="https://grpc.io/docs/what-is-grpc/core-concepts/">gRPC</a>.</p>
+</div>
+<div class="paragraph">
+<p>In order to illustrate how gRPC integration works, we are going to use an already existing <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus">Serverless Workflow application</a>. This example greets a user in their preferred language by invoking a gRPC service.</p>
+</div>
+<div class="paragraph">
+<p>Relevant files of this Workflow Application are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-server-rpc-quarkus/src/main/proto/greeting.proto">gRPC proto file</a>:</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This file defines a greeter service, which consists of the <code>sayHello</code> method. The <code>sayHello</code> method accepts two parameters, including name of the user and an optional language to use in the greeting message (English by default). The <code>sayHello</code> method returns the greeting message in the appropriate language.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">// The greeter service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
 
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+  string language=2;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreet.sw.json">Workflow definition file</a>:</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This file defines an RPC <a href="https://github.com/serverlessworkflow/specification/blob/main/specification.md#using-functions-for-rpc-service-invocations">function</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"functions": [
+    {
+      "name": "sayHello",
+      "type": "rpc",
+      "operation": "greeting.proto#Greeter#SayHello"
+    }
+  ]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this <code>rpc</code> function, the <code>operation</code> property is composed of three tokens separated by <code>#</code>. The three tokens include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>URI of the proto file (<code>greeting.proto</code>)</p>
+</li>
+<li>
+<p>Name of the service (<code>Greeter</code>)</p>
+</li>
+<li>
+<p>Name of the method (<code>SayHello</code>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Kogito supports three URI schemes, including <code>http</code>, <code>file</code>, and <code>classpath</code> (default). Therefore, in the previous example, the <code>greeting.proto</code> is expected to be found in the project classpath.</p>
+</div>
+<div class="paragraph">
+<p>The execution of the workflow consists of a single <a href="https://github.com/serverlessworkflow/specification/blob/main/specification.md#operation-state">operation</a> state, which is composed of one <a href="https://github.com/serverlessworkflow/specification/blob/main/specification.md#action-definition">action</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json"> {
+    "name": "sayHello",
+    "functionRef" : {
+        "refName": "sayHello",
+        "arguments": {
+            "name": ".name",
+            "language": ".language"
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example, the action invokes the <code>sayHello</code> RPC method using two model variables: <code>name</code> and <code>language</code>. These parameters are provided as part of the REST call that starts the workflow.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/pom.xml">Maven POM</a>:</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The <code>gRPC</code> functionality is included within <a href="https://github.com/kiegroup/kogito-runtimes/tree/main/quarkus/extensions/kogito-quarkus-serverless-workflow-extension">Serverless Workflow Quarkus extension</a>, which means you do not need to add specific dependencies for <code>gRPC</code> to work with Serverless Workflow.</p>
+</div>
+<div class="paragraph">
+<p>This <code>pom.xml</code> file contains the following <code>resource</code> node:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;resource&gt;
+ &lt;directory&gt;${project.basedir}/../serverless-workflow-greeting-server-rpc-quarkus/src/main/proto&lt;/directory&gt;
+ &lt;includes&gt;
+   &lt;include&gt;greeting.proto&lt;/include&gt;
+  &lt;/includes&gt;
+&lt;/resource&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The reason for this snippet to exist is to guarantee that the proto file is included in the classpath. Remember that in the Serverless Workflow file, the  URI for the proto file does not contain any scheme, therefore the proto file is expected to be accessible in the classpath.</p>
+</div>
+<div class="paragraph">
+<p>The previous, Maven based, approach can be used when the source code of the  Serverless Workflow and the gRPC server are stored in the same repository, but normally this will not be the case. If the proto file can be downloaded from a remote server, you might use the <code>http</code> scheme. If the proto file is not remotely accessible, you will need to manually obtain a copy of it and store in a directory that is included in the classpath (for example <code>src/main/resources</code>). Another possibility is to copy the proto file in a well known absolute path (that might a be a shared network file system) and use the <code>file</code> scheme.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/application.properties">Application properties</a>:</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In the <code>application.properties</code> file, you can add the information for the Serverless Workflow application to locate the <code>gRPC</code> server.</p>
+</div>
+<div class="paragraph">
+<p>Internally, the Serverless Workflow implementation uses the same set of properties as <a href="https://quarkus.io/guides/grpc-service-consumption#client-configuration">Quarkus gRPC client</a>. The <code>client-name</code> used by Kogito is the service name declared in the proto file.</p>
+</div>
+<div class="paragraph">
+<p>So, since in our example we are calling a service called <code>Greeter</code>, we include the snippet below.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.grpc.clients.Greeter.host=localhost
+quarkus.grpc.clients.Greeter.port=50051</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the same GitHub repository as the example application, there is a <a href="https://github.com/kiegroup/kogito-examples/tree/main/kogito-quarkus-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-server-rpc-quarkus">maven project</a> which provides a simple implementation of the <code>Greeter</code> service. By default, this gRPC server runs on port <code>50051</code>. Therefore, the same port is used in the <code>application.properties</code> file.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="running-serverless-workflow-application"><a class="anchor" href="#running-serverless-workflow-application"></a>Running the Serverless Workflow application</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Before running the Serverless Workflow application, you need to start the gRPC server the workflow invokes. To run the gRPC server, navigate to the <code>serverless-workflow-greeting-server-rpc-quarkus</code> directory in a commmand terminal and enter the command</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn compile exec:java -Dexec.mainClass="org.kie.kogito.examples.sw.greeting.GreeterService"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Now you need to run the Serverless Workflow application</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean quarkus:dev</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Once the Serverless Workflow application is started, you can invoke the workflow instance using any http client, such as <code>curl</code></p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://localhost:8080/jsongreet</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The answer should be similar to this one</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"4376cc50-42d4-45ef-8a5e-6e403a654a30","workflowdata":{"name":"John","language":"English","message":"Hello from gRPC service John"}}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can also try greeting in a different language</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "Javi", "language": "Spanish"}}' http://localhost:8080/jsongreet</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In response, you will see the greeting in Spanish language.</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
