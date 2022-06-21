@@ -42,7 +42,7 @@ Kogito follows the link:{spec_doc_url}#using-functions-for-restful-service-invoc
    "functions":[
       {
          "name":"myFunction1",
-         "operation":"file:///home/users/kogito/myopenapi-file.yaml#myFunction1"
+         "operation":"classpath:/myopenapi-file.yaml#myFunction1"
       }
    ]
 }
@@ -100,7 +100,7 @@ To make REST calls using OpenAPI specification files, you must define the functi
 Once you have access to the OpenAPI specification files, you can create the function definitions in the workflow. You can use the link:{kogito_examples_base_url}/serverless-workflow-temperature-conversion[serverless-workflow-temperature-conversion] example application as a reference.
 
 .Procedure
-Copy the example's subtraction and multiplication OpenAPI specification files into your Kogito workflow service directory `src/main/resources/specs`.
+Copy the OpenAPI specification files of the service(s) you want to invoke into your Kogito workflow service directory `src/main/resources/specs`. In this example, the multiplication and subtraction services.
 
 The files were extracted from the running multiplication and subtraction services. They are regular REST Quarkus applications that expose their OpenAPI specification files via the link:{quarkus_swagger_url}[Quarkus Swagger extension].
 
@@ -181,7 +181,15 @@ Use the `operationId` to compose the final URI in the function definition as sho
 
 === Acessing the Functions in the Workflow States
 
-The next step is to use the function definitions in the workflow states. In the example application, the functions are called sequentially in an link:{spec_doc_url}#operation-state[Operation State]:
+The next step is to use the function definitions in the workflow states. 
+
+Any link:{spec_doc_url}#Action-Definition[workflow actions] can call a function definition, having a similar way of referencing the functions that you previously defined in the workflow.
+
+To map the function's arguments, refer to the parameters described in the OpenAPI specification file, link:{open_api_spec_url}#operation-object[operations section]. In the following example, the parameters are part of the request body.
+
+The Kogito engine will map the parameter naming according to the OpenAPI specification. Then, you can use {understanding-jq-expressions}[JQ expressions] to extract the payload data and map it to the required parameters.
+
+In the example application, the functions are called sequentially in an link:{spec_doc_url}#operation-state[Operation State]:
 
 [source,json]
 ----
@@ -236,13 +244,7 @@ The next step is to use the function definitions in the workflow states. In the 
 <4> Reference to the `multiplication` function
 <5> Definition of the `multiplication` function arguments
 
-Any link:{spec_doc_url}#Action-Definition[workflow actions] can call a function definition, having a similar way of referencing the functions that you previously defined in the workflow.
-
-To map the function's arguments, refer to the parameters described in the OpenAPI specification file, link:{open_api_spec_url}#operation-object[operations section]. In this example, the parameters are part of the request body.
-
-The Kogito engine will map the parameter naming according to the OpenAPI specification. Then, you can use {understanding-jq-expressions}[JQ expressions] to extract the payload data and map it to the required parameters.
-
-See the PetStore API example:
+For an example mapping parameters in the request path rather than in the body, see the PetStore API example:
 
 .Petstore OpenAPI specification excerpt
 [source,json]
@@ -309,6 +311,42 @@ Only the highlighted excerpt of the workflow definition file is shown in this ex
 <1> The state definition
 <2> The function definition reference, assuming that you have a function definition named `getPetById` for the PetStore OpenAPI specification
 <3> The arguments definition. In this example, Kogito will add the argument `petId` to the request path before making the call.
+
+== Configuring the OpenAPI Services endpoint URL
+
+Under the hood, Kogito uses the link:{quarkus_openapi_gen_url}[Quarkus OpenAPI Generator extension] and the link:{quarkus_rest_client_url}[Quarkus REST Client]. All the configurations are based on these two components backed up by link:{quarkus_config_url}[Quarkus Configuration].
+
+To configure the endpoints, you must use the sanitized OpenAPI specification file name as the link:{quarkus_rest_client_url}#create-the-configuration[REST client configuration key]. For example, for a file named `subtraction.yaml`, the configuration key is `subtraction_yaml`.
+
+[TIP]
+====
+For more information about how Kogito sanitizes the file name, see link:{mp_config_env_vars_url}[Environment Variables Mapping Rules]. The key must be a valid environment variable.
+====
+
+This configuration key is used on every property related to the Quarkus REST Client. For example, to configure the URL, you can use:
+
+.Example of URL configuration
+[source,properties]
+----
+quarkus.rest-client.subtraction_yaml.url=http://myserver.com
+----
+
+To avoid hardcoding the URL in the application properties you can use link:{quarkus_config_url}#with-environment-variables[environment variables substitution], as shown in the example:
+
+.Example of URL configuration with Environment Variables
+[source,properties]
+----
+quarkus.rest-client.subtraction_yaml.url=${SUBTRACTION_URL:http://myserver.com}
+----
+
+In this example, if the environment variable `SUBTRACTION_URL` is not found, the URL falls back to `http://myserver.com`. 
+
+[TIP]
+====
+You can use this feature to configure the application in Kubernetes environments where the environment variable can be injected in application's pod.
+====
+
+For more information about endpoints and general configuration, please see {configuring-openapi-services-endpoints}[Configuring OpenAPI Services Endpoints]. 
 
 == Running the Example
  
@@ -392,27 +430,6 @@ You can see the result of all the calls made by the workflow during this executi
 <5> The result of the call to the Multiplication Service
 +
 Alternatively to `curl`, you can use the link:http://localhost:8080/q/swagger-ui/#/Fahrenheit%20_to%20_celsius%20Resource/createResource_fahrenheit_to_celsius[OpenAPI Swagger UI] to make calls to the workflow application.
-
-== Configuration of the OpenAPI Services
-
-Internally, Kogito uses the link:{quarkus_openapi_gen_url}[Quarkus OpenAPI Generator extension] and the link:{quarkus_rest_client_url}[Quarkus REST Client]. All the configurations are based on these two components backed up by link:{quarkus_config_url}[Quarkus Configuration].
-
-To configure the endpoints, you must use the sanitized OpenAPI specification file name as the link:{quarkus_rest_client_url}#create-the-configuration[REST client configuration key]. For example, for a file named `subtraction.yaml`, the configuration key is `subtraction_yaml`.
-
-[TIP]
-====
-For more information about how Kogito sanitizes the file name, see link:{mp_config_env_vars_url}[Environment Variables Mapping Rules]. The key must be a valid environment variable.
-====
-
-This configuration key is used on every property related to the Quarkus REST Client. For example, to configure the URL, you can use:
-
-.Example of URL configuration
-[source,properties]
-----
-quarkus.rest-client.subtraction_yaml.url=http://myserver.com
-----
-
-For more information about endpoints and general configuration, please see {configuring-openapi-services-endpoints}[Configuring OpenAPI Services Endpoints]. 
 
 == Additional resources
 
