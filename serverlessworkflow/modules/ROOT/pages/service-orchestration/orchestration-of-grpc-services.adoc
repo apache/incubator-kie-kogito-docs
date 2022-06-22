@@ -1,1 +1,152 @@
-= Orchestration of gRPC based services
+= Orchestrating the gRPC based services
+
+As a developer, you can invoke a gRPC service using a Serverless Workflow application that is run with Quarkus. This guide describes how to create a workflow that invokes a running gRPC service and how to configure properties to locate that running gRPC service.
+
+For information about gRPC concepts, see link:https://grpc.io/docs/what-is-grpc/core-concepts/[gRPC].
+
+In order to illustrate how gRPC integration works, we are going to use an already existing link:https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus[Serverless Workflow application]. This example greets a user in their preferred language by invoking a gRPC service. 
+
+Relevant files of this Workflow Application are:
+
+* link:https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-server-rpc-quarkus/src/main/proto/greeting.proto[gRPC proto file]: 
+
+This file defines a greeter service, which consists of the `sayHello` method. The `sayHello` method accepts two parameters, including name of the user and an optional language to use in the greeting message (English by default). The `sayHello` method returns the greeting message in the appropriate language.
+
+[source]
+----
+// The greeter service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+  string language=2;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}
+----
+
+* link:https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreet.sw.json[Workflow definition file]: 
+
+This file defines an RPC link:https://github.com/serverlessworkflow/specification/blob/main/specification.md#using-functions-for-rpc-service-invocations[function].
+
+[source,json]
+----
+
+"functions": [
+    {
+      "name": "sayHello",
+      "type": "rpc",
+      "operation": "greeting.proto#Greeter#SayHello"
+    }
+  ]
+----
+
+In this `rpc` function, the `operation` property is composed of three tokens separated by `#`. The three tokens include:
+
+** URI of the proto file (`greeting.proto`)
+** Name of the service (`Greeter`)
+** Name of the method (`SayHello`)
+
+Kogito supports three URI schemes, including `http`, `file`, and `classpath` (default). Therefore, in the previous example, the `greeting.proto` is expected to be found in the project classpath.
+
+The execution of the workflow consists of a single link:https://github.com/serverlessworkflow/specification/blob/main/specification.md#operation-state[operation] state, which is composed of one link:https://github.com/serverlessworkflow/specification/blob/main/specification.md#action-definition[action].
+
+
+[source,json]
+----
+ {
+    "name": "sayHello",
+    "functionRef" : {
+        "refName": "sayHello",
+        "arguments": {
+            "name": ".name",
+            "language": ".language"
+        }
+    }
+}
+----
+
+In the previous example, the action invokes the `sayHello` RPC method using two model variables: `name` and `language`. These parameters are provided as part of the REST call that starts the workflow.
+
+* link:https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/pom.xml[Maven POM]: 
+
+The `gRPC` functionality is included within link:https://github.com/kiegroup/kogito-runtimes/tree/main/quarkus/extensions/kogito-quarkus-serverless-workflow-extension[Serverless Workflow Quarkus extension], which means you do not need to add specific dependencies for `gRPC` to work with Serverless Workflow.
+
+This `pom.xml` file contains the following `resource` node:
+
+[source,xml]
+----
+<resource>
+ <directory>${project.basedir}/../serverless-workflow-greeting-server-rpc-quarkus/src/main/proto</directory>
+ <includes>
+   <include>greeting.proto</include>
+  </includes>
+</resource>
+----
+
+The reason for this snippet to exist is to guarantee that the proto file is included in the classpath. Remember that in the Serverless Workflow file, the  URI for the proto file does not contain any scheme, therefore the proto file is expected to be accessible in the classpath.  
+
+The previous, Maven based, approach can be used when the source code of the  Serverless Workflow and the gRPC server are stored in the same repository, but normally this will not be the case. If the proto file can be downloaded from a remote server, you might use the `http` scheme. If the proto file is not remotely accessible, you will need to manually obtain a copy of it and store in a directory that is included in the classpath (for example `src/main/resources`). Another possibility is to copy the proto file in a well known absolute path (that might a be a shared network file system) and use the `file` scheme.
+
+* link:https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/application.properties[Application properties]: 
+
+In the `application.properties` file, you can add the information for the Serverless Workflow application to locate the `gRPC` server.
+
+Internally, the Serverless Workflow implementation uses the same set of properties as link:https://quarkus.io/guides/grpc-service-consumption#client-configuration[Quarkus gRPC client]. The `client-name` used by Kogito is the service name declared in the proto file.
+
+So, since in our example we are calling a service called `Greeter`, we include the snippet below. 
+
+[source,properties]
+----
+quarkus.grpc.clients.Greeter.host=localhost
+quarkus.grpc.clients.Greeter.port=50051
+----
+
+In the same GitHub repository as the example application, there is a link:https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-server-rpc-quarkus[maven project] which provides a simple implementation of the `Greeter` service. By default, this gRPC server runs on port `50051`. Therefore, the same port is used in the `application.properties` file.
+
+[[running-serverless-workflow-application]]
+== Running the Serverless Workflow application
+
+. Before running the Serverless Workflow application, you need to start the gRPC server the workflow invokes. To run the gRPC server, navigate to the `serverless-workflow-greeting-server-rpc-quarkus` directory in a commmand terminal and enter the command
++
+[source, shell]
+----
+mvn compile exec:java -Dexec.mainClass="org.kie.kogito.examples.sw.greeting.GreeterService"
+----
+
+. Now you need to run the Serverless Workflow application 
++
+[source,shell]
+----
+mvn clean quarkus:dev
+----
+
+. Once the Serverless Workflow application is started, you can invoke the workflow instance using any http client, such as `curl`
+
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://localhost:8080/jsongreet
+----
+
+The answer should be similar to this one
+
+[source,shell]
+----
+{"id":"4376cc50-42d4-45ef-8a5e-6e403a654a30","workflowdata":{"name":"John","language":"English","message":"Hello from gRPC service John"}}
+----
+
+You can also try greeting in a different language
+
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "Javi", "language": "Spanish"}}' http://localhost:8080/jsongreet
+----
+
+In response, you will see the greeting in Spanish language.
