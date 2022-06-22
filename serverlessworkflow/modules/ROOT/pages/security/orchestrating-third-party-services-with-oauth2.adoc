@@ -1,6 +1,5 @@
 Orchestrating third party services with OAuth2 authentication
 =============================================================
-v1.0, 06-08-2022
 :compat-mode!:
 // Metadata:
 :description: Authentication support for OpenAPI services
@@ -559,9 +558,12 @@ When all the services are running you can use the following `curl` commands to r
 
 Calculate the currency exchange from `EUR` to `USD`:
 
-.Successful execution request
-[source, bash]
-----
+[tabs]
+====
+Request::
++
+[source,bash]
+--
 curl -X 'POST' \
   'http://localhost:8080/currency_exchange_workflow' \
   -H 'accept: */*' \
@@ -574,11 +576,11 @@ curl -X 'POST' \
            "amount": 2.0
        }
     }'
-----
-
-.Successful execution response
-[source, json]
-----
+--
+Response::
++
+[source,json]
+--
 {
   "id": "399ce304-037c-486d-b4bf-1564baf907a1",
   "workflowdata": {
@@ -592,16 +594,19 @@ curl -X 'POST' \
     "result": 2.1156
   }
 }
-----
-
+--
+====
 
 === Unsuccessful validation
 
 Calculate the currency exchange from `EUR` to `MXN`:
 
-.Unsuccessful validation request
-[source, bash]
-----
+[tabs]
+====
+Request::
++
+[source,bash]
+--
 curl -X 'POST' \
   'http://localhost:8080/currency_exchange_workflow' \
   -H 'accept: */*' \
@@ -614,11 +619,11 @@ curl -X 'POST' \
     "amount": 2.0
   }
 }'
-----
-
-.Unsuccessful validation response
-[source, json]
-----
+--
+Response::
++
+[source,json]
+--
 {
   "id": "e0e7708d-c82c-47d7-9354-09ccd1e972bb",
   "workflowdata": {
@@ -631,7 +636,8 @@ curl -X 'POST' \
     "exchangeRate": null
   }
 }
-----
+--
+====
 
 [NOTE]
 ====
@@ -644,9 +650,12 @@ This was done to show that a Serverless Workflow can also implement intermediate
 
 Unexpected error when accessing the `acme-financial-service`:
 
-.Unexpected error request
-[source, bash]
-----
+[tabs]
+====
+Request::
++
+[source,bash]
+--
 curl -X 'POST' \
   'http://localhost:8080/currency_exchange_workflow' \
   -H 'accept: */*' \
@@ -659,11 +668,11 @@ curl -X 'POST' \
     "amount": 2.0
   }
 }'
-----
-
-.Unexpected error response
-[source, json]
-----
+--
+Response::
++
+[source,json]
+--
 {
   "id": "0044ffa0-7b2b-4fdc-af60-cd98c6bd3ade",
   "workflowdata": {
@@ -676,6 +685,7 @@ curl -X 'POST' \
     "exchangeRate": null
   }
 }
-----
+--
+====
 
 include::../../pages/_common-content/report-issue.adoc[]
