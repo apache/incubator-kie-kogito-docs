@@ -176,6 +176,16 @@ The previous command results in the following container image:
 ====
 In case GraalVM is not installed, you can set the `quarkus.native.container-build=true` system property, which creates a Linux executable.
 ====
+[IMPORTANT]
+.Configure Docker to use the in-cluster (Remote) Docker daemon
+====
+When build Container Images using a remote Docker Daemon, i.e. Minikube, you need to use the following system property instead of `-Dquarkus.native.container-build=true`
+
+[source,shell]
+----
+-Dquarkus.native.remote-container-build=true
+----
+====
 
 [IMPORTANT]
 ====
