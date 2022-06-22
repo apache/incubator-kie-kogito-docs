@@ -10,6 +10,7 @@ Building Serverless Workflow Images using Quarkus CLI
 :quarkus_container_images_url: https://quarkus.io/guides/container-image
 :quarkus_native_builds_url: https://quarkus.io/guides/building-native-image
 :google_jib_url: https://github.com/GoogleContainerTools/jib
+:kogito_sw_examples_git_repo_url: https://github.com/kiegroup/kogito-examples.git
 
 This document describes how to build Serverless Application Container Image using the link:{quarkus_cli_url}[Quarkus CLI].
 
@@ -29,7 +30,7 @@ The examples in this document assume that you have the Quarkus tooling installed
 
 == Using a Kogito example application
 
-To get started with building Serverless Workflow images, you can use the link:{example_project_url}[serverless-workflow-greeting-quarkus] example application.
+To get started with building Serverless Workflow images, you can use the link:{kogito_sw_examples_url}/serverless-workflow-greeting-quarkus[serverless-workflow-greeting-quarkus] example application.
 
 .Prerequisites
 * Quarkus {quarkus_version} is installed.
@@ -37,16 +38,16 @@ To get started with building Serverless Workflow images, you can use the link:{e
 NOTE: You can skip the following procedure, if you already have a Serverless Workflow application.
 
 .Procedure
-. Clone the link:{kogito_examples_url}[kogito-examples] repository and navigate to the link:{example_project_url}[serverless-workflow-greeting-quarkus] example application.
+. Clone the link:{kogito_sw_examples_git_repo_url}[kogito-examples] repository and navigate to the link:{kogito_sw_examples_url}/serverless-workflow-greeting-quarkus[serverless-workflow-greeting-quarkus] example application.
 +
 .Clone a Kogito example application
 [source,shell,subs="attributes+"]
 ----
-$ git clone --branch stable {kogito_examples_url} && cd kogito-examples/serverless-workflow-examples/serverless-workflow-greeting-quarkus
+$ git clone --branch main {kogito_sw_examples_git_repo_url} && cd kogito-examples/serverless-workflow-examples/serverless-workflow-greeting-quarkus
 ----
 
-. To run the example application, follow the instructions in link:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service].
-. Install the Quarkus command line interface (CLI). For more information, see link:https://quarkus.io/guides/cli-tooling#installing-the-cli[Installing the Quarkus CLI].
+. To run the example application, follow the instructions in xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service].
+. Install the Quarkus command line interface (CLI). For more information, see link:{quarkus_cli_url}[Installing the Quarkus CLI].
 . Add the required Quarkus extension using Quarkus CLI:
 +
 --
@@ -149,7 +150,7 @@ When it comes to Serverless Workflow, a small startup footprint is expected, whi
 
 .Prerequisites
 * You have created a Quarkus project.
-* Quarkus CLI is installed. For more information about installing the Quarkus CLI, see link:https://quarkus.io/guides/cli-tooling#installing-the-cli[Installing the Quarkus CLI].
+* Quarkus CLI is installed. For more information about installing the Quarkus CLI, see  link:{quarkus_cli_url}[Installing the Quarkus CLI].
 
 .Procedure
 . In a command terminal, navigate to your Quarkus project.
@@ -163,8 +164,7 @@ $ quarkus build --native -Dquarkus.container-image.build=true \
     -Dquarkus.container-image.group=kogito \
     -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
     -Dquarkus.container-image.tag=1.0-native \
-    -Dquarkus.container-image.registry=quay.io \
-    -Dquarkus.native.container-build=true
+    -Dquarkus.container-image.registry=quay.io
 ----
 
 The previous command results in the following container image:
@@ -174,6 +174,16 @@ The previous command results in the following container image:
 [NOTE]
 ====
 In case GraalVM is not installed, you can set the `quarkus.native.container-build=true` system property, which creates a Linux executable.
+====
+[IMPORTANT]
+.Configure Docker to use the in-cluster (Remote) Docker daemon
+====
+When build Container Images using a remote Docker Daemon, i.e. Minikube, you need to use the following system property instead of `-Dquarkus.native.container-build=true`
+
+[source,shell]
+----
+-Dquarkus.native.remote-container-build=true
+----
 ====
 
 For more information about native builds, see the Quarkus documentation of link:{quarkus_native_builds_url}[Building a native executable].
