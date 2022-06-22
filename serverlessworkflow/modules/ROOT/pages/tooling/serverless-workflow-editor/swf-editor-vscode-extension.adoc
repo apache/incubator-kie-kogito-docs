@@ -1,0 +1,179 @@
+= VScode Extension for Serverless Workflow Editor
+
+The VScode extension for Serverless Workflow Editor allows you to view and edit serverless workflow files in your local projects.
+
+.Prerequisites
+* Visual Studio Code version 1.46.0 and above.
+
+.Serverless Workflow VScode Extension
+image::tooling/serverless-workflow-editor/swf-editor-vscode-extension-page.png[]
+
+== Installing VScode Extension
+
+The VScode extension can be installed in two ways.
+
+* You can visit https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] and follow the instructions or use the *extensions* tab(Ctrl+Shift+X) and click on *install* to install the extension.
+
+.Installing VScode Extension in marketplace
+image::tooling/serverless-workflow-editor/swf-editor-vscode-market-place.png[]
+
+* You can download the _vscode_extension_serverless_workflow_editor_VERSION.vsix_ https://github.com/kiegroup/kie-tools/releases[kie-tools] and install it in vscode using the *Install from VSIX* option in the extensions menu.
+
+.Installing VScode Extension using vsix
+image::tooling/serverless-workflow-editor/swf-editor-vscode-vsix-package.png[]
+
+== Working with VScode Extension
+
+Once installation is complete, you can create a Serverless Workflow file or open an existing file in VScode. VScode will automatically use the extension when you open a Serverless Workflow file.
+
+The extension provides a set of commands to perform specific actions.
+
+=== List of commands
+* *Serverless Workflow: Generate SVG without any notification*: Generates an SVG file of the diagram in the workspace next to the Serverless Workflow file.
+* *Serverless Workflow: Open as Diagram (to the side)*: Opens the diagram to the right side of the editor
+* *Serverless Workflow: Setup automatically open Diagram Editor alongside Text Editor*: Allows the user to configure if the diagram should be opened by default alongside the editor. Provides two options, *Open automatically* and *Do not open*.
+* *Serverless Workflow: Configure Service Registries*: Opens the configuration for the Service Registries.
+* *Serverless Workflow: Refresh Service Registries*: Refresh the artifact list of the Service Registries.
+* *Serverless Workflow: Log in Service Registries*: Triggers a log in action of the Service Registries.
+
+To trigger a command, go to *view* → *Command Palette*... or press *Ctrl+Shift+P* to open the command palette. Type in *Serverless Workflow* in the search bar to see the list of commands.
+
+.Command palette of the VScode extension
+image::tooling/serverless-workflow-editor/swf-editor-vscode-command-palette.png[]
+
+=== Serverless Workflow Editor Setttings
+The extension's settings can be configured by navigating to *File* → *Preferences* → *Settings*.
+
+.The following settings can be configured in the settings page:
+*  *Automatically Open Diagram Editor Alongside Text Editor*: Provides a dropdown with *Ask next time*(default), *Do not open* and *Open automatically* to configure the opening of the diagram.
+* *Run On Save*: Executes a command to generate an SVG of the workflow when a _save_ action is performed.
+* *Service Registries*: Provides a link to access the _settings.json_, to configure the Serivce Registries.
+* *Should Reference Service Registry Functions With Urls*: Provides a check box to toggle between downloading the openAPI file or use the url of the function in Service Registry.
+* *Specs Storage Path*: Provides a text box to edit the path of openAPI spec file(defaults to 'specs' folder).
+* *Svg Filename Template*: Provides a text box to edit the filename template to be used when generating SVG files.
+* *Svg File Path*: Provides a text box to edit the path to generate SVG files.
+
+.Settings page of the extension
+image::tooling/serverless-workflow-editor/swf-editor-vscode-settings.png[]
+
+=== Context based auto-completion
+The extension can use openAPI spec files stored locally in the 'specs folder'(<<Serverless Workflow Editor Setttings,check the settings section>>) or in remote Service Registries to provide advanced auto-complete features for *Function Definitions*.
+
+The extension is able to parse the openAPI spec files and provide the list of Function Definitions in the auto-complete dialog.
+
+.Function Definition auto complete dialogue
+image::tooling/serverless-workflow-editor/swf-editor-function-definition-auto-complete-dialogue.png[]
+
+After selecting one of the options in the auto-complete dialog, a full Function Definition object will be added to the functions array with the right settings.
+
+.Function Definition object auto completed
+image::tooling/serverless-workflow-editor/swf-editor-auto-completed-function-definition.png[]
+
+Once function definition is added, it will be available for auto completion in the Function Reference section.
+
+.Function Reference auto complete dialogue
+image::tooling/serverless-workflow-editor/swf-editor-auto-complete-function-reference-dialogue.png[]
+
+After selecting one of the options in the auto-complete dialog, a full Function Reference object will be added with the right reference name and attributes.
+
+.Function Reference object auto completed
+image::tooling/serverless-workflow-editor/swf-editor-auto-completed-function-reference.png[]
+
+NOTE: After selecting one of the options in the auto-complete dialog, the openAPI spec file will be downloaded into the 'specs' folder(<<Serverless Workflow Editor Setttings,Configured in the settings>>). The saved file follows the format of _REGISTRY-NAME_OPERATION-NAME_VERSION_.
+
+If any change is made in the registry, make use of the *Refresh Service Registries*... to fetch the new changes.
+
+.Refresh Service Registries button in Function Definition section
+image::tooling/serverless-workflow-editor/swf-editor-refresh-registry.png[]
+
+Click on the *Add funtion*... button to create a new Function Definition object.
+
+=== Service Registry settings
+
+The Service Registry settings can be accessed by clicking on the *Setup Service Registries*... situated above the Function Definition section.
+In the JSON, the  _kogito.swf.serviceRegistries_ object accepts an array of *registries* attribute. Each registry object has the following properites:
+
+.Registry object example:
+```
+  {
+    "name": "openshift",
+    "url": "https://bu98.serviceregistry.rhcloud.com/t/9f07ff4a-e959-49e4-b177-89f0ae5c3a2b/apis/registry/v2",
+    "authProvider":"red-hat-account"
+  }
+```
+The *name* is an identifier provided for the particular registry.
+The *url* is the actual url where the service registry is hosted.
+The *authProvider* is the type of authentication provided to the registry. It can have *none* and *red-hat-account* as values.
+
+.If the value is *red-hat-account* the following are required:
+* A https://sso.redhat.com/auth/realms/redhat-external/login-actions/registration?client_id=cloud-services&tab_id=Rd8aj14U3Xk[Red Hat account]
+* https://marketplace.visualstudio.com/items?itemName=redhat.vscode-redhat-account[Redhat authentication extension]
+
+Also if the auth provider is set to *red-hat-account*, a *Log in Service Registries* button is provided which when clicked navigates the user to the Service Registry login.
+
+.Log in Service Registries button in function definition section
+image::tooling/serverless-workflow-editor/swf-editor-login-service-registries-function-definition.png[]
+
+=== Connecting the extension to Apicurio Serivce Registries
+
+.Prerequisites
+* A https://sso.redhat.com/auth/realms/redhat-external/login-actions/registration?client_id=cloud-services&tab_id=Rd8aj14U3Xk[Red Hat account] with access to https://console.redhat.com/[Red Hat Hybrid Cloud Console].
+* https://marketplace.visualstudio.com/items?itemName=redhat.vscode-redhat-account[Redhat authentication extension]
+
+The extension has the capability to connect to a remote Service Registry inorder to enhance the auto-complete capabilities of the Workflow's Function Definitions section.
+
+Login to the https://console.redhat.com/[Red Hat Hybrid Cloud Console].
+
+.Red Hat Hybrid Cloud Console Page
+image::tooling/serverless-workflow-editor/swf-editor-rhhcc-page.png[]
+
+Click on the Create Service Registry instance and provide an appropriate name for the registry.
+
+.Create Service Registry
+image::tooling/serverless-workflow-editor/swf-editor-create-service-registry-rhhcc.png[]
+
+Click on the registry created to navigate to the following page.
+
+.Service Registry page
+image::tooling/serverless-workflow-editor/swf-editor-service-registry-page-rhhcc.png[]
+
+Click on the *Upload artifact* button and fill in the necessary details and upload an artifact with openAPI specification.
+
+NOTE: The *Group* is not mandatory for Apicurio but is mandatory of the extension to work. Please make sure to enter a value there.
+
+.Upload tab of Apicurio Service Registry
+image::tooling/serverless-workflow-editor/swf-editor-apicurio-upload-artifact.png[]
+
+In the top right corner, click on the Kebab Menu. Click on the *Connection* drop-down to open a list of connection urls for the registry.
+Copy the *Core Registry API* url.
+
+.Exposed API's of the registry
+image::tooling/serverless-workflow-editor/swf-editor-remote-apicurio-url.png[]
+
+In the Workflow's Function Definition section of the file, click on the *Setup Service Registries* to access the settings.json.
+
+.Function Definition Section with Setup Service Registries option
+image::tooling/serverless-workflow-editor/swf-editor-vscode-setup-registry.png[]
+
+In the _settings.json_ file, add the following configuration inside the array of registries to connect the extension to the remote instance of Apicurio Service Registry(use the Core Registry API copied from the Red Hat Hybrid Cloud Console previously).
+
+.Settings.json registry configuration
+image::tooling/serverless-workflow-editor/swf-editor-remote-registry-config.png[]
+
+save the settings and you have successfully connected to the remote Apicurio Service Registry.
+
+In the Workflow's Function Definitions section, click *Ctrl+Space* to view the list of functions available and click on the required function to auto-complete the config.
+
+.Function workflow definition section auto-complete
+image::tooling/serverless-workflow-editor/swf-editor-remote-registry-functions-section.png[]
+
+== Validation
+
+NOTE: Currently validation is performed only for JSON files. The validation is based out of JSON schema and it checks only the structure of the json and not the content.
+
+The validation warnings and errors can be seen in the *Problems* tab. Go to *Terminal* → *New Terminal* or press *Ctrl+Shift+`* to open the terminal and then click on the problems tab to open it.
+
+.Errors and warnings in problems tab
+image::tooling/serverless-workflow-editor/swf-editor-vscode-problems-tab.png[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
