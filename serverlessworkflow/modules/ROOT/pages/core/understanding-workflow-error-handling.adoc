@@ -8,10 +8,10 @@ An error is an exceptional occurrence that alters the regular Workflow execution
 
 An link:{spec_doc_url}#error-definition[Error definition] in Serverless Workflow is composed of a name and an code. The name is a natural language description of the error, for example: 'wrong parameter', while the code is a vendor specific parameter that helps the implementor to identify the error. In the case of Kogito, the code is mandatory and consist of the fully qualified Java class name of an link:https://docs.oracle.com/javase/tutorial/essential/exceptions/index.html[Exception type] that might be thrown by the state.
 
-The algorithm used by Kogito to determine if an exception should be handled by an error definition is:
+The steps used by Kogito to determine if an exception should be handled by an error definition are:
 
 * It checks if the type of the Java Exception being thrown is an instance (which includes any descendant) of the Java Exception specified in `code` property of the error definition. 
-* If this not the case, it recursively checks if the root cause of the Java Exception is an instance (which includes any descendant) of the Java Exception specified in `code` property of the error definition.
+* If this not the case, it recursively applies the same check to the root cause of the original Java Exception, till the exception chain is exhausted. 
 
 == Error handling example 
 
@@ -44,7 +44,7 @@ This functionality is achieved by:
      }
   ]
 ----
-* Referring this error definition in the 'checkEven' state to tell the workflow that if this error occurs it should transition to `odd` state rather than the regular transition to `even` state. Since `IllegalArgumentException` is a child of `RuntimeException`, it will be handled by the `errorRef` if thrown by `isEven` function.
+* Referring this error definition in the `checkEven` state to tell the workflow that if this error occurs it should transition to `odd` state rather than the regular transition to `even` state. Since `IllegalArgumentException` is a child of `RuntimeException`, it will be handled by the `errorRef` if thrown by `isEven` function.
 +
 [source,json]
 ----
@@ -75,3 +75,7 @@ This functionality is achieved by:
 == Additional resources
 
 * xref:getting-started/create-your-first-workflow-service.adoc[Create your first Workflow Service].
+
+include::../../pages/_common-content/report-issue.adoc[]
+
+
