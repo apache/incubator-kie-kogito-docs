@@ -79,7 +79,7 @@ Function arguments might be expressed as a JSON object, whose property values mi
 ----
 
 In the snippet above, we are specifying that the left number of the subtraction is equal to the `fahrenheit` property (which is an input number provided by the user invoking the flow) and that the right number is equal to the `substractvalue` property (which is a constant number injected into the flow model by SetConstants state). After resolving expression evaluation for all properties that contain an expression, the resulting JSON object is passed to the  OpenAPI call. Depending on the OpenAPI definition, properties of that JSON object will be used as the body, path, query, or header of the upcoming REST invocation. 
-Note that, for the sake of brevity, the expression is not embedded within `${}`. Kogito will infer it is a valid `jq` expression because of the . prefix, but you can embed it if you prefer to do so.
+Note that, for the sake of brevity, the expression is not embedded within `${}`. Kogito will infer it is a valid `jq` expression because of the `.` (period) prefix, but you can embed it if you prefer to do so.
 
 Function arguments might also be defined as a string containing an expression that returns a JSON object.
 [source,json]
