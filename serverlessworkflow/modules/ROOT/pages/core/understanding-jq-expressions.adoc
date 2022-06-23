@@ -138,7 +138,7 @@ We define a `max` function of type expression. The operation property is a strin
  ]
 ----
 
-Since we are only interested in the maximum `x`, besides invoking the function using `functionRef`, this actions also contains an action data filter. If we were not adding this filter, the whole JSON Object returned by the function call will be merged into the flow model. The filter has two properties: `results`, which selects the attribute to be merged from the data returned by the action and `toStateData`, which indicates the name of the target property inside the flow model (in case this property does not exist, it will be added). So, after executing the action, the flow model will consist of a `number` property storing the maximum value and the original `numbers` array. Then the flow transitions to `finish` state.
+Since we are only interested in the maximum `x`, besides invoking the function using `functionRef`, this action also contains an action data filter. If we were not adding this filter, the whole JSON object returned by the function call would be merged into the flow model. The filter has two properties: `results`, which selects the attribute to be merged from the data returned by the action, and `toStateData`, which indicates the name of the target property inside the flow model (in case this property does not exist, it will be added). So, after executing the action, the flow model will consist of a `number` property storing the maximum value and the original `numbers` array. Then the flow transitions to `finish` state.
 
 .The state data filter
 [source,json]
