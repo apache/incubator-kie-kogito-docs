@@ -2,7 +2,7 @@
 
 Every workflow instance is associated with a data model. This model regardless of whether your flow file is written in YAML or JSON, consists of a JSON object. The initial content of that object depends on how the flow is started. If the flow is created through a link:{cloud_events_url}[Cloud Event], then the content is taken from `data` property. If started through an HTTP POST invocation, then the request body is expected to have a `workflowdata` property, from where the content of the model is retrieved. 
 
-Expressions are the mechanism defined by the link:{spec_doc_url}#workflow-expressions[Serverless Workflow Specification] for the states to interact with the data model. Kogito supports two expression languages: link:https://github.com/json-path/JsonPath[jsonpath] and link:https://stedolan.github.io/jq/manual/[jq]. The default one is `jq`, but you can change it to `jsonpath` by using the `expressionLang` property. This guide will focus on `jq` and discuss its usage in following uses cases: switch state conditions, action function arguments and  data filtering.
+Expressions are the mechanism defined by the link:{spec_doc_url}#workflow-expressions[Serverless Workflow Specification] for the states to interact with the data model. Kogito supports two expression languages: link:https://github.com/json-path/JsonPath[jsonpath] and link:https://stedolan.github.io/jq/manual/[jq]. The default one is `jq`, but you can change it to `jsonpath` by using the `expressionLang` property. This guide will focus on `jq` and discuss its usage in following uses cases: switch state conditions, action function arguments, and data filtering.
 
 
 == Switch Conditions
