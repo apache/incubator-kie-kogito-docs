@@ -1,23 +1,23 @@
-= VScode Extension for Serverless Workflow Editor
+= VScode Extension for the Kogito Serverless Workflow Editor
 
-The VScode extension for Serverless Workflow Editor allows you to view and edit serverless workflow files in your local projects.
+The VScode extension for the Kogito Serverless Workflow Editor allows you to view and edit serverless workflow files in your local projects.
 
 .Prerequisites
-* Visual Studio Code version 1.46.0 and above.
+* Visual Studio Code version {vscode_version} and above.
 
-.Serverless Workflow VScode Extension
+.Kogito Serverless Workflow VScode Extension
 image::tooling/serverless-workflow-editor/swf-editor-vscode-extension-page.png[]
 
 == Installing VScode Extension
 
 The VScode extension can be installed in two ways.
 
-* You can visit https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] and follow the instructions or use the *extensions* tab(Ctrl+Shift+X) and click on *install* to install the extension.
+* You can visit link:{kogito_swf_editor_vscode_marketplace_url}[Kogito Serverless Workflow Editor] and follow the instructions or use the *extensions* tab(Ctrl+Shift+X) and click on *install* to install the extension.
 
 .Installing VScode Extension in marketplace
 image::tooling/serverless-workflow-editor/swf-editor-vscode-market-place.png[]
 
-* You can download the _vscode_extension_serverless_workflow_editor_VERSION.vsix_ https://github.com/kiegroup/kie-tools/releases[kie-tools] and install it in vscode using the *Install from VSIX* option in the extensions menu.
+* You can download the 'vscode_extension_serverless_workflow_editor_VERSION.vsix' link:{kie_tools_releases_page_url}[kie-tools] and install it in vscode using the *Install from VSIX* option in the extensions menu.
 
 .Installing VScode Extension using vsix
 image::tooling/serverless-workflow-editor/swf-editor-vscode-vsix-package.png[]
@@ -41,7 +41,7 @@ To trigger a command, go to *view* → *Command Palette*... or press *Ctrl+Shift
 .Command palette of the VScode extension
 image::tooling/serverless-workflow-editor/swf-editor-vscode-command-palette.png[]
 
-=== Serverless Workflow Editor Setttings
+=== Kogito Serverless Workflow Editor Setttings
 The extension's settings can be configured by navigating to *File* → *Preferences* → *Settings*.
 
 .The following settings can be configured in the settings page:
@@ -57,7 +57,7 @@ The extension's settings can be configured by navigating to *File* → *Preferen
 image::tooling/serverless-workflow-editor/swf-editor-vscode-settings.png[]
 
 === Context based auto-completion
-The extension can use openAPI spec files stored locally in the 'specs folder'(<<Serverless Workflow Editor Setttings,check the settings section>>) or in remote Service Registries to provide advanced auto-complete features for *Function Definitions*.
+The extension can use openAPI spec files stored locally in the 'specs folder'(<<Kogito Serverless Workflow Editor Setttings,check the settings section>>) or in remote Service Registries to provide advanced auto-complete features for *Function Definitions*.
 
 The extension is able to parse the openAPI spec files and provide the list of Function Definitions in the auto-complete dialog.
 
@@ -79,7 +79,7 @@ After selecting one of the options in the auto-complete dialog, a full Function 
 .Function Reference object auto completed
 image::tooling/serverless-workflow-editor/swf-editor-auto-completed-function-reference.png[]
 
-NOTE: After selecting one of the options in the auto-complete dialog, the openAPI spec file will be downloaded into the 'specs' folder(<<Serverless Workflow Editor Setttings,Configured in the settings>>). The saved file follows the format of _REGISTRY-NAME_OPERATION-NAME_VERSION_.
+NOTE: After selecting one of the options in the auto-complete dialog, the openAPI spec file will be downloaded into the 'specs' folder(<<Kogito Serverless Workflow Editor Setttings,Configured in the settings>>). The saved file follows the format of _REGISTRY-NAME_OPERATION-NAME_VERSION_.
 
 If any change is made in the registry, make use of the *Refresh Service Registries*... to fetch the new changes.
 
@@ -94,20 +94,23 @@ The Service Registry settings can be accessed by clicking on the *Setup Service 
 In the JSON, the  _kogito.swf.serviceRegistries_ object accepts an array of *registries* attribute. Each registry object has the following properites:
 
 .Registry object example:
-```
+
+[source,json]
+----
   {
     "name": "openshift",
     "url": "https://bu98.serviceregistry.rhcloud.com/t/9f07ff4a-e959-49e4-b177-89f0ae5c3a2b/apis/registry/v2",
     "authProvider":"red-hat-account"
   }
-```
+----
+
 The *name* is an identifier provided for the particular registry.
 The *url* is the actual url where the service registry is hosted.
 The *authProvider* is the type of authentication provided to the registry. It can have *none* and *red-hat-account* as values.
 
 .If the value is *red-hat-account* the following are required:
-* A https://sso.redhat.com/auth/realms/redhat-external/login-actions/registration?client_id=cloud-services&tab_id=Rd8aj14U3Xk[Red Hat account]
-* https://marketplace.visualstudio.com/items?itemName=redhat.vscode-redhat-account[Redhat authentication extension]
+* link:{red_hat_sso_login_url}[Red Hat account]
+* link:{red_hat_auth_vscode_marketplace_url}[Redhat authentication extension]
 
 Also if the auth provider is set to *red-hat-account*, a *Log in Service Registries* button is provided which when clicked navigates the user to the Service Registry login.
 
@@ -117,12 +120,12 @@ image::tooling/serverless-workflow-editor/swf-editor-login-service-registries-fu
 === Connecting the extension to Apicurio Serivce Registries
 
 .Prerequisites
-* A https://sso.redhat.com/auth/realms/redhat-external/login-actions/registration?client_id=cloud-services&tab_id=Rd8aj14U3Xk[Red Hat account] with access to https://console.redhat.com/[Red Hat Hybrid Cloud Console].
-* https://marketplace.visualstudio.com/items?itemName=redhat.vscode-redhat-account[Redhat authentication extension]
+* A * link:{red_hat_sso_login_url}[Red Hat account] with access to link:{red_hat_hybrid_cloud_console_url}[Red Hat Hybrid Cloud Console].
+* link:{red_hat_auth_vscode_marketplace_url}[Redhat authentication extension]
 
 The extension has the capability to connect to a remote Service Registry inorder to enhance the auto-complete capabilities of the Workflow's Function Definitions section.
 
-Login to the https://console.redhat.com/[Red Hat Hybrid Cloud Console].
+Login to the link:{red_hat_hybrid_cloud_console_url}[Red Hat Hybrid Cloud Console].
 
 .Red Hat Hybrid Cloud Console Page
 image::tooling/serverless-workflow-editor/swf-editor-rhhcc-page.png[]
