@@ -43,7 +43,7 @@ NOTE: You can skip the following procedure, if you already have a Serverless Wor
 .Clone a Kogito example application
 [source,shell,subs="attributes+"]
 ----
-$ git clone --branch main {kogito_sw_examples_git_repo_url} && cd kogito-examples/serverless-workflow-examples/serverless-workflow-greeting-quarkus
+git clone --branch main {kogito_sw_examples_git_repo_url} && cd kogito-examples/serverless-workflow-examples/serverless-workflow-greeting-quarkus
 ----
 
 . To run the example application, follow the instructions in xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service].
@@ -54,7 +54,7 @@ $ git clone --branch main {kogito_sw_examples_git_repo_url} && cd kogito-example
 .Add the Jib extension
 [source,shell]
 ----
-$ quarkus extension add 'container-image-jib'
+quarkus extension add 'container-image-jib'
 ----
 
 After adding the Jib extension, if you see the `pom.xml` file, you can verify the newly added dependency:
@@ -86,7 +86,7 @@ After installing the required tooling, you can start building your Serverless Wo
 .Build your Serverless Workflow application
 [source,shell]
 ----
-$ quarkus build -Dquarkus.container-image.build=true \
+quarkus build -Dquarkus.container-image.build=true \
     -Dquarkus.container-image.group=kogito \
     -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
     -Dquarkus.container-image.tag=1.0 \
@@ -102,7 +102,7 @@ NOTE: The added Jib extension caches the `target/lib` directory. Based on the si
 .Example of pushing the built Serverless Workflow application to a registry
 [source,shell]
 ----
-$ quarkus build -Dquarkus.container-image.build=true \
+quarkus build -Dquarkus.container-image.build=true \
     -Dquarkus.container-image.group=kogito \
     -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
     -Dquarkus.container-image.tag=1.0 \
@@ -139,7 +139,7 @@ You can activate the created Apache Maven profile using Quarkus CLI:
 .Activate the Apache Maven profile
 [source,shell]
 ----
-$ quarkus build -- -Pbuild-container
+ quarkus build -- -Pbuild-container
 ----
 --
 
@@ -160,7 +160,7 @@ When it comes to Serverless Workflow, a small startup footprint is expected, whi
 .Example of building a native image
 [source,shell]
 ----
-$ quarkus build --native -Dquarkus.container-image.build=true \
+quarkus build --native -Dquarkus.container-image.build=true \
     -Dquarkus.container-image.group=kogito \
     -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
     -Dquarkus.container-image.tag=1.0-native \
@@ -204,7 +204,7 @@ After building your Serveless Workflow image using Quarkus CLI, you can test the
 .Example JVM image
 [source,shell]
 ----
-$ docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0
+docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0
 ...
 INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final on JVM (powered by Quarkus 2.9.2.Final) started in 1.302s
 ----
@@ -212,7 +212,7 @@ INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final on J
 .Example native image
 [source,shell]
 ----
-$ docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0-native
+docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0-native
 ...
 INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final native (powered by Quarkus 2.9.2.Final) started in 0.039s
 ----
@@ -226,7 +226,7 @@ You can notice that, the startup of native image is faster than the JVM image.
 .Example request
 [source,shell]
 ----
-$ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://localhost:8080/jsongreet
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://localhost:8080/jsongreet
 ----
 
 .Example response

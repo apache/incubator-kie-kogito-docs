@@ -63,21 +63,29 @@ If you don't have it installed, execute the following command to let minikube ha
 ----
 alias kubectl="minikube kubectl --"
 ----
-====
 
 Now, the `kubectl` command should be available.
+====
+
 
 === Installing Knative on Minikube
 .Procedure
 . Install and configure Knative on Minikube
 +
-Knative CLI offers a plugin called `quickstart` that will configure everything needed. To to install it follow these link:{kn_cli_quickstart_plugin_url}[steps].
+Knative CLI offers a plugin called `quickstart` that will configure everything needed. To install it follow these link:{kn_cli_quickstart_plugin_url}[steps].
 +
 With the plugin configured, execute:
 +
 [source,shell]
 ----
 kn quickstart minikube
+----
++
+NOTE: The command above configures a Minikube profile called `knative`, from now on, all minikube commands will use this profile, to list the Minikube available profiles use the following command:
++
+[source,shell]
+----
+minikube profile list
 ----
 +
 NOTE: To install everything manually, there is this link:{knative_on_minikube_step_by_step_url}[post] from the Red Hat Developers blog that guides you through the process.
@@ -140,7 +148,8 @@ Before start the procedure to install de Serverless Application, make sure you h
 minikube tunnel --profile knative
 ----
 +
-NOTE: The tunnel command will start in a loop, it must be running during all this guide.
+NOTE: The tunnel command will start in a loop, it must be running during all this guide. +
+On Mac and Windows you might be required to provide the system's user password.
 
 . Tunnel Output example
 +
@@ -236,7 +245,11 @@ As response, you should get something like:
 You can also use plain Kubernetes objects to deploy Serverless Workflow.
 Instead of creating the `knative` 'yaml|json' descriptors, you can leverage the Quarkus Kubernetes extension and Kogito Knative Addon to generate that for you. To use this, ensure the following dependencies are present on the Application dependencies:
 
-.Pom.xml
+
+[tabs]
+====
+Pom.xml::
++
 [source,xml]
 ----
 <dependency>
@@ -248,15 +261,16 @@ Instead of creating the `knative` 'yaml|json' descriptors, you can leverage the 
   <artifactId>quarkus-kubernetes</artifactId>
 </dependency>
 ----
-
-.Gradle
+Gradle::
++
 [source,shell,subs="attributes+"]
 ----
 quarkus-kubernetes 'io.quarkus:quarkus-kubernetes:{quarkus_version}'
 quarkus-kubernetes 'org.kie.kogito:kogito-addons-quarkus-knative-eventing:{kogito_version}'
 ----
+====
 
-Set the following system properties so the files can be generated:
+Set the following system properties with `-D` prefix if using Quarkus CLI or in the `application.properties` file within the Workflow Application so the files can be generated:
 
 .System Properties
 [source,shell,subs="attributes+"]
@@ -264,7 +278,6 @@ Set the following system properties so the files can be generated:
 quarkus.kubernetes.deployment-target=knative
 quarkus.knative.name=greeting-quarkus-kubectl
 ----
-
 
 Then, build your application as usual, the following files can be found at `target/kubernetes` directory:
 
@@ -332,10 +345,22 @@ kubectl apply -f target/kubernetes/knative.yml
 ----
 
 Check if the service was deployed correctly:
+[tabs]
+====
+kubectl::
++
 [source,shell]
 ----
 kubectl get services.serving.knative.dev greeting-quarkus-kubectl
 ----
+kn::
++
+[source,shell]
+--
+kn service list
+--
+====
+
 
 It should return something like:
 [source,shell]
