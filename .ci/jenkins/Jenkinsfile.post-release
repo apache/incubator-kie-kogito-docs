@@ -1,0 +1,141 @@
+// TODO release branch should be added when new branch is created
+// TODO kie-docs update in a post-release job ?
+
+import org.jenkinsci.plugins.workflow.libs.Library
+
+@Library('jenkins-pipeline-shared-libraries')_
+
+pipeline {
+    agent {
+        label 'kie-rhel7 && !master'
+    }
+
+    tools {
+        nodejs 'nodejs-16.2.0'
+    }
+
+    options {
+        timestamps()
+        timeout(time: 60, unit: 'MINUTES')
+    }
+
+    // parameters {
+    // For parameters, check into .jenkins/dsl/jobs.groovy file
+    // }
+
+    environment {
+        // Some generated env is also defined into .jenkins/dsl/jobs.groovy file
+
+        CI_EMAIL_TO = credentials("${JENKINS_EMAIL_CREDS_ID}")
+    }
+
+    stages {
+        stage('Initialization') {
+            steps {
+                script {
+                    cleanWs()
+
+                    if (params.DISPLAY_NAME) {
+                        currentBuild.displayName = params.DISPLAY_NAME
+                    }
+
+                    // Verify version is set and if on right release branch
+                    assert getKogitoVersion()
+                    assert getBuildBranch() == util.getReleaseBranchFromVersion(getProjectVersion())
+                }
+            }
+        }
+
+        stage('Update Kogito Docs release branch') {
+            steps {
+                script {
+                    dir('kogito-docs') {
+                        deleteDir()
+                        checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
+                        sh "git checkout ${getBuildBranch()}"
+
+                        updateYaml('serverlessworkflow/antora.yml') { swfAntoraConfig ->
+                            swfAntoraConfig.version = getProjectVersion()
+                        }
+
+                        // Add changed files, commit, open and merge PR
+                        if (githubscm.isThereAnyChanges()) {
+                            githubscm.commitChanges("Release Kogito ${getProjectVersion()}")
+                            githubscm.pushObject('origin', getBuildBranch(), getGitAuthorCredsID())
+                        } else {
+                            echo "No changes to push."
+                        }
+
+                        // Tag repository
+                        githubscm.tagLocalAndRemoteRepository('origin', getProjectVersion(), getGitAuthorCredsID(), env.BUILD_TAG, true)
+                    }
+                }
+            }
+        }
+
+        stage('Update Kogito Docs main branch') {
+            steps {
+                script {
+                    dir('kogito-docs') {
+                        deleteDir()
+                        checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), 'main', false, getGitAuthorCredsID()))
+                        sh "git checkout ${getBuildBranch()}"
+
+                        updateYaml('antora-playbook.yml') { antoraConfig ->
+                            antoraConfig.content.sources[0].tags.add([ name: getProjectVersion() ])
+                        }
+
+                        // Add changed files, commit, open and merge PR
+                        if (githubscm.isThereAnyChanges()) {
+                            githubscm.commitChanges("Release Kogito ${getProjectVersion()}")
+                            githubscm.pushObject('origin', getBuildBranch(), getGitAuthorCredsID())
+                        } else {
+                            echo "No changes to push."
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post {
+        unsuccessful {
+            sendNotification()
+        }
+        cleanup {
+            script {
+                // Clean also docker in case of usage of testcontainers lib
+                util.cleanNode('docker')
+            }
+        }
+    }
+}
+
+void sendNotification() {
+    mailer.sendMarkdownTestSummaryNotification('Post-release', "[${getBuildBranch()}] Kogito Docs", [env.CI_EMAIL_TO])
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Getter / Setter
+//////////////////////////////////////////////////////////////////////////////
+
+String getProjectVersion() {
+    return params.PROJECT_VERSION
+}
+
+String getBuildBranch() {
+    return params.BUILD_BRANCH_NAME
+}
+
+String getGitAuthor() {
+    return env.GIT_AUTHOR
+}
+
+String getGitAuthorCredsID() {
+    return env.AUTHOR_CREDS_ID
+}
+
+void updateYaml(String filePath, Closure updateClosure) {
+    def yamlData = readYaml(file: filePath)
+    updateClosure(yamlData)
+    writeYaml(file: filePath, data: yamlData, overwrite: true)
+}
