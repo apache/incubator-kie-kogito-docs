@@ -1,27 +1,27 @@
-= Serverless Workflow integration test with postgreSQL
+= Serverless Workflow integration test with PostgreSQL
 ==========================================================
 :compat-mode!:
 // Metadata:
-:description: Serverless Workflow integration test with postgreSQL
+:description: Serverless Workflow integration test with PostgreSQL
 :keywords: kogito, workflow, quarkus, serverless, quarkus-cli, test, integration, postgreSQL
 // Referenced documentation pages.
 :basic-integration-test-with-restassured: xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc
 :mocking-opnapi-services-with-wiremock: xref:testing-and-troubleshooting/mocking-opnapi-services-with-wiremock.adoc
 :mocking-http-cloudevents-with-wiremock: xref:testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc
 // External pages
-:kogito_sw_examples_git_repo_url: https://github.com/kiegroup/kogito-examples.git
-:quarkus_testing_guide: https://quarkus.io/guides/getting-started-testing
-:quarkus_testing_guide_integration_test: https://quarkus.io/guides/getting-started-testing#quarkus-integration-test
-:quarkus_testing_guide_test_resource: https://quarkus.io/guides/getting-started-testing#quarkus-test-resource
+:quarkus_testing_guide_integration_test: {quarkus_testing_guide}#quarkus-integration-test
+:quarkus_testing_guide_test_resource: {quarkus_testing_guide}#quarkus-test-resource
+:availableTestcontainers: https://github.com/kiegroup/kogito-runtimes/tree/main/kogito-test-utils/src/main/java/org/kie/kogito/testcontainers
+:quarkusTestResourceLifecycleManager_class: https://github.com/quarkusio/quarkus/blob/main/test-framework/common/src/main/java/io/quarkus/test/common/QuarkusTestResourceLifecycleManager.java
 
-This document describes how to test your Serverless Workflow application integrated with PostgreSQL persistence.
+This document describes how to test your Kogito Serverless Workflow application integrated with PostgreSQL persistence.
 
 [[integration-test-overview]]
-== Overview of Quarkus Integration testing
+== Overview of Quarkus Integration Testing
 The goal is to be able to launch and test the artifact produced by the Quarkus builds and verify its interaction
 with a PostgreSQL database instance.
 
-In order to simulate that scenario and verify the service behaviour, we are using different Quarkus annotations and tools
+In order to simulate that scenario and verify the service behavior, we are using different Quarkus annotations and tools
  that simplify this work like:
 
 * *@QuarkusIntegrationTest* will be used to launch and test the artifact produced by the Serverless Workflow Quarkus build. For more
@@ -31,12 +31,12 @@ details see {quarkus_testing_guide_integration_test}[@QuarkusIntegrationTest] gu
 * *Kogito-quarkus-test-utils* with some Kogito predefined testcontainers as the PostgreSQL one.
 
 The testing case followed in this document is based on the `serverless-workflow-examples/serverless-workflow-newsletter-subscription` example application.
-You can access this example application in {kogito_sw_examples_git_repo_url}[Kogito Examples] GitHub repository
+You can access this example application in {kogito_sw_examples_url}[Kogito Examples] GitHub repository.
 
 
 [[creating-integration-test]]
-== Creating the integration test with postgreSQL
-Let's create the integration test for a specific Serverless Workflow with PostgresQL:
+== Creating the integration test with PostgreSQL
+Let's create the integration test for a specific Kogito Serverless Workflow with PostgresQL:
 
 First, we need to include the dependency to kogito-quarkus-test-utils at the project pom.xml
 --
@@ -55,7 +55,7 @@ This allows us to use predefined test resources such the one we need in this cas
 
 [NOTE]
 ====
-This test framework allows the use of predefined test resources like: KafkaQuarkusTestResource, KeycloakQuarkusTestResource that can be used to test
+This test framework allows the use of predefined test resources you can see {availableTestcontainers}[here] that can be used to test
 more complex scenarios
 ====
 
@@ -76,23 +76,20 @@ class HelloTestIT {<3>
 @QuarkusTestResource makes Quarkus run the corresponding QuarkusTestResourceLifecycleManager before any tests are run.
 <3> The naming of the test would end with 'IT' to identify which test needs to be executed as an integration test.
 
-Once the needed resources and annotation are specified, We can start testing the different interactions with the Serverless Workflow like it
- is explained in {basic-integration-test-with-restassured}[Testing your Serverless Workflow application using REST Assured].
+Once you specify the required resources and annotations, you can start testing the different interactions with the application as the guide link:{basic-integration-test-with-restassured}[Testing your Serverless Workflow application using REST Assured] describes.
 
 [[Add-postgreSQL-test-resource]]
 == PostgreSQL instance as test resource
-The test are using PostgreSqlQuarkusTestResource to start the PostgresSQL instance. PostgreSqlQuarkusTestResource is a predefined test
- resource provided by kogito-quarkus-test-utils that starts a container with the PostgreSQL instance. That container has a full set of
- default configuration that are included in the integration test automatically
+The test are using PostgreSqlQuarkusTestResource to start the PostgresSQL instance.
+PostgreSqlQuarkusTestResource is a predefined test resource provided by kogito-quarkus-test-utils that starts a container with the PostgreSQL instance.
+That container has a full set of default configuration that are included in the integration test automatically
 
 [NOTE]
 ====
-As a test resource, it will run its QuarkusTestResourceLifecycleManager before the service tests are executed.
-More related info in {quarkus_testing_guide_test_resource}[TESTING YOUR APPLICATION] Quarkus guide.
+As a test resource, it will run its {quarkusTestResourceLifecycleManager_class}[QuarkusTestResourceLifecycleManager] before the service tests are executed. More related info in {quarkus_testing_guide_test_resource}[Starting services before the Quarkus application starts].
 ====
 
-The container has a full set of default configuration, such as PostgreSQL docker image name, default user, default password,...
- all the needed configuration values to link the Serverless Workflow service with that instance are added automatically to the integration test.
+The container has a full set of default configuration, such as PostgreSQL docker image name, default user, default password,... all the needed configuration values to link the Serverless Workflow service with that instance are added automatically to the integration test.
 
 .Properties added automatically by PostgreSqlQuarkusTestResource
 [source, properties]
@@ -107,7 +104,7 @@ quarkus.datasource.password
 == Conditional PostgreSQL test resource
 
 This test resource can be disabled by a configuration like it's done in the `serverless-workflow-examples/serverless-workflow-newsletter-subscription` example.
-This allows us to reuse the same integration test with PostgreSQL enabled just for profiles with persistence enabled.
+This allows you to reuse the same integration test with PostgreSQL enabled just for profiles with persistence enabled.
 In order to achieve this resource activation we have created this local test resource:
 
 .Conditional test resource creation
@@ -135,9 +132,8 @@ public class SubscriptionResourceIT {
 }
 ----
 
-This new resource ConditionalPostgreSqlQuarkusTestResource only will be started when the 'enable.resource.postgresql' system property is true.
-In the example, the `persistence` profile incorporates this property setting to execute the integration test with the
- ConditionalPostgreSqlQuarkusTestResource enabled.
+This new resource ConditionalPostgreSqlQuarkusTestResource only will be started when the `enable.resource.postgresql` system property is true.
+In the example, the `persistence` profile incorporates this property setting to execute the integration test with the ConditionalPostgreSqlQuarkusTestResource enabled.
 
 .Example of profile definition that runs the integration test with ConditionalPostgreSqlQuarkusTestResource enabled
 [source,xml]
@@ -183,8 +179,8 @@ or enabling directly throw the command line
 mvn clean verify -Denable.resource.postgresql=true
 ----
 
-The testing procedure in this document is based on the `serverless-workflow-examples/serverless-workflow-newsletter-subscription`
- example application. You can access this example application in {kogito_sw_examples_git_repo_url}[Kogito Examples] GitHub repository
+The testing procedure in this document is based on the `serverless-workflow-examples/serverless-workflow-newsletter-subscription` example application.
+You can access this example application in {kogito_sw_examples_url}[Kogito Examples] GitHub repository
 
 --
 
