@@ -1,6 +1,6 @@
 = VScode Extension for the Kogito Serverless Workflow Editor
 
-The VScode extension for the Kogito Serverless Workflow Editor allows you to view and edit serverless workflow files in your local projects.
+The VScode extension for the Kogito Serverless Workflow Editor allows you to view and edit CNCF Serverless Workflow Specification files in your local projects.
 
 .Prerequisites
 * Visual Studio Code version {vscode_version} and above.
@@ -8,7 +8,7 @@ The VScode extension for the Kogito Serverless Workflow Editor allows you to vie
 .Kogito Serverless Workflow VScode Extension
 image::tooling/serverless-workflow-editor/swf-editor-vscode-extension-page.png[]
 
-== Installing VScode Extension
+== Installing the VScode Extension
 
 The VScode extension can be installed in two ways.
 
@@ -22,7 +22,7 @@ image::tooling/serverless-workflow-editor/swf-editor-vscode-market-place.png[]
 .Installing VScode Extension using vsix
 image::tooling/serverless-workflow-editor/swf-editor-vscode-vsix-package.png[]
 
-== Working with VScode Extension
+== Working with the VScode Extension
 
 Once installation is complete, you can create a Serverless Workflow file or open an existing file in VScode. VScode will automatically use the extension when you open a Serverless Workflow file.
 
@@ -57,7 +57,7 @@ The extension's settings can be configured by navigating to *File* → *Preferen
 image::tooling/serverless-workflow-editor/swf-editor-vscode-settings.png[]
 
 === Context based auto-completion
-The extension can use openAPI spec files stored locally in the 'specs folder'(<<Kogito Serverless Workflow Editor Setttings,check the settings section>>) or in remote Service Registries to provide advanced auto-complete features for *Function Definitions*.
+The extension can use link:{open_api_spec_url}[openAPI spec] files stored locally in the 'specs folder'(<<Kogito Serverless Workflow Editor Setttings,check the settings section>>) or in remote Service Registries to provide advanced auto-complete features for *Function Definitions*.
 
 The extension is able to parse the openAPI spec files and provide the list of Function Definitions in the auto-complete dialog.
 
@@ -79,14 +79,17 @@ After selecting one of the options in the auto-complete dialog, a full Function 
 .Function Reference object auto completed
 image::tooling/serverless-workflow-editor/swf-editor-auto-completed-function-reference.png[]
 
-NOTE: After selecting one of the options in the auto-complete dialog, the openAPI spec file will be downloaded into the 'specs' folder(<<Kogito Serverless Workflow Editor Setttings,Configured in the settings>>). The saved file follows the format of _REGISTRY-NAME_OPERATION-NAME_VERSION_.
+[NOTE]
+====
+After selecting one of the options in the auto-complete dialog, the openAPI spec file will be downloaded into the 'specs' folder(<<Kogito Serverless Workflow Editor Setttings,Configured in the settings>>). The saved file follows the format of _REGISTRY-NAME_OPERATION-NAME_VERSION_.
+====
 
 If any change is made in the registry, make use of the *Refresh Service Registries*... to fetch the new changes.
 
 .Refresh Service Registries button in Function Definition section
 image::tooling/serverless-workflow-editor/swf-editor-refresh-registry.png[]
 
-Click on the *Add funtion*... button to create a new Function Definition object.
+Click on the *Add function*... button to create a new Function Definition object.
 
 === Service Registry settings
 
@@ -117,13 +120,13 @@ Also if the auth provider is set to *red-hat-account*, a *Log in Service Registr
 .Log in Service Registries button in function definition section
 image::tooling/serverless-workflow-editor/swf-editor-login-service-registries-function-definition.png[]
 
-=== Connecting the extension to Apicurio Serivce Registries
+=== Connecting the extension to Apicurio Service Registries
 
 .Prerequisites
 * A * link:{red_hat_sso_login_url}[Red Hat account] with access to link:{red_hat_hybrid_cloud_console_url}[Red Hat Hybrid Cloud Console].
 * link:{red_hat_auth_vscode_marketplace_url}[Redhat authentication extension]
 
-The extension has the capability to connect to a remote Service Registry inorder to enhance the auto-complete capabilities of the Workflow's Function Definitions section.
+The extension has the capability to connect to a remote Service Registry in order to enhance the auto-complete capabilities of the Workflow's Function Definitions section.
 
 Login to the link:{red_hat_hybrid_cloud_console_url}[Red Hat Hybrid Cloud Console].
 
@@ -142,7 +145,10 @@ image::tooling/serverless-workflow-editor/swf-editor-service-registry-page-rhhcc
 
 Click on the *Upload artifact* button and fill in the necessary details and upload an artifact with openAPI specification.
 
-NOTE: The *Group* is not mandatory for Apicurio but is mandatory of the extension to work. Please make sure to enter a value there.
+[NOTE] 
+====
+The *Group* is not mandatory for Apicurio but is mandatory for the extension to work. Please make sure to enter a value there.
+====
 
 .Upload tab of Apicurio Service Registry
 image::tooling/serverless-workflow-editor/swf-editor-apicurio-upload-artifact.png[]
@@ -163,7 +169,7 @@ In the _settings.json_ file, add the following configuration inside the array of
 .Settings.json registry configuration
 image::tooling/serverless-workflow-editor/swf-editor-remote-registry-config.png[]
 
-save the settings and you have successfully connected to the remote Apicurio Service Registry.
+Save the settings and you have successfully connected to the remote Apicurio Service Registry.
 
 In the Workflow's Function Definitions section, click *Ctrl+Space* to view the list of functions available and click on the required function to auto-complete the config.
 
@@ -172,7 +178,10 @@ image::tooling/serverless-workflow-editor/swf-editor-remote-registry-functions-s
 
 == Validation
 
-NOTE: Currently validation is performed only for JSON files. The validation is based out of JSON schema and it checks only the structure of the json and not the content.
+[NOTE]
+====
+Currently validation is performed only for JSON files. The validation is based on JSON schema, and it checks only the structure of the JSON and not the content.
+====
 
 The validation warnings and errors can be seen in the *Problems* tab. Go to *Terminal* → *New Terminal* or press *Ctrl+Shift+`* to open the terminal and then click on the problems tab to open it.
 
