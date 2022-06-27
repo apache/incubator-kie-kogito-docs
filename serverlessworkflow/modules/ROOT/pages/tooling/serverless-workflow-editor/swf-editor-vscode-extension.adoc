@@ -1,6 +1,6 @@
 = VScode Extension for the Kogito Serverless Workflow Editor
 
-The VScode extension for the Kogito Serverless Workflow Editor allows you to view and edit CNCF Serverless Workflow Specification files in your local projects.
+The VScode extension for the Kogito Serverless Workflow Editor allows you to view and edit link:{spec_website_url}[CNCF Serverless Workflow Specification] files in your local projects.
 
 .Prerequisites
 * Visual Studio Code version {vscode_version} and above.
@@ -32,7 +32,7 @@ The extension provides a set of commands to perform specific actions.
 * *Serverless Workflow: Generate SVG without any notification*: Generates an SVG file of the diagram in the workspace next to the Serverless Workflow file.
 * *Serverless Workflow: Open as Diagram (to the side)*: Opens the diagram to the right side of the editor
 * *Serverless Workflow: Setup automatically open Diagram Editor alongside Text Editor*: Allows the user to configure if the diagram should be opened by default alongside the editor. Provides two options, *Open automatically* and *Do not open*.
-* *Serverless Workflow: Configure Service Registries*: Opens the configuration for the Service Registries.
+* *Serverless Workflow: Configure Service Registries*: Opens the configuration for the Service Registries in the Extension Settings screen.
 * *Serverless Workflow: Refresh Service Registries*: Refresh the artifact list of the Service Registries.
 * *Serverless Workflow: Log in Service Registries*: Triggers a log in action of the Service Registries.
 
@@ -45,21 +45,21 @@ image::tooling/serverless-workflow-editor/swf-editor-vscode-command-palette.png[
 The extension's settings can be configured by navigating to *File* → *Preferences* → *Settings*.
 
 .The following settings can be configured in the settings page:
-*  *Automatically Open Diagram Editor Alongside Text Editor*: Provides a dropdown with *Ask next time*(default), *Do not open* and *Open automatically* to configure the opening of the diagram.
-* *Run On Save*: Executes a command to generate an SVG of the workflow when a _save_ action is performed.
-* *Service Registries*: Provides a link to access the _settings.json_, to configure the Serivce Registries.
-* *Should Reference Service Registry Functions With Urls*: Provides a check box to toggle between downloading the openAPI file or use the url of the function in Service Registry.
-* *Specs Storage Path*: Provides a text box to edit the path of openAPI spec file(defaults to 'specs' folder).
-* *Svg Filename Template*: Provides a text box to edit the filename template to be used when generating SVG files.
-* *Svg File Path*: Provides a text box to edit the path to generate SVG files.
+* *Automatically Open Diagram Editor Alongside Text Editor*: Sets if the diagram should be opened by default when a Serverless Workflow is edited. The possible options are: *Ask next time*(default), *Do not open* and *Open automatically*.
+* *Run On Save*: Sets the VScode command to execute when saving the edited Serverless Workflow file, defaults 'extension.kogito.swf.silentlyGenerateSvg' (generate the diagram SVG).
+* *Service Registries*: Gives access to the Service Registries configuration in the _settings.json_ file.
+* *Should Reference Service Registry Functions With Urls*: when autocompleting functions from link:{open_api_spec_url}[OpenAPI spec] files in the Service Registry, this setting specifies if the Function operation should use the URL to the link:{open_api_spec_url}[OpenAPI spec] file or use a local path (file will be downloaded to the *Specs Storage Path*).
+* *Specs Storage Path*: Provides a text box to edit the path oflink:{open_api_spec_url}[OpenAPI spec] file (defaults to 'specs' folder next to the edited Serverless Workflow file).
+* *Svg Filename Template*: Sets the filename template to be used when generating the diagram SVG file. Defaults to 'fileName.svg'.
+* *Svg File Path*: Sets he path to store the diagram SVG. Defaults to the same edited Serverless Workflow directory.
 
 .Settings page of the extension
 image::tooling/serverless-workflow-editor/swf-editor-vscode-settings.png[]
 
 === Context based auto-completion
-The extension can use link:{open_api_spec_url}[openAPI spec] files stored locally in the 'specs folder'(<<Kogito Serverless Workflow Editor Setttings,check the settings section>>) or in remote Service Registries to provide advanced auto-complete features for *Function Definitions*.
+The extension can use link:{open_api_spec_url}[OpenAPI spec] files stored locally in the 'specs folder' (<<Kogito Serverless Workflow Editor Setttings,check the settings section>>) or in remote Service Registries to provide advanced auto-complete features for *Function Definitions*.
 
-The extension is able to parse the openAPI spec files and provide the list of Function Definitions in the auto-complete dialog.
+The extension is able to parse the link:{open_api_spec_url}[OpenAPI spec] files and provide the list of Function Definitions in the auto-complete dialog.
 
 .Function Definition auto complete dialogue
 image::tooling/serverless-workflow-editor/swf-editor-function-definition-auto-complete-dialogue.png[]
@@ -79,10 +79,129 @@ After selecting one of the options in the auto-complete dialog, a full Function 
 .Function Reference object auto completed
 image::tooling/serverless-workflow-editor/swf-editor-auto-completed-function-reference.png[]
 
+== How to enable the extension to load OpenAPI files from Apicurio Registries
+
+=== Configuring the Service Registry
+The extension allows to configure a list of Service Registries that will enable the editor to load link:{open_api_spec_url}[OpenAPI spec] files stored in the external registries.
+
+You can add the list of Service Registries in the extension's _settings.json_ file using the _kogito.swf.serviceRegistries_ key that matches the following JSON schema.
+
+.Service Registry Schema:
+
+[source,json]
+----
+ {
+  "type": "object",
+  "properties": {
+    "registries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https?://?[-A-Za-z0-9+&@#/%?=_!:.]+[-A-Za-z0-9+&@#/%=~_|]"
+          },
+          "authProvider": {
+            "type": "string",
+            "enum": ["none", "red-hat-account", "oidc"],
+            "default": "none"
+          },
+          "authUrl": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https?://?[-A-Za-z0-9+&@#/%?=_!:.]+[-A-Za-z0-9+&@#/%=~_|]"
+          },
+          "clientId": { "type": "string" }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "authProvider": { "const": "oidc" }
+              }
+            },
+            "then": {
+              "required": ["authUrl", "clientId"]
+            }
+          }
+        ],
+        "required": ["name", "url", "authProvider"]
+      }
+    }
+  }
+}
+----
+
+.Each item in the *registries* array should have atleast the following three properties:
+* *name*: The identifier provided for the particular registry.
+* *url*: The URL for the REST api of the Apicurio Registry.
+* *authProvider*: The type of authentication for the Apicurio Registry. The expected values are *none* (no authentication) and *red-hat-account* (login with your Red Hat account).
+
+.Example of Service Registry Configuration:
+[source,json]
+----
+ "kogito.swf.serviceRegistries": {
+  "registries": [ 
+    {
+      "name": "registry1",
+      "url": "https://{url-to-my-service-registry1}/apis/registry/v2",
+      "authProvider": "none"
+    },
+    {
+      "name": "registry2",
+      "url": "https://{url-to-my-service-registry2}/apis/registry/v2",
+      "authProvider": "red-hat-account"
+    }
+  ]
+}
+----
+
+[NOTE] 
+====
+The Service Registry settings are available on the extension settings and they could be accessed by clicking on the *Setup Service Registries*... situated above the Function Definition section or using the command *Serverless Workflow: Configure Service Registries*.
+====
+
+=== Using the Service Registries for auto-completion
+
+.If you have a Service Registry that requires Red Hat authentication the following are the prereqisites:
+* A link:{red_hat_sso_login_url}[Red Hat account] with access to link:{red_hat_hybrid_cloud_console_url}[Red Hat Hybrid Cloud Console].
+* link:{red_hat_auth_vscode_marketplace_url}[Redhat authentication extension]
+
+In the Serverless Workflow file, you can see that there is an option to *Setup Service Registries*. Click on it to get navigated to the _settings.json_ file to configure the *registries*.
+
+.Function Definition Section with Setup Service Registries option
+image::tooling/serverless-workflow-editor/swf-editor-vscode-setup-registry.png[]
+
+Once you configure the Service Registry settings, the Function Definition section of the workflow file shows a *Log in Service Registries* button if it is configured to a remote Service Registry (Eg. Apicurio Registry). Clicking on this button redirects to the Red Hat login (SSO) page. You can login with your Red Hat credentials to connect to the Apicurio Registries.
+
+[NOTE] 
+====
+The redirection to Red Hat login (SSO) page happens only if the *authProvider* has the value of 'red-hat-account' in the Service Registry settings.
+====
+
+.Function Definition Section with Log in Service Registries option
+image::tooling/serverless-workflow-editor/swf-editor-login-service-registries-function-definition.png[]
+
+Once you have successfully logged in, use *Ctrl+Space* in the workflow's Function Definitions section to view the list of functions available.
+
+.Function workflow definition section auto-complete
+image::tooling/serverless-workflow-editor/swf-editor-remote-registry-functions-section.png[]
+
+Click on the required function to auto-complete the Function Definition.
+
+.Auto-completed Function Definition
+image::tooling/serverless-workflow-editor/swf-editor-completed-function-definition.png[]
+
 [NOTE]
 ====
-After selecting one of the options in the auto-complete dialog, the openAPI spec file will be downloaded into the 'specs' folder(<<Kogito Serverless Workflow Editor Setttings,Configured in the settings>>). The saved file follows the format of _REGISTRY-NAME_OPERATION-NAME_VERSION_.
+After selecting one of the options in the auto-complete dialog, the link:{open_api_spec_url}[OpenAPI spec] file will be downloaded into the 'specs' folder(<<Kogito Serverless Workflow Editor Setttings,Configured in the settings>>). The saved file follows the format of _REGISTRY-NAME_OPERATION-NAME_VERSION_.
 ====
+
+.Downloaded OpenAPI spec file
+image::tooling/serverless-workflow-editor/swf-editor-open-api-spec.png[]
 
 If any change is made in the registry, make use of the *Refresh Service Registries*... to fetch the new changes.
 
@@ -91,90 +210,7 @@ image::tooling/serverless-workflow-editor/swf-editor-refresh-registry.png[]
 
 Click on the *Add function*... button to create a new Function Definition object.
 
-=== Service Registry settings
-
-The Service Registry settings can be accessed by clicking on the *Setup Service Registries*... situated above the Function Definition section.
-In the JSON, the  _kogito.swf.serviceRegistries_ object accepts an array of *registries* attribute. Each registry object has the following properites:
-
-.Registry object example:
-
-[source,json]
-----
-  {
-    "name": "openshift",
-    "url": "https://bu98.serviceregistry.rhcloud.com/t/9f07ff4a-e959-49e4-b177-89f0ae5c3a2b/apis/registry/v2",
-    "authProvider":"red-hat-account"
-  }
-----
-
-The *name* is an identifier provided for the particular registry.
-The *url* is the actual url where the service registry is hosted.
-The *authProvider* is the type of authentication provided to the registry. It can have *none* and *red-hat-account* as values.
-
-.If the value is *red-hat-account* the following are required:
-* link:{red_hat_sso_login_url}[Red Hat account]
-* link:{red_hat_auth_vscode_marketplace_url}[Redhat authentication extension]
-
-Also if the auth provider is set to *red-hat-account*, a *Log in Service Registries* button is provided which when clicked navigates the user to the Service Registry login.
-
-.Log in Service Registries button in function definition section
-image::tooling/serverless-workflow-editor/swf-editor-login-service-registries-function-definition.png[]
-
-=== Connecting the extension to Apicurio Service Registries
-
-.Prerequisites
-* A * link:{red_hat_sso_login_url}[Red Hat account] with access to link:{red_hat_hybrid_cloud_console_url}[Red Hat Hybrid Cloud Console].
-* link:{red_hat_auth_vscode_marketplace_url}[Redhat authentication extension]
-
-The extension has the capability to connect to a remote Service Registry in order to enhance the auto-complete capabilities of the Workflow's Function Definitions section.
-
-Login to the link:{red_hat_hybrid_cloud_console_url}[Red Hat Hybrid Cloud Console].
-
-.Red Hat Hybrid Cloud Console Page
-image::tooling/serverless-workflow-editor/swf-editor-rhhcc-page.png[]
-
-Click on the Create Service Registry instance and provide an appropriate name for the registry.
-
-.Create Service Registry
-image::tooling/serverless-workflow-editor/swf-editor-create-service-registry-rhhcc.png[]
-
-Click on the registry created to navigate to the following page.
-
-.Service Registry page
-image::tooling/serverless-workflow-editor/swf-editor-service-registry-page-rhhcc.png[]
-
-Click on the *Upload artifact* button and fill in the necessary details and upload an artifact with openAPI specification.
-
-[NOTE] 
-====
-The *Group* is not mandatory for Apicurio but is mandatory for the extension to work. Please make sure to enter a value there.
-====
-
-.Upload tab of Apicurio Service Registry
-image::tooling/serverless-workflow-editor/swf-editor-apicurio-upload-artifact.png[]
-
-In the top right corner, click on the Kebab Menu. Click on the *Connection* drop-down to open a list of connection urls for the registry.
-Copy the *Core Registry API* url.
-
-.Exposed API's of the registry
-image::tooling/serverless-workflow-editor/swf-editor-remote-apicurio-url.png[]
-
-In the Workflow's Function Definition section of the file, click on the *Setup Service Registries* to access the settings.json.
-
-.Function Definition Section with Setup Service Registries option
-image::tooling/serverless-workflow-editor/swf-editor-vscode-setup-registry.png[]
-
-In the _settings.json_ file, add the following configuration inside the array of registries to connect the extension to the remote instance of Apicurio Service Registry(use the Core Registry API copied from the Red Hat Hybrid Cloud Console previously).
-
-.Settings.json registry configuration
-image::tooling/serverless-workflow-editor/swf-editor-remote-registry-config.png[]
-
-Save the settings and you have successfully connected to the remote Apicurio Service Registry.
-
-In the Workflow's Function Definitions section, click *Ctrl+Space* to view the list of functions available and click on the required function to auto-complete the config.
-
-.Function workflow definition section auto-complete
-image::tooling/serverless-workflow-editor/swf-editor-remote-registry-functions-section.png[]
+Now you have successfully connected to the Apicurio Registry and made use of the auto-complete feature of the extension.
 
 == Validation
 
@@ -183,7 +219,7 @@ image::tooling/serverless-workflow-editor/swf-editor-remote-registry-functions-s
 Currently validation is performed only for JSON files. The validation is based on JSON schema, and it checks only the structure of the JSON and not the content.
 ====
 
-The validation warnings and errors can be seen in the *Problems* tab. Go to *Terminal* → *New Terminal* or press *Ctrl+Shift+`* to open the terminal and then click on the problems tab to open it.
+The validation warnings and errors can be seen in the *Problems* tab. Go to *View* → *Problems* or press *Ctrl+Shift+M* to open the *Problems* tab.
 
 .Errors and warnings in problems tab
 image::tooling/serverless-workflow-editor/swf-editor-vscode-problems-tab.png[]
