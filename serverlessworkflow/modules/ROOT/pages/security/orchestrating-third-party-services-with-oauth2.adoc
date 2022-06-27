@@ -2,27 +2,27 @@ Orchestrating third party services with OAuth2 authentication
 =============================================================
 :compat-mode!:
 // Metadata:
-:description: Authentication support for OpenAPI services
+:description: Orchestrating third party services with OAuth2 authentication
 :keywords: kogito, workflow, serverless, authentication
 // Referenced documentation pages.
-:orchestration-of-opnapi-based-services: xref:service-orchestration/orchestration-of-opnapi-based-services.adoc
+:orchestration-of-opnapi-based-services: xref:service-orchestration/orchestration-of-openapi-based-services.adoc
 :configuring-openapi-services-endpoints: xref:service-orchestration/configuring-openapi-services-endpoints.adoc
-:authentication-support-for-openapi-services: xref:security/authentication-support-for-openapi-services.adoc
-:authentication-support-for-openapi-services-oauth-example: xref:security/authentication-support-for-openapi-services.adoc#ref-example-oauth-authentication
+:authentication-support-for-openapi-services: xref:security/authention-support-for-openapi-services.adoc
+:authentication-support-for-openapi-services-oauth-example: xref:security/authention-support-for-openapi-services.adoc#ref-example-oauth-authentication
 // Other links
-// TODO review the links to the examples.
-:kogito-examples-repository-url: https://github.com/wmedvede/kogito-examples
-:serverless-workflow-oauth2-orchestration-quarkus-example: https://github.com/wmedvede/kogito-examples/tree/KOGITO-7263/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus
-:serverless-workflow-oauth2-orchestration-quarkus-example-workflow-definition: https://github.com/wmedvede/kogito-examples/blob/KOGITO-7263/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/currency-exchange-workflow/src/main/resources/currency-exchange-workflow.sw.json
-:serverless-workflow-oauth2-orchestration-quarkus-example-running-the-example: https://github.com/wmedvede/kogito-examples/tree/KOGITO-7263/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus
+:kogito_sw_examples_serverless_workflow_oauth2_orchestration_url: {kogito_sw_examples_url}/serverless-workflow-oauth2-orchestration-quarkus
+:kogito_sw_examples_serverless_workflow_oauth2_orchestration_workflow_definition_url: {kogito_sw_examples_url}/serverless-workflow-oauth2-orchestration-quarkus/currency-exchange-workflow/src/main/resources/currency-exchange-workflow.sw.json
+:kogito_sw_examples_serverless_workflow_oauth2_orchestration_running_the_example_url: {kogito_sw_examples_url}/serverless-workflow-oauth2-orchestration-quarkus
 
-:quarkus-guide-security-openid-connect-client: https://quarkus.io/guides/security-openid-connect-client
-:quarkus-guide-credentials-provider: https://quarkus.io/guides/credentials-provider
-:quarkus-guide-config-reference: https://quarkus.io/guides/config-reference#environment-variables
-:quarkus-guide-config-reference-environment-variables: https://quarkus.io/guides/config-reference#environment-variables
+:quarkus_guide_security_openid_connect_client_url: {quarkus_guides_base_url}/security-openid-connect-client
+:quarkus_guide_credentials_provider_url: {quarkus_guides_base_url}/credentials-provider
+:quarkus_guide_config_reference_url: {quarkus_guides_base_url}/config-reference
+:quarkus_guide_config_reference_environment_variables_url: {quarkus_guides_base_url}/config-reference#environment-variables
 
-:cnf-serverless-workflow-function-definition: https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#using-functions-for-restful-service-invocations
-:cnf-serverless-workflow-action-data-filters: https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Action-data-filters
+:spec_doc_functions_for_custom_function_types_url: {spec_doc_url}#defining-custom-function-types
+:spec_doc_functions_for_restful_service_invocation_url: {spec_doc_url}#using-functions-for-restful-service-invocations
+:spec_doc_functions_for_expression_evaluation_url: {spec_doc_url}#Using-Functions-For-Expression-Evaluation
+:spec_doc_action_data_filters_url: {spec_doc_url}#Action-data-filters
 
 This guide shows how to implement and configure a Serverless Workflow that orchestrate the interaction with an Oauth2 secured REST service.
 
@@ -34,7 +34,7 @@ For information about orchestrating and configuring the OpenAPI based services, 
 
 == Introduction
 
-Imagine that you have set of applications that must resolve currency exchange calculations as part of their regular operations. For that, you need an accurate source of information to get the different exchange rates.
+Imagine that you have a set of applications that must resolve currency exchange calculations as part of their regular operations. For that, you need an accurate source of information to get the different exchange rates.
 
 Fortunately, your company has a commercial agreement with Acme Financial Services, and those rates can be queried using their Oauth2 secured services. Additionally, as confidential client, you were granted with proper credentials to access these services as part of the agreement.
 
@@ -49,11 +49,11 @@ Implement a Serverless Workflow that resolves:
 * Potential vendor lock-in problems if you want to change the provider in the future.
 * Domain specific validations, optimizations, etc.
 
-The next sections shows how to create the end-to-end solution by following the {serverless-workflow-oauth2-orchestration-quarkus-example}[serverless-workflow-oauth2-orchestration-quarkus] example.
+The next sections shows how to create the end-to-end solution by following the {kogito_sw_examples_serverless_workflow_oauth2_orchestration_url}[serverless-workflow-oauth2-orchestration-quarkus] example.
 
 [NOTE]
 ====
-To get the source code of the example you must clone the {kogito-examples-repository-url}[GitHub repository] and go to the `serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus` directory.
+To get the source code of the example you must clone the {kogito_examples_repository_url}[GitHub repository] and go to the `serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus` directory.
 ====
 
 === Services
@@ -83,7 +83,7 @@ image::security/orchestrating-third-party-services-with-oauth2/architecture-diag
 [NOTE]
 ====
 The interactions with the Oauth2 server are managed automatically by the Serverless Workflow.
-And you must only configure a {quarkus-guide-security-openid-connect-client}[Quarkus OpenId Connect Client (OIDC)] as described <<Configuration, here>>.
+And you must only configure a {quarkus_guide_security_openid_connect_client_url}[Quarkus OpenId Connect Client (OIDC)] as described <<Configuration, here>>.
 ====
 
 == Currency Exchange Workflow
@@ -133,7 +133,7 @@ The following Serverless Workflow specification defines the `currency-exchange-w
     {
       "name": "calculateExchange",
       "type": "expression",
-      "operation": "{ calculateExchangeResult: .amount * .exchangeRate }"
+      "operation": "${ { calculateExchangeResult: .amount * .exchangeRate } }"
     }
   ],
   "errors": [
@@ -248,7 +248,7 @@ The following Serverless Workflow specification defines the `currency-exchange-w
 
 === ValidateInputs
 
-To execute custom Java processing as part of the Serverless Workflow, you can use a {cnf-serverless-workflow-function-definition}[CNCF Serverless Workflow function] such as `validateInputs`.
+To execute custom Java processing as part of the Serverless Workflow, you can use a {spec_doc_functions_for_custom_function_types_url}[CNCF Serverless Workflow custom function] such as `validateInputs`.
 
 --
 .validateInputs function definition
@@ -305,7 +305,7 @@ public class ExchangeWorkflowHelper {
 
 === GetExchangeRate
 
-To access the `acme-financial-service` you can use a {cnf-serverless-workflow-function-definition}[CNCF Serverless Workflow function], such as `getExchangeRate`:
+To access the `acme-financial-service` you can use a {spec_doc_functions_for_restful_service_invocation_url}[CNCF Serverless Workflow function], such as `getExchangeRate`:
 
 --
 .getExchangeRate function definition
@@ -329,22 +329,22 @@ For the configuration above the file `acme-financial-service.yml` must be locate
 
 You can find more information in {orchestration-of-opnapi-based-services}[Orchestration of OpenAPI based services].
 
-To filter the information that must be returned to the workflow you can use a {cnf-serverless-workflow-action-data-filters}[CNCF Serverless Workflow actionDataFilter] such as:
+To filter the information that must be returned to the workflow you can use a {spec_doc_action_data_filters_url}[CNCF Serverless Workflow actionDataFilter] such as:
 
 --
 .actionDataFilter to pass the `getExchangeRate` results:
 [source, json]
 ----
   "actionDataFilter": {
-    "results": "${ {exchangeRate: .rate} }" <1> <2>
+    "results": "${ {exchangeRate: .rate} }" <1>
   }
 ----
-<1> Merge the `"rate"` property value coming in the `acme-financial-service` invocation result, into value into a workflowdata property `"exchangeRate"`.
+<1> Merge the `"rate"` property value coming in the `acme-financial-service` invocation result, into a workflowdata property `"exchangeRate"`.
 --
 
 === CalculateExchange
 
-To calculate the currency exchange you can use a {cnf-serverless-workflow-function-definition}[CNCF Serverless Workflow function], such as `calculateExchange`:
+To calculate the currency exchange you can use a {spec_doc_functions_for_expression_evaluation_url}[CNCF Serverless Workflow function], such as `calculateExchange`:
 
 --
 .calculateExchange function definition
@@ -353,7 +353,7 @@ To calculate the currency exchange you can use a {cnf-serverless-workflow-functi
 {
   "name": "calculateExchange", <1>
   "type": "expression", <2>
-  "operation": "{ calculateExchangeResult: .amount * .exchangeRate }" <3>
+  "operation": "${ { calculateExchangeResult: .amount * .exchangeRate } }" <3>
 }
 ----
 
@@ -362,7 +362,7 @@ To calculate the currency exchange you can use a {cnf-serverless-workflow-functi
 <3> Specifies that the function returns a JSON object with a property `"calculateExchangeResult"` that contains the calculation.
 --
 
-To filter the information that must be returned to the workflow you can use a {cnf-serverless-workflow-action-data-filters}[CNCF Serverless Workflow actionDataFilter] such as:
+To filter the information that must be returned to the workflow you can use a {spec_doc_action_data_filters_url}[CNCF Serverless Workflow actionDataFilter] such as:
 
 --
 .actionDataFilter to pass the `calculateExchange` results:
@@ -441,7 +441,7 @@ components:
 <5> Specifies that the `exchangeRate` operation is secured with the `acme-financial-oauth` security scheme.
 <6> Response type specification.
 <7> `acme-financial-oauth` security scheme specification.
-<8> Security scheme type. This information indicates that you must configure a {quarkus-guide-security-openid-connect-client}[Quarkus OpenId Connect Client (OIDC)] with name `acme_financial_oauth` to execute the operation.
+<8> Security scheme type. This information indicates that you must configure a {quarkus_guide_security_openid_connect_client_url}[Quarkus OpenId Connect Client (OIDC)] with name `acme_financial_oauth` to execute the operation.
 <9> Authentication flow to use, and flow information.
 --
 
@@ -471,7 +471,7 @@ quarkus.oidc-client.acme_financial_oauth.credentials.client-secret.value=secret 
 ----
 
 <1> Is the package name for the automatically generated classes that implements the access to the all operations defined in the file `acme-financial-service.yml`.
-<2> Is the root URL to access all the operations defined in the file `acme-financial-service.yml`. For the `exchangeRate` operation, an absolute URL such as `http://localhost:8483/financial-service/exchange-rate` is automatically generated.
+<2> Is the root URL to access all the operations defined in the file `acme-financial-service.yml`. For the `exchangeRate` operation, an absolute URL such as \http://localhost:8483/financial-service/exchange-rate is automatically generated.
 
 <3> Disable the Oauth2 server endpoints discovery since the endpoints provided in the <<acme-financial-service-yml, acme-financial-service.yml>> file will be used instead.
 <4> Is the authentication URL of the Oauth2 server.
@@ -480,13 +480,13 @@ quarkus.oidc-client.acme_financial_oauth.credentials.client-secret.value=secret 
 <7> Is the method to use at the time to send the client-secret for the authentications when the client grant type is used.
 <8> Is the client secret to authenticate the Serverless Workflow against the authorization service when the client grant type is used. This secret must be provided by Acme.
 
-To configure the `acme_financial_service_oauth` {quarkus-guide-security-openid-connect-client}[Quarkus OpenId Connect Client (OIDC)] you must follow the rules described in {authentication-support-for-openapi-services-oauth-example}[Example of OAuth2 authentication].
+To configure the `acme_financial_service_oauth` {quarkus_guide_security_openid_connect_client_url}[Quarkus OpenId Connect Client (OIDC)] you must follow the rules described in {authentication-support-for-openapi-services-oauth-example}[Example of OAuth2 authentication].
 And the particular attributes depends on the Oauth2 server and authorization flow to use, you can get this information from the OpenAPI specification of the target service <<acme-financial-service-yml, acme-financial-service.yml>>.
 
 [NOTE]
 ====
-You can use the alternatives defined in the {quarkus-guide-config-reference}[Quarkus configuration reference guide] to configure these properties.
-A common usage is to define {quarkus-guide-config-reference-environment-variables}[environment variables] to set the authentication secrets, and you can also use the {quarkus-guide-credentials-provider}[Quarkus Credentials Provider] framework.
+You can use the alternatives defined in the {quarkus_guide_config_reference_url}[Quarkus configuration reference guide] to configure these properties.
+A common usage is to define {quarkus_guide_config_reference_environment_variables_url}[environment variables] to set the authentication secrets, and you can also use the {quarkus_guide_credentials_provider_url}[Quarkus Credentials Provider] framework.
 ====
 
 == Running the example
