@@ -11,8 +11,8 @@
 // External pages
 :quarkus_testing_guide_integration_test: {quarkus_testing_guide}#quarkus-integration-test
 :quarkus_testing_guide_test_resource: {quarkus_testing_guide}#quarkus-test-resource
-:availableTestcontainers: https://github.com/kiegroup/kogito-runtimes/tree/main/kogito-test-utils/src/main/java/org/kie/kogito/testcontainers
-:quarkusTestResourceLifecycleManager_class: https://github.com/quarkusio/quarkus/blob/main/test-framework/common/src/main/java/io/quarkus/test/common/QuarkusTestResourceLifecycleManager.java
+:available_test_containers: https://github.com/kiegroup/kogito-runtimes/tree/main/kogito-test-utils/src/main/java/org/kie/kogito/testcontainers
+:quarkus_test_tesource_lifecycle_manager_class: https://github.com/quarkusio/quarkus/blob/main/test-framework/common/src/main/java/io/quarkus/test/common/QuarkusTestResourceLifecycleManager.java
 
 This document describes how to test your Kogito Serverless Workflow application integrated with PostgreSQL persistence.
 
@@ -54,7 +54,7 @@ This allows us to use predefined test resources such as: **PostgreSqlQuarkusTest
 
 [NOTE]
 ====
-This test framework allows the usage of predefined test resources,  you can see {availableTestcontainers}[here] that can be used to test more complex scenarios.
+This test framework allows the usage of predefined test resources,  you can see {available_test_containers}[here] that can be used to test more complex scenarios.
 ====
 
 Next, add the test annotations to the integration test resources as the example below:
@@ -83,7 +83,7 @@ That container has a full set of default configuration that are included in the 
 
 [NOTE]
 ====
-As a test resource, it will run its {quarkusTestResourceLifecycleManager_class}[QuarkusTestResourceLifecycleManager] before the service test execution. More related info in {quarkus_testing_guide_test_resource}[Starting services before the Quarkus application starts].
+As a test resource, it will run its {quarkus_test_tesource_lifecycle_manager_class}[QuarkusTestResourceLifecycleManager] before the service test execution. More related info in {quarkus_testing_guide_test_resource}[Starting services before the Quarkus application starts].
 ====
 
 The container has a full set of default configuration, such as PostgreSQL docker image name, default user, default password,...
