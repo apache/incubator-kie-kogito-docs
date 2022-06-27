@@ -35,7 +35,7 @@ void setupPostReleaseJob() {
 
             stringParam('BUILD_BRANCH_NAME', "${GIT_BRANCH}", 'Set the Git branch to checkout')
 
-            stringParam('PROJECT_VERSION', '', 'Project version.')
+            stringParam('KOGITO_VERSION', '', 'Kogito final version.')
 
             booleanParam('SEND_NOTIFICATION', true, 'In case you want the pipeline to send a notification on CI channel for this run.')
         }

@@ -41,7 +41,8 @@ pipeline {
 
                     // Verify version is set and if on right release branch
                     assert getKogitoVersion()
-                    assert getBuildBranch() == util.getReleaseBranchFromVersion(getProjectVersion())
+                    // TODO to set back
+                    // assert getBuildBranch() == util.getReleaseBranchFromVersion(getKogitoVersion())
                 }
             }
         }
@@ -49,25 +50,25 @@ pipeline {
         stage('Update Kogito Docs release branch') {
             steps {
                 script {
-                    dir('kogito-docs') {
+                    dir("kogito-docs-${getBuildBranch()}") {
                         deleteDir()
                         checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
                         sh "git checkout ${getBuildBranch()}"
 
                         updateYaml('serverlessworkflow/antora.yml') { swfAntoraConfig ->
-                            swfAntoraConfig.version = getProjectVersion()
+                            swfAntoraConfig.version = getKogitoVersion()
                         }
 
                         // Add changed files, commit, open and merge PR
                         if (githubscm.isThereAnyChanges()) {
-                            githubscm.commitChanges("Release Kogito ${getProjectVersion()}")
+                            githubscm.commitChanges("Release Kogito ${getKogitoVersion()}")
                             githubscm.pushObject('origin', getBuildBranch(), getGitAuthorCredsID())
                         } else {
                             echo "No changes to push."
                         }
 
                         // Tag repository
-                        githubscm.tagLocalAndRemoteRepository('origin', getProjectVersion(), getGitAuthorCredsID(), env.BUILD_TAG, true)
+                        githubscm.tagLocalAndRemoteRepository('origin', getKogitoVersion(), getGitAuthorCredsID(), env.BUILD_TAG, true)
                     }
                 }
             }
@@ -79,16 +80,19 @@ pipeline {
                     dir('kogito-docs') {
                         deleteDir()
                         checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), 'main', false, getGitAuthorCredsID()))
-                        sh "git checkout ${getBuildBranch()}"
+                        sh "git checkout main"
 
                         updateYaml('antora-playbook.yml') { antoraConfig ->
-                            antoraConfig.content.sources[0].tags.add([ name: getProjectVersion() ])
+                            if (!antoraConfig.content.sources[0].tags) {
+                                antoraConfig.content.sources[0].tags = []
+                            }
+                            antoraConfig.content.sources[0].tags.add([ name: getKogitoVersion() ])
                         }
 
                         // Add changed files, commit, open and merge PR
                         if (githubscm.isThereAnyChanges()) {
-                            githubscm.commitChanges("Release Kogito ${getProjectVersion()}")
-                            githubscm.pushObject('origin', getBuildBranch(), getGitAuthorCredsID())
+                            githubscm.commitChanges("Release Kogito ${getKogitoVersion()}")
+                            githubscm.pushObject('origin', 'main', getGitAuthorCredsID())
                         } else {
                             echo "No changes to push."
                         }
@@ -118,8 +122,8 @@ void sendNotification() {
 // Getter / Setter
 //////////////////////////////////////////////////////////////////////////////
 
-String getProjectVersion() {
-    return params.PROJECT_VERSION
+String getKogitoVersion() {
+    return params.KOGITO_VERSION
 }
 
 String getBuildBranch() {
