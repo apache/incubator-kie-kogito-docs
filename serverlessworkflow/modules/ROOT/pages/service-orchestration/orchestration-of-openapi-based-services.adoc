@@ -1,5 +1,5 @@
-Orchestration of OpenAPI based services
-=======================================
+Orchestrating the OpenAPI services
+==================================
 :compat-mode!:
 // Metadata:
 :description: Orchestration of OpenAPI based services
@@ -25,17 +25,26 @@ Orchestration of OpenAPI based services
 :camel-k-integration: xref:integrations/camel-k-integration.adoc
 :authention-support-for-openapi-services: xref:security/authention-support-for-openapi-services.adoc
 
-This document describes how to call REST services via an link:{open_api_spec_url}[OpenAPI] specification file.
+This document describes how to call REST services using an link:{open_api_spec_url}[OpenAPI] specification file.
 
-The examples in this document assume that you have the Kogito tooling installed and have created a Serverless Workflow project. 
+.Prerequisites
 
-For more information about the tooling, see {getting-familiar-with-our-tooling}[Using Serverless Workflow tooling]. To create a new project, see {create-your-first-workflow-service}[Creating your first Serverless Workflow service].
+The examples in this document assumes that you have following prerequisites:
 
-== The OpenAPI Function Definition
+* You have installed the Kogito tooling.
++
+For more information about the tooling, see {getting-familiar-with-our-tooling}[Using Serverless Workflow tooling].
 
-Kogito follows the link:{spec_doc_url}#using-functions-for-restful-service-invocations[CNCF Serverless Workflow specification function definition] to make calls to remote REST services using an OpenAPI specification reference, as shown in the following example:
+* You have created a Serverless Workflow project.
++
+For more information about creating a Serverless Workflow project, see {create-your-first-workflow-service}[Creating your first Serverless Workflow service].
 
-.An example of an OpenAPI function definition
+[[con-openapi-function-definition]]
+== OpenAPI function definition
+
+Kogito follows the link:{spec_doc_url}#using-functions-for-restful-service-invocations[CNCF Serverless Workflow specification function definition] to send requests to remote REST services using an OpenAPI specification reference as shown in the following example:
+
+.Example of an OpenAPI function definition
 [source,json]
 ----
 {
@@ -50,69 +59,87 @@ Kogito follows the link:{spec_doc_url}#using-functions-for-restful-service-invoc
 
 [NOTE]
 ====
-The function `type` attribute can be ommited since the link:{spec_doc_url}#Function-Definition[default value] is `rest`.
+In the previous example function definition, the `type` attribute can be ommited as the link:{spec_doc_url}#Function-Definition[default value] is `rest`.
 ====
 
-The `operation` attribute is a string composed by:
+In the previous example, the `operation` attribute is a string, which is composed using the following parameters:
 
-1. The URI that the engine uses to locate the specification file
-2. The operation identifier (`operationId`), which you find in the link:{open_api_spec_url}#fixed-fields-7[OpenAPI specification file].
+* URI that the engine uses to locate the specification file, such as `classpath`.
+* Operation identifier. You can find the operation identifier in the link:{open_api_spec_url}#fixed-fields-7[OpenAPI specification file].
 
 Kogito supports the following URI schemes:
 
-* `classpath` for files located in the application project under the `src/main/resources` folder. The `classpath` is the default scheme when you don't define a scheme in the string. For example `classpath:/myopenapifile.yaml` or `/myopenapifile.yaml`. In this example, the file location is in `src/main/resources/myopenapifile.yaml` path
-* `file` for files located in the filesystem
-* `http` or `https` for remotely located files
+* `classpath`: This URI scheme is supported for the files that are located in the `src/main/resources` folder of the application project. The `classpath` is the default URI scheme. If you do not define a URI scheme as shown in the following examples, the file location is defined as `src/main/resources/myopenapifile.yaml`:
++
+--
+`classpath:/myopenapifile.yaml`
+
+`/myopenapifile.yaml`
+-- 
+
+* `file`: This URI scheme is supported for the files that are located in the file system.
+* `http` or `https`: This URI scheme is supported for remotely located files.
 
 [IMPORTANT]
 ====
-The OpenAPI specification files must be available only on build time. This is because, during runtime, Kogito leverages its internal code generation feature to make the REST calls. So {build-workflow-image-with-quarkus-cli}[once you build your application image], the Kogito engine won't access the files anymore.
+The OpenAPI specification files must be available during the build time, because Kogito leverages the internal code generation feature to send requests on runtime. Therefore, when you build your application image, the engine will not have the access to the files. 
+
+For more information about building Serverless Workflow images, see {build-workflow-image-with-quarkus-cli}[Building Serverless Workflow Images using Quarkus CLI].
 ====
 
-== Getting Access to the OpenAPI Specification Files
+To get started with orchestrating the OpenAPI based services, you must locate the REST services OpenAPI specification files. Usually, REST services expose their interface using the OpenAPI specification. For example, see the link:https://petstore3.swagger.io/api/v3/openapi.json[Petstore API].
 
-To get started, you must locate the REST services OpenAPI specification files.
+In case, the OpenAPI service that you want to add to the Serverless Workflow does not contain a specification file, you can either create a specification file or update the OpenAPI service to generate and expose the file.
 
-Usually, REST services expose their interface via the OpenAPI specification. For example, see the link:https://petstore3.swagger.io/api/v3/openapi.json[Petstore API].
-
-If the service you want to add to the workflow doesn't have the specification file, you can either create one or update the service to generate and expose it.
-
-The vast majority of the popular REST frameworks already support the OpenAPI specification generator. For example:
+There are various REST frameworks that support the OpenAPI specification generation, including:
 
 * Java
-** link:{quarkus_swagger_url}[Quarkus Swagger]
-** link:{spring_swagger_url}[Spring Boot Docs]
+** link:{quarkus_swagger_url}[Quarkus - Using OpenAPI and Swagger UI]
+** link:{spring_swagger_url}[Spring Boot Documentation]
 * Go
-** link:{go_swagger_url}[Go Swagger]
+** link:{go_swagger_url}[Go Swagger Documentation]
 * Python
 ** link:{python_flasgger_url}[Flasgger]
 * .NET
-** link:{dotnet_swagger_url}[ASP.NET Core web API documentation with Swagger / OpenAPI]
+** link:{dotnet_swagger_url}[ASP.NET Core web API documentation with Swagger/OpenAPI]
 * TypeScript
 ** link:{npm_swagger_url}[Swagger UI Express]
 * PHP
-** link:{php_swagger_url}[Swagger PHP]
+** link:{php_swagger_url}[swagger-php]
 
-If you don't have access to the REST service to add the OpenAPI specification generator, you can use the link:{swagger_inspector_url}[Swagger Inspector] to generate the file. This tool will generate the specification file based on HTTP traffic.
+If you do not have access to the REST service, which is used to add the OpenAPI specification generator, you can use Swagger Inspector. The link:{swagger_inspector_url}[Swagger Inspector] generates the specification file based on HTTP traffic.
 
-== Making REST Calls based on the OpenAPI Specification
+[[proc-send-request-rest-call-openapi-spec]]
+== Sending requests with the REST calls based on the OpenAPI specification
 
-To make REST calls using OpenAPI specification files, you must define the function references and then use these functions in the workflow states.
+To send requests with the REST calls that are based on the OpenAPI specification files, you need to perform the following procedures:
 
-=== Defining the OpenAPI functions
+. Define the function references
+. Access the defined functions in the Serverless Workflow states
 
-Once you have access to the OpenAPI specification files, you can create the function definitions in the workflow. You can use the link:{kogito_sw_examples_url}/serverless-workflow-temperature-conversion[serverless-workflow-temperature-conversion] example application as a reference.
+[[proc-define-openapi-functions]]
+=== Defining OpenAPI functions in Serverless Workflow
+
+To send requests with the REST calls, first you need to define the OpenAPI functions. 
+
+.Prerequisites
+* You have access to the OpenAPI specification files.
++
+Once you have access to the OpenAPI specification files, you can define the functions in the Serverless Workflow. 
+
+You can also use the link:{kogito_sw_examples_url}/serverless-workflow-temperature-conversion[`serverless-workflow-temperature-conversion`] example application as a reference.
 
 .Procedure
-Copy the OpenAPI specification files of the service(s) you want to invoke into your Kogito workflow service directory `src/main/resources/specs`. In this example, the multiplication and subtraction services.
+. Copy the OpenAPI specification files of the service(s) that you want to invoke into your Serverless Workflow service directory that is `src/main/resources/specs`.
++
+--
+In the `serverless-workflow-temperature-conversion` example application, the services that are invoked include multiplication and subtraction services. 
 
-The files were extracted from the running multiplication and subtraction services. They are regular REST Quarkus applications that expose their OpenAPI specification files via the link:{quarkus_swagger_url}[Quarkus Swagger extension].
+The OpenAPI specification files in `serverless-workflow-temperature-conversion` example application are extracted from the running multiplication and subtraction services. The REST Quarkus applications expose the related OpenAPI specification files using the link:{quarkus_swagger_url}[Quarkus Swagger extension].
 
-The `operationId` is necessary to add a reference to the proper operation you want to make the REST invocation.
+Following is an example OpenAPI specification of the multiplication REST service:
 
-In the Multiplication REST Service OpenAPI specification, you can locate the `operationId` attribute in the `paths` section, as shown in the example:
-
-.Location of the `operationId` attribute
+.Example multiplication REST service OpenAPI specification
 [source,yaml]
 ----
 openapi: 3.0.3
@@ -158,12 +185,14 @@ components:
           type: number
 ----
 
-<1> The `operationId` of the REST operation
-<2> The data structure of the REST operation
+<1> `operationId` of the REST operation. The `operationId` in an OpenAPI specification is necessary to add a reference to the operation that you want to use in REST invocation.
+<2> Data structure of the REST operation.
+--
 
-Use the `operationId` to compose the final URI in the function definition as shown in the example:
-
-.OpenAPI Functions definition in the Temperature Conversion example
+. Use the same `operationId` to compose the final URI in the function definition as shown in the following example:
++
+--
+.OpenAPI functions definition in the Temperature Conversion example
 [source,json]
 ----
 {
@@ -180,21 +209,33 @@ Use the `operationId` to compose the final URI in the function definition as sho
 }
 ----
 
-<1> The OpenAPI function definition of the multiplication function
-<2> The OpenAPI function definition of the subtraction function
+<1> Function definition for OpenAPI multiplication function
+<2> Function definition for OpenAPI subtraction function
+--
 
-=== Acessing the Functions in the Workflow States
+[[proc-access-function-sw-states]]
+=== Accessing functions in the Serverless Workflow states
 
-The next step is to use the function definitions in the workflow states. 
+After defining the function definitions, you can access the defined functions in the Serverless Workflow states.
 
-Any link:{spec_doc_url}#Action-Definition[workflow actions] can call a function definition, having a similar way of referencing the functions that you previously defined in the workflow.
+.Prerequisites
+* You have defined the OpenAPI functions in Serverless Workflow. For more information, see <<proc-define-openapi-functions, Defining OpenAPI functions in Serverless Workflow>>.
 
-To map the function's arguments, refer to the parameters described in the OpenAPI specification file, link:{open_api_spec_url}#operation-object[operations section]. In the following example, the parameters are part of the request body.
+.Procedure
+. Use a link:{spec_doc_url}#Action-Definition[workflow action] to call a function definition that you added.
++
+--
+Any workflow action that consists of a similar approach of referencing the functions that you used in the function definition can call a defined function.
+--
 
-The Kogito engine will map the parameter naming according to the OpenAPI specification. Then, you can use {understanding-jq-expressions}[JQ expressions] to extract the payload data and map it to the required parameters.
+. To map the arguments of a function, you can refer to the parameters that are described link:{open_api_spec_url}#operation-object[Operation Object] section of OpenAPI specification.
++
+--
+Also, the engine maps the parameter naming according to the OpenAPI specification. After that, you can use {understanding-jq-expressions}[jq expressions] to extract the payload data and map the data to the required parameters.
 
-In the example application, the functions are called sequentially in an link:{spec_doc_url}#operation-state[Operation State]:
+In the following example, the parameters are part of the request body:
 
+.Example of mapping a function arguments
 [source,json]
 ----
 {
@@ -242,15 +283,17 @@ In the example application, the functions are called sequentially in an link:{sp
 }
 ----
 
-<1> The Operation State definition
+<1> Operation State definition
 <2> Reference to the `subtraction` function
 <3> Definition of the `subtraction` function arguments
 <4> Reference to the `multiplication` function
 <5> Definition of the `multiplication` function arguments
 
-For an example mapping parameters in the request path rather than in the body, see the PetStore API example:
+In the `serverless-workflow-temperature-conversion` example application, the functions are called sequentially in an link:{spec_doc_url}#operation-state[Operation State] as shown in the previous example.
 
-.Petstore OpenAPI specification excerpt
+For more information about mapping parameters in the request path instead of request body, you can refer to the following PetStore API example:
+
+.Example Petstore OpenAPI specification excerpt
 [source,json]
 ----
 {
@@ -279,12 +322,7 @@ For an example mapping parameters in the request path rather than in the body, s
 }
 ----
 
-[NOTE]
-====
-Only the highlighted excerpt of the OpenAPI specification file is shown in this example.
-====
-
-In this example, only one parameter named `petId` goes in the path. In this case, this is what an invocation to this function looks like:
+Following is an example invocation of a function, in which only one parameter named `petId` is added in the request path:
 
 .Example of calling the PetStore function
 [source,json]
@@ -306,58 +344,69 @@ In this example, only one parameter named `petId` goes in the path. In this case
   ]
 }
 ----
+<1> State definition, such as `CallPetStore`.
+<2> Function definition reference. In the previous example, the function definition `getPetById` is for PetStore OpenAPI specification.
+<3> Arguments definition. In the previous example, Kogito adds the argument `petId` to the request path before sending a request.
+--
 
-[NOTE]
-====
-Only the highlighted excerpt of the workflow definition file is shown in this example.
-====
+[[proc-configuring-openapi-service-endpoint-url]]
+== Configuring the endpoint URL of OpenAPI services
 
-<1> The state definition
-<2> The function definition reference, assuming that you have a function definition named `getPetById` for the PetStore OpenAPI specification
-<3> The arguments definition. In this example, Kogito will add the argument `petId` to the request path before making the call.
+After accessing the function definitions in Serverless Workflow states, you can configure the endpoint URL of OpenAPI services. 
 
-== Configuring the OpenAPI Services endpoint URL
+Kogito uses the link:{quarkus_openapi_gen_url}[Quarkus OpenAPI Generator extension] and the link:{quarkus_rest_client_url}[Quarkus REST Client], and all the configurations are based on these components, which are backed using {quarkus_config_url}[Quarkus Configuration].
 
-Under the hood, Kogito uses the link:{quarkus_openapi_gen_url}[Quarkus OpenAPI Generator extension] and the link:{quarkus_rest_client_url}[Quarkus REST Client]. All the configurations are based on these two components backed up by link:{quarkus_config_url}[Quarkus Configuration].
+.Prerequisites
+* You have defined the function definitions in the Serverless Workflow. For more information, see <<proc-define-openapi-functions, Defining OpenAPI functions in Serverless Workflow>>.
+* You have the access to the defined functions in the Serverless Workflow states. For more information, see <<proc-access-function-sw-states, Accessing functions in the Serverless Workflow states>>.
 
-To configure the endpoints, you must use the sanitized OpenAPI specification file name as the link:{quarkus_rest_client_url}#create-the-configuration[REST client configuration key]. For example, for a file named `subtraction.yaml`, the configuration key is `subtraction_yaml`.
+.Procedure
+. To configure the endpoints, you must use the sanitized OpenAPI specification file name as the link:{quarkus_rest_client_url}#create-the-configuration[REST client configuration key]. The configuration key must be set as a valid environment variable.
++
+--
+For example, a file named as `subtraction.yaml` contains the configuration key as `subtraction_yaml`.
 
-[TIP]
-====
-For more information about how Kogito sanitizes the file name, see link:{mp_config_env_vars_url}[Environment Variables Mapping Rules]. The key must be a valid environment variable.
-====
+For more information about how Kogito sanitizes file names, see link:{mp_config_env_vars_url}[Environment Variables Mapping Rules].
+--
 
-This configuration key is used on every property related to the Quarkus REST Client. For example, to configure the URL, you can use:
-
+. You can use the same configuration key on each property that is related to the Quarkus REST client as shown in the following URL configuration example:
++
+--
 .Example of URL configuration
 [source,properties]
 ----
 quarkus.rest-client.subtraction_yaml.url=http://myserver.com
 ----
+--
 
-To avoid hardcoding the URL in the application properties you can use link:{quarkus_config_url}#with-environment-variables[environment variables substitution], as shown in the example:
-
-.Example of URL configuration with Environment Variables
+. To avoid hardcoding the URL in the application properties, you can use link:{quarkus_config_url}#with-environment-variables[environment variables substitution], as shown in the following example:
++
+--
+.Example of URL configuration with environment variables
 [source,properties]
 ----
 quarkus.rest-client.subtraction_yaml.url=${SUBTRACTION_URL:http://myserver.com}
 ----
 
-In this example, if the environment variable `SUBTRACTION_URL` is not found, the URL falls back to `http://myserver.com`. 
+In case the environment variable `SUBTRACTION_URL` is not found in the previous example, the URL redirects to `http://myserver.com`.
 
 [TIP]
 ====
-You can use this feature to configure the application in Kubernetes environments where the environment variable can be injected in application's pod.
+You can also use environment variables to configure the application in Kubernetes environments, in which variables can be injected into the pod of the application.
 ====
 
-In a future release, Kogito will have a Kubernetes Service Discovery feature. With this feature, you will point to a Kubernetes or Knative object you want to call and the engine will automatically configure the endpoints for you once you deploy it in the cluster.
+For more information about endpoints and general configuration, see {configuring-openapi-services-endpoints}[Configuring OpenAPI services endpoints].
 
-For more information about endpoints and general configuration, please see {configuring-openapi-services-endpoints}[Configuring OpenAPI Services Endpoints]. 
+[NOTE]
+====
+In a future release, Kogito will provide support for Kubernetes Service Discovery feature. Using the Kubernetes Service Discovery feature, you can point to a Kubernetes or Knative object that you want to call. After that, the engine will automatically configure the endpoints once you deploy the endpoints in the cluster.
+====
+--
 
 == Additional resources
 
-- {configuring-openapi-services-endpoints}[Configuring OpenAPI Services Endpoints]
-- {camel-k-integration}[Camel K Integration]
-- {authention-support-for-openapi-services}[Authentication Support for OpenAPI Services]
+* {configuring-openapi-services-endpoints}[Configuring OpenAPI services endpoints]
+* {camel-k-integration}[Integrating Camel K]
+* {authention-support-for-openapi-services}[Authentication for OpenAPI services in Serverless Workflow]
 
 include::../../pages/_common-content/report-issue.adoc[]
