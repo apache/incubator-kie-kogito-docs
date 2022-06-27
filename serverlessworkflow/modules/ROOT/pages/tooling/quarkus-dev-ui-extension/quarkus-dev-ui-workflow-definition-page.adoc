@@ -1,0 +1,49 @@
+= Kogito Serverless Workflow Definitions page
+
+The Workflow Definitions Page shows the list of available Workflow Definitions that you can use to trigger Cloud Events and start Workflow Instances. It provides a <<Workflow Definition filters,filter>> to search for the Definitions and has a <<Workflow Definitions table,table>> which shows the list of available Workflow Definitions.
+
+.The Workflow Definitions page
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-definitions.png[]
+
+== Workflow Definitions table
+
+.The table provides the following details of the Workflow Definitions
+* *Workflow Name*: The name of the Workflow Definition.
+* *Endpoint*: The URL to the Workflow Definition.
+* *Actions*: Provides a button to start a new Workflow.
+
+== Workflow Definition filters
+
+.The Workflow Definitions filter
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-definitions-filter.png[]
+
+You can filter a given Workflow Definition by typing the *Workflow Name* in the *Filter by workflow name* search bar and then click on the *Apply Filter* button.The applied filters appear as a chip below the search bar.You can clear the required filters by using the 'x' button in each chip.
+Click on the *Refresh* icon to fetch any newly added Workflow Definitions.
+The *Reset to default* button clears all the applied filters (default).
+
+== Trigger Cloud Event page
+
+Clicking on the play button in the *Actions* column of Workflow Definitions table navigates you to the Tirgger Cloud Events page.
+
+.Trigger Cloud Event page
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-trigger-cloud-events.png[]
+
+You can input the right *Type* and *Data* and click on the *Send* button to start a Workflow.
+The *Reset* button can be used to clear any entered values.
+
+You can also make use of the *Business key* text box to provide a custom Businesskey value to the Workflow Instance. If it is left blank, an auto-generated Business Key will be provided to the Workflow Instance.
+
+.Example values to trigger a workflow
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-tirgger-cloud-event-values.png[]
+
+On successful start of the the Workflow Instance, a success alert pops-up on the top. The alert has a *Go to workflow list* which can be used to navigate to the xref:tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.adoc[Workflow  Instances page]. Clicking on the 'x' closes the alert.
+
+.Trigger Workflow success alert
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-tirgger-cloud-event-success-alert.png[]
+
+If the values entered are not correct, a failure alert pops-up on the top. It has a *View Details* button to view the error message and a *Go to workflow list* to navigate to the xref:tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.adoc[Workflow  Instances page]. Clicking on the 'x' closes the alert.
+
+.Trigger Workflow failure alert
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-tirgger-cloud-event-fail-alert.png[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
