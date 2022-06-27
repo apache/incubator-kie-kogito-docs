@@ -101,7 +101,7 @@ image::security/orchestrating-third-party-services-with-oauth2/currency-exchange
 .. If validation failed, no transition, finalize the workflow with the error execution status.
 . Call `acme-financial-service` to get the exchange rate:
 .. If the call is successful, transition to (4).
-.. If the call fails, transition to (5).
+.. If the call fails, transition to (6).
 . Calculate the currency exchange and transition to (5).
 . Set the successful execution status and finalize the workflow execution.
 . Set the error execution status and finalize the workflow execution.
@@ -499,9 +499,9 @@ To run the example you must follow these steps:
 
 [source, bash]
 ----
-$ git clone https://github.com/kiegroup/kogito-examples.git
+git clone https://github.com/kiegroup/kogito-examples.git
 
-$ cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus
 ----
 
 === Build the example
@@ -511,7 +511,7 @@ $ cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orc
 
 [source, bash]
 ----
-$ mvn clean install
+mvn clean install
 ----
 
 === Start Keycloak
@@ -521,18 +521,18 @@ $ mvn clean install
 
 [source, bash]
 ----
-$ cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/scripts
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/scripts
 
-$ cd ./startKeycloak.sh
+cd ./startKeycloak.sh
 ----
 
 Alternatively, you can use docker-compose following this procedure:
 
 [source, bash]
 ----
-$ cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/docker-compose
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/docker-compose
 
-$ docker-compose up
+docker-compose up
 ----
 
 === Start Acme Financial Service
@@ -542,9 +542,9 @@ $ docker-compose up
 
 [source, bash]
 ----
-$ cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/acme-financial-service
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/acme-financial-service
 
-$ java -jar target/quarkus-app/quarkus-run.jar
+java -jar target/quarkus-app/quarkus-run.jar
 ----
 
 === Start Currency Exchange Workflow
@@ -554,9 +554,9 @@ $ java -jar target/quarkus-app/quarkus-run.jar
 
 [source, bash]
 ----
-$ cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/currency-exchange-workflow
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/currency-exchange-workflow
 
-$ java -jar target/quarkus-app/quarkus-run.jar
+java -jar target/quarkus-app/quarkus-run.jar
 ----
 
 == Execution examples
