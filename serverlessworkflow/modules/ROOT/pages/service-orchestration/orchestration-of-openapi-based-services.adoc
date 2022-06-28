@@ -82,7 +82,7 @@ Kogito supports the following URI schemes:
 
 [IMPORTANT]
 ====
-The OpenAPI specification files must be available during the build time, because Kogito leverages the internal code generation feature to send requests on runtime. Therefore, when you build your application image, the engine will not have the access to the files. 
+The OpenAPI specification files must be available during the build time, because Kogito leverages the internal code generation feature to send requests on runtime. Therefore, once you have built the application image, Kogito will not have access to the files.
 
 For more information about building Serverless Workflow images, see {build-workflow-image-with-quarkus-cli}[Building Serverless Workflow Images using Quarkus CLI].
 ====
@@ -110,9 +110,9 @@ There are various REST frameworks that support the OpenAPI specification generat
 If you do not have access to the REST service, which is used to add the OpenAPI specification generator, you can use Swagger Inspector. The link:{swagger_inspector_url}[Swagger Inspector] generates the specification file based on HTTP traffic.
 
 [[proc-send-request-rest-call-openapi-spec]]
-== Sending requests with the REST calls based on the OpenAPI specification
+== Sending REST requests based on the OpenAPI specification
 
-To send requests with the REST calls that are based on the OpenAPI specification files, you need to perform the following procedures:
+To send REST requests that are based on the OpenAPI specification files, you need to perform the following procedures:
 
 . Define the function references
 . Access the defined functions in the Serverless Workflow states
@@ -130,7 +130,7 @@ Once you have access to the OpenAPI specification files, you can define the func
 You can also use the link:{kogito_sw_examples_url}/serverless-workflow-temperature-conversion[`serverless-workflow-temperature-conversion`] example application as a reference.
 
 .Procedure
-. Copy the OpenAPI specification files of the service(s) that you want to invoke into your Serverless Workflow service directory that is `src/main/resources/specs`.
+. Copy the OpenAPI specification files of the service(s) you want to invoke into your Serverless Workflow service directory, which can be `src/main/resources/specs`.
 +
 --
 In the `serverless-workflow-temperature-conversion` example application, the services that are invoked include multiplication and subtraction services. 
@@ -228,7 +228,7 @@ After defining the function definitions, you can access the defined functions in
 Any workflow action that consists of a similar approach of referencing the functions that you used in the function definition can call a defined function.
 --
 
-. To map the arguments of a function, you can refer to the parameters that are described link:{open_api_spec_url}#operation-object[Operation Object] section of OpenAPI specification.
+. To map the arguments of a function, you can refer to the parameters described in the link:{open_api_spec_url}#operation-object[Operation Object] section of OpenAPI specification.
 +
 --
 Also, the engine maps the parameter naming according to the OpenAPI specification. After that, you can use {understanding-jq-expressions}[jq expressions] to extract the payload data and map the data to the required parameters.
