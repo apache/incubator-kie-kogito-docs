@@ -1,1 +1,154 @@
-//= Orchestration-based SAGA pattern
+= Orchestration-based SAGA pattern
+=====================================================
+06-27-2022
+:compat-mode!:
+// Metadata:
+:description: Saga Pattern use case example
+:keywords: kogito, workflow, serverless, saga, saga pattern, consistency, microservices, orchestration, orchestrator
+
+== Brief introduction to Saga pattern
+
+Saga is a design pattern to manage data consistency across participants in distributed transaction scenarios.
+
+In a microservice architecture, a participant could be defined as a microservice, responsible to perform actions related to its business domain.
+Saga is meant to provide transaction management using a sequence of steps.
+
+While executing a step, failures might happen, in this situation, a sequence of compensating actions are executed to undo the changes that were made during the execution, or to leave the system in a known termination state, aiming for consistency.
+
+== The order fulfillment example
+
+This is a very common use case, present in many e-commerce companies and for sure it should be familiar to you.
+The basic idea in this scenario is a user buys some item through an e-commerce application inputting the payment method and delivery information and waits for this item to be delivered at the specified address.
+Given this use case, what happens behind the scenes is a sequence of steps that should be executed to complete the order, as shown in the picture:
+
+.Example Order Fulfilment
+image::use-cases/orchestration-based-saga-pattern/order-fulfilment-example.png[]
+
+In the example there are mainly the following steps:
+
+<1> Order checkout: the user confirms the order with the chosen items, payment method, and delivery address.
+<2> Stock reservation: where this item from the order is selected from the stock and reserved, being removed from the total stock item.
+<3> Payment processing: based on the payment method and the user information, for instance, the credit card, the credit is checked and allocated to that payment.
+<4> Shipping processing: it represents a mechanism that could communicate with third-party systems responsible to deliver orders or even an internal system responsible for logistics and delivery.
+
+In the below picture, it is possible to visualize the two main flows in case of success or failure, during the order fulfillment flow which describes a Saga pattern.
+
+.Example Order Fulfilment Saga
+image::use-cases/orchestration-based-saga-pattern/order-fulfilment-saga.png[]
+
+In the first case, the happy path, the item stock is reserved, after that, the payment is successfully processed and finally, the order shipping is scheduled and the flow is completed for that order.
+
+The second case describes an example where a failure or any error is thrown during the shipping process for a given order, in this situation, a sequence of compensation actions is executed, which cancels the payment, and releases the stock for the items related to that order.
+
+== Order Saga with Serverless workflow
+
+As a developer, you can use link:{spec_doc_url}[Serverless Workflow] to create a Saga defining the participants' calls with all the steps and compensations.
+In this scenario, Kogito with serverless workflow plays the Saga Executor Coordinator (SEC) role, which orchestrates the calls to the participants in the Saga.
+
+The order fulfillment example is used to showcase how to define the Saga with Kogito using Serverless Workflow, the source code can be found here https://github.com/kiegroup/kogito-examples/tree/main/kogito-quarkus-examples/process-saga-quarkus.
+The workflow definition used to define the order saga is (link)
+
+.Example Order Fulfilment Saga Workflow
+image::use-cases/orchestration-based-saga-pattern/order-fulfilment-saga-workflow.png[]
+
+In the workflow diagram you can see how to describe the calls to the participants, the possible errors that each service can throw, and finally, how to define compensations to each step to be executed once an error happens during workflow execution.
+
+=== Saga participants interactions
+
+To define the interactions among participants in the Saga using Serverless Workflow Specification, you can use link:{spec_doc_url}#workflow-states[states] with transitions link:{spec_doc_url}#Transitions[transitions] corresponding to the participants' interactions.
+
+Each state represents a step to be achieved in the Saga and an action associated with the state represents how to invoke a participant to execute a given step, for instance, `processPayment` state has the `processPaymentAction` action responsible to invoke the function to execute the payment processing, that might be done by the participant `Payment Service`.
+The `transition` attribute represents the next step to be started, to perform the order shipping scheduling for the Saga.
+
+[#payment-state]
+.Example the state declaration representing the process payment step in the Saga
+[source,json]
+{
+"name": "processPayment",
+"type": "operation",
+"actions": [
+    {
+    "name": "processPaymentAction",
+    "functionRef": {
+    "refName": "processPayment",
+    "arguments": {
+    "orderId": ".orderId",
+    "failService": ".failService"
+    }
+    },
+    "actionDataFilter": {
+    "results": ".",
+    "toStateData": ".paymentResponse"
+    }
+    }
+    ],
+    "transition": "scheduleShipping",
+    "compensatedBy": "CancelPayment",
+    "onErrors": [
+    {
+    "errorRef": "process payment failed",
+    "transition": "ServiceError"
+    }
+]
+}
+
+=== Compensations
+
+The core functionality when designing the Saga is the compensation for each step to be executed by a participant.
+In serverless workflow, each state should define how it should be compensated using its compensatedBy property, which indicates another state responsible to perform the compensation for it, i.e. processPayment defines the CancelPayment as the compensation, as define in the <<payment-state, payment state>>.
+
+[source,json]
+"compensatedBy": "CancelPayment"
+
+=== Errors
+
+Compensations are triggered as soon as an error occurs, according to the errors definitions associated states on serverless workflow, where they are identified by a name, for instance, on `processPayment` there is the error `process payment failed` which is a reference to the <<#errors-definitions, errors section>> in the workflow definition.
+
+[#errors-definitions]
+.Example the error declaration for the Saga
+[source,json]
+"errors" : [
+{
+"name" : "reserve stock failed",
+"code": "org.kie.kogito.ServiceException"
+},
+{
+"name": "process payment failed",
+"code": "org.kie.kogito.ServiceException"
+},
+{
+"name": "shipping failed",
+"code": "org.kie.kogito.ServiceException"
+}
+]
+
+The defined error uses the FQDN of Java exceptions thrown by functions, in the given example, `org.kie.kogito.ServiceException` is thrown by they service calls defined as a  <<#custom-function, Java method>>, however, they could be any type of xref:{spec_doc_url}#workflow-functions[functions], i.e REST, OpenAPI, gRPC, etc.
+For more details about error handling see xref:core/understanding-workflow-error-handling.adoc[Understanding workflow error handling].
+
+[#custom-function]
+.Example custom function using a Java class and method
+[source,json]
+ {
+ "name": "reserveStock",
+ "type": "custom",
+ "operation": "service:org.kie.kogito.PaymentService::processPayment"
+}
+
+Kogito workflow engine controls all steps that were executed and should be compensated, in a stateful manner, this means the Saga can be long-lived, containing wait states among on the steps in the workflow, this means after each wait state the workflow is persisted and can continue in a different request, but for simplicity, this example shows the Saga as a request-response, also called straight-through workflow.
+
+.Example Serverless workflow for Order Fulfilment
+image::use-cases/orchestration-based-saga-pattern/order-fulfilment-workflow.png[]
+
+=== Running and testing the example
+
+==== Building the project
+
+==== Creating a new Success Order
+
+==== Simulating errors to activate the compensations
+
+
+
+== Additional resources
+
+* xref:core/understanding-workflow-error-handling.adoc[Understanding workflow error handling].
