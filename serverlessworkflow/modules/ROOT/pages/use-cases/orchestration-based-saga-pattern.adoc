@@ -45,8 +45,8 @@ The second case describes an example where a failure or any error is thrown duri
 As a developer, you can use link:{spec_doc_url}[Serverless Workflow] to create a Saga defining the participants' calls with all the steps and compensations.
 In this scenario, Kogito with serverless workflow plays the Saga Executor Coordinator (SEC) role, which orchestrates the calls to the participants in the Saga.
 
-The order fulfillment example is used to showcase how to define the Saga with Kogito using Serverless Workflow, the source code can be found here https://github.com/kiegroup/kogito-examples/tree/main/kogito-quarkus-examples/process-saga-quarkus.
-The workflow definition used to define the order saga is (link)
+The order fulfillment example is used to showcase how to define the Saga with Kogito using Serverless Workflow, the source code can be found here link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus[serverless-workflow-saga-quarkus].
+The workflow definition used to define the order saga is link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus/src/main/resources/order-saga-error-handling.sw.json[order-saga-error-handling.sw.json].
 
 .Example Order Fulfilment Saga Workflow
 image::use-cases/orchestration-based-saga-pattern/order-fulfilment-saga-workflow.png[]
@@ -122,7 +122,7 @@ Compensations are triggered as soon as an error occurs, according to the errors 
 }
 ]
 
-The defined error uses the FQDN of Java exceptions thrown by functions, in the given example, `org.kie.kogito.ServiceException` is thrown by they service calls defined as a  <<#custom-function, Java method>>, however, they could be any type of xref:{spec_doc_url}#workflow-functions[functions], i.e REST, OpenAPI, gRPC, etc.
+The defined error uses the FQDN of Java exceptions thrown by functions, in the given example, `org.kie.kogito.ServiceException` is thrown by they service calls defined as a  <<#custom-function, Java method>>, however, they could be any type of link:{spec_doc_url}#workflow-functions[functions], i.e REST, OpenAPI, gRPC, etc.
 For more details about error handling see xref:core/understanding-workflow-error-handling.adoc[Understanding workflow error handling].
 
 [#custom-function]
@@ -135,9 +135,6 @@ For more details about error handling see xref:core/understanding-workflow-error
 }
 
 Kogito workflow engine controls all steps that were executed and should be compensated, in a stateful manner, this means the Saga can be long-lived, containing wait states among on the steps in the workflow, this means after each wait state the workflow is persisted and can continue in a different request, but for simplicity, this example shows the Saga as a request-response, also called straight-through workflow.
-
-.Example Serverless workflow for Order Fulfilment
-image::use-cases/orchestration-based-saga-pattern/order-fulfilment-workflow.png[]
 
 === Running and testing the example
 
