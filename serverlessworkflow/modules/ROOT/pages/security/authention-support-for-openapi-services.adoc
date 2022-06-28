@@ -47,6 +47,18 @@ The following shows the example of security scheme definitions:
     }
 ----
 
+If the OpenAPI specification file contains `securitySchemes` definitions, but not link:{open_api_spec_url}[Security Requirement Object] definitions, the generator can be configured to create the security requirement objects by default. In this case, for all operations without a security requirement, the default one is created. Note that the property value needs to match the name of a security scheme object definition, such as `http-basic-example` or `api-key-example` in the previous `securitySchemes` list.
+
+[cols="20%,40%,40%", options="header"]
+|===
+|Description |Property Key |Example
+
+|Create security for the referenced security scheme
+|`quarkus.openapi-generator.codegen.default.security.scheme`
+|`quarkus.openapi-generator.codegen.default.security.scheme=http-basic-example`
+
+|===
+
 To configure the credentials that are used to access the secured OpenAPI service operations and related parameters, you must use the application properties that are related to the security schemes.
 
 To compose the configuration keys, use the following format:
@@ -54,7 +66,7 @@ To compose the configuration keys, use the following format:
 .Format for configuration keys
 [source, properties]
 ----
-quarkus.openapi-generator.[filename].[security_scheme_name].auth.[auth_property_name]
+quarkus.openapi-generator.[filename].auth.[security_scheme_name].[auth_property_name]
 ----
 
 The previous format includes the following parameters:
