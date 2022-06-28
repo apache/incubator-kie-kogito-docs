@@ -122,7 +122,7 @@ Compensations are triggered as soon as an error occurs, according to the errors 
 }
 ]
 
-The defined error uses the FQDN of Java exceptions thrown by functions, in the given example, `org.kie.kogito.ServiceException` is thrown by they service calls defined as a  <<#custom-function, Java method>>, however, they could be any type of link:{spec_doc_url}#workflow-functions[functions], i.e REST, OpenAPI, gRPC, etc.
+The defined error uses the FQDN of Java exceptions thrown by functions, in the given example, `org.kie.kogito.ServiceException` is thrown by they service calls defined as a  <<#custom-function, Java method>> here is the link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus/src/main/java/org/kie/kogito/PaymentService.java[source], however, they could be any type of link:{spec_doc_url}#workflow-functions[functions], i.e REST, OpenAPI, gRPC, etc.
 For more details about error handling see xref:core/understanding-workflow-error-handling.adoc[Understanding workflow error handling].
 
 [#custom-function]
@@ -144,7 +144,7 @@ Kogito workflow engine controls all steps that were executed and should be compe
 :order_saga_workflow_path: order_saga_error_workflow
 //POST /{order_saga_workflow_path}
 
-.Example request
+.Example success request
 [source,shell]
 ----
 curl -L -X POST "http://localhost:8080/order_saga_error_workflow" -H 'Content-Type: application/json' --data-raw '{
@@ -154,7 +154,7 @@ curl -L -X POST "http://localhost:8080/order_saga_error_workflow" -H 'Content-Ty
 }'
 ----
 
-.Example response
+.Example success response
 [source,json]
 ----
 {
@@ -199,7 +199,7 @@ In the console executing the application, you can check the log with information
 
 To make testing the workflow easier it was introduced an optional attribute `failService` that indicates which service should respond with an error. The attribute is the simple class name of the service to return an error. In the following request example, the `ShippingService` should throw an error that breaks the workflow execution triggering the compensations.
 
-.Example request
+.Example compensation request
 [source,shell]
 ----
 curl -L -X POST 'http://localhost:8080/order_saga_error_workflow' -H 'Content-Type: application/json' --data-raw '{
@@ -210,7 +210,7 @@ curl -L -X POST 'http://localhost:8080/order_saga_error_workflow' -H 'Content-Ty
 }'
 ----
 
-.Example response
+.Example compensation response
 [source,json]
 ----
 {
