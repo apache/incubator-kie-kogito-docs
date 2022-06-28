@@ -1,8 +1,17 @@
 = Understanding JQ expressions
 
+:compat-mode!:
+// Metadata:
+:description: Understanding JQ expressions
+:keywords: kogito, workflow, serverless, jq, expression
+// links:
+:jq_url: https://stedolan.github.io/jq/manual/
+:jsonpath_url: https://github.com/json-path/JsonPath/
+:json_data_types_url: https://www.w3schools.com/js/js_json_datatypes.asp
+
 Every workflow instance is associated with a data model. This model regardless of whether your flow file is written in YAML or JSON, consists of a JSON object. The initial content of that object depends on how the flow is started. If the flow is created through a link:{cloud_events_url}[Cloud Event], then the content is taken from `data` property. If started through an HTTP POST invocation, then the request body is expected to have a `workflowdata` property, from where the content of the model is retrieved. 
 
-Expressions are the mechanism defined by the link:{spec_doc_url}#workflow-expressions[Serverless Workflow Specification] for the states to interact with the data model. Kogito supports two expression languages: link:https://github.com/json-path/JsonPath[jsonpath] and link:https://stedolan.github.io/jq/manual/[jq]. The default one is `jq`, but you can change it to `jsonpath` by using the `expressionLang` property. This guide will focus on `jq` and discuss its usage in following uses cases: switch state conditions, action function arguments, and data filtering.
+Expressions are the mechanism defined by the link:{spec_doc_url}#workflow-expressions[Serverless Workflow Specification] for the states to interact with the data model. Kogito supports two expression languages: link:{jsonpath_url}[jsonpath] and link:{jq_url}[jq]. The default one is `jq`, but you can change it to `jsonpath` by using the `expressionLang` property. This guide will focus on `jq` and discuss its usage in following uses cases: switch state conditions, action function arguments, and data filtering.
 
 
 == Switch Conditions
@@ -49,7 +58,7 @@ As the specification requires, all expressions are embedded within `${… }`. Bu
 
 Serverless Workflow Specification allows defining link:{spec_doc_url}#workflow-functions[functions] that can be invoked several times by the workflow states. Every different function call might contain different arguments, which are specified using function arguments.
 
-A function definition can be found in the link:{kogito_sw_examples_url}/serverless-workflow-temperature-conversion[temperature conversion] repository. 
+A function definition can be found in the link:{kogito_sw_examples_url}/serverless-workflow-temperature-conversion/conversion-workflow/src/main/resources/fahrenheit-to-celsius.sw.json[temperature conversion] repository. 
 This flow performs xref:core/orchestration-of-openapi-based-services.adoc[OpenAPI] invocations to convert Fahrenheit to Celsius. 
 
 We focus on the call to the  `substraction` one. 
@@ -63,7 +72,7 @@ We focus on the call to the  `substraction` one.
 }]
 ----
 
-Function arguments might be expressed as a JSON object, whose property values might be either a string containing an expression or any link:https://www.w3schools.com/js/js_json_datatypes.asp[JSON data type] (string, number, boolean…). 
+Function arguments might be expressed as a JSON object, whose property values might be either a string containing an expression or any link:{json_data_types_url}[JSON data type] (string, number, boolean…). 
 
 [source,json]
 ----
@@ -96,6 +105,7 @@ In the snippet above, the whole string is evaluated and the resulting JSON objec
 == Data filtering
 
 Serverless workflow specification defines some filtering mechanisms in order to select which data should be part of the flow data model:
+
 * link:{spec_doc_url}#action-data-filters[action data filter] selects the portion of the action result that will be merged into the model, overriding only those properties in the flow model that share the name with the selected action result
 * link:{spec_doc_url}#event-data-filters[event data filter] same purpose than the previous one, but applied to events rather than actions.
 * link:{spec_doc_url}#state-data-filters[state data filter] sets the whole flow model to the JSON object returned by the expression, discarding any existing property.
