@@ -143,19 +143,21 @@ You can add the list of Service Registries in the extension's _settings.json_ fi
 .Example of Service Registry Configuration:
 [source,json]
 ----
- "kogito.swf.serviceRegistries": {
-  "registries": [ 
-    {
-      "name": "registry1",
-      "url": "https://{url-to-my-service-registry1}/apis/registry/v2",
-      "authProvider": "none"
-    },
-    {
-      "name": "registry2",
-      "url": "https://{url-to-my-service-registry2}/apis/registry/v2",
-      "authProvider": "red-hat-account"
+{
+    "kogito.swf.serviceRegistries": {
+        "registries": [
+            {
+                "name": "openshift",
+                "url": "https://{url-to-openshift-registry}/apis/registry/v2",
+                "authProvider": "red-hat-account"
+            },
+            {
+                "name": "local",
+                "url": "https://{url-to-local-registry}/apis/registry/v2",
+                "authProvider": "none"
+            },
+        ]
     }
-  ]
 }
 ----
 
@@ -188,7 +190,7 @@ image::tooling/serverless-workflow-editor/swf-editor-login-service-registries-fu
 Once you have successfully logged in, use *Ctrl+Space* in the workflow's Function Definitions section to view the list of functions available.
 
 .Function workflow definition section auto-complete
-image::tooling/serverless-workflow-editor/swf-editor-remote-registry-functions-section.png[]
+image::tooling/serverless-workflow-editor/swf-editor-auto-complete-dialog.png[]
 
 Click on the required function to auto-complete the Function Definition.
 
