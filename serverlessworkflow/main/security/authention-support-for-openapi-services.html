@@ -224,6 +224,30 @@
 </div>
 </div>
 <div class="paragraph">
+<p>If the OpenAPI specification file contains <code>securitySchemes</code> definitions, but not <a href="https://spec.openapis.org/oas/v3.1.0.html">Security Requirement Object</a> definitions, the generator can be configured to create the security requirement objects by default. In this case, for all operations without a security requirement, the default one is created. Note that the property value needs to match the name of a security scheme object definition, such as <code>http-basic-example</code> or <code>api-key-example</code> in the previous <code>securitySchemes</code> list.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Property Key</th>
+<th class="tableblock halign-left valign-top">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Create security for the referenced security scheme</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.openapi-generator.codegen.default.security.scheme</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.openapi-generator.codegen.default.security.scheme=http-basic-example</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
 <p>To configure the credentials that are used to access the secured OpenAPI service operations and related parameters, you must use the application properties that are related to the security schemes.</p>
 </div>
 <div class="paragraph">
@@ -232,7 +256,7 @@
 <div class="listingblock">
 <div class="title">Format for configuration keys</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.openapi-generator.[filename].[security_scheme_name].auth.[auth_property_name]</code></pre>
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.openapi-generator.[filename].auth.[security_scheme_name].[auth_property_name]</code></pre>
 </div>
 </div>
 <div class="paragraph">
