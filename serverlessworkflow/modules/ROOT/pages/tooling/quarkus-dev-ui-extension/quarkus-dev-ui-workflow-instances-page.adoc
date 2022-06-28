@@ -25,15 +25,15 @@ The table has sorting capability on all the columns.
 
 == Workflow Instance filters
 
-You can filter the Workflow Instances based on the states and Businesskeys. By default the states: *Active*, *Completed*, *Aborted*, *Error* and *Suspended* are applied. You can use the *Status* dropdown to see the list of states available. Use the checkbox against the state names to select/unselect them. Click on the *Apply filter* button to get the filtered Workflow Instances. 
+You can filter the Workflow Instances based on the states and Business keys. By default the states: *Active*, *Completed*, *Aborted*, *Error* and *Suspended* are applied. You can use the *Status* dropdown to see the list of states available. Use the checkbox against the state names to select/unselect them. Click on the *Apply filter* button to get the filtered Workflow Instances. 
 
-You can enter the right value of Businesskey in the *Filter by business key* text bar. Clicking *Apply filter* button, filters the list based on the value of the Businesskey entered.
+You can enter the right value of Business key in the *Filter by business key* text bar. Clicking *Apply filter* button, filters the list based on the value of the Businesskey entered.
 
-.Filters applied on the Workflow 
+.Filters applied on the Workflow Instances filter
 
 image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-filters-in-workflow-instances.png[]
 
-All the filters appear under their respective chips. All the states appear under *Status* chip and the Businesskey appears under *Business Key* chip.You can clear the required filters by using the 'x' button in each chip.
+All the filters appear under their respective chips. All the states appear under *Status* chip and the Businesskey appears under *Business Key* chip.You can clear the required filters by using the '*x*' button in each chip.
 
 Click on the *Refresh* icon to fetch any newly added Workflow Instances.
 The *Reset to default* button clears all the applied filters and resets to default state (applies all the States in the filters).
@@ -56,9 +56,24 @@ This panel enables you to explore the Workflow diagram and execution path of the
 .Workflow Diagram panel
 image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-diagram-panel.png[]
 
+==== How to display your Workflow Instance diagram?
+
+The Kogito process SVG add-on can be added to the Kogito project using
+
+.Quarkus Addons:Process-SVG dependency in pom.xml
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-addons-quarkus-process-svg</artifactId>
+</dependency>
+----
+
+You can generate the SVG using the Kogito Serverless Workflow Editor VS Code Extension and place the generated SVG in the _src/main/resources/META-INF/processSVG_ folder of your Kogito project. The add-on is responsible for exposing the SVG diagram to Dev UI. The Dev UI reads the diagram and provides the Workflow Diagram panel.
+
 === Workflow Timeline
 
-The Timeline panel displays the list of nodes related to the Workflow instance. Each node consists of an icon, indicating the state of the node, such as active, completed, or error.
+The Timeline panel displays the list of nodes related to the Workflow instance. Each node consists of an icon, indicating the state of the node, such as *Active*, *Completed*, or *Error*.
 
 .Workflow Timeline panel
 image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-timeline-panel.png[]
