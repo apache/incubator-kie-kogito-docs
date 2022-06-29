@@ -1,5 +1,5 @@
-= Understanding JQ expressions
-
+Understanding JQ expressions
+============================
 :compat-mode!:
 // Metadata:
 :description: Understanding JQ expressions
@@ -38,21 +38,10 @@ The switch state contains this condition, which in turn contains two `jq` expres
       ]
 ----
 
-As the specification requires, all expressions are embedded within `${… }`. But Kogito is smart enough to infer that the string within the condition is an expression, so you can skip it and just write a shorter version of the previous code that behaves the same. 
-
-[source,json]
-----
-"dataConditions": [
-        {
-          "condition": ".language == \"English\"",
-          "transition": "GreetInEnglish"
-        },
-        {
-          "condition": ".language == \"Spanish\"",
-          "transition": "GreetInSpanish"
-        }
-      ]
-----
+[sidebar]
+--
+Serverless Workflow Specification requires all expressions to be embedded within `${… }`. Nevertheless, Kogito is smart enough to infer whether an string is an expression. Therefore you might save some characters and skip the __${__ at the beginning and the __}__ at the the end. If portability is a concern, you must use the specification way. Through this guide you will see that both forms are indistinguishable used.
+--
 
 == Function Arguments
 
@@ -88,7 +77,7 @@ Function arguments might be expressed as a JSON object, whose property values mi
 ----
 
 In the snippet above, we are specifying that the left number of the subtraction is equal to the `fahrenheit` property (which is an input number provided by the user invoking the flow) and that the right number is equal to the `substractvalue` property (which is a constant number injected into the flow model by SetConstants state). After resolving expression evaluation for all properties that contain an expression, the resulting JSON object is passed to the  OpenAPI call. Depending on the OpenAPI definition, properties of that JSON object will be used as body, path, query, or header of the upcoming REST invocation. 
-Note that, for the sake of brevity, the expression is not embedded within `${}`. Kogito will infer it is a valid `jq` expression because of the `.` (period) prefix, but you can embed it if you prefer to do so.
+
 
 Function arguments might also be defined as a string containing an expression that returns a JSON object.
 [source,json]
