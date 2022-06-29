@@ -63,34 +63,36 @@ The `transition` attribute represents the next step to be started, to perform th
 [#payment-state]
 .Example the state declaration representing the process payment step in the Saga
 [source,json]
+----
 {
-"name": "processPayment",
-"type": "operation",
-"actions": [
-    {
-    "name": "processPaymentAction",
-    "functionRef": {
-    "refName": "processPayment",
-    "arguments": {
-    "orderId": ".orderId",
-    "failService": ".failService"
-    }
-    },
-    "actionDataFilter": {
-    "results": ".",
-    "toStateData": ".paymentResponse"
-    }
-    }
-    ],
-    "transition": "scheduleShipping",
-    "compensatedBy": "CancelPayment",
-    "onErrors": [
-    {
-    "errorRef": "process payment failed",
-    "transition": "ServiceError"
-    }
-]
+   "name":"processPayment",
+   "type":"operation",
+   "actions":[
+      {
+         "name":"processPaymentAction",
+         "functionRef":{
+            "refName":"processPayment",
+            "arguments":{
+               "orderId":".orderId",
+               "failService":".failService"
+            }
+         },
+         "actionDataFilter":{
+            "results":".",
+            "toStateData":".paymentResponse"
+         }
+      }
+   ],
+   "transition":"scheduleShipping",
+   "compensatedBy":"CancelPayment",
+   "onErrors":[
+      {
+         "errorRef":"process payment failed",
+         "transition":"ServiceError"
+      }
+   ]
 }
+----
 
 === Compensations
 
@@ -107,20 +109,24 @@ Compensations are triggered as soon as an error occurs, according to the errors 
 [#errors-definitions]
 .Example the error declaration for the Saga
 [source,json]
-"errors" : [
+----
 {
-"name" : "reserve stock failed",
-"code": "org.kie.kogito.ServiceException"
-},
-{
-"name": "process payment failed",
-"code": "org.kie.kogito.ServiceException"
-},
-{
-"name": "shipping failed",
-"code": "org.kie.kogito.ServiceException"
+   "errors":[
+      {
+         "name":"reserve stock failed",
+         "code":"org.kie.kogito.ServiceException"
+      },
+      {
+         "name":"process payment failed",
+         "code":"org.kie.kogito.ServiceException"
+      },
+      {
+         "name":"shipping failed",
+         "code":"org.kie.kogito.ServiceException"
+      }
+   ]
 }
-]
+----
 
 The defined error uses the FQDN of Java exceptions thrown by functions, in the given example, `org.kie.kogito.ServiceException` is thrown by they service calls defined as a  <<#custom-function, Java method>> here is the link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus/src/main/java/org/kie/kogito/PaymentService.java[source], however, they could be any type of link:{spec_doc_url}#workflow-functions[functions], i.e REST, OpenAPI, gRPC, etc.
 For more details about error handling see xref:core/understanding-workflow-error-handling.adoc[Understanding workflow error handling].
@@ -129,10 +135,10 @@ For more details about error handling see xref:core/understanding-workflow-error
 .Example custom function using a Java class and method
 [source,json]
 ----
- {
- "name": "reserveStock",
- "type": "custom",
- "operation": "service:org.kie.kogito.PaymentService::processPayment"
+{
+   "name":"reserveStock",
+   "type":"custom",
+   "operation":"service:org.kie.kogito.PaymentService::processPayment"
 }
 ----
 
@@ -158,25 +164,25 @@ curl -L -X POST "http://localhost:8080/order_saga_error_workflow" -H 'Content-Ty
 [source,json]
 ----
 {
-   "id": "b5c0bf16-1e37-4d7a-82cd-610809090d9c",
-   "workflowdata": {
-       "orderId": "03e6cf79-3301-434b-b5e1-d6899b5639aa",
-       "stockResponse": {
-           "type": "SUCCESS",
-           "resourceId": "dc32abe6-9706-4061-8e96-910d8e06728d"
-       },
-       "paymentResponse": {
-           "type": "SUCCESS",
-           "resourceId": "505259d9-1c12-40ea-af5d-679e2cd89394"
-       },
-       "shippingResponse": {
-           "type": "SUCCESS",
-           "resourceId": "d6e2d538-0229-4b8e-a363-17ebabdb3585"
-       },
-       "orderResponse": {
-           "type": "SUCCESS",
-           "resourceId": "03e6cf79-3301-434b-b5e1-d6899b5639aa"
-       }
+   "id":"b5c0bf16-1e37-4d7a-82cd-610809090d9c",
+   "workflowdata":{
+      "orderId":"03e6cf79-3301-434b-b5e1-d6899b5639aa",
+      "stockResponse":{
+         "type":"SUCCESS",
+         "resourceId":"dc32abe6-9706-4061-8e96-910d8e06728d"
+      },
+      "paymentResponse":{
+         "type":"SUCCESS",
+         "resourceId":"505259d9-1c12-40ea-af5d-679e2cd89394"
+      },
+      "shippingResponse":{
+         "type":"SUCCESS",
+         "resourceId":"d6e2d538-0229-4b8e-a363-17ebabdb3585"
+      },
+      "orderResponse":{
+         "type":"SUCCESS",
+         "resourceId":"03e6cf79-3301-434b-b5e1-d6899b5639aa"
+      }
    }
 }
 ----
@@ -214,33 +220,32 @@ curl -L -X POST 'http://localhost:8080/order_saga_error_workflow' -H 'Content-Ty
 [source,json]
 ----
 {
-   "id": "217050a3-6676-4c0e-8555-2fcda936e00e",
-   "workflowdata": {
-       "orderId": "03e6cf79-3301-434b-b5e1-d6899b5639aa",
-       "failService": "ShippingService",
-       "stockResponse": {
-           "type": "SUCCESS",
-           "resourceId": "6ab362c6-a6c4-4517-b232-3349741271d5"
-       },
-       "paymentResponse": {
-           "type": "SUCCESS",
-           "resourceId": "2114cc5b-1912-4b34-b869-734907f0fef2"
-       },
-       "cancelPaymentResponse": {
-           "type": "SUCCESS",
-           "resourceId": "2114cc5b-1912-4b34-b869-734907f0fef2"
-       },
-       "cancelStockResponse": {
-           "type": "SUCCESS",
-           "resourceId": "6ab362c6-a6c4-4517-b232-3349741271d5"
-       },
-       "orderResponse": {
-           "type": "ERROR",
-           "resourceId": "03e6cf79-3301-434b-b5e1-d6899b5639aa"
-       }
+   "id":"217050a3-6676-4c0e-8555-2fcda936e00e",
+   "workflowdata":{
+      "orderId":"03e6cf79-3301-434b-b5e1-d6899b5639aa",
+      "failService":"ShippingService",
+      "stockResponse":{
+         "type":"SUCCESS",
+         "resourceId":"6ab362c6-a6c4-4517-b232-3349741271d5"
+      },
+      "paymentResponse":{
+         "type":"SUCCESS",
+         "resourceId":"2114cc5b-1912-4b34-b869-734907f0fef2"
+      },
+      "cancelPaymentResponse":{
+         "type":"SUCCESS",
+         "resourceId":"2114cc5b-1912-4b34-b869-734907f0fef2"
+      },
+      "cancelStockResponse":{
+         "type":"SUCCESS",
+         "resourceId":"6ab362c6-a6c4-4517-b232-3349741271d5"
+      },
+      "orderResponse":{
+         "type":"ERROR",
+         "resourceId":"03e6cf79-3301-434b-b5e1-d6899b5639aa"
+      }
    }
 }
-
 ----
 
 In the console executing the application, you can check the log with the executed steps.
