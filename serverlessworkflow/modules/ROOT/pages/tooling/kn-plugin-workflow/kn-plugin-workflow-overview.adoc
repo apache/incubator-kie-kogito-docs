@@ -62,7 +62,6 @@ Use "kn workflow [command] --help" for more information about a command.
 ----
 
 === create
-
 This command will scaffold a new Kogito Serverless Workflow project in the current directory.
 
 It sets up a Quarkus project with minimal extensions to build a Kogito Serverless Workflow  project. Also, the generated project has a "hello world" workflow.sw.json located on the
@@ -73,31 +72,65 @@ It sets up a Quarkus project with minimal extensions to build a Kogito Serverles
 kn workflow create
 ----
 
-By default the generated project is named "new-project". This name can be overritten with the `[-n|--name]` flag. The following example creates a new project called "my-project":
+By default the generated project is named "new-project". This name can be overritten with the `[-n|--name]` flag.
 
 [source,shell]
 ----
 kn workflow create --name my-project
 ----
+This example creates a new project called "my-project".
 
-Also, it's possible to add more extensions to the Quarkus project during its creation, by using the `[-e|--extension]` flag. You can pass more than one extension, but they need to be separated by a comma. The following example creates a new project with two additional extensions, "quarkus-jsonp" and "quarkus-smallrye-openapi":
+Also, it's possible to add more extensions to the Quarkus project during its creation, by using the `[-e|--extension]` flag. You can pass more than one extension, but they need to be separated by a comma.
 
 [source,shell]
 ----
 kn workflow create --extension quarkus-jsonp,quarkus-smallrye-openapi
 ----
+This example creates a new project with two additional extensions, "quarkus-jsonp" and "quarkus-smallrye-openapi".
 
 === build
+The build command, builds a Kogito Serverless Workflow project in the current directory and generate a container image.
 
-Builds a Kogito Serverless Workflow project in the current directory and generate a specific image:
+NOTE: To use this command `--image` or `--image-name` flag need to be used.
 
 [source,shell]
 ----
-kn workflow build --image quay.io/mysuer/myproject
+kn workflow build --image my-project
+kn workflow build --image-name my-project
 ----
-==== image
-The `--image` flag can be used in several ways:
+This example generate a local image named "quay.io/my-project:latest". Note that the `registry` and `tag` defaults are `quay.io` and `latest` respectivly.
 
+==== Image naming options
+Let's take a better look in the image naming options.
+
+The `[-i|--image]` flag can be used in several ways.
+* --image=[name]
+* --image=[name]:[tag]
+* --image=[repository]/[name]
+* --image=[repository]/[name]:[tag]
+* --image=[registry]/[repository]/[name]
+* --image=[registry]/[repository]/[name]:[tag]
+
+Also, it's possible to use the specific flags to compose the image full name. The flags are:
+* --image-registry
+* --image-repository
+* --image-name
+* --image-tag
+
+NOTE: If the --image flag is provided together with any of these flags, the specifc value will override --image.
+
+[source,shell]
+----
+kn workflow build --image my-user/my-project:1.0.0 --image-repository other-user --image-tag 1.0.1
+----
+The example above will result in an image named `quay.io/other-user/my-project:1.0.1`
+
+==== Building strategy
+To build the image we have two different strategies.
+. Jib
+.. Podman
+
+. Docker
 
 === deploy
 
