@@ -38,28 +38,31 @@ The below picture makes it possible to visualize the two main flows in case of s
 .Example Order fulfillment Saga
 image::use-cases/orchestration-based-saga-pattern/order-fulfillment-saga.png[]
 
-In the first case, the happy path, the item stock is reserved, after that, the payment is successfully processed and finally, the order shipping is scheduled and the flow is completed for that order.
+In the first case, the happy path, the item stock is reserved. After that, the payment is successfully processed, the order shipping is scheduled, and the flow is completed for that order.
 
-The second case describes an example where a failure or any error is thrown during the shipping process for a given order, in this situation, a sequence of compensation actions is executed, which cancels the payment, and releases the stock for the items related to that order.
+The second case describes an example of a failure or any error thrown during the shipping process for a given order. In this situation, a sequence of compensation actions is executed, which cancels the payment, and releases the stock for the items related to that order.
 
 == Saga orchestration with Serverless workflow
 
 As a developer, you can use link:{spec_doc_url}[Serverless Workflow] to create a Saga defining the participants' calls with all the steps and compensations.
-In this scenario, Kogito with serverless workflow plays the Saga Executor Coordinator (SEC) role, which orchestrates the calls to the participants in the Saga.
 
-The order fulfillment example is used to showcase how to define the Saga with Kogito using Serverless Workflow, the source code can be found here link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus[serverless-workflow-saga-quarkus].
+In this scenario, Kogito Serverless Workflow plays the Saga Executor Coordinator (SEC) role, which orchestrates the calls to the participants in the Saga.
+
+The order fulfillment example showcases how to define the Saga with Kogito Serverless Workflow. The source code can be found here in link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus[serverless-workflow-saga-quarkus].
+
 The workflow definition used to define the order saga is link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus/src/main/resources/order-saga-error-handling.sw.json[order-saga-error-handling.sw.json].
 
 .Example Order fulfillment Saga Workflow
 image::use-cases/orchestration-based-saga-pattern/order-fulfillment-saga-workflow.png[]
 
-In the workflow diagram you can see how to describe the calls to the participants, the possible errors that each service can throw, and finally, how to define compensations to each step to be executed once an error happens during workflow execution.
+In the workflow diagram, you can see how to describe the calls to the participants, the possible errors each service can throw, and how to define compensations for each step to be executed once an error happens during workflow execution.
 
 === Saga participants interactions
 
-To define the interactions among participants in the Saga using Serverless Workflow Specification, you can use link:{spec_doc_url}#workflow-states[states] with transitions link:{spec_doc_url}#Transitions[transitions] corresponding to the participants' interactions.
+To define the interactions among participants in the Saga using Serverless Workflow Specification, you can use link:{spec_doc_url}#workflow-states[states] with link:{spec_doc_url}#Transitions[transitions] corresponding to the participants' interactions.
 
-Each state represents a step to be achieved in the Saga and an action associated with the state represents how to invoke a participant to execute a given step, for instance, `processPayment` state has the `processPaymentAction` action responsible to invoke the function to execute the payment processing, that might be done by the participant `Payment Service`.
+Each state represents a step to be achieved in the Saga, and an action associated with the state represents how to invoke a participant to execute a given step. So, for instance, the `processPayment` state has the `processPaymentAction` action responsible for invoking the function to execute the payment processing, which the participant `Payment Service` might do.
+
 The `transition` attribute represents the next step to be started, to perform the order shipping scheduling for the Saga.
 
 [#payment-state]
