@@ -1,93 +1,179 @@
-= VS Code Extension for the Kogito Serverless Workflow Editor
+VS Code extension for Serverless Workflow editor
+================================================
+:compat-mode!:
+// Metadata:
+:description: VS Code Extension for Serverless Workflow editor
+:keywords: kogito, workflow, serverless, editor, VS Code, extension
+// links:
+:kogito_swf_editor_vscode_marketplace_url: https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor
+:red_hat_sso_login_url: https://sso.redhat.com/auth/realms/redhat-external/login-actions/registration?client_id=cloud-services&tab_id=Rd8aj14U3Xk
+:red_hat_auth_vscode_marketplace_url: https://marketplace.visualstudio.com/items?itemName=redhat.vscode-redhat-account
+:red_hat_hybrid_cloud_console_url: https://console.redhat.com/
 
-The VS Code extension for the Kogito Serverless Workflow Editor allows you to view and edit link:{spec_website_url}[CNCF Serverless Workflow Specification] files in your local projects.
+The VS Code extension for the Serverless Workflow editor enables you to view and edit link:{spec_website_url}[CNCF Serverless Workflow specification] files in your local projects.
 
-.Prerequisites
-* Visual Studio Code version {vscode_version} and above.
+This document describes how to install and use the VS Code extension for Serverless Worklfow editor, along with how to load OpenAPI files using the extension.
 
-.Kogito Serverless Workflow VS Code Extension
+[[proc-install-vscode-extension-sw-editor]]
+== Installing the VS Code Extension for Serverless Workflow editor
+
+Using the VS Code extension for Serverless Workflow editor, enables you to view and edit the workflow specification files in your local projects.
+
+.Serverless Workflow VS Code extension
 image::tooling/serverless-workflow-editor/swf-editor-vscode-extension-page.png[]
 
-== Installing the VS Code Extension
+.Prerequisites
+* Visual Studio Code {vscode_version} or later is installed.
 
-The VS Code extension can be installed in two ways.
+.Procedure
+. You can install the VS Code extension for Serverless Workflow editor using one of the following methods:
 
-* You can visit link:{kogito_swf_editor_vscode_marketplace_url}[Kogito Serverless Workflow Editor] and follow the instructions or use the *extensions* tab(Ctrl+Shift+X) and click on *install* to install the extension.
-
-.Installing VS Code Extension in marketplace
+* *Go to Visual Studio Marketplace*: Go to link:{kogito_swf_editor_vscode_marketplace_url}[Serverless Workflow Editor] extension page in Visual Studio Marketplace and click *Install*.
++
+--
+.Serverless Workflow Editor in Visual Studio Marketplace
 image::tooling/serverless-workflow-editor/swf-editor-vscode-market-place.png[]
+--
 
-* You can download the 'vscode_extension_serverless_workflow_editor_VERSION.vsix' link:{kie_tools_releases_page_url}[kie-tools] and install it in VS Code using the *Install from VSIX* option in the extensions menu.
+* *Download VSIX file*:
++
+--
+.. Download the `vscode_extension_serverless_workflow_editor_VERSION.vsix` file from the link:{kie_tools_releases_page_url}[kie-tools] releases page in GitHub.
 
-.Installing VS Code Extension using vsix
+.. Click *Install from VSIX* option from the extensions menu and install the `vscode_extension_serverless_workflow_editor_VERSION.vsix` file in VS Code.
+
+.Install VS Code extension using VSIX
 image::tooling/serverless-workflow-editor/swf-editor-vscode-vsix-package.png[]
+--
 
-== Working with the VS Code Extension
+. Once installation is complete, you can create a Serverless Workflow file or open an existing workflow file in VS Code.
++
+When you open a Serverless Workflow file, VS Code uses the extension automatically.
 
-Once installation is complete, you can create a Serverless Workflow file or open an existing file in VS Code. VS Code will automatically use the extension when you open a Serverless Workflow file.
+== Features in Serverless Workflow editor
 
-The extension provides a set of commands to perform specific actions.
+The Serverless Workflow editor contains the following main features:
 
-=== List of commands
-* *Serverless Workflow: Generate SVG without any notification*: Generates an SVG file of the diagram in the workspace next to the Serverless Workflow file.
-* *Serverless Workflow: Open as Diagram (to the side)*: Opens the diagram to the right side of the editor
-* *Serverless Workflow: Setup automatically open Diagram Editor alongside Text Editor*: Allows the user to configure if the diagram should be opened by default alongside the editor. Provides two options, *Open automatically* and *Do not open*.
-* *Serverless Workflow: Configure Service Registries*: Opens the configuration for the Service Registries in the Extension Settings screen.
-* *Serverless Workflow: Refresh Service Registries*: Refresh the artifact list of the Service Registries.
-* *Serverless Workflow: Log in Service Registries*: Triggers a log in action of the Service Registries.
+* Reload diagram dynamically: In the Serverless Workflow editor, when you make a change in the code editor, the workflow diagram updates automatically.
+* SVG generation: In the Serverless Workflow editor, you can save a workflow diagram as `.svg` file in the workspace.
+* Auto-completion based on the context: The Serverless Workflow editor contains the capability of auto-completing the code based on the context.
++
+--
+The Serverless Workflow VS Code extension parses the link:{open_api_spec_url}[OpenAPI specification] files and provides a list of function definitions in the auto-complete dialog box.
 
-To trigger a command, go to *view* → *Command Palette*... or press *Ctrl+Shift+P* to open the command palette. Type in *Serverless Workflow* in the search bar to see the list of commands.
-
-.Command palette of the VS Code extension
-image::tooling/serverless-workflow-editor/swf-editor-vscode-command-palette.png[]
-
-=== Kogito Serverless Workflow Editor Setttings
-The extension's settings can be configured by navigating to *File* → *Preferences* → *Settings*.
-
-.The following settings can be configured in the settings page:
-* *Automatically Open Diagram Editor Alongside Text Editor*: Sets if the diagram should be opened by default when a Serverless Workflow is edited. The possible options are: *Ask next time*(default), *Do not open* and *Open automatically*.
-* *Run On Save*: Sets the VS Code command to execute when saving the edited Serverless Workflow file, defaults 'extension.kogito.swf.silentlyGenerateSvg' (generate the diagram SVG).
-* *Service Registries*: Gives access to the Service Registries configuration in the _settings.json_ file.
-* *Should Reference Service Registry Functions With Urls*: when autocompleting functions from link:{open_api_spec_url}[OpenAPI spec] files in the Service Registry, this setting specifies if the Function operation should use the URL to the link:{open_api_spec_url}[OpenAPI spec] file or use a local path (file will be downloaded to the *Specs Storage Path*).
-* *Specs Storage Path*: Provides a text box to edit the path oflink:{open_api_spec_url}[OpenAPI spec] file (defaults to 'specs' folder next to the edited Serverless Workflow file).
-* *Svg Filename Template*: Sets the filename template to be used when generating the diagram SVG file. Defaults to 'fileName.svg'.
-* *Svg File Path*: Sets he path to store the diagram SVG. Defaults to the same edited Serverless Workflow directory.
-
-.Settings page of the extension
-image::tooling/serverless-workflow-editor/swf-editor-vscode-settings.png[]
-
-=== Context based auto-completion
-The extension can use link:{open_api_spec_url}[OpenAPI spec] files stored locally in the 'specs folder' (<<Kogito Serverless Workflow Editor Setttings,check the settings section>>) or in remote Service Registries to provide advanced auto-complete features for *Function Definitions*.
-
-The extension is able to parse the link:{open_api_spec_url}[OpenAPI spec] files and provide the list of Function Definitions in the auto-complete dialog.
-
-.Function Definition auto complete dialogue
+.Function definition in auto-complete dialog box
 image::tooling/serverless-workflow-editor/swf-editor-function-definition-auto-complete-dialogue.png[]
 
-After selecting one of the options in the auto-complete dialog, a full Function Definition object will be added to the functions array with the right settings.
+Once you select an option in the auto-complete dialog box, a function definition is added to the functions array with proper settings as shown in the following example:
 
-.Function Definition object auto completed
+.Example of function definition object
 image::tooling/serverless-workflow-editor/swf-editor-auto-completed-function-definition.png[]
 
-Once function definition is added, it will be available for auto completion in the Function Reference section.
+When the function definition is added, the function is available for auto-completion in the function reference section as shown in the following example:
 
-.Function Reference auto complete dialogue
+.Example of a function reference
 image::tooling/serverless-workflow-editor/swf-editor-auto-complete-function-reference-dialogue.png[]
 
-After selecting one of the options in the auto-complete dialog, a full Function Reference object will be added with the right reference name and attributes.
+Once you select an option from the auto-complete dialog box, a function reference is added with proper reference name and attributes.
+--
+* Validation: The Serverless Workflow editor performs validation on the workflow files and provides an error-free experience.
 
-.Function Reference object auto completed
-image::tooling/serverless-workflow-editor/swf-editor-auto-completed-function-reference.png[]
+[[ref-supported-commands-vscode-extension]]
+== Supported commands in Serverless Workflow VS Code extension
 
-== How to enable the extension to load OpenAPI files from Apicurio Registries
+The VS Code extension for Serverless Workflow editor supports the following commands:
 
-=== Configuring the Service Registry
-The extension allows to configure a list of Service Registries that will enable the editor to load link:{open_api_spec_url}[OpenAPI spec] files stored in the external registries.
+.Supported commands in Serverless Workflow VS Code extension
+[cols="40%,60%", options="header"]
+|===
+|Command
+|Description
 
-You can add the list of Service Registries in the extension's _settings.json_ file using the _kogito.swf.serviceRegistries_ key that matches the following JSON schema.
+| *Serverless Workflow: Generate SVG without any notification*
+| Generates an SVG file of a workflow diagram in the workspace next to the Serverless Workflow file.
 
-.Service Registry Schema:
+| *Serverless Workflow: Open as Diagram (to the side)*
+| Opens the workflow diagram to the right side of the editor.
 
+| *Serverless Workflow: Setup automatically open Diagram Editor alongside Text Editor*
+| Allows you to set whether or not a workflow diagram needs to be opened by default alongside the editor. This operation provides two options, including *Open automatically* and *Do not open*.
+
+| *Serverless Workflow: Configure Service Registries*
+| Opens the service registries configurations on the *Extension Settings* page.
+
+| *Serverless Workflow: Refresh Service Registries*
+| Refreshes the artifact list of service registries.
+
+| *Serverless Workflow: Log in Service Registries*
+| Triggers a login action of service registries.
+|===
+
+To trigger a command in VS Code, go to *View* → *Command Palette...* or you can press *Ctrl+Shift+P* to open the command palette. Enter _Serverless Workflow_ in the search tab to see the list of supported commands.
+
+.Command Palette in VS Code
+image::tooling/serverless-workflow-editor/swf-editor-vscode-command-palette.png[]
+
+[[ref-sw-editor-settings]]
+== Serverless Workflow editor settings
+
+You can navigate to *File* → *Preferences* → *Settings* and configure the following settings for the Serverless Workflow editor:
+
+.Settings in Serverless Workflow VS Code extension
+[cols="40%,60%", options="header"]
+|===
+|Setting
+|Description
+
+| *Automatically Open Diagram Editor Alongside Text Editor*
+a| This setting enables the editor to open a workflow diagram when a Serverless Workflow is being edited. The available options include:
+
+* *Ask next time* (default)
+* *Do not open*
+* *Open automatically*
+
+| *Run On Save*
+a| This setting executes a VS Code command when you save an edited Serverless Workflow file. The default VS Code command that is executed is `extension.kogito.swf.silentlyGenerateSvg` (generate a diagram SVG).
+
+| *Service Registries*
+a| This setting provides access to the configuration of service registries in the `setting.json` file.
+
+| *Should Reference Service Registry Functions With Urls*
+| When automatically completing the functions in the service registry, this setting specifies whether a function operation uses the URL of link:{open_api_spec_url}[OpenAPI specification] file or uses the local path, where the file is downloaded (*Specs Storage Path*).
+
+| *Specs Storage Path*
+| This setting enables you to define or edit the path of link:{open_api_spec_url}[OpenAPI specification] file. The default value is `specs` folder.
+
+| *Svg Filename Template*
+| This setting enables you to set a file name template, which can be used while generating the diagram SVG file. The default value is `fileName.svg`.
+
+| *Svg File Path*
+| This setting enables you to set a path, where the generated diagram SVG file will be stored.
+
+|===
+
+.Settings page in VS Code extension
+image::tooling/serverless-workflow-editor/swf-editor-vscode-settings.png[]
+
+== Enabling VS Code extension to load OpenAPI files from remote service registries
+
+The VS Code extension for Serverless Workflow editor can use link:{open_api_spec_url}[OpenAPI specification] files that are stored locally in the `specs` folder. Also, the OpenAPI specification files can be stored in remote service registries, providing auto-complete feature for function definitions. 
+
+For more information about OpenAPI specification files path, see <<ref-sw-editor-settings, Serverless Workflow editor settings>>.
+
+The VS Code extension configures a list of service registries, which enables the Serverless Workflow editor to load OpenAPI specification files that are stored in the external registries.
+
+.Prerequisites
+* VS Code extension for the Serverless Workflow editor is installed.
++
+For more information about installing the VS Code extension, see <<proc-install-vscode-extension-sw-editor, Installing the VS Code Extension for Serverless Workflow editor>>.
+
+.Procedure
+. Open your Serverless Workflow file in VS Code IDE and select the *Setup Service Registries* option.
+. Navigate to the `settings.json` file.
+. Add the list of service registries in the `settings.json` file using the `kogito.swf.serviceRegistries` key, which matches the following JSON schema:
++
+--
+.Service Registry Schema
 [source,json]
 ----
  {
@@ -98,13 +184,13 @@ You can add the list of Service Registries in the extension's _settings.json_ fi
       "items": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "url": {
+          "name": { "type": "string" }, <1>
+          "url": { <2>
             "type": "string",
             "format": "uri",
             "pattern": "^https?://?[-A-Za-z0-9+&@#/%?=_!:.]+[-A-Za-z0-9+&@#/%=~_|]"
           },
-          "authProvider": {
+          "authProvider": { <3>
             "type": "string",
             "enum": ["none", "red-hat-account"],
             "default": "none"
@@ -117,12 +203,15 @@ You can add the list of Service Registries in the extension's _settings.json_ fi
 }
 ----
 
-.Each item in the *registries* array should have atleast the following three properties:
-* *name*: The identifier provided for the particular registry.
-* *url*: The URL for the REST api of the Apicurio Registry.
-* *authProvider*: The type of authentication for the Apicurio Registry. The expected values are *none* (no authentication) and *red-hat-account* (login with your Red Hat account).
+In the registries array, each item must contain the following properties:
 
-.Example of Service Registry Configuration:
+<1> *name*: Identifier provided for a registry.
+<2> *url*: URL for the REST API of the remotes service registry, such as Apicurio registry.
+<3> *authProvider*: Type of authentication for the remote service registry. This property contains values as *none* (no authentication) and *red-hat-account* (log in with your Red Hat account).
+
+Following is an example of a service registry configuration:
+
+.Example of service registry configuration
 [source,json]
 ----
 {
@@ -143,69 +232,90 @@ You can add the list of Service Registries in the extension's _settings.json_ fi
 }
 ----
 
-[NOTE] 
-====
-The Service Registry settings are available on the extension settings and they could be accessed by clicking on the *Setup Service Registries*... situated above the Function Definition section or using the command *Serverless Workflow: Configure Service Registries*.
-====
+To access the service registry settings in the VS Code, click on the *Setup Service Registries* option and use the *Serverless Workflow: Configure Service Registries* command.
+--
 
-=== Using the Service Registries for auto-completion
+=== Using service registries for auto-completion
 
-.If you have a Service Registry that requires Red Hat authentication the following are the prereqisites:
-* A link:{red_hat_sso_login_url}[Red Hat account] with access to link:{red_hat_hybrid_cloud_console_url}[Red Hat Hybrid Cloud Console].
-* link:{red_hat_auth_vscode_marketplace_url}[Redhat authentication extension]
+You can use the service registries for auto-completion feature in the Serverless Workflow VS Cod extension. 
 
-In the Serverless Workflow file, you can see that there is an option to *Setup Service Registries*. Click on it to get navigated to the _settings.json_ file to configure the *registries*.
+.Prerequisites
+The following prerequisites are for the service registries that require Red Hat authentication:
 
-.Function Definition Section with Setup Service Registries option
+* You have a link:{red_hat_sso_login_url}[Red Hat account] with access to link:{red_hat_hybrid_cloud_console_url}[Red Hat Hybrid Cloud Console].
+* link:{red_hat_auth_vscode_marketplace_url}[Redhat authentication extension] is installed.
+
+.Procedure
+. In a Serverless Workflow file, click the *Setup Service Registries* options and navigate to the `settings.json` file to configure the service registries.
++
+--
+.Function definition section with Setup Service Registries option
 image::tooling/serverless-workflow-editor/swf-editor-vscode-setup-registry.png[]
 
-Once you configure the Service Registry settings, the Function Definition section of the workflow file shows a *Log in Service Registries* button if it is configured to a remote Service Registry (Eg. Apicurio Registry). Clicking on this button redirects to the Red Hat login (SSO) page. You can login with your Red Hat credentials to connect to the Apicurio Registries.
+Once you configure the service registry settings, the function definition section in Serverless Workflow file displays a *Log in Service Registries* button. 
 
+[NOTE]
+====
+The *Log in Service Registries* button appears when the function definition is configured to a remote service registry, such as Apicurio registry.
+====
+--
+
+. Click on the *Log in Service Registries* option.
++
+You are redirected to the Red Hat login (SSO) page.
+
+. Log in with your Red Hat credentials to connect to the remote service registry.
++
+--
 [NOTE] 
 ====
-The redirection to Red Hat login (SSO) page happens only if the *authProvider* has the value of 'red-hat-account' in the Service Registry settings.
+You are redirected to the Red Hat login (SSO) page only if the *authProvider* property contains the value of `red-hat-account` in the service registry settings.
 ====
 
-.Function Definition Section with Log in Service Registries option
+.Function definition section with Log in Service Registries option
 image::tooling/serverless-workflow-editor/swf-editor-login-service-registries-function-definition.png[]
+--
 
-Once you have successfully logged in, use *Ctrl+Space* in the workflow's Function Definitions section to view the list of functions available.
-
-.Function workflow definition section auto-complete
+. After logging in, use *Ctrl+Space* in the function definition section to view the list of available functions.
++
+.Example of function definition section auto-complete dialog box
 image::tooling/serverless-workflow-editor/swf-editor-auto-complete-dialog.png[]
 
-Click on the required function to auto-complete the Function Definition.
-
-.Auto-completed Function Definition
+. Click on a function to auto-complete the function definition as shown in the following example:
++
+--
+.Example of an auto-completed function definition
 image::tooling/serverless-workflow-editor/swf-editor-completed-function-definition.png[]
 
 [NOTE]
 ====
-After selecting one of the options in the auto-complete dialog, the link:{open_api_spec_url}[OpenAPI spec] file will be downloaded into the 'specs' folder(<<Kogito Serverless Workflow Editor Setttings,Configured in the settings>>). The saved file follows the format of _REGISTRY-NAME_OPERATION-NAME_VERSION_.
+After selecting an option in the auto-complete dialog box, the OpenAPI specification file is downloaded into the `specs` folder. The downloaded OpenAPI specification file follows the _REGISTRY-NAME_OPERATION-NAME_VERSION_ format.
 ====
 
-.Downloaded OpenAPI spec file
+.Downloaded OpenAPI specification file
 image::tooling/serverless-workflow-editor/swf-editor-open-api-spec.png[]
+--
 
-If any change is made in the registry, make use of the *Refresh Service Registries*... to fetch the new changes.
-
-.Refresh Service Registries button in Function Definition section
+. To fetch the new changes in the service registry, click *Refresh Service Registries*.
++
+.Refresh Service Registries button in function definition section
 image::tooling/serverless-workflow-editor/swf-editor-refresh-registry.png[]
 
-Click on the *Add function*... button to create a new Function Definition object.
+. To create a new function definition object, click *Add function*.
 
-Now you have successfully connected to the Apicurio Registry and made use of the auto-complete feature of the extension.
-
-== Validation
+. You can also validate the auto-completion using the JSON schema to the workflow file structure.
++
+--
 
 [NOTE]
 ====
-Currently validation is performed only for JSON files. The validation is based on JSON schema, and it checks only the structure of the JSON and not the content.
+The Serverless Workflow editor performs validation using JSON schema to the workflow file structure but not the values, and auto-completion works with JSON but not with YAML.
 ====
 
-The validation warnings and errors can be seen in the *Problems* tab. Go to *View* → *Problems* or press *Ctrl+Shift+M* to open the *Problems* tab.
+To view the validation warnings and errors, go to *View* → *Problems* or press *Ctrl+Shift+M* to open the *Problems* tab.
 
-.Errors and warnings in problems tab
+.Errors and warnings in Problems tab
 image::tooling/serverless-workflow-editor/swf-editor-vscode-problems-tab.png[]
+--
 
 include::../../../pages/_common-content/report-issue.adoc[]
