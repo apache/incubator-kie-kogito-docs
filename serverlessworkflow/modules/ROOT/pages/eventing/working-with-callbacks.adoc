@@ -16,7 +16,7 @@ For the flow to know this published event is the one it is waiting for, the exte
 
 The workflow in the link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus[Serverless Workflow Callback Quarkus] example illustrates the callback feature. Once started (this application does not have an initial model), it publishes an event of type `resume` and waits for an event of `wait` type. The event of type `resume` is consumed by a listener that simulates the behavior of an external service. Consequently, as an external service will do, once the actions associated to that event reception has finished, this listener publishes a new event of type `wait`. Once this event is received, the workflow move to the next state and successfully ends. 
 
-The first step to be done is to declare the event types being used by the workflow: `resume` and `wait`
+The first step to be done is to declare the event types being used by the workflow: `resume` and `wait`, as shown in the excerpt bellow:
 
 [code,json]
 ----
