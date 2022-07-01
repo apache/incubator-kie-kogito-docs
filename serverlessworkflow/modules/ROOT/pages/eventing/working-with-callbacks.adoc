@@ -39,7 +39,7 @@ The first step to be done is to declare the event types being used by the workfl
 
 Then it declares a Callback state that will publish an event of type `resume` and wait for an event of type `wait`. The Cloud Event being published contains a `move` data field. The event being received is expected to have a `result` data field, which according to the link:{spec_doc_url}#event-data-filters[eventDataFilter], will be added to the workflow model as `move` field. 
 
-.Excerpt of the Callback State declaration handling with the waitEvent
+.Excerpt of the Callback State declaration handling the wait event
 [code,json]
 ----
 {
@@ -61,9 +61,9 @@ Then it declares a Callback state that will publish an event of type `resume` an
     }
 ----
 
-The event of type `resume` is consumed by a link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/java/org/kie/kogito/examples/PrintService.java[Java listener]. This Java listener publishes a new event of type `wait`
+The event of type `resume` is consumed by a link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/java/org/kie/kogito/examples/PrintService.java[event listener]. This event listener publishes a new event of type `wait`
 
-.Excerpt of the Java method that consumes the event "resume"
+.Excerpt of the Java method that publishes the wait event
 [code,java]
 ----
 
@@ -93,7 +93,7 @@ As mentioned before, the `kogitoprocrefid` header is pivotal because, when not u
 
 Remember that every workflow has a unique instance id that is automatically included in any event published by Kogito. As you can see in the code snippet below, the event listener takes the process instance id from a cloud event attribute named `kogitoprocinstanceid` of the event being consumed. 
 
-.Excerpt of the event consumer in the callback example
+.Excerpt of the Java method that consumes the resume event 
 [source,java]
 ----
     @Incoming("in-resume")
