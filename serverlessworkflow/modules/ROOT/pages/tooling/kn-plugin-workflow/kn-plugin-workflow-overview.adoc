@@ -88,6 +88,8 @@ kn workflow create --extension quarkus-jsonp,quarkus-smallrye-openapi
 ----
 This example creates a new project with two additional extensions, "quarkus-jsonp" and "quarkus-smallrye-openapi".
 
+NOTE: Running the `create` command for the first time can take a while, due to the necessity to download all dependencies for the Quarkus project.
+
 === build
 The build command, builds a Kogito Serverless Workflow project in the current directory and generate a container image.
 
@@ -126,11 +128,31 @@ kn workflow build --image my-user/my-project:1.0.0 --image-repository other-user
 The example above will result in an image named `quay.io/other-user/my-project:1.0.1`
 
 ==== Building strategy
-To build the image we have two different strategies.
+We have two different strategies to build the project and generate the image.
+
 . Jib
-.. Podman
+Jib is an extension that enables building a container image without the necessity of a container runtime. Rebuilds are fast and the resultant image is optimized.
+
+The following commands builds the image using Jib and save it in the Docker or Podman runtime respectivaly.
+[source,shell]
+----
+kn workflow build --image my-project --jib
+kn workflow build --image my-project --jib-podman
+----
+
+If you don't want to use any container runtime, use the `--push` option, so the built image will be imediatly pushed to the respecitive registry.
+[source,shell]
+----
+kn workflow build --image my-project --jib --push
+----
+NOTE: You need to be authenticated in your registry to this command work. Remember, the resultant image in this case is "quay.io/my-project:latest".
 
 . Docker
+Building with Docker is straight forward as it's the default option. Also, it's possible to automatically push the image to the respecitive registry by using the `--push` option.
+[source,shell]
+----
+kn workflow build --image my-project --push
+----
 
 === deploy
 
