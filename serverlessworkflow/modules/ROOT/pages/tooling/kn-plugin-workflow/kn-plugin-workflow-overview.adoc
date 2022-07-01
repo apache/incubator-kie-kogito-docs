@@ -5,7 +5,7 @@
 :description: Overview of the Workflow plugin for the Knative CLI
 :keywords: kogito, workflow, serverless, knative, plugin
 
-`kn-plugin-workflow` is a plugin of the Knative Client to enable users to quickly set up a local Kogito Serverless Workflow project from the command line.
+`kn-plugin-workflow` is a plugin for the Knative Client to enable users to quickly set up a local Kogito Serverless Workflow project from the command line.
 
 .Prerequisites
 * {java_install_url}[Java] at least version {java_min_version}
@@ -16,17 +16,17 @@
 
 == Instalation
 
-You can download the latest binaries from the {kie_tools_releases_url}[Releases] page.
+You can download the latest binaries from the {kie_tools_releases_page_url}[KIE Tooling Releases] page.
 
 There are two ways to run `kn workflow`:
 
 . You can run it standalone, just put it on your system path and make sure it is executable.
 . You can install it as a plugin of the `kn` client to run:
-* Follow the {kn_cli_install_url}[documentation] to install `kn` CLI if you don't have it
-* Copy the `kn-workflow` binary to a directory on your `PATH` (for example, `/usr/local/bin`) and make sure its filename is `kn-workflow`
+* Follow the {kn_cli_install_url}[documentation] to install `kn` CLI if you don't have it.
+* Copy the `kn-workflow` binary to a directory on your `PATH` (for example, `/usr/local/bin`) and make sure its filename is `kn-workflow`.
 * On macOS give the ownership to the root user:
 `sudo chown root: /usr/local/bin/kn-workflow`
-* Run `kn plugin list` to verify that the `kn-workflow` plugin is installed successfully
+* Run `kn plugin list` to verify that the `kn-workflow` plugin is installed successfully.
 
 After installing the plugin, you can use `kn workflow` to run its related subcommands.
 
@@ -62,11 +62,12 @@ Use "kn workflow [command] --help" for more information about a command.
 ----
 
 === create
-The `create` command will scaffold a new Kogito Serverless Workflow project in the current directory.
+The `create` command scaffolds a new Kogito Serverless Workflow project in the current directory.
 
 It sets up a Quarkus project with minimal extensions to build a Kogito Serverless Workflow project. Also, the generated project has a "hello world" workflow.sw.json located on the
-./<project-name>/src/main/resources directory.
+`./<project-name>/src/main/resources` directory.
 
+.Creates a new project called "new-project"
 [source,shell]
 ----
 kn workflow create
@@ -74,19 +75,19 @@ kn workflow create
 
 By default, the generated project is named "new-project". This name can be overwritten with the `[-n|--name]` flag.
 
+.Creates a new project called "my-project"
 [source,shell]
 ----
 kn workflow create --name my-project
 ----
-This example creates a new project called "my-project".
 
-Also, it's possible to add more extensions to the Quarkus project during its creation, by using the `[-e|--extension]` flag. You can pass more than one extension, but they need to be separated by a comma.
+Also, it's possible to add more extensions to the Quarkus project during its creation by using the `[-e|--extension]` flag. You can pass more than one extension, but they need to be separated by a comma.
 
+.Creates a new project with "quarkus-jsonp" and "quarkus-smallrye-openapi" extensions
 [source,shell]
 ----
 kn workflow create --extension quarkus-jsonp,quarkus-smallrye-openapi
 ----
-This example creates a new project with two additional extensions, "quarkus-jsonp" and "quarkus-smallrye-openapi".
 
 NOTE: The first time you use the `create` command, it can take a while due to the necessity to download all dependencies for the Quarkus project.
 
@@ -95,17 +96,19 @@ The `build` command builds a Kogito Serverless Workflow project in the current d
 
 NOTE: You need to use the `--image` or `--image-name` flag in the `build` command.
 
+.Builds the project and generates a local image called "quay.io/my-project"
 [source,shell]
 ----
 kn workflow build --image my-project
 kn workflow build --image-name my-project
 ----
-This example generates a local image named "quay.io/my-project:latest". Note that the `registry` and `tag` defaults are `quay.io` and `latest` respectively.
+NOTE: The `registry` and `tag` defaults are `quay.io` and `latest` respectively.
 
 ==== Image naming options
 Let's take a better look at the image naming options.
 
 The `[-i|--image]` flag can be used in several ways.
+
 * --image=[name]
 * --image=[name]:[tag]
 * --image=[repository]/[name]
@@ -114,41 +117,52 @@ The `[-i|--image]` flag can be used in several ways.
 * --image=[registry]/[repository]/[name]:[tag]
 
 Also, it's possible to use specific flags to compose the image's full name. The flags are:
+
 * --image-registry
 * --image-repository
 * --image-name
 * --image-tag
 
-NOTE: If the --image flag is provided together with any of these flags, the specific value will override --image.
+NOTE: If the --image flag is provided together with any of these flags, the specific value will override `--image`.
 
+.Builds the project and generates a local image called "quay.io/other-user/my-project:1.0.1"
 [source,shell]
 ----
 kn workflow build --image my-user/my-project:1.0.0 --image-repository other-user --image-tag 1.0.1
 ----
-The example above will result in an image named "quay.io/other-user/my-project:1.0.1".
 
 ==== Building strategy
 We have two different strategies to build the project and generate the image.
 
-. Jib
+.Jib
 Jib is an extension that enables building a container image without the necessity of a container runtime. Rebuilds are fast, and the resultant image is optimized.
 
-The following commands build the image using Jib and save it in the Docker or Podman runtime respectively.
+.Builds the project and generates a local image using Jib (Save it in the Docker runtime)
 [source,shell]
 ----
 kn workflow build --image my-project --jib
+----
+
+.Builds the project and generates a local image using Jib (Save it in the Podman runtime)
+[source,shell]
+----
 kn workflow build --image my-project --jib-podman
 ----
 
 If you don't want to use any container runtime, use the `--push` option, so the built image will be immediately pushed to the respective registry.
+
+.Builds the project and pushes the image using Jib (No container runtime required)
 [source,shell]
 ----
 kn workflow build --image my-project --jib --push
 ----
 NOTE: Remember to have access to your registry before using the `--push` option. You can do it using the `docker login`, `podman login`, or any other equivalent method.
 
-. Docker
+.Docker
+
 Building with Docker is straightforward as it's the default option. Also, it's possible to automatically push the image to the respective registry by using the `--push` option.
+
+.Builds the project and pushes the image using Docker
 [source,shell]
 ----
 kn workflow build --image my-project --push
@@ -159,6 +173,7 @@ The `deploy` command deploys a Kogito Serverless Workflow project in the current
 
 Also, remember to have access to your cluster, and your cluster needs to have access to your image.
 
+.Deploys the project to authenticated cluster
 [source,shell]
 ----
 kn workflow deploy
@@ -167,7 +182,7 @@ kn workflow deploy --path other-path
 NOTE: If you need to use a more complex deploy setup, we recommend directly using the `kubectl` command line.
 
 == Building from Source
-If you want to build the project form source, follow the steps:
+If you want to build the project from source, follow the steps:
 [source,shell]
 ----
 git clone git@github.com:kie-group/kie-tools.git
@@ -178,4 +193,4 @@ go mod tidy
 yarn build
 ----
 
-include::../../pages/_common-content/report-issue.adoc[]
+include::../../../pages/_common-content/report-issue.adoc[]
