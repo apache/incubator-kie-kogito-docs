@@ -6,7 +6,11 @@ Working with Callbacks
 :keywords: kogito, workflow, serverless, callback, event
 
 
-This guide discuss link:{spec_doc_url}#Callback-State[Callback State]. This is a state that performs an action and wait for an event produced as result of that action in order to resume the workflow. So it is  suitable to perform __fire&wait-for-result__ operations. The action will normally be an external service invocation. This service is expected to be async. From the flow perspective, async means that the control will be returned to the caller almost immediately, without waiting for the actual operation to be finished. Once it does finished, then a cloud_events_url[Cloud Event] will be published to resume the flow. In order the flow to know this published event is the one it is waiting for, external service developer might include in the event header the Kogito process instance id or, preferably, use the xref:event-correlation-with-workflows[Serverless workflow correlation mechanism]. This guide will focus on the former mechanism, which is based on the fact that every Kogito Workflow instance has an automatically generated and unique identifier.
+This guide discuss the link:{spec_doc_url}#Callback-State[Callback State]. This is a state that performs an action and waits for an event produced as a result of that action to resume the workflow. So it is suitable to perform __fire&wait-for-result__ operations. The action will normally be an external service invocation. This service is expected to be async.
+
+From the flow perspective, async means that the control will be returned to the caller almost immediately, without waiting for the actual operation to be finished. Once it ends, a link:{cloud_events_url}[Cloud Event] will be published to resume the flow.
+
+For the flow to know this published event is the one it is waiting for, the external service developer might include the Kogito process instance id in the event header or, preferably, use the xref:event-correlation-with-workflows[Serverless Workflow correlation mechanism]. This guide will focus on the former mechanism, which is based on the fact that every Kogito Workflow instance has an automatically generated and unique identifier.
 
 == Error callback example 
 
