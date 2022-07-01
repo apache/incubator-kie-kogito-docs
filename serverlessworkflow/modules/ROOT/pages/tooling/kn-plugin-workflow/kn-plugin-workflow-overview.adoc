@@ -94,7 +94,7 @@ NOTE: The first time you use the `create` command, it can take a while due to th
 === build
 The `build` command builds a Kogito Serverless Workflow project in the current directory and generates a container image. The build process produces a `knative.yml` deploy file in the `./target/kubernetes` folder. If your workflow has **events**, it'll also generate a `kogito.yml` deploy file.
 
-NOTE: You need to use the `--image` or `--image-name` flag in the `build` command.
+To use the the `build` you need to provide at least one of the two flags: `--image` or `--image-name`.
 
 .Builds the project and generates a local image called "quay.io/my-project"
 [source,shell]
@@ -102,7 +102,7 @@ NOTE: You need to use the `--image` or `--image-name` flag in the `build` comman
 kn workflow build --image my-project
 kn workflow build --image-name my-project
 ----
-NOTE: The `registry` and `tag` defaults are `quay.io` and `latest` respectively.
+NOTE: The "registry" and "tag" defaults are "quay.io" and "latest" respectively.
 
 ==== Image naming options
 Let's take a better look at the image naming options.
@@ -116,14 +116,14 @@ The `[-i|--image]` flag can be used in several ways.
 * --image=[registry]/[repository]/[name]
 * --image=[registry]/[repository]/[name]:[tag]
 
-Also, it's possible to use specific flags to compose the image's full name. The flags are:
+Also, it's possible to use specific flags to compose the image's full name.
 
 * --image-registry
 * --image-repository
 * --image-name
 * --image-tag
 
-NOTE: If the --image flag is provided together with any of these flags, the specific value will override `--image`.
+NOTE: If the "--image" flag is provided together with any of these flags, the specific value will override "--image".
 
 .Builds the project and generates a local image called "quay.io/other-user/my-project:1.0.1"
 [source,shell]
@@ -156,7 +156,7 @@ If you don't want to use any container runtime, use the `--push` option, so the 
 ----
 kn workflow build --image my-project --jib --push
 ----
-NOTE: Remember to have access to your registry before using the `--push` option. You can do it using the `docker login`, `podman login`, or any other equivalent method.
+NOTE: Remember to have access to your registry before using the "--push" option. You can do it using the "docker login", "podman login", or any other equivalent method.
 
 .Docker
 
@@ -179,7 +179,7 @@ Also, remember to have access to your cluster, and your cluster needs to have ac
 kn workflow deploy
 kn workflow deploy --path other-path
 ----
-NOTE: If you need to use a more complex deploy setup, we recommend directly using the `kubectl` command line.
+NOTE: If you need to use a more complex deploy setup, we recommend directly using the "kubectl" command line.
 
 == Building from Source
 If you want to build the project from source, follow the steps:
