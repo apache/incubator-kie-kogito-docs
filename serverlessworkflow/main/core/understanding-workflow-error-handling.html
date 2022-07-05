@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>Error handling in Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Understanding workflow error handling">
+    <meta name="keywords" content="kogito, workflow, serverless, error">
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -73,6 +75,9 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Core</span>
 <ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
   </li>
@@ -164,6 +169,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow</a></li>
+    <li>Core</li>
+    <li><a href="understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a></li>
+  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/core/understanding-workflow-error-handling.adoc">Edit this Page</a></div>
   </div>
@@ -172,7 +182,177 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page">Error handling in Serverless Workflow</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes how you can handle the errors that might occur during Serverless Workflow .</p>
+</div>
+<div class="paragraph">
+<p>The Serverless Workflow specification provides an <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-error-handling">error handling</a> mechanism, enabling you to handle the errors that might happen during the interactions between the workflow and external systems.</p>
+</div>
+<div class="paragraph">
+<p>When an error occurs, it changes the regular Serverless Workflow sequence. In such cases, a workflow state transitions to an alternative state that can potentially handle the error, instead of transitioning to the predefined state.</p>
+</div>
+<div class="paragraph">
+<p>Note that error definition for a Serverless Workflow is optional. If error handling is not defined, then the workflow execution is aborted when an error occurs. As a developer, you can consider the error handling in Serverless Workflow as a <code>try-catch</code> or a <code>goto</code> construct.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="con-error-definition"><a class="anchor" href="#con-error-definition"></a>Error definition</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#error-definition">error definition</a> in Serverless Workflow is composed of a <code>name</code> and <code>code</code> parameters. The <code>name</code> is a short and natural language description of an error, such as <code>wrong parameter</code>. The <code>code</code> parameter helps the implementation to identify the error.</p>
+</div>
+<div class="paragraph">
+<p>In Kogito, the <code>code</code> parameter is mandatory, which consists of the fully qualified Java class name of an <a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/index.html">exception type</a>.</p>
+</div>
+<div class="paragraph">
+<p>To determine if an exception is handled by an error definition, Kogito first checks whether or not the type of the Java exception is an instance of the exception that is specified in the error definition. Otherwise, Kogito recursively applies the same check to any embedded exception within the original Java one, till the exception chain is exhausted.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ref-example-error-handling"><a class="anchor" href="#ref-example-error-handling"></a>Example of error handling</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The workflow in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-error-quarkus"><code>serverless-workflow-error-quarkus</code> example application</a> illustrate the usage of the error handling mechanism.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/core/error_handling.png" alt="error handling">
+</div>
+<div class="title">Figure 1. Example of error handling</div>
+</div>
+<div class="paragraph">
+<p>The workflow accepts an integer number as the input model. When the workflow starts, it invokes the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examplesserverless-workflow-error-quarkus/src/main/java/org/kie/kogito/examples/EvenService.java"><code>isEven</code> Java service</a>, which accepts that integer number as a parameter. This service throws an <code>IllegalArgumentException</code> exception if the integer number is odd. This means that if the integer number is even, the Serverless Workflow transitions to the <code>even</code> state, however, if the integer number is odd, the Serverless Workflow transitions to the <code>odd</code> state, resulting in a different model output.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example <code>checkEven</code> state</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+      "name": "checkEven",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "checkEvenAction",
+          "functionRef": {
+            "refName": "isEven",
+            "arguments": {
+              "number": "$.number"
+            }
+          }
+        }
+      ],
+      "transition": "even",
+      "onErrors": [
+        {
+          "errorRef": "odd number",
+          "transition": "odd"
+        }
+      ]
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The workflow defines a function that invokes the <code>isEven</code> method of <code>org.kie.kogito.examples.EvenService</code> class. This function uses a <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#defining-custom-function-types">custom function type</a>, enabling Kogito to invoke Java methods.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example <code>isEven</code> function definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "name": "isEven",
+    "type": "custom",
+    "operation": "service:java:org.kie.kogito.examples.EvenService::isEven"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To handle the error, the worflow defines an <code>odd number</code> error which handles any runtime exception. As the <code>IllegalArgumentException</code> is a child of <code>RuntimeException</code>, if <code>isEven</code> method throws the exception, it will be handled.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example error definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"errors": [
+    {
+      "name": "odd number",
+      "code": "java.lang.RuntimeException"
+     }
+  ]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#inject-state">Inject</a> state is used to populate the model with specific JSON payload. Therefore, the even and odd state defines the <code>message</code> property as <code>even</code> and <code>odd</code> respectively.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">   {
+      "name": "even",
+      "type": "inject",
+      "data": {
+        "numberType": "even"
+      },
+      "transition": "finish"
+    },
+    {
+      "name": "odd",
+      "type": "inject",
+      "data": {
+        "numberType": "odd"
+      },
+      "transition": "finish"
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>finish</code> state in the <code>serverless-workflow-error-quarkus</code> example application displays the model content to the console, so you can verify that the expected message has been set.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">    {
+      "name": "finish",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "printAction",
+          "functionRef": {
+            "refName": "printMessage",
+            "arguments": {
+              "message": "$.numberType"
+            }
+          }
+        }
+      ],
+      "end": {
+        "terminate": "true"
+      }
+    }</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
