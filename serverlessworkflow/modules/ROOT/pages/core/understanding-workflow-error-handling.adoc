@@ -1,1 +1,141 @@
-//= Understanding workflow error handling
+Error handling in Serverless Workflow
+=====================================
+:compat-mode!:
+// Metadata:
+:description: Understanding workflow error handling
+:keywords: kogito, workflow, serverless, error
+// links
+:java_exception_url: https://docs.oracle.com/javase/tutorial/essential/exceptions/index.html
+
+This document describes how you can handle the errors that might occur during Serverless Workflow . 
+
+The Serverless Workflow specification provides an link:{spec_doc_url}#workflow-error-handling[error handling] mechanism, enabling you to handle the errors that might happen during the interactions between the workflow and external systems. 
+
+When an error occurs, it changes the regular Serverless Workflow sequence. In such cases, a workflow state transitions to an alternative state that can potentially handle the error, instead of transitioning to the predefined state.
+
+Note that error definition for a Serverless Workflow is optional. If error handling is not defined, then the workflow execution is aborted when an error occurs. As a developer, you can consider the error handling in Serverless Workflow as a `try-catch` or a `goto` construct.
+
+[[con-error-definition]]
+== Error definition
+
+An link:{spec_doc_url}#error-definition[error definition] in Serverless Workflow is composed of a `name` and `code` parameters. The `name` is a short and natural language description of an error, such as `wrong parameter`. The `code` parameter helps the implementation to identify the error.
+
+In Kogito, the `code` parameter is mandatory, which consists of the fully qualified Java class name of an link:{java_exception_url}[exception type].
+
+To determine if an exception is handled by an error definition, Kogito first checks whether or not the type of the Java exception is an instance of the exception that is specified in the error definition. Otherwise, Kogito recursively applies the same check to any embedded exception within the original Java one, till the exception chain is exhausted.
+
+[[ref-example-error-handling]]
+== Example of error handling
+
+The workflow in the link:{kogito_sw_examples_url}/serverless-workflow-error-quarkus[`serverless-workflow-error-quarkus` example application] illustrate the usage of the error handling mechanism. 
+
+.Example of error handling
+image::core/error_handling.png[]
+
+The workflow accepts an integer number as the input model. When the workflow starts, it invokes the link:{kogito_sw_examples_url}serverless-workflow-error-quarkus/src/main/java/org/kie/kogito/examples/EvenService.java[`isEven` Java service], which accepts that integer number as a parameter. This service throws an `IllegalArgumentException` exception if the integer number is odd. This means that if the integer number is even, the Serverless Workflow transitions to the `even` state, however, if the integer number is odd, the Serverless Workflow transitions to the `odd` state, resulting in a different model output.
+
+.Example `checkEven` state 
+[source,json]
+----
+{
+      "name": "checkEven",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "checkEvenAction",
+          "functionRef": {
+            "refName": "isEven",
+            "arguments": {
+              "number": "$.number"
+            }
+          }
+        }
+      ],
+      "transition": "even",
+      "onErrors": [
+        {
+          "errorRef": "odd number",
+          "transition": "odd"
+        }
+      ]
+    }
+----
+
+The workflow defines a function that invokes the `isEven` method of `org.kie.kogito.examples.EvenService` class. This function uses a link:{spec_doc_url}#defining-custom-function-types[custom function type], enabling Kogito to invoke Java methods. 
+
+.Example `isEven` function definition
+[source, json]
+----
+{
+    "name": "isEven",
+    "type": "custom",
+    "operation": "service:java:org.kie.kogito.examples.EvenService::isEven"
+}
+----
+
+To handle the error, the worflow defines an `odd number` error which handles any runtime exception. As the `IllegalArgumentException` is a child of `RuntimeException`, if `isEven` method throws the exception, it will be handled. 
+
+.Example error definition
+[source, json]
+----
+"errors": [
+    {
+      "name": "odd number",
+      "code": "java.lang.RuntimeException"
+     }
+  ]
+----
+
+
+The link:{spec_doc_url}#inject-state[Inject] state is used to populate the model with specific JSON payload. Therefore, the even and odd state defines the `message` property as `even` and `odd` respectively. 
+
+[source, json]
+----
+   {
+      "name": "even",
+      "type": "inject",
+      "data": {
+        "numberType": "even"
+      },
+      "transition": "finish"
+    },
+    {
+      "name": "odd",
+      "type": "inject",
+      "data": {
+        "numberType": "odd"
+      },
+      "transition": "finish"
+    }
+----
+
+The `finish` state in the `serverless-workflow-error-quarkus` example application displays the model content to the console, so you can verify that the expected message has been set.
+
+[source, json]
+----
+    {
+      "name": "finish",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "printAction",
+          "functionRef": {
+            "refName": "printMessage",
+            "arguments": {
+              "message": "$.numberType"
+            }
+          }
+        }
+      ],
+      "end": {
+        "terminate": "true"
+      }
+    }
+----
+== Additional resources
+
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
+
+include::../../pages/_common-content/report-issue.adoc[]
+
+
