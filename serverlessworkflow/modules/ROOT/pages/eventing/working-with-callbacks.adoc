@@ -87,7 +87,7 @@ The event of type `resume` is consumed by a link:{kogito_sw_examples_url}/server
     }
 ----
 
-The cloud event published by the listener modifies the original value of the `move` field and publishes it as the `result` field. Moreover, it contains a header attribute, named `kogitoprocrefid`, holding the process instance id of the workflow that published the event.
+The cloud event published by the listener modifies the original value of the `move` field and publishes it as the `result` field. Moreover, it contains a Cloud Event attribute, named `kogitoprocrefid`, holding the process instance id of the workflow that published the event.
 
 As mentioned before, the `kogitoprocrefid` header is pivotal because, when not using correlation, it is the only way for the callback state to know that this event should be used to resume the flow. 
 
