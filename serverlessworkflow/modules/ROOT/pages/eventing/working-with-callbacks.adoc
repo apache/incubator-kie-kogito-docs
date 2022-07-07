@@ -14,9 +14,9 @@ For the flow to know this published event is the one it is waiting for, the exte
 
 == Error callback example 
 
-The workflow in the link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus[Serverless Workflow Callback Quarkus] example illustrates the callback feature. Once started (this application does not have an initial model), it publishes an event of type `resume` and waits for an event of `wait` type.
+The workflow in the link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus[Serverless Workflow Callback Quarkus] example illustrates the callback feature. Once started (this workflow does not have an initial model), it publishes a Cloud Event of type `resume` and waits for a Cloud Event of `wait` type.
 
-The type `resume` event is consumed by a listener that simulates the behavior of an external service. Consequently, as an external service will do, once the actions associated with that event reception have finished, this listener publishes a new event of type `wait`. Once this event is received, the workflow moves to the next state and successfully ends. 
+The Cloud Event with type `resume` is consumed by a listener that simulates the behavior of an external service. Consequently, as an external service will do, once the actions associated with that event reception have finished, this listener publishes a new Cloud Event with type `wait`. Once this event is received, the workflow moves to the next state and successfully ends. 
 
 The first step to be done is to declare the event types being used by the workflow: `resume` and `wait`, as shown in the excerpt bellow:
 
@@ -87,7 +87,7 @@ The event of type `resume` is consumed by a link:{kogito_sw_examples_url}/server
     }
 ----
 
-The cloud event published by the listener modifies the original value of the `move` field and publishes it as the `result` field. Moreover, it contains a Cloud Event attribute, named `kogitoprocrefid`, holding the process instance id of the workflow that published the event.
+This cloud event modifies the original value of the `move` field and publishes it as the `result` field. Moreover, it contains a Cloud Event attribute, named `kogitoprocrefid`, holding the process instance id of the workflow that published the consumed event.
 
 As mentioned before, the `kogitoprocrefid` header is pivotal because, when not using correlation, it is the only way for the callback state to know that this event should be used to resume the flow. 
 
@@ -108,9 +108,9 @@ Remember that every workflow has a unique instance id that is automatically incl
 
 === Kafka configuration
 
-This example requires an external broker that handles the involved events in order to work. In this case, we are using link:{kafka_doc_url}[Kafka], but you might use link:xref:consume-produce-events-with-knative-eventing.adoc[Knative Eventing] instead.
+This example requires an external broker that handles the involved events in order to work. In this case, the default setup uses link:{kafka_doc_url}[Kafka], but you might use link:xref:consume-produce-events-with-knative-eventing.adoc[Knative Eventing] instead.
 
-Kakfa use topics to publish/consume messages. In this example we are using two of them, which matches the name of event types defined in the workflow: `wait` and `resume`. They are configured in link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/resources/application.properties}[application.properties]. If you are interested on details, take a look to link:{kogito_kafka_integration_url}[Kafka integration documentation]. 
+Kakfa use topics to publish/consume messages. In this example we are using two of them, which matches the name of the Cloud Event types defined in the workflow: `wait` and `resume`. They are configured in link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/resources/application.properties}[application.properties]. If you are interested on details, take a look to link:xref:consume-producing-events-with-kafka.adoc[Consume and Produce Events with Kafka]. 
 
 == Additional resources
 
