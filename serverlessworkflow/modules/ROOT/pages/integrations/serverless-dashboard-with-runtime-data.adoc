@@ -1,1 +1,315 @@
-//= Displaying workflow runtime data in serverless dashboards
+= Displaying workflow runtime data in serverless dashboards
+
+This document describes steps to create serverless dashboards to monitor Kogito Serverless Workflows. 
+
+To build dashboards we need data and it can be easily acquired from Kogito Serverless Workflow using any of the following approaches:
+
+* Enabling **Metrics**
+* Integrating with **Data Index** to consume data using its REST API
+* Using custom mechanisms (such as `ProcessInstanceListener`)
+
+In this document we will explore creating serverless dashboards for metrics and for Data Index GraphQL REST API.
+
+== Serverless Dashboards with Dashbuilder
+
+Serverless Dashboards are visualizations that run entirely on the client side. We will use https://www.dashbuilder.org[Dashbuilder] to create serverless dashboards: it consumes data from any JSON source and the dashboard is defined in YML format.
+
+To use Dashbuilder you just have to uncompress the `dashbuilder-client` NPM package and edit the file *setup.js* to link your YML files.
+
+image::getting-started/integrations/dashbuilder-sample-report.png[]
+
+
+== Using Metrics for building Dashboards
+
+For adding metrics to your serverless workflow application just add the dependency `org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus` and the metrics will be available in `/q/metrics` URL.
+Dashbuilder can consume data directly from metrics endpoints. Using an expression to format some metrics we can simply show metrics in a table using the following YML:
+
+.Show metrics in a table
+[source,yml]
+----
+datasets:
+  - uuid: swf_metrics
+    url: http://localhost:8080/q/metrics
+    expression: >-
+        $map($, function($l) { 
+                [
+                    $l[0], 
+                    $contains($l[1], "process_id") ? 
+                                            $replace($match($l[1], /process_id=".*?"/).match, 
+                                            "process_id", 
+                                            "workflow") : 
+                                            $l[1], 
+                    $l[2] = "NaN" ? -1 : $l[2]
+                ]
+            }
+        )
+pages:
+    - components:
+        - settings:            
+            lookup:
+               uuid: swf_metrics
+----
+
+.Metrics in a table
+image::getting-started/integrations/dashbuilder-metrics-table.png[]
+
+To extract serverless workflow specific information you can use specific Kogito metrics and when displaying the metric we filter the data to only include these metrics. Metrics related to Serverless Workflow:
+
+* *kogito_process_instance_completed_total*: Completed Workflows
+* *kogito_process_instance_started_total*: Started Workflows
+* *kogito_process_instance_running_total*: Running Workflows
+* *kogito_process_instance_duration_seconds_sum*: Workflows Total Duration 
+
+Dashbuilder *metrics* and *bar chart* components are useful to display these metrics. After filtering specific metrics we can put the information in bar charts as you can see the YML below:
+
+
+[source,yml]
+----
+datasets:
+  - uuid: metrics
+    url: http://localhost:8080/q/metrics
+    expression: >-
+        $map($, function($l) { 
+                [
+                    $l[0], 
+                    $contains($l[1], "process_id") ? 
+                                            $replace($match($l[1], /process_id=".*?"/).match, 
+                                            "process_id", 
+                                            "workflow") : 
+                                            $l[1], 
+                    $l[2] = "NaN" ? -1 : $l[2]
+                ]
+            }
+        )
+    columns:
+      - id: metric
+        type: label
+      - id: labels
+        type: label
+      - id: value
+        type: number
+pages:
+  - rows:
+      - columns:
+          - span: "6"
+            components:
+              - html: >-
+                  <p style="font-size: large">Started </p>
+              - settings:
+                  type: BARCHART                  
+                  chart:
+                    resizable: 'true'
+                    width: '2000'
+                  lookup:
+                    uuid: metrics
+                    sort:
+                      - column: value
+                        sortOrder: DESCENDING
+                    filter:
+                      - column: metric
+                        function: EQUALS_TO
+                        args:
+                          - "kogito_process_instance_started_total"
+                    group:
+                      - columnGroup:
+                          source: labels
+                        groupFunctions:
+                          - source: labels
+                          - source: value
+          - span: "6"
+            components:
+              - html: >-
+                  <p style="font-size: large">Running </p>
+              - settings:
+                  type: BARCHART                 
+                  chart:
+                    resizable: 'true'
+                    width: '2000'
+                  lookup:
+                    uuid: metrics
+                    sort:
+                      - column: value
+                        sortOrder: DESCENDING
+                    filter:
+                      - column: metric
+                        function: EQUALS_TO
+                        args:
+                          - "kogito_process_instance_running_total"
+                    group:
+                      - columnGroup:
+                          source: labels
+                        groupFunctions:
+                          - source: labels
+                          - source: value
+      - columns:
+          - span: "6"
+            components:
+              - html: >-
+                  <p style="font-size: large">Completed </p>
+              - settings:
+                  type: BARCHART
+                  chart:
+                    resizable: 'true'
+                    width: '2000'
+                  dataSetLookup:
+                    uuid: metrics
+                    sort:
+                      - column: value
+                        sortOrder: DESCENDING
+                    filter:
+                      - column: metric
+                        function: EQUALS_TO
+                        args:
+                          - "kogito_process_instance_completed_total"
+                    group:
+                      - columnGroup:
+                          source: labels
+                        groupFunctions:
+                          - source: labels
+                          - source: value
+          - span: "6"
+            components:
+              - html: >-
+                  <p style="font-size: large">Total Duration </p>
+              - settings:
+                  type: BARCHART                  
+                  chart:
+                    resizable: 'true'
+                    width: '2000'
+                  lookup:
+                    uuid: metrics
+                    sort:
+                      - column: value
+                        sortOrder: DESCENDING
+                    filter:
+                      - column: metric
+                        function: EQUALS_TO
+                        args:
+                          - "kogito_process_instance_duration_seconds_sum"
+                    group:
+                      - columnGroup:
+                          source: labels
+                        groupFunctions:
+                          - source: labels
+                          - source: value
+----
+
+.Workflow Metrics Dashboard
+image::getting-started/integrations/dashbuilder-workflows-metrics-dashboard.png[]
+
+If you are using Prometheus we can use PROMQL with Prometheus REST API and transform the result to the JSON format supported by Dashbuilder to build dashboards. For further information about Dashbuilder and Prometheus check the article https://blog.kie.org/2022/07/creating-prometheus-dashboards-using-dashbuilder.html[Creating Prometheus Dashboards with Dashbuilder].
+
+== Using Data Index
+
+Data index is a service available during development mode and it contains all data about the workflow steps execution. By default data index is available at `http://localhost:8180` and it uses GraphQL, so Dashbuilder can connect to it using its REST API and transform the result to the supported format.
+
+The steps to create a dashboard with data from Data Index:
+
+1) Go to Data Index GraphQL interface (default is `http://localhost:8180/graphiql`) and test your query. Let's use as example this query that list all workflows:
+
+.Example GraphQL query to retrieve all workflows
+[source,json]
+----
+{
+  ProcessInstances {
+    processId
+    processName
+    state
+    start
+    end
+    businessKey
+    error {message}
+  }
+}
+----
+
+2) Notice that when you run the query it modifies the URL to include the query. Copy the URL, but modify `graphiql` to `graphql`. When accessing it you will notice that it returns the result in a JSON format, such as:
+
+.GraphQL JSON result when using the query above
+[source,json]
+----
+{
+  "data": {
+    "ProcessInstances": [
+      {
+        "processId": "yamlgreet",
+        "processName": "Greeting workflow",
+        "state": "COMPLETED",
+        "start": "2022-07-01T16:08:12.038Z",
+        "end": "2022-07-01T16:08:12.061Z",
+        "businessKey": null,
+        "error": null
+      },
+    ]
+  }
+}
+----
+[NOTE]
+====
+Internally Workflows are referenced as process hence the fields `processId` and `processName` are actually the workflow id and name.
+====
+
+3) Now it is required to transform the response, so a transform expression is used. Notice also that it includes the columns metadata for the dataset
+
+.Transform expression to get the fields from the JSON response
+[source,json]
+----
+{
+    "columns" :[
+        {"id": "Workflow Id", "type": "label"},
+        {"id": "Workflow Name", "type": "label"},
+        {"id": "State", "type": "label"},
+        {"id": "Start", "type": "label"},
+        {"id": "End", "type": "label"},
+        {"id": "Business Key", "type": "label"},
+        {"id": "Error", "type": "label"}
+    ],    
+    "values" : $.data.ProcessInstances.[ processId, processName, state, start, end, businessKey ? businessKey : "", error ? error.message : ""]
+}
+----
+
+4) Finally we can create our dashboard using the expression and the URL mentioned previously. Our dashboard has a bar chart that counts the process instances by State and list all dashboards in a table:
+
+.Example Dashboard for Kogito Data Index
+[source,yml]
+----
+datasets:
+    - uuid: workflows
+      url: http://localhost:8180/graphql/?query=%7BProcessInstances%7BprocessId%20processName%20state%20start%20end%20businessKey%20error%7Bmessage%7D%7D%7D%0A
+      expression: >-
+            {
+                "columns" :[
+                    {"id": "Workflow Id", "type": "label"},
+                    {"id": "Workflow Name", "type": "label"},
+                    {"id": "State", "type": "label"},
+                    {"id": "Start", "type": "label"},
+                    {"id": "End", "type": "label"},
+                    {"id": "Business Key", "type": "label"},
+                    {"id": "Error", "type": "label"}
+                ],    
+                "values" : $.data.ProcessInstances.[ processId, processName, state, start, end, businessKey ? businessKey : "", error ? error.message : ""]
+            }      
+pages:
+    - components:
+        - settings:
+            type: BARCHART
+            lookup:
+                uuid: workflows
+                group:
+                    - columnGroup: 
+                        source: State
+                      functions:
+                          - source: State
+                          - source: State
+                            function: COUNT
+        - settings:
+            lookup:
+                uuid: workflows
+----
+
+The YML above results in the following dashboard:
+
+.Dashboard with data from Data Index
+image::getting-started/integrations/data-index-workflow-list-report.png[]
+
+For more examples check https://www.dashbuilder.org[Dashbuilder Website].
