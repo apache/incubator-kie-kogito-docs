@@ -20,7 +20,7 @@ image::getting-started/hello-world-workflow.png[]
 .Prerequisites
 * Java {java_min_version} is installed with `JAVA_HOME` configured appropriately.
 * Maven {maven_min_version}
-* {quarkus_cli_url}[Quarkus CLI] {quarkus_version}
+* {quarkus_cli_url}[Quarkus CLI] {quarkus_version} or xref:tooling/kn-plugin-workflow/kn-plugin-workflow-overview.adoc[Knative CLI] {kn-cli-version}
 * Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.java[Red Hat Java Extension]
 and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
 
@@ -32,8 +32,11 @@ For more information about the tooling and the required dependencies, see xref:g
 To create your Serverless Workflow service, first you need to bootstrap a project.
 
 .Procedure
-
-. In a command terminal, enter the following command to create a project:
+. In a command terminal, use one of the below mentioned command to create a project:
++
+[tabs]
+====
+Quarkus CLI::
 +
 --
 .Create a project using Quarkus CLI
@@ -55,7 +58,10 @@ The previous command creates a Maven Quarkus project in the `serverless-workflow
 * `quarkus-smallrye-openapi`: Adds support for Swagger documentation when you run the application in development mode
 
 The SwaggerUI is available at `http://localhost:8080/q/swagger-ui/` when you run the application.
-
+--
+Maven::
++
+--
 .Create a project using Maven
 [source,shell,subs="attributes"]
 ----
@@ -68,8 +74,24 @@ cd serverless-workflow-hello-world
 
 In the previous command, `org.kie.kogito.examples`, `serverless-workflow-hello-world`, and `1.0` is group id, artifact id, and version of your project respectively.
 --
+Knative CLI::
++
+--
+.Create a project using Knative CLI
+[source,shell]
+----
+kn workflow create --name my-project --extension quarkus-jsonp,quarkus-smallrye-openapi
+----
+
+Follow this xref:tooling/kn-plugin-workflow/kn-plugin-workflow-overview.adoc[guide] to know more information on Knative CLI.
+--
+====
 
 . To verify that project is created, compile the project using the following command:
++
+[tabs]
+====
+Quarkus CLI::
 +
 --
 .Compile your project using Quarkus CLI
@@ -77,13 +99,27 @@ In the previous command, `org.kie.kogito.examples`, `serverless-workflow-hello-w
 ----
 quarkus build
 ----
-
+--
+Maven::
++
+--
 .Compile your project using Maven
 [source,shell]
 ----
 mvn clean package
 ----
 --
+Knative CLI::
++
+--
+.Builds the project and generates a local image called "quay.io/other-user/my-project:1.0.1"
+[source,shell]
+----
+kn workflow build --image my-user/my-project:1.0.0 --image-repository other-user --image-tag 1.0.1
+----
+Follow this xref:tooling/kn-plugin-workflow/kn-plugin-workflow-overview.adoc[guide] to know more information on Knative CLI.
+--
+====
 
 [[creating-workflow]]
 == Creating a workflow
@@ -167,19 +203,39 @@ After creating a workflow, you can run your Serverless Workflow application.
 .Procedure
 . Enter the following command to run your Serverless Workflow application:
 +
+
+[tabs]
+====
+Quarkus CLI::
++
 --
 .Run your Serverless Workflow application using Quarkus CLI
 [source,shell]
 ----
 quarkus dev
 ----
-
+--
+Maven::
++
+--
 .Run your Serverless Workflow application using Maven
 [source,shell]
 ----
 mvn clean quarkus:dev
 ----
-
+--
+Knative CLI::
++
+--
+.Deploys the project to authenticated cluster
+[source,shell]
+----
+kn workflow deploy
+----
+Follow this xref:tooling/kn-plugin-workflow/kn-plugin-workflow-overview.adoc[guide] to know more information on Knative CLI.
+--
+====
++
 .Example response
 [source,shell,subs="attributes"]
 ----
@@ -218,7 +274,6 @@ __  ____  __  _____   ___  __ ____  ______
 2022-05-25 14:38:13,379 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,182 INFO  [io.quarkus] (main) Profile prod activated.
 2022-05-25 14:38:13,380 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,182 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, inmemory-postgres, jdbc-postgresql, narayana-jta, oidc, reactive-routes, rest-client-reactive, rest-client-reactive-jackson, security, smallrye-context-propagation, smallrye-graphql-client, smallrye-health, smallrye-metrics, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx, vertx-graphql]
 ----
---
 
 . Once your Serverless Workflow application is started, you can send a request for the provided endpoint:
 +
