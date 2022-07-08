@@ -1,1 +1,89 @@
-//= Consuming and producing events with Kafka
+Consuming and producing events with Kafka
+=========================================
+:compat-mode!:
+// Metadata:
+:description: Consuming and producing events with Kafka
+:keywords: kogito, workflow, serverless, events, kafka
+// links
+:kogito_messaging_url: https://docs.jboss.org/kogito/release/latest/html_single/#_kogito_messaging_add_on
+:kogito_kafka_integration_url: https://docs.jboss.org/kogito/release/latest/html_single/#proc-messaging-enabling_kogito-configuring
+:configuration_example_url: {kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/resources/application.properties}
+:smallrye_connector_doc_url: {smallrye_url}/connectors/connectors.html
+:kafka_connector_properties_url: {smallrye_url}/kafka/kafka.html#_configuration_reference
+
+
+This guide focus on how to configure Kogito Serverless Workflow to interact with link: link:{kafka_doc_url}[Kafka]. Kafka uses an abstraction called topic to classify events. Events are published to a topic and events are consumed from a topic. 
+
+Kogito uses link:{smallrye_connector_doc_url}[Smallrye connectors] to encapsulate access to several brokers. This allows Kogito to support different brokers just by changing configuration and classpath dependencies. However, it also introduces an extra layer of indirection, through an entity called channel. Channels are unidirectional, they have to be declared as input (incoming) or output (outgoing), and this definition is immutable. When using Kafka, Smallrye channels must be mapped to Kafka topics though configuration.
+
+== Setting up Kafka dependency
+
+This section explains how to tell Kogito Serverless Workflow to use the Kafka Smallrye connector. This info is extracted from link:{kogito_kafka_integration_url}[Kogito documentation]
+
+Although Kogito Messaging capabilities are optional, they are already included the Quarkus Serverless Workflow Extension. Thats why you do not need to explicitly include the messaging add-on dependency when using Serverless Workflow. However, you need to indicate you are going to use Kafka by adding the Kafka Quarkus Smallrye connector dependency. 
+
+If using Maven, this means including following snippet in pom.xml:
+
+[source,json]
+----
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-smallrye-reactive-messaging-kafka</artifactId>
+</dependency>
+----
+
+== Configuring Smallrye channels
+
+This section explains how to configure Smallrye channels for a Kogito Serverless Workflow using event definitions. This info is extracted from link:{kogito_messaging_url}[Kogito documentation]
+
+Channels are configured by using properties. The pattern for these properties is `mp.messaging.[incoming|outgoing].<channel name>.<property_name>`.
+
+Kogito serverless workflow allows different channel mapping strategies:
+
+* Define one default incoming channel to receive all the incoming messages and one default outgoing channel to store all the published messages.
+
+* Define a channel for each Cloud Event Type so that every message type has a dedicated channel.
+
+* Define a channel for certain Cloud Event Types and let the not mapped Cloud Event types to use the default incoming or outgoing channel.
+
+Kogito first searches for channel name equals to Cloud Event type in the properties. If found, it uses that channel for that Cloud Event type. If not, it searches for default channel definition. If also not existing, then an error will be reported.
+
+The name for the default incoming channel is `kogito_incoming_stream` and for the default outgoing channel is `kogito_outgoing_stream`.
+
+You can change the default incoming and outgoing topic name as follows:
+
+[source,properties]
+----
+kogito.addon.messaging.incoming.defaultName=<default channel name>
+kogito.addon.messaging.outgoing.defaultName=<default channel name>
+----
+
+This is the full list of link:{kafka_connector_properties_url}[properties] you can use for a channel when using Kafka connector.
+
+There are two mandatory properties that you need to setup for every channel defined:
+
+* `connector`, which has to be set to `smallrye-kafka`
+* Depending on the channel being input or output: 
+** if incoming, `value.deserializer`. Unless you have specific marshaling needs, will be set to `org.apache.kafka.common.serialization.ByteArrayDeserializer` or `org.apache.kafka.common.serialization.StringDeserializer`
+** if outgoing, `value.serializer`. Unless you have specific marshaling needs, will be set to `org.apache.kafka.common.serialization.ByteArraySerializer` or `org.apache.kafka.common.serialization.StringSerializer`
+
+Another relevant, although optional, property is `topic`. If present, it should contain the Kafka topic name to be used for that channel. If missing, the channel name will be used as topic name. 
+
+=== Channel Mapping Example 
+
+Let illustrate the previous explanation by reviewing the properties configured in the link:{configuration_example_url}[Callback example].
+This example uses two Cloud Event types: `wait`, which is incoming, and `resume`, which is outgoing. 
+
+Kafka topic names matches the cloud event types, therefore it makes sense to chose one channel per Cloud Event type mapping strategy. This implies two channels must be configured. Since the channel name matches the cloud event type, we do not need to indicate the optional `topic` property.
+
+[source,properties]
+----
+mp.messaging.incoming.wait.connector=smallrye-kafka
+mp.messaging.incoming.wait.value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+
+mp.messaging.outgoing.resume.connector=smallrye-kafka
+mp.messaging.outgoing.resume.value.serializer=org.apache.kafka.common.serialization.StringSerializer
+----
+
+
+
