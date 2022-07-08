@@ -1,6 +1,8 @@
-= Displaying workflow runtime data in serverless dashboards
+= Displaying workflow runtime data in Serverless Dashboards
 
-This document describes steps to create serverless dashboards to monitor Kogito Serverless Workflows. 
+:dashbuilder_url: https://www.dashbuilder.org
+
+This document describes steps to create Serverless Dashboards to monitor Kogito Serverless Workflows. 
 
 To build dashboards we need data and it can be easily acquired from Kogito Serverless Workflow using any of the following approaches:
 
@@ -12,17 +14,28 @@ In this document we will explore creating serverless dashboards for metrics and 
 
 == Serverless Dashboards with Dashbuilder
 
-Serverless Dashboards are visualizations that run entirely on the client side. We will use https://www.dashbuilder.org[Dashbuilder] to create serverless dashboards: it consumes data from any JSON source and the dashboard is defined in YML format.
 
-To use Dashbuilder you just have to uncompress the `dashbuilder-client` NPM package and edit the file *setup.js* to link your YML files.
+Serverless Dashboards are visualizations that run entirely on the client side. We will use link:{dashbuilder_url}[Dashbuilder] to create Serverless Dashboards: it consumes data from any JSON source and the dashboard is defined in YML format.
 
-image::getting-started/integrations/dashbuilder-sample-report.png[]
+To use Dashbuilder you just have to uncompress the `dashbuilder-client` NPM package and edit the file *setup.js* to link your YML files. For further information please check link:https://www.dashbuilder.org/docs/#_client_only[Dashbuilder documentation].
+
+image::integrations/dashbuilder-sample-report.png[]
 
 
 == Using Metrics for building Dashboards
 
-For adding metrics to your serverless workflow application just add the dependency `org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus` and the metrics will be available in `/q/metrics` URL.
-Dashbuilder can consume data directly from metrics endpoints. Using an expression to format some metrics we can simply show metrics in a table using the following YML:
+For adding metrics to your Serverless Workflow application just add the dependency `org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus` and the metrics will be available in `/q/metrics` URL.
+
+.Dependency to be added to `pom.xml` to enable metrics
+[source,xml]
+----
+    <dependency>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>kogito-addons-quarkus-monitoring-prometheus</artifactId>
+    </dependency>
+----
+
+Dashbuilder can consume data directly from metrics endpoints. Using a link:https://docs.jsonata.org/overview.html[JSONAta expression] to format some metrics we can simply show metrics in a table using the following YML:
 
 .Show metrics in a table
 [source,yml]
@@ -51,9 +64,9 @@ pages:
 ----
 
 .Metrics in a table
-image::getting-started/integrations/dashbuilder-metrics-table.png[]
+image::integrations/dashbuilder-metrics-table.png[]
 
-To extract serverless workflow specific information you can use specific Kogito metrics and when displaying the metric we filter the data to only include these metrics. Metrics related to Serverless Workflow:
+To extract Serverless Workflow-specific information, you can use specific Kogito metrics, and when displaying the metric we filter the data to only include these metrics. Metrics related to Serverless Workflow:
 
 * *kogito_process_instance_completed_total*: Completed Workflows
 * *kogito_process_instance_started_total*: Started Workflows
@@ -195,18 +208,19 @@ pages:
 ----
 
 .Workflow Metrics Dashboard
-image::getting-started/integrations/dashbuilder-workflows-metrics-dashboard.png[]
+image::integrations/dashbuilder-workflows-metrics-dashboard.png[]
 
-If you are using Prometheus we can use PROMQL with Prometheus REST API and transform the result to the JSON format supported by Dashbuilder to build dashboards. For further information about Dashbuilder and Prometheus check the article https://blog.kie.org/2022/07/creating-prometheus-dashboards-using-dashbuilder.html[Creating Prometheus Dashboards with Dashbuilder].
+If you are using Prometheus, we can use PROMQL with Prometheus REST API and transform the result to the JSON format supported by Dashbuilder to build dashboards. For further information about Dashbuilder and Prometheus check the article https://blog.kie.org/2022/07/creating-prometheus-dashboards-using-dashbuilder.html[Creating Prometheus Dashboards with Dashbuilder].
 
 == Using Data Index
 
-Data index is a service available during development mode and it contains all data about the workflow steps execution. By default data index is available at `http://localhost:8180` and it uses GraphQL, so Dashbuilder can connect to it using its REST API and transform the result to the supported format.
+Data index is a service available during development mode, containing all data about the execution of workflow steps. By default, the data index is available at `http://localhost:8180`, and it uses GraphQL, so Dashbuilder can connect to it using its REST API and transform the result to the supported format.
 
-The steps to create a dashboard with data from Data Index:
+.The steps to create a dashboard with data from Data Index:
 
-1) Go to Data Index GraphQL interface (default is `http://localhost:8180/graphiql`) and test your query. Let's use as example this query that list all workflows:
-
+. Go to the Data Index GraphQL interface (default is `http://localhost:8180/graphiql`) and test your query. Let's use as an example this query that lists all workflows:
++
+--
 .Example GraphQL query to retrieve all workflows
 [source,json]
 ----
@@ -223,8 +237,10 @@ The steps to create a dashboard with data from Data Index:
 }
 ----
 
-2) Notice that when you run the query it modifies the URL to include the query. Copy the URL, but modify `graphiql` to `graphql`. When accessing it you will notice that it returns the result in a JSON format, such as:
-
+--
+. Notice that when you run the query it modifies the URL to include the query. Copy the URL, but modify `graphiql` to `graphql`. When accessing it you will notice that it returns the result in a JSON format, such as:
++
+--
 .GraphQL JSON result when using the query above
 [source,json]
 ----
@@ -246,11 +262,12 @@ The steps to create a dashboard with data from Data Index:
 ----
 [NOTE]
 ====
-Internally Workflows are referenced as process hence the fields `processId` and `processName` are actually the workflow id and name.
+Internally, Workflows are referenced as process hence the fields `processId` and `processName` are actually the workflow id and name.
 ====
-
-3) Now it is required to transform the response, so a transform expression is used. Notice also that it includes the columns metadata for the dataset
-
+--
+. Now it is required to transform the response, so a transform expression is used. Notice also that it includes the columns metadata for the dataset
++
+--
 .Transform expression to get the fields from the JSON response
 [source,json]
 ----
@@ -267,8 +284,8 @@ Internally Workflows are referenced as process hence the fields `processId` and 
     "values" : $.data.ProcessInstances.[ processId, processName, state, start, end, businessKey ? businessKey : "", error ? error.message : ""]
 }
 ----
-
-4) Finally we can create our dashboard using the expression and the URL mentioned previously. Our dashboard has a bar chart that counts the process instances by State and list all dashboards in a table:
+--
+. Finally we can create our dashboard using the expression and the URL mentioned previously. Our dashboard has a bar chart that counts the process instances by State and list all dashboards in a table:
 
 .Example Dashboard for Kogito Data Index
 [source,yml]
@@ -310,6 +327,6 @@ pages:
 The YML above results in the following dashboard:
 
 .Dashboard with data from Data Index
-image::getting-started/integrations/data-index-workflow-list-report.png[]
+image::integrations/data-index-workflow-list-report.png[]
 
-For more examples check https://www.dashbuilder.org[Dashbuilder Website].
+For more examples check link:{dashbuilder_url}[Dashbuilder Website].
