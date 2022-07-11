@@ -8,15 +8,15 @@ Consuming and producing events with Kafka
 :kogito_messaging_url: https://docs.jboss.org/kogito/release/latest/html_single/#_kogito_messaging_add_on
 :kogito_kafka_integration_url: https://docs.jboss.org/kogito/release/latest/html_single/#proc-messaging-enabling_kogito-configuring
 :configuration_example_url: {kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/resources/application.properties}
-:smallrye_connector_doc_url: {smallrye_url}/connectors/connectors.html
-:kafka_connector_properties_url: {smallrye_url}/kafka/kafka.html#_configuration_reference
+:smallrye_connector_doc_url: {smallrye_messaging_url}/connectors/connectors.html
+:kafka_connector_properties_url: {smallrye_messaging_url}/kafka/kafka.html#_configuration_reference
 
 
 This guide focus on how to configure Kogito Serverless Workflow to interact with link: link:{kafka_doc_url}[Kafka]. Kafka uses an abstraction called topic to classify events. Events are published to a topic and events are consumed from a topic. 
 
-Kogito uses link:{smallrye_connector_doc_url}[Smallrye connectors] to encapsulate access to several brokers. This allows Kogito to support different brokers just by changing configuration and classpath dependencies. However, it also introduces an extra layer of indirection, through an entity called channel. Channels are unidirectional, they have to be declared as input (incoming) or output (outgoing), and this definition is immutable. When using Kafka, Smallrye channels must be mapped to Kafka topics though configuration.
+Kogito uses link:{smallrye_connector_doc_url}[Smallrye connectors] to encapsulate access to several brokers. This allows Kogito to support different brokers just by changing configuration and classpath dependencies. However, it also introduces an extra layer of indirection: an entity called channel. Channels are unidirectional, they have to be declared as input (`incoming`) or output (`outgoing`), and this definition is immutable. When using Kafka, Smallrye channels must be mapped to Kafka topics through configuration.
 
-== Setting up Kafka dependency
+== Adding Kafka dependency
 
 This section explains how to instruct Kogito Serverless Workflow to use the Kafka Smallrye connector. This info is extracted from link:{kogito_kafka_integration_url}[Kogito documentation]
 
@@ -36,13 +36,13 @@ If using Maven, this means including following snippet in pom.xml:
 
 This section explains how to configure Smallrye channels for a Kogito Serverless Workflow using event definitions. This info is extracted from link:{kogito_messaging_url}[Kogito documentation]
 
-Channels are configured by using properties. The pattern for these properties is `mp.messaging.[incoming|outgoing].<channel name>.<property_name>`.
+Channels are defined by using link:{quarkus_config_url}[Quarkus configuration]. The pattern for channel properties is `mp.messaging.[incoming|outgoing].<channel name>.<property_name>`.
 
 Kogito serverless workflow allows different channel mapping strategies:
 
 * Define one default incoming channel to receive all the incoming messages and one default outgoing channel to store all the published messages.
 
-* Define a channel for each Cloud Event Type so that every message type has a dedicated channel.
+* Define a channel for each link:{cloud_events_url}[Cloud Event] Type so that every message type has a dedicated channel.
 
 * Define a channel for certain Cloud Event Types and let the not mapped Cloud Event types to use the default incoming or outgoing channel.
 
