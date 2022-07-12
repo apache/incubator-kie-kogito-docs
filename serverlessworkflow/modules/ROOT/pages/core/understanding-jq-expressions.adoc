@@ -1,1 +1,158 @@
-//= Understanding JQ expressions
+Understanding JQ expressions
+============================
+:compat-mode!:
+// Metadata:
+:description: Understanding JQ expressions
+:keywords: kogito, workflow, serverless, jq, expression
+// links:
+:jq_url: https://stedolan.github.io/jq/manual/
+:jsonpath_url: https://github.com/json-path/JsonPath/
+:json_data_types_url: https://www.w3schools.com/js/js_json_datatypes.asp
+
+Every workflow instance is associated with a data model. This model regardless of whether your flow file is written in YAML or JSON, consists of a JSON object. The initial content of that object depends on how the flow is started. If the flow is created through a link:{cloud_events_url}[Cloud Event], then the content is taken from `data` property. If started through an HTTP POST invocation, then the request body is expected to have a `workflowdata` property, from where the content of the model is retrieved. 
+
+Expressions are the mechanism defined by the link:{spec_doc_url}#workflow-expressions[Serverless Workflow Specification] for the states to interact with the data model. Kogito supports two expression languages: link:{jsonpath_url}[jsonpath] and link:{jq_url}[jq]. The default one is `jq`, but you can change it to `jsonpath` by using the `expressionLang` property. This guide will focus on `jq` and discuss its usage in following uses cases: switch state conditions, action function arguments, and data filtering.
+
+
+== Switch Conditions
+
+Conditions inside a switch state allow the workflow designer to choose which path the flow should follow depending on the model content. A condition is an expression that returns a boolean when evaluated against the model. If the condition associated with a state transition returns true, that is the place for the flow to go. 
+
+For example, in link:{kogito_sw_examples_url}/serverless-workflow-greeting-quarkus[greetings] repository, we are selecting which message should be displayed to the user depending on his language of choice: English or Spanish. In computational terms, if the value of the property language is English, the constant literal to be injected on the property `message` will be __Hello from__… , else if the value of the same property is Spanish, then the injected `message` will be __Saludos desde…__.
+
+image::core/switch_condition.png[]
+
+The switch state contains this condition, which in turn contains two `jq` expression that returns a boolean. 
+
+[source,json]
+----
+"dataConditions": [
+        {
+          "condition": "${ .language == \"English\" }",
+          "transition": "GreetInEnglish"
+        },
+        {
+          "condition": "${ .language == \"Spanish\" }",
+          "transition": "GreetInSpanish"
+        }
+      ]
+----
+
+[sidebar]
+--
+Serverless Workflow Specification requires all expressions to be embedded within `${… }`. Nevertheless, Kogito is smart enough to infer whether an string is an expression. Therefore you might save some characters and skip the __${__ at the beginning and the __}__ at the the end. If portability is a concern, you must use the specification way. Through this guide you will see that both forms are indistinguishable used.
+--
+
+== Function Arguments
+
+Serverless Workflow Specification allows defining link:{spec_doc_url}#workflow-functions[functions] that can be invoked several times by the workflow states. Every different function call might contain different arguments, which are specified using function arguments.
+
+A function definition can be found in the link:{kogito_sw_examples_url}/serverless-workflow-temperature-conversion/conversion-workflow/src/main/resources/fahrenheit-to-celsius.sw.json[temperature conversion] repository. 
+This flow performs xref:core/orchestration-of-openapi-based-services.adoc[OpenAPI] invocations to convert Fahrenheit to Celsius. 
+
+We focus on the call to the  `substraction` one. 
+
+[source,json]
+----
+"functions": [
+{
+  "name": "subtraction",
+  "operation": "specs/subtraction.yaml#doOperation"
+}]
+----
+
+Function arguments might be expressed as a JSON object, whose property values might be either a string containing an expression or any link:{json_data_types_url}[JSON data type] (string, number, boolean…). 
+
+[source,json]
+----
+"functionRef": 
+{
+  "refName": "subtraction",
+  "arguments": 
+  {
+    "leftElement": ".fahrenheit",
+    "rightElement": ".subtractValue"
+  }
+}
+----
+
+In the snippet above, we are specifying that the left number of the subtraction is equal to the `fahrenheit` property (which is an input number provided by the user invoking the flow) and that the right number is equal to the `substractvalue` property (which is a constant number injected into the flow model by SetConstants state). After resolving expression evaluation for all properties that contain an expression, the resulting JSON object is passed to the  OpenAPI call. Depending on the OpenAPI definition, properties of that JSON object will be used as body, path, query, or header of the upcoming REST invocation. 
+
+
+Function arguments might also be defined as a string containing an expression that returns a JSON object.
+[source,json]
+----
+"functionRef": {
+  "refName": "subtraction",
+  "arguments": "{leftElement: .fahrenheit, rightElement : .subtractValue}"
+ }
+
+----
+
+In the snippet above, the whole string is evaluated and the resulting JSON object, which is the same than in the first case, is passed to the OpenAPI call. 
+
+== Data filtering
+
+Serverless workflow specification defines some filtering mechanisms in order to select which data should be part of the flow data model:
+
+* link:{spec_doc_url}#action-data-filters[action data filter] selects the portion of the action result that will be merged into the model, overriding only those properties in the flow model that share the name with the selected action result
+* link:{spec_doc_url}#event-data-filters[event data filter] same purpose than the previous one, but applied to events rather than actions.
+* link:{spec_doc_url}#state-data-filters[state data filter] sets the whole flow model to the JSON object returned by the expression, discarding any existing property.
+
+We are going to illustrate, using this link:{kogito_sw_examples_url}/serverless-workflow-expression-quarkus[repository], the usage of action and state data filters.
+
+image::core/expression_diagram.png[]
+
+This Serverless Workflow Application accepts as input an array of complex numbers (where `x` is the real coordinate and `y` the imaginary one) and defines an expression function (invoked by `squareState`) to calculate the maximum `x` and the minimum `y` for that `numbers` array. It also contains an action data filter (defined inside `squareState`) that selects the maximum `x` to be merged into the flow model and a state data filter (defined inside `finish` state) that sets that max value as the whole model that will be returned to the caller.
+
+
+.The expression function
+[source,json]
+----
+"functions": [
+    {
+      "name": "max",
+      "type": "expression",
+      "operation": "{max: .numbers | max_by(.x), min: .numbers | min_by(.y)}"
+    }
+]
+----
+
+We define a `max` function of type expression. The operation property is a string containing a `jq` expression. This expression returns a JSON object, where the `max` property is the maximum value of the `x` coordinate in the input array, and the `min` property is the minimum value of the `y` coordinate in the same array. 
+
+.The action data filter
+[source,json]
+----
+"actions": [
+        {
+          "name": "maxAction",
+          "functionRef": {
+            "refName": "max"
+          },
+          "actionDataFilter": {
+             "results" : ".max.x",
+             "toStateData" : ".number"
+          }
+        }
+ ]
+----
+
+Since we are only interested in the maximum `x`, besides invoking the function using `functionRef`, this action also contains an action data filter. If we were not adding this filter, the whole JSON object returned by the function call would be merged into the flow model. The filter has two properties: `results`, which selects the attribute to be merged from the data returned by the action, and `toStateData`, which indicates the name of the target property inside the flow model (in case this property does not exist, it will be added). So, after executing the action, the flow model will consist of a `number` property storing the maximum value and the original `numbers` array. Then the flow transitions to `finish` state.
+
+.The state data filter
+[source,json]
+----
+"name": "finish",
+"type": "operation",
+"stateDataFilter": {
+   "input": "{result: .number}"
+}
+----
+
+Since we do not want to return the original `numbers` array as a result of the flow execution, the final stage consists of a state data filter that sets the contents of the output model. Hence, we set the model to be a JSON object containing a property named `result`, whose value is the maximum number calculated by the previous state, which was stored in the `number` property. We achieve this by using the `input` property of the stateDataFilter construct, meaning that the model is changed before the state gets executed. As the final result of this whole procedure, the model content returned to the user contains a `result` property whose value is the maximum `x`.
+
+== Additional resources
+
+* xref:service-orchestration/orchestration-of-opnapi-based-services.adoc[Configuring OpenAPI Services Endpoints]
+
+include::../../pages/_common-content/report-issue.adoc[]
