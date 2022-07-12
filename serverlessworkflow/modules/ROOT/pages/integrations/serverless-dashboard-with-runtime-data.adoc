@@ -1,8 +1,12 @@
-= Displaying workflow runtime data in Serverless Dashboards
-
+ Displaying workflow runtime data in Serverless Dashboards
+==========================================================
+:compat-mode!:
+// Metadata:
+:description: Displaying workflow runtime data in Serverless Dashboards
+:keywords: kogito, workflow, quarkus, serverless, dashboards, monitoring
 :dashbuilder_url: https://www.dashbuilder.org
-
-This document describes steps to create Serverless Dashboards to monitor Kogito Serverless Workflows. 
+:jsonata_url: https://docs.jsonata.org/overview.html
+This document describes steps to create Dashboards to monitor Kogito Serverless Workflows. 
 
 To build dashboards we need data and it can be easily acquired from Kogito Serverless Workflow using any of the following approaches:
 
@@ -10,23 +14,23 @@ To build dashboards we need data and it can be easily acquired from Kogito Serve
 * Integrating with **Data Index** to consume data using its REST API
 * Using custom mechanisms (such as `ProcessInstanceListener`)
 
-In this document we will explore creating serverless dashboards for metrics and for Data Index GraphQL REST API.
+In this document we will explore creating dashboards for metrics and for Data Index GraphQL REST API.
 
 == Serverless Dashboards with Dashbuilder
 
 
-Serverless Dashboards are visualizations that run entirely on the client side. We will use link:{dashbuilder_url}[Dashbuilder] to create Serverless Dashboards: it consumes data from any JSON source and the dashboard is defined in YML format.
+Serverless Dashboards are visualizations that run entirely on the client side. We will use link:{dashbuilder_url}[Dashbuilder] to create Dashboards: it consumes data from any JSON source and the dashboard is defined in YAML format.
 
-To use Dashbuilder you just have to uncompress the `dashbuilder-client` NPM package and edit the file *setup.js* to link your YML files. For further information please check link:https://www.dashbuilder.org/docs/#_client_only[Dashbuilder documentation].
+To use Dashbuilder you need to download, uncompress the `dashbuilder-client` NPM package and edit the file *setup.js* to link your YAML files. For further information please check link:https://www.dashbuilder.org/docs/#_client_only[Dashbuilder documentation].
 
 image::integrations/dashbuilder-sample-report.png[]
 
 
 == Using Metrics for building Dashboards
 
-For adding metrics to your Serverless Workflow application just add the dependency `org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus` and the metrics will be available in `/q/metrics` URL.
+To enable metrics for your Serverless Workflow application add the `org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus` dependency to your apps's classpath and the metrics will be available at `/q/metrics` path.
 
-.Dependency to be added to `pom.xml` to enable metrics
+.Metrics Dependency to be added to `pom.xml`
 [source,xml]
 ----
     <dependency>
@@ -35,10 +39,10 @@ For adding metrics to your Serverless Workflow application just add the dependen
     </dependency>
 ----
 
-Dashbuilder can consume data directly from metrics endpoints. Using a link:https://docs.jsonata.org/overview.html[JSONAta expression] to format some metrics we can simply show metrics in a table using the following YML:
+Dashbuilder can consume data directly from metrics endpoints. Using a link:{jsonata_url}[JSONAta expression] to format some metrics we can simply show metrics in a table using the following YML:
 
 .Show metrics in a table
-[source,yml]
+[source,yaml]
 ----
 datasets:
   - uuid: swf_metrics
@@ -66,7 +70,7 @@ pages:
 .Metrics in a table
 image::integrations/dashbuilder-metrics-table.png[]
 
-To extract Serverless Workflow-specific information, you can use specific Kogito metrics, and when displaying the metric we filter the data to only include these metrics. Metrics related to Serverless Workflow:
+To extract a specific information from the Workflow, you can use specific Kogito metrics, and when displaying the metric we filter the data to only include it. Metrics related to Serverless Workflow:
 
 * *kogito_process_instance_completed_total*: Completed Workflows
 * *kogito_process_instance_started_total*: Started Workflows
@@ -76,7 +80,7 @@ To extract Serverless Workflow-specific information, you can use specific Kogito
 Dashbuilder *metrics* and *bar chart* components are useful to display these metrics. After filtering specific metrics we can put the information in bar charts as you can see the YML below:
 
 
-[source,yml]
+[source,yaml]
 ----
 datasets:
   - uuid: metrics
@@ -330,3 +334,6 @@ The YML above results in the following dashboard:
 image::integrations/data-index-workflow-list-report.png[]
 
 For more examples check link:{dashbuilder_url}[Dashbuilder Website].
+
+
+include::../../pages/_common-content/report-issue.adoc[]
