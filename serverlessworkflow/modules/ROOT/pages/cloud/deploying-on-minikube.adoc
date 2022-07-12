@@ -11,6 +11,7 @@ Deploying your Serverless Workflow application on Minikube
 :kn_cli_quickstart_plugin_url: https://knative.dev/docs/install/quickstart-install/#install-the-knative-cli
 :knative_on_minikube_step_by_step_url: https://redhat-developer-demos.github.io/knative-tutorial/knative-tutorial/setup/minikube.html
 :knative_issue_url: https://github.com/knative/serving/issues/6101
+:quarkus_k8s_deploy_url: https://github.com/quarkusio/quarkus/issues/26385
 
 This document describes how to deploy your Serverless Workflow application using a local Kubernetes cluster, such as link:{minikube_url}}[Minikube], along with a procedure to run the Knative platform.
 
@@ -164,7 +165,7 @@ You might be required to tag the container images using one of the following reg
 * `ko.local`
 * `dev.local`
 
-You can also set the `imagePullPolicy` to `Never` or `IfNotPresent`, otherwise Minikube pulls the images from a remote registry.
+You might need to set the `imagePullPolicy` to `Never` or `IfNotPresent`, otherwise Minikube pulls the images from a remote registry. This behavior can be avoided by tagging the image using previously listed domains.
 
 For more information, see link:{knative_issue_url}[How to use locally built docker image].
 --
@@ -178,7 +179,7 @@ For more information, see link:{knative_issue_url}[How to use locally built dock
 minikube tunnel --profile knative
 ----
 
-The previous command starts in a loop. Therefore, this command must be running through the deployment process. On Mac and Windows, you might be required to provide the user password.
+The previous command starts in a loop. Therefore, this command must be running throughout the process mentioned in this document. On Mac and Windows, you might be required to provide the user password.
 
 .Example tunnel output
 [source,shell]
@@ -396,7 +397,7 @@ spec:
             timeoutSeconds: 10
 ----
 
-You can find the following generated files in `target/kubernetes` directory:
+You can find the previous content in the generated files in the `target/kubernetes` directory:
 
 * knative.json
 * knative.yml
@@ -408,7 +409,7 @@ Once the files are generated, you might be required to add the `imagePullPolicy`
 Some of the system properties are not working properly due to a bug in decorate API. For more information about the bug, see link:https://github.com/quarkusio/quarkus/issues/23832[Quarkus issue].
 
 There is a small bug on the 'Decorate API' where some system properties are not taking effect, for more information please take a look at this link:https://github.com/quarkusio/quarkus/issues/23832[Quarkus issue].
-After the file generation, you'll might be required to add the `imagePullPolicy` manually before deploying it.
+After the file generation, you might be required to add the `imagePullPolicy` manually before deploying it.
 ====
 --
 
@@ -462,26 +463,39 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 [[proc-deploy-sw-application-quarkus-cli]]
 === Deploying your Serverless Workflow application using Quarkus CLI
 
-The link:{quarkus_cli_url}[Quarkus CLI] can be used to abstract all of these complexity mentioned before and deploy it automatically after the build completes. To instruct Quarkus to perform the deployment automatically for you, you need to set a few system properties, which are:
+You can use the link:{quarkus_cli_url}[Quarkus CLI] to abstract all of the complexities mentioned in the previous sections and deploy your Serverless Workflow application once the build completes. 
 
-.System Properties
+
+.Prerequisites
+* Serverless Workflow application is installed.
+* Quarkus CLI is installed. For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
+
+.Procedure
+. To deploy your Serverless Workflow application using Quarkus CLI, set the following system properties in `application.properties` file:
++
+--
+.Required system properties
 [source,properties]
 ----
 quarkus.knative.name=greeting-quarkus-cli <1>
 quarkus.kubernetes.deploy=true <2>
 quarkus.container-image.push=false <3>
 ----
-<1> - The Knative resource name.
-<2> - Whether or not install deploy the on the active kubernetes cluster.
-<3> - Force to not push images when using Minikube's remove Docker daemon to avoid image validation.
+
+<1> - Property for the Knative resource name
+<2> - Property to set whether or not deploy on an active Kubernetes cluster
+<3> - Property to whether or not push images when using Minikube's remove Docker daemon to avoid image validation
 
 [IMPORTANT]
 ====
-This functionality only works with Quarkus 2.10.2.Final or newer, for more information please visit this
+This functionality works with Quarkus {quarkus_version} or later. For more information, see
 link:{quarkus_k8s_deploy_url}[link].
 ====
+--
 
-Check if the service was deployed correctly:
+. Verify if your Serverless Workflow application is deployed correctly:
++
+--
 [tabs]
 ====
 kubectl::
@@ -490,25 +504,30 @@ kubectl::
 ----
 kubectl get services.serving.knative.dev greeting-quarkus-cli
 ----
-kn::
+Knative CLI::
 +
 [source,shell]
---
+----
 kn service list greeting-quarkus-cli
---
+----
 ====
 
-It should return something like:
+.Example output
 [source,shell]
 ----
 NAME                   URL                                                                                      LATEST                       AGE    CONDITIONS   READY   REASON
 greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   greeting-quarkus-cli-00001   7m6s   3 OK / 3     True
 ----
+--
 
-It can now be accessed using the listed `URL`:
+. You can access your Serverless Workflow application using the listed URL in the output.
++
+--
+.Access your Serverless Workflow application
 [source,shell]
 ----
 curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet.37.sslip.io/jsongreet
 ----
+--
 
 include::../../pages/_common-content/report-issue.adoc[]
