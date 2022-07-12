@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>Understanding JQ expressions :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Understanding JQ expressions">
+    <meta name="keywords" content="kogito, workflow, serverless, jq, expression">
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -74,6 +76,9 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Core</span>
 <ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="understanding-jq-expressions.html">Understanding JQ expressions</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
   </li>
@@ -180,6 +185,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Core</li>
+    <li><a href="understanding-jq-expressions.html">Understanding JQ expressions</a></li>
+  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/core/understanding-jq-expressions.adoc">Edit this Page</a></div>
   </div>
@@ -188,7 +198,215 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page">Understanding JQ expressions</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Every workflow instance is associated with a data model. This model regardless of whether your flow file is written in YAML or JSON, consists of a JSON object. The initial content of that object depends on how the flow is started. If the flow is created through a <a href="https://cloudevents.io/">Cloud Event</a>, then the content is taken from <code>data</code> property. If started through an HTTP POST invocation, then the request body is expected to have a <code>workflowdata</code> property, from where the content of the model is retrieved.</p>
+</div>
+<div class="paragraph">
+<p>Expressions are the mechanism defined by the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-expressions">Serverless Workflow Specification</a> for the states to interact with the data model. Kogito supports two expression languages: <a href="https://github.com/json-path/JsonPath/">jsonpath</a> and <a href="https://stedolan.github.io/jq/manual/">jq</a>. The default one is <code>jq</code>, but you can change it to <code>jsonpath</code> by using the <code>expressionLang</code> property. This guide will focus on <code>jq</code> and discuss its usage in following uses cases: switch state conditions, action function arguments, and data filtering.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_switch_conditions"><a class="anchor" href="#_switch_conditions"></a>Switch Conditions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Conditions inside a switch state allow the workflow designer to choose which path the flow should follow depending on the model content. A condition is an expression that returns a boolean when evaluated against the model. If the condition associated with a state transition returns true, that is the place for the flow to go.</p>
+</div>
+<div class="paragraph">
+<p>For example, in <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-quarkus">greetings</a> repository, we are selecting which message should be displayed to the user depending on his language of choice: English or Spanish. In computational terms, if the value of the property language is English, the constant literal to be injected on the property <code>message</code> will be <em>Hello from</em>… , else if the value of the same property is Spanish, then the injected <code>message</code> will be <em>Saludos desde…</em>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/core/switch_condition.png" alt="switch condition">
+</div>
+</div>
+<div class="paragraph">
+<p>The switch state contains this condition, which in turn contains two <code>jq</code> expression that returns a boolean.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"dataConditions": [
+        {
+          "condition": "${ .language == \"English\" }",
+          "transition": "GreetInEnglish"
+        },
+        {
+          "condition": "${ .language == \"Spanish\" }",
+          "transition": "GreetInSpanish"
+        }
+      ]</code></pre>
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="paragraph">
+<p>Serverless Workflow Specification requires all expressions to be embedded within <code>${… }</code>. Nevertheless, Kogito is smart enough to infer whether an string is an expression. Therefore you might save some characters and skip the <em>${</em> at the beginning and the <em>}</em> at the the end. If portability is a concern, you must use the specification way. Through this guide you will see that both forms are indistinguishable used.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_function_arguments"><a class="anchor" href="#_function_arguments"></a>Function Arguments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Serverless Workflow Specification allows defining <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-functions">functions</a> that can be invoked several times by the workflow states. Every different function call might contain different arguments, which are specified using function arguments.</p>
+</div>
+<div class="paragraph">
+<p>A function definition can be found in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-temperature-conversion/conversion-workflow/src/main/resources/fahrenheit-to-celsius.sw.json">temperature conversion</a> repository.
+This flow performs <a href="#core/orchestration-of-openapi-based-services.adoc" class="xref unresolved">OpenAPI</a> invocations to convert Fahrenheit to Celsius.</p>
+</div>
+<div class="paragraph">
+<p>We focus on the call to the  <code>substraction</code> one.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"functions": [
+{
+  "name": "subtraction",
+  "operation": "specs/subtraction.yaml#doOperation"
+}]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Function arguments might be expressed as a JSON object, whose property values might be either a string containing an expression or any <a href="https://www.w3schools.com/js/js_json_datatypes.asp">JSON data type</a> (string, number, boolean…).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"functionRef":
+{
+  "refName": "subtraction",
+  "arguments":
+  {
+    "leftElement": ".fahrenheit",
+    "rightElement": ".subtractValue"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the snippet above, we are specifying that the left number of the subtraction is equal to the <code>fahrenheit</code> property (which is an input number provided by the user invoking the flow) and that the right number is equal to the <code>substractvalue</code> property (which is a constant number injected into the flow model by SetConstants state). After resolving expression evaluation for all properties that contain an expression, the resulting JSON object is passed to the  OpenAPI call. Depending on the OpenAPI definition, properties of that JSON object will be used as body, path, query, or header of the upcoming REST invocation.</p>
+</div>
+<div class="paragraph">
+<p>Function arguments might also be defined as a string containing an expression that returns a JSON object.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"functionRef": {
+  "refName": "subtraction",
+  "arguments": "{leftElement: .fahrenheit, rightElement : .subtractValue}"
+ }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the snippet above, the whole string is evaluated and the resulting JSON object, which is the same than in the first case, is passed to the OpenAPI call.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_data_filtering"><a class="anchor" href="#_data_filtering"></a>Data filtering</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Serverless workflow specification defines some filtering mechanisms in order to select which data should be part of the flow data model:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#action-data-filters">action data filter</a> selects the portion of the action result that will be merged into the model, overriding only those properties in the flow model that share the name with the selected action result</p>
+</li>
+<li>
+<p><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#event-data-filters">event data filter</a> same purpose than the previous one, but applied to events rather than actions.</p>
+</li>
+<li>
+<p><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#state-data-filters">state data filter</a> sets the whole flow model to the JSON object returned by the expression, discarding any existing property.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We are going to illustrate, using this <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-expression-quarkus">repository</a>, the usage of action and state data filters.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/core/expression_diagram.png" alt="expression diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>This Serverless Workflow Application accepts as input an array of complex numbers (where <code>x</code> is the real coordinate and <code>y</code> the imaginary one) and defines an expression function (invoked by <code>squareState</code>) to calculate the maximum <code>x</code> and the minimum <code>y</code> for that <code>numbers</code> array. It also contains an action data filter (defined inside <code>squareState</code>) that selects the maximum <code>x</code> to be merged into the flow model and a state data filter (defined inside <code>finish</code> state) that sets that max value as the whole model that will be returned to the caller.</p>
+</div>
+<div class="listingblock">
+<div class="title">The expression function</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"functions": [
+    {
+      "name": "max",
+      "type": "expression",
+      "operation": "{max: .numbers | max_by(.x), min: .numbers | min_by(.y)}"
+    }
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We define a <code>max</code> function of type expression. The operation property is a string containing a <code>jq</code> expression. This expression returns a JSON object, where the <code>max</code> property is the maximum value of the <code>x</code> coordinate in the input array, and the <code>min</code> property is the minimum value of the <code>y</code> coordinate in the same array.</p>
+</div>
+<div class="listingblock">
+<div class="title">The action data filter</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"actions": [
+        {
+          "name": "maxAction",
+          "functionRef": {
+            "refName": "max"
+          },
+          "actionDataFilter": {
+             "results" : ".max.x",
+             "toStateData" : ".number"
+          }
+        }
+ ]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Since we are only interested in the maximum <code>x</code>, besides invoking the function using <code>functionRef</code>, this action also contains an action data filter. If we were not adding this filter, the whole JSON object returned by the function call would be merged into the flow model. The filter has two properties: <code>results</code>, which selects the attribute to be merged from the data returned by the action, and <code>toStateData</code>, which indicates the name of the target property inside the flow model (in case this property does not exist, it will be added). So, after executing the action, the flow model will consist of a <code>number</code> property storing the maximum value and the original <code>numbers</code> array. Then the flow transitions to <code>finish</code> state.</p>
+</div>
+<div class="listingblock">
+<div class="title">The state data filter</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"name": "finish",
+"type": "operation",
+"stateDataFilter": {
+   "input": "{result: .number}"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Since we do not want to return the original <code>numbers</code> array as a result of the flow execution, the final stage consists of a state data filter that sets the contents of the output model. Hence, we set the model to be a JSON object containing a property named <code>result</code>, whose value is the maximum number calculated by the previous state, which was stored in the <code>number</code> property. We achieve this by using the <code>input</code> property of the stateDataFilter construct, meaning that the model is changed before the state gets executed. As the final result of this whole procedure, the model content returned to the user contains a <code>result</code> property whose value is the maximum <code>x</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#service-orchestration/orchestration-of-opnapi-based-services.adoc" class="xref unresolved">Configuring OpenAPI Services Endpoints</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
