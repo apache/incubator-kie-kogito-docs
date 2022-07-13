@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Workflow plugin for Knative CLI :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Overview of the Workflow plugin for the Knative CLI">
+    <meta name="keywords" content="kogito, workflow, serverless, knative, plugin">
+    <meta name="generator" content="Antora 3.0.1">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="main">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Create your first workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-jq-expressions.html">jq expressions in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="serverless-workflow-editor/swf-editor-overview.html">Serverless Workflow editor</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome GitHub extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension for Serverless Workflow editor</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Kogito Serverless Workflow Tools extension in Quarkus Dev UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances in Kogito Serverless Workflow Tools extension</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions in Kogito Serverless Workflow Tools extension</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="kn-plugin-workflow-overview.html">Workflow plugin for Knative CLI</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">Orchestrating the OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">Authentication for OpenAPI services in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cloud</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">main</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">main</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Tooling</li>
+    <li><a href="kn-plugin-workflow-overview.html">Workflow plugin for Knative CLI</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/tooling/kn-plugin-workflow-overview.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Workflow plugin for Knative CLI</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>kn-plugin-workflow</code> is a plugin for the Knative Client to enable users to quickly set up a local Kogito Serverless Workflow project from the command line.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p><a href="https://www.java.com/en/download/help/download_options.html">Java</a> at least version 11+</p>
+</li>
+<li>
+<p><a href="https://maven.apache.org/install.html">Maven</a> at least version 3.8.1</p>
+</li>
+<li>
+<p><a href="https://docs.docker.com/engine/install/">Docker</a> (Optional)</p>
+</li>
+<li>
+<p><a href="https://docs.podman.io/en/latest/">Podman</a> (Optional)</p>
+</li>
+<li>
+<p><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl">Kubernetes CLI</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_installation"><a class="anchor" href="#_installation"></a>Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can download the latest binaries from the <a href="https://github.com/kiegroup/kie-tools/releases">KIE Tooling Releases</a> page.</p>
+</div>
+<div class="paragraph">
+<p>There are two ways to run <code>kn workflow</code>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>You can run it standalone, just put it on your system path and make sure it is executable.</p>
+</li>
+<li>
+<p>You can install it as a plugin of the <code>kn</code> client to run:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Follow the <a href="https://github.com/knative/client/blob/main/docs/README.md#installing-kn">documentation</a> to install <code>kn</code> CLI if you don&#8217;t have it.</p>
+</li>
+<li>
+<p>Copy the <code>kn-workflow</code> binary to a directory on your <code>PATH</code> (for example, <code>/usr/local/bin</code>) and make sure its filename is <code>kn-workflow</code>.</p>
+</li>
+<li>
+<p>On macOS give the ownership to the root user:
+<code>sudo chown root: /usr/local/bin/kn-workflow</code></p>
+</li>
+<li>
+<p>Run <code>kn plugin list</code> to verify that the <code>kn-workflow</code> plugin is installed successfully.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>After installing the plugin, you can use <code>kn workflow</code> to run its related subcommands.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_usage"><a class="anchor" href="#_usage"></a>Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After the installation, you will be able to use the <code>workflow</code> subcommand in the Knative CLI. It&#8217;s possible to use in two ways:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow
+kn-workflow</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following help message will appear after running the command above:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Manage Kogito Serverless Workflow projects
+
+Usage:
+  kn workflow [command]
+
+Available Commands:
+  build       Build a Kogito Serverless Workflow project and generate a container image
+  completion  Generate the autocompletion script for the specified shell
+  create      Create a Kogito Serverless Workflow project
+  deploy      Deploy a Kogito Serverless Workflow project
+  help        Help about any command
+
+Flags:
+  -h, --help      help for kn-workflow
+  -v, --verbose   Print verbose logs
+
+Use "kn workflow [command] --help" for more information about a command.</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create"><a class="anchor" href="#_create"></a>Create</h3>
+<div class="paragraph">
+<p>The <code>create</code> command scaffolds a new Kogito Serverless Workflow project in the current directory.</p>
+</div>
+<div class="paragraph">
+<p>It sets up a Quarkus project with minimal extensions to build a Kogito Serverless Workflow project. Also, the generated project has a "hello world" workflow.sw.json located on the
+<code>./&lt;project-name&gt;/src/main/resources</code> directory.</p>
+</div>
+<div class="listingblock">
+<div class="title">Creates a new project called "new-project"</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow create</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By default, the generated project is named "new-project". This name can be overwritten with the <code>[-n|--name]</code> flag.</p>
+</div>
+<div class="listingblock">
+<div class="title">Creates a new project called "my-project"</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow create --name my-project</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, it&#8217;s possible to add more extensions to the Quarkus project during its creation by using the <code>[-e|--extension]</code> flag. You can pass more than one extension, but they need to be separated by a comma.</p>
+</div>
+<div class="listingblock">
+<div class="title">Creates a new project with "quarkus-jsonp" and "quarkus-smallrye-openapi" extensions</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow create --extension quarkus-jsonp,quarkus-smallrye-openapi</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The first time you use the <code>create</code> command, it can take a while due to the necessity to download all dependencies for the Quarkus project.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_build"><a class="anchor" href="#_build"></a>Build</h3>
+<div class="paragraph">
+<p>The <code>build</code> command builds a Kogito Serverless Workflow project in the current directory and generates a container image. The build process produces a <code>knative.yml</code> deploy file in the <code>./target/kubernetes</code> folder. If your workflow has <strong>events</strong>, it&#8217;ll also generate a <code>kogito.yml</code> deploy file.</p>
+</div>
+<div class="paragraph">
+<p>To use the the <code>build</code> you need to provide at least one of the two flags: <code>--image</code> or <code>--image-name</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Builds the project and generates a local image called "quay.io/my-project"</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project
+kn workflow build --image-name my-project</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The "registry" and "tag" defaults are "quay.io" and "latest" respectively.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_image_naming_options"><a class="anchor" href="#_image_naming_options"></a>Image naming options</h4>
+<div class="paragraph">
+<p>Let&#8217;s take a better look at the image naming options.</p>
+</div>
+<div class="paragraph">
+<p>The <code>[-i|--image]</code> flag can be used in several ways.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>--image=[name]</p>
+</li>
+<li>
+<p>--image=[name]:[tag]</p>
+</li>
+<li>
+<p>--image=[repository]/[name]</p>
+</li>
+<li>
+<p>--image=[repository]/[name]:[tag]</p>
+</li>
+<li>
+<p>--image=[registry]/[repository]/[name]</p>
+</li>
+<li>
+<p>--image=[registry]/[repository]/[name]:[tag]</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Also, it&#8217;s possible to use specific flags to compose the image&#8217;s full name.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>--image-registry</p>
+</li>
+<li>
+<p>--image-repository</p>
+</li>
+<li>
+<p>--image-name</p>
+</li>
+<li>
+<p>--image-tag</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If the "--image" flag is provided together with any of these flags, the specific value will override "--image".</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Builds the project and generates a local image called "quay.io/other-user/my-project:1.0.1"</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-user/my-project:1.0.0 --image-repository other-user --image-tag 1.0.1</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_building_strategy"><a class="anchor" href="#_building_strategy"></a>Building strategy</h4>
+<div class="paragraph">
+<p>We have two different strategies to build the project and generate the image.</p>
+</div>
+<div class="paragraph">
+<div class="title">Jib</div>
+<p>Jib is an extension that enables building a container image without the necessity of a container runtime. Rebuilds are fast, and the resultant image is optimized.</p>
+</div>
+<div class="listingblock">
+<div class="title">Builds the project and generates a local image using Jib (Save it in the Docker runtime)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project --jib</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Builds the project and generates a local image using Jib (Save it in the Podman runtime)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project --jib-podman</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you don&#8217;t want to use any container runtime, use the <code>--push</code> option, so the built image will be immediately pushed to the respective registry.</p>
+</div>
+<div class="listingblock">
+<div class="title">Builds the project and pushes the image using Jib (No container runtime required)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project --jib --push</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Remember to have access to your registry before using the "--push" option. You can do it using the "docker login", "podman login", or any other equivalent method.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<div class="title">Docker</div>
+<p>Building with Docker is straightforward as it&#8217;s the default option. Also, it&#8217;s possible to automatically push the image to the respective registry by using the <code>--push</code> option.</p>
+</div>
+<div class="listingblock">
+<div class="title">Builds the project and pushes the image using Docker</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project --push</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deploy"><a class="anchor" href="#_deploy"></a>Deploy</h3>
+<div class="paragraph">
+<p>The <code>deploy</code> command deploys a Kogito Serverless Workflow project in the current directory (build command is required). It uses the <code>./target/kubernetes</code> folder to find the generated <code>knative.yml</code> and, if exists, the <code>kogito.yml</code>. If your deployment files are saved in another folder, it&#8217;s possible to override the path with the <code>--path</code> flag.</p>
+</div>
+<div class="paragraph">
+<p>Also, remember to have access to your cluster, and your cluster needs to have access to your image.</p>
+</div>
+<div class="listingblock">
+<div class="title">Deploys the project to authenticated cluster</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow deploy
+kn workflow deploy --path other-path</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you need to use a more complex deploy setup, we recommend directly using the "kubectl" command line.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_building_from_source"><a class="anchor" href="#_building_from_source"></a>Building from Source</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you want to build the project from source, follow the steps:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">git clone git@github.com:kie-group/kie-tools.git
+cd kie-tools
+pnpm bootstrap
+pnpm -F @kie-tools/kn-plugin-workflow... build:dev
+cd packages/kn-plugin-workflow
+go mod tidy</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>
