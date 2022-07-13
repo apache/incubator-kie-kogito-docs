@@ -154,6 +154,9 @@
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
+  </li>
 </ul>
   </li>
 </ul>
@@ -239,7 +242,7 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="_using_a_kogito_example_application"><a class="anchor" href="#_using_a_kogito_example_application"></a>Using a Kogito example application</h2>
+<h2 id="proc-using-example-application"><a class="anchor" href="#proc-using-example-application"></a>Using an example application</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>To get started with building Serverless Workflow images, you can use the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-quarkus">serverless-workflow-greeting-quarkus</a> example application.</p>
@@ -270,17 +273,17 @@ You can skip the following procedure, if you already have a Serverless Workflow 
 <li>
 <p>Clone the <a href="https://github.com/kiegroup/kogito-examples.git">kogito-examples</a> repository and navigate to the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-quarkus">serverless-workflow-greeting-quarkus</a> example application.</p>
 <div class="listingblock">
-<div class="title">Clone a Kogito example application</div>
+<div class="title">Clone an example application</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ git clone --branch stable https://github.com/kiegroup/kogito-examples.git &amp;&amp; cd kogito-examples/serverless-workflow-examples/serverless-workflow-greeting-quarkus</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">git clone --branch main https://github.com/kiegroup/kogito-examples.git &amp;&amp; cd kogito-examples/serverless-workflow-examples/serverless-workflow-greeting-quarkus</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>To run the example application, follow the instructions in <a href="getting-started/create-your-first-workflow-service.adoc">Creating your first Serverless Workflow service</a>.</p>
+<p>To run the example application, follow the instructions in <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
 </li>
 <li>
-<p>Install the Quarkus command line interface (CLI). For more information, see <a href="https://quarkus.io/guides/cli-tooling#installing-the-cli">Installing the Quarkus CLI</a>.</p>
+<p>Install the Quarkus command line interface (CLI). For more information, see <a href="https://quarkus.io/guides/cli-tooling">Installing the Quarkus CLI</a>.</p>
 </li>
 <li>
 <p>Add the required Quarkus extension using Quarkus CLI:</p>
@@ -289,7 +292,7 @@ You can skip the following procedure, if you already have a Serverless Workflow 
 <div class="listingblock">
 <div class="title">Add the Jib extension</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ quarkus extension add 'container-image-jib'</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus extension add 'container-image-jib'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -341,7 +344,7 @@ You can skip the following procedure, if you already have a Serverless Workflow 
 <div class="listingblock">
 <div class="title">Build your Serverless Workflow application</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ quarkus build -Dquarkus.container-image.build=true \
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build -Dquarkus.container-image.build=true \
     -Dquarkus.container-image.group=kogito \
     -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
     -Dquarkus.container-image.tag=1.0 \
@@ -355,10 +358,8 @@ You can skip the following procedure, if you already have a Serverless Workflow 
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The added Jib extension caches the <code>target/lib</code> directory. Based on the size of your project, Jib speeds up the rebuilds. If you want to push your Serverless Workflow application to a registry, ensure that define the following properties as required:
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>The added Jib extension caches the <code>target/lib</code> directory. Based on the size of your project, Jib speeds up the rebuilds. If you want to push your Serverless Workflow application to a registry, ensure that you define the following properties as required:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -373,10 +374,14 @@ The added Jib extension caches the <code>target/lib</code> directory. Based on t
 </li>
 </ul>
 </div>
+</td>
+</tr>
+</table>
+</div>
 <div class="listingblock">
 <div class="title">Example of pushing the built Serverless Workflow application to a registry</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ quarkus build -Dquarkus.container-image.build=true \
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build -Dquarkus.container-image.build=true \
     -Dquarkus.container-image.group=kogito \
     -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
     -Dquarkus.container-image.tag=1.0 \
@@ -419,7 +424,7 @@ The added Jib extension caches the <code>target/lib</code> directory. Based on t
 <div class="listingblock">
 <div class="title">Activate the Apache Maven profile</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ quarkus build -- -Pbuild-container</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell"> quarkus build -- -Pbuild-container</code></pre>
 </div>
 </div>
 </div>
@@ -439,7 +444,7 @@ The added Jib extension caches the <code>target/lib</code> directory. Based on t
 <p>You have created a Quarkus project.</p>
 </li>
 <li>
-<p>Quarkus CLI is installed. For more information about installing the Quarkus CLI, see <a href="https://quarkus.io/guides/cli-tooling#installing-the-cli">Installing the Quarkus CLI</a>.</p>
+<p>Quarkus CLI is installed. For more information about installing the Quarkus CLI, see <a href="https://quarkus.io/guides/cli-tooling">Installing the Quarkus CLI</a>.</p>
 </li>
 </ul>
 </div>
@@ -456,12 +461,11 @@ The added Jib extension caches the <code>target/lib</code> directory. Based on t
 <div class="listingblock">
 <div class="title">Example of building a native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ quarkus build --native -Dquarkus.container-image.build=true \
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build --native -Dquarkus.container-image.build=true \
     -Dquarkus.container-image.group=kogito \
     -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
     -Dquarkus.container-image.tag=1.0-native \
-    -Dquarkus.container-image.registry=quay.io \
-    -Dquarkus.native.container-build=true</code></pre>
+    -Dquarkus.container-image.registry=quay.io</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -484,8 +488,48 @@ The added Jib extension caches the <code>target/lib</code> directory. Based on t
 </tr>
 </table>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Configure Docker to use the in-cluster (Remote) Docker daemon</div>
 <div class="paragraph">
-<p>For more information about native builds, see the Quarkus documentation of <a href="https://quarkus.io/guides/building-native-image">Building a native executable</a>.</p>
+<p>When build Container Images using a remote Docker Daemon, i.e. Minikube, you need to use the following system property instead of <code>-Dquarkus.native.container-build=true</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">-Dquarkus.native.remote-container-build=true</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When you build Container Images using a remote Docker Daemon, such as Minikube, then use the following system property instead of <code>-Dquarkus.native.container-build=true</code> property:</p>
+</div>
+<div class="listingblock">
+<div class="title">System property to use a remote Docker Daemon</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">-Dquarkus.native.remote-container-build=true</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For more information about native builds, see <a href="https://quarkus.io/guides/building-native-image">Building a native executable</a>.</p>
 </div>
 </div>
 </div>
@@ -513,43 +557,72 @@ The added Jib extension caches the <code>target/lib</code> directory. Based on t
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>When Docker is available, Quarkus pushes the container image to the local registry of Docker:</p>
+<p>Start JVM and native Container Images.</p>
 <div class="openblock">
 <div class="content">
-<div class="listingblock">
-<div class="title">Example JVM image</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_example-jvm-image"></a>Example JVM image</p>
+</li>
+<li>
+<p><a id="tabset1_example-native-image"></a>Example native image</p>
+</li>
+</ul>
+</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0
+<div class="tab-pane" aria-labelledby="tabset1_example-jvm-image">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0
 ...
 INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final on JVM (powered by Quarkus 2.9.2.Final) started in 1.302s</code></pre>
 </div>
 </div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_example-native-image">
 <div class="listingblock">
-<div class="title">Example native image</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0-native
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0-native
 ...
 INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final native (powered by Quarkus 2.9.2.Final) started in 0.039s</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
 <div class="paragraph">
-<p>You can notice that, the startup of native image is faster than the JVM image.</p>
+<p>Note that the startup of native image is faster than the JVM image.</p>
 </div>
 </div>
 </div>
 </li>
 <li>
-<p>To invoke the Serverless worflow application, execute the following command once the container has started:</p>
+<p>To invoke the Serverless Workflow application, execute the following command once the container is started:</p>
 <div class="openblock">
 <div class="content">
-<div class="listingblock">
-<div class="title">Example request</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_example-request"></a>Example request</p>
+</li>
+<li>
+<p><a id="tabset2_example-response"></a>Example response</p>
+</li>
+</ul>
+</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://localhost:8080/jsongreet</code></pre>
-</div>
-</div>
+<div class="tab-pane" aria-labelledby="tabset2_example-request">
 <div class="listingblock">
-<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://localhost:8080/jsongreet</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_example-response">
+<div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
     "id": "2acf710d-7e4a-481d-925c-dfd85a369987",
@@ -559,6 +632,9 @@ INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final nati
         "greeting": "Hello from JSON Workflow, "
     }
 }</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
