@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>Mocking OpenAPI services with WireMock :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Mocking OpenAPI services with WireMock">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, quarkus-cli, test, wiremock, openapi">
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -143,6 +145,9 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Testing and Troubleshooting</span>
 <ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="mocking-opnapi-services-with-wiremock.html">Mocking OpenAPI Services with Wiremock</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
   </li>
@@ -189,6 +194,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Testing and Troubleshooting</li>
+    <li><a href="mocking-opnapi-services-with-wiremock.html">Mocking OpenAPI Services with Wiremock</a></li>
+  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/testing-and-troubleshooting/mocking-opnapi-services-with-wiremock.adoc">Edit this Page</a></div>
   </div>
@@ -197,7 +207,424 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
+<h1 class="page">Mocking OpenAPI services with WireMock</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes how to mock OpenAPI services using WireMock. The testing procedure in this document is based on the <code>serverless-workflow-examples/serverless-workflow-service-calls-quarkus</code> example application. You can access this example application in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-service-calls-quarkus">GitHub repository</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The examples in this document assumes that you have the following prerequisites:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You have installed the <a href="#getting-started/getting-familiar-with-our-tooling.adoc">Kogito tooling</a>.</p>
+</li>
+<li>
+<p>You have <a href="#getting-started/create-your-first-workflow-service.adoc">created a Serverless Workflow project</a> that <a href="#service-orchestration/orchestration-of-openapi-based-services.adoc">orchestrates OpenAPI services</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_about_wiremock"><a class="anchor" href="#_about_wiremock"></a>About WireMock</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://wiremock.org/docs/">WireMock</a> is an open source Mocking API for unit, integration and performance tests. You can use it to isolate your tests from 3rd party APIs and prototype APIs that still don&#8217;t exist.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_adding_a_mocked_openapi_service_to_your_tests"><a class="anchor" href="#_adding_a_mocked_openapi_service_to_your_tests"></a>Adding a mocked OpenAPI service to your tests</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following procedure describes how to add WireMock to your Serverless Workflow application:</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Add the WireMock dependency to your <code>pom.xml</code> file.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">WireMock dependency</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.github.tomakehurst&lt;/groupId&gt;
+    &lt;artifactId&gt;wiremock-jre8&lt;/artifactId&gt;
+    &lt;version&gt;{wiremock.version}&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Replace <code>{wiremock.version}</code> with the version of WireMock you want to use.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Choose when you want to start your WireMock server. There are two options:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Start WireMock server as a <code>QuarkusTestResource</code>. This means that your WireMock server will be started once before to run any test and will be stopped once the tests finishes. This is the option that fits most use cases.</p>
+</li>
+<li>
+<p>Start a WireMock server independently for each test. This is useful if you need different behavior for each test.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Define how the WireMock server should be started.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Starting a WireMock server example</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">WireMockConfiguration config = WireMockConfiguration.wireMockConfig().dynamicPort(); <i class="conum" data-value="1"></i><b>(1)</b>
+WireMockServer wireMockServer = new WireMockServer(config); <i class="conum" data-value="2"></i><b>(2)</b>
+wireMockServer.start(); <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Creates the configuration for the WireMock server. It&#8217;s a good practice to use a dynamic port when possible. This way, you prevent the tests from failing due to port conflicts. When using a dynamic port is not possible, you can use the <code>WireMockConfiguration#port(int)</code> method to use a fixed port number.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Creates the WireMock server instance.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Starts the WireMock server.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Mock the endpoints.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Mocking endpoints example</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">ObjectMapper objectMapper = new ObjectMapper();
+JsonNode greecePayload = objectMapper.readTree(getClass().getResourceAsStream("/country_mock.json")); <i class="conum" data-value="1"></i><b>(1)</b>
 
+wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo("/rest/v2/name/Greece")) <i class="conum" data-value="2"></i><b>(2)</b>
+                               .willReturn(WireMock.aResponse() <i class="conum" data-value="3"></i><b>(3)</b>
+                                                   .withStatus(200) <i class="conum" data-value="4"></i><b>(4)</b>
+                                                   .withHeader("Content-Type", "application/json") <i class="conum" data-value="5"></i><b>(5)</b>
+                                                   .withJsonBody(greecePayload))); <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Creates the JSON payload that will be returned by the WireMock server. Alternatively, you can use the <code>ResponseDefinitionBuilder#withBody</code> method to define a <code>String</code> or a <code>byte[]</code> as the response body.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Defines a stub for the <code>/rest/v2/name/Greece</code> endpoint.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Defines the response for the stub.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Defines the response status.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Defines the response headers.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Defines the response body.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Stop the WireMock server.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Stopping a WireMock server example</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">wireMockServer.stop();</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="_starting_a_wiremock_server_as_a_quarkustestresource"><a class="anchor" href="#_starting_a_wiremock_server_as_a_quarkustestresource"></a>Starting a WireMock server as a <code>QuarkusTestResource</code></h3>
+<div class="paragraph">
+<p>The following procedure describes how to start a WireMock server as a <code>QuarkusTestResource</code>.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Create a class that implements the <code>QuarkusTestResource</code> interface.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">QuarkusTestResource implementation example</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Map;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+
+public class RestCountriesMockServer implements QuarkusTestResourceLifecycleManager {
+
+    private WireMockServer wireMockServer;
+
+    @Override
+    public Map&lt;String, String&gt; start() { <i class="conum" data-value="1"></i><b>(1)</b>
+        configureWiremockServer();
+        return Map.of("quarkus.rest-client.restcountries_json.url", wireMockServer.baseUrl() + "/rest"); <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+
+    private void configureWiremockServer() {
+        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
+        wireMockServer.start();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode greecePayload;
+        try {
+            greecePayload = objectMapper.readTree(getClass().getResourceAsStream("/country_mock.json"));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        wireMockServer.stubFor(get(urlEqualTo("/rest/v2/name/Greece"))
+                                       .willReturn(aResponse()
+                                                           .withStatus(200)
+                                                           .withHeader("Content-Type", "application/json")
+                                                           .withJsonBody(greecePayload)));
+    }
+
+    @Override
+    public void stop() { <i class="conum" data-value="3"></i><b>(3)</b>
+        if (wireMockServer != null) {
+            wireMockServer.stop();
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Start the test resource. This method is called once before all tests.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Returns a map of application properties that will be set in the test environment. In this case, it sets the <code>quarkus.rest-client.restcountries_json.url</code> property to the base URL of the WireMock server.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Stop the test resource. This method is called once after all tests.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Use the <code>QuarkusTestResource</code> implementation in your test class.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example of a test class using the <code>QuarkusTestResource</code> implementation</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.Test;
+
+@QuarkusTest
+@QuarkusTestResource(RestCountriesMockServer.class) <i class="conum" data-value="1"></i><b>(1)</b>
+class CountryServiceWorkflowTest {
+
+    @Test
+    void testFeatureA() {
+        // ...
+    }
+
+    @Test
+    void testFeatureB() {
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Uses the <code>RestCountriesMockServer</code> class as a test resource.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>For more information about <code>QuarkusTestResource</code>, see <a href="https://quarkus.io/guides/getting-started-testing#quarkus-test-resource">Starting services before the Quarkus application starts</a>.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_starting_a_wiremock_server_to_be_used_in_a_specific_test"><a class="anchor" href="#_starting_a_wiremock_server_to_be_used_in_a_specific_test"></a>Starting a WireMock server to be used in a specific test</h3>
+<div class="paragraph">
+<p>The following procedure describes how to start a WireMock server to be used in a specific test.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Wrap the test logic between starting and stopping the WireMock server.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example of a test using a specific WireMock server instance</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+
+@QuarkusTest
+class CountryServiceWorkflowTest {
+
+    @Test
+    void testFeatureA() throws IOException {
+        WireMockServer wireMockServer = startWiremockServerForFeatureA();
+        try {
+            // test logic
+        } finally {
+            wireMockServer.stop();
+        }
+    }
+
+    @Test
+    void testFeatureB() {
+        WireMockServer wireMockServer = startWiremockServerForFeatureB();
+        try {
+            // test logic
+        } finally {
+            wireMockServer.stop();
+        }
+    }
+
+    private static WireMockServer startWiremockServerForFeatureA() throws IOException {
+        WireMockServer wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
+        wireMockServer.start();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode greecePayload = objectMapper.readTree(CountryServiceWorkflowTest.class.getResourceAsStream("/country_mock_feature_a.json"));
+        wireMockServer.stubFor(get(urlEqualTo("/rest/v2/name/Greece"))
+                                       .willReturn(aResponse()
+                                                           .withStatus(200)
+                                                           .withHeader("Content-Type", "application/json")
+                                                           .withJsonBody(greecePayload)));
+
+        return wireMockServer;
+    }
+
+    private static WireMockServer startWiremockServerForFeatureB() {
+        WireMockServer wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
+        wireMockServer.start();
+
+        wireMockServer.stubFor(get(urlEqualTo("/rest/v2/name/Greece"))
+                                       .willReturn(aResponse().withStatus(404)));
+
+        return wireMockServer;
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_testing_your_serverless_workflow_application"><a class="anchor" href="#_testing_your_serverless_workflow_application"></a>Testing your Serverless Workflow application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To test your Serverless Workflow application, you can follow the instructions in the <a href="#testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc">Basic Integration Test with RestAssured</a> guide.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
