@@ -1,0 +1,92 @@
+Kogito Serverless Workflow Tools extension in Quarkus Dev UI
+============================================================
+:compat-mode!:
+// Metadata:
+:description: Kogito Serverless Workflow Tools extension in Quarkus Dev UI
+:keywords: kogito, workflow, serverless, Quarkus, Dev UI
+// links
+:quarkus_dev_ui_url: https://quarkus.io/guides/dev-ui
+:quarkus_extension_url: https://code.quarkus.io/
+
+Quarkus applications come integrated with a link:{quarkus_dev_ui_url}[Dev UI], providing a number of tools that help in developing the applications in Quarkus. You can plug in such tools to your Quarkus application as link:{quarkus_extension_url}[extensions], such as Kogito Serverless Workflow Tools.
+
+[[proc-install-sw-tools-extension]]
+== Installing Kogito Serverless Workflow Tools extension
+
+The Kogito Serverless Workflow Tools extension provides a console to view, manage, and start the workflow instances.
+
+.Prerequisites
+* Quarkus {quarkus_version} is installed.
+* Quarkus command line interface (CLI) is installed. For more information, see link:{quarkus_cli_url}[Installing the Quarkus CLI].
+
+.Procedure
+. In a command terminal, enter the following command to install the Kogito Serverless Workflow Tools extension:
++
+--
+.Install Kogito Serverless Workflow Tools extension
+[source,shell]
+----
+quarkus ext add org.kie.kogito:kogito-quarkus-serverless-workflow-devui
+----
+
+Executing the previous command adds the following dependency to `pom.xml` file of your project:
+
+.Kogito Serverless Workflow Tools dependency in `pom.xml` file
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-quarkus-serverless-workflow-devui</artifactId>
+  <version>${VERSION}</version>
+</dependency>
+----
+--
+
+. Enter the following command to add `kogito-addons-quarkus-process-svg` extension that provides SVG diagrams to the consoles:
++
+--
+.Install Kogito SVG add-on extension
+[source,shell]
+----
+quarkus ext add org.kie.kogito:kogito-addons-quarkus-process-svg
+----
+
+Executing the previous command adds the following dependency to `pom.xml` file of your project:
+
+.Process-SVG dependency in `pom.xml` file
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-addons-quarkus-process-svg</artifactId>
+</dependency>
+----
+--
+
+. Run the following command to start the Quarkus application:
++
+--
+.Start Quarkus application
+[source,shell]
+----
+quarkus dev
+----
+--
+
+. To access the Quarkus Dev UI, go to `http://localhost:8080/q/dev/`.
++
+--
+
+.Kogito Serverless Workflow Tools extension in Quarkus Dev UI
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-quarkus-dev-ui.png[]
+
+The Kogito Serverless Workflow Tools extension contains the following pages:
+
+* xref:tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.adoc[Workflow  Instances]
+* xref:tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.adoc[Workflow Definitions]
+--
+
+
+include::../../../pages/_common-content/report-issue.adoc[]
+
+
