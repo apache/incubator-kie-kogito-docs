@@ -1,5 +1,5 @@
-Mocking OpenAPI services with WireMock
-======================================
+= Mocking OpenAPI services using WireMock
+
 // Metadata:
 :description: Mocking OpenAPI services with WireMock
 :keywords: kogito, workflow, quarkus, serverless, quarkus-cli, test, wiremock, openapi
@@ -11,31 +11,34 @@ Mocking OpenAPI services with WireMock
 :create-your-first-workflow-service: xref:getting-started/create-your-first-workflow-service.adoc
 :orchestration-of-openapi-based-services: xref:service-orchestration/orchestration-of-openapi-based-services.adoc
 
-This document describes how to mock OpenAPI services using WireMock. The testing procedure in this document is based on the `serverless-workflow-examples/serverless-workflow-service-calls-quarkus` example application. You can access this example application in the link:{kogito_sw_examples_url}/serverless-workflow-service-calls-quarkus[GitHub repository].
+This document describes how to mock OpenAPI services using WireMock. The testing procedure described in this document is based on the link:{kogito_sw_examples_url}/serverless-workflow-service-calls-quarkus[`serverless-workflow-service-calls-quarkus`] example application.
 
-== Prerequisites
+link:{wiremock_url}[WireMock] is an open source Mocking API for unit, integration, and performance tests. You can use WireMock to isolate your tests from third party APIs and prototype APIs that do not exist.
 
-The examples in this document assumes that you have the following prerequisites:
+.Prerequisites
+The examples used in this document assumes that you have the following prerequisites:
 
-* You have installed the {getting-familiar-with-our-tooling}[Kogito tooling].
+* Required tooling is installed. For more information, see link:{getting-familiar-with-our-tooling}[Getting familiar with our tooling].
+* A Serverless Worlfow project is created and orchestrates the OpenAPI services.
++
+For more information about creating a Serverless Workflow project and orchestrating OpenAPI services, see link:{create-your-first-workflow-service}[Creating your first Serverless Workflow service] and link:{orchestration-of-openapi-based-services}[Orchestrating the OpenAPI services].
 
-* You have {create-your-first-workflow-service}[created a Serverless Workflow project] that {orchestration-of-openapi-based-services}[orchestrates OpenAPI services].
-
-== About WireMock
-
-{wiremock_url}[WireMock] is an open source Mocking API for unit, integration and performance tests. You can use it to isolate your tests from 3rd party APIs and prototype APIs that still don't exist.
-
+[[proc-add-mocked-openapi-service-tests]]
 == Adding a mocked OpenAPI service to your tests
 
-The following procedure describes how to add WireMock to your Serverless Workflow application:
+The procedure in this section describes how you can add WireMock to your Serverless Workflow application.
+
+.Prerequisites
+
+* A Serverless Workflow project is created. 
++
+For more information about creating a workflow project, see link:{create-your-first-workflow-service}[Creating your first Serverless Workflow service].
 
 .Procedure
-
-. Add the WireMock dependency to your `pom.xml` file.
-
+. Add the following WireMock dependency to the `pom.xml` file of your project:
 +
 --
-.WireMock dependency
+.Add WireMock dependency to `pom.xml`
 [source,xml]
 ----
 <dependency>
@@ -48,36 +51,39 @@ The following procedure describes how to add WireMock to your Serverless Workflo
 
 [NOTE]
 ====
-Replace `{wiremock.version}` with the version of WireMock you want to use.
+Replace `{wiremock.version}` variable with the version of WireMock that you want to use.
 ====
 --
 
-. Choose when you want to start your WireMock server. There are two options:
-
-* Start WireMock server as a `QuarkusTestResource`. This means that your WireMock server will be started once before to run any test and will be stopped once the tests finishes. This is the option that fits most use cases.
-* Start a WireMock server independently for each test. This is useful if you need different behavior for each test.
-
-. Define how the WireMock server should be started.
-
+. Select one of the following methods to start your WireMock server:
 +
 --
-.Starting a WireMock server example
+* You can start the WireMock server as a `QuarkusTestResource`. If you select this method, then the WireMock server is started once before you run any test, and the server is stopped when the test finishes. This option is suitable for most use cases.
+
+* You can start the WireMock server independently for each test. This option is useful when you want each test to behave differently.
+
+For more information about starting the WireMock server, see <<proc-start-wiremock-server-quarkustestresource, Starting WireMock server as a `QuarkusTestResource`>> and <<proc-start-wiremock-server-specific-test, Starting WireMock server for a specific test>>.
+--
+
+. Define the method that you selected to start the WireMock server as shown in the following example:
++
+--
+.Example of starting a WireMock server
 [source,java]
 ----
 WireMockConfiguration config = WireMockConfiguration.wireMockConfig().dynamicPort(); <1>
 WireMockServer wireMockServer = new WireMockServer(config); <2>
 wireMockServer.start(); <3>
 ----
-<1> Creates the configuration for the WireMock server. It's a good practice to use a dynamic port when possible. This way, you prevent the tests from failing due to port conflicts. When using a dynamic port is not possible, you can use the `WireMockConfiguration#port(int)` method to use a fixed port number.
+<1> Creates the configuration for the WireMock server. You must use a dynamic port when possible since it prevents the tests from failing due to port conflicts. When you cannot use a dynamic port, you can use the `WireMockConfiguration#port(int)` method to use a fixed port number.
 <2> Creates the WireMock server instance.
 <3> Starts the WireMock server.
 --
 
-. Mock the endpoints.
-
+. Mock the endpoints as shown in the following example:
 +
 --
-.Mocking endpoints example
+.Example of mocking endpoints
 [source,java]
 ----
 ObjectMapper objectMapper = new ObjectMapper();
@@ -89,7 +95,7 @@ wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo("/rest/v2/name/Greece"))
                                                    .withHeader("Content-Type", "application/json") <5>
                                                    .withJsonBody(greecePayload))); <6>
 ----
-<1> Creates the JSON payload that will be returned by the WireMock server. Alternatively, you can use the `ResponseDefinitionBuilder#withBody` method to define a `String` or a `byte[]` as the response body.
+<1> Creates the JSON payload, which the WireMock server returns. Alternatively, you can use the `ResponseDefinitionBuilder#withBody` method to define a `String` or a `byte[]` as the response body.
 <2> Defines a stub for the `/rest/v2/name/Greece` endpoint.
 <3> Defines the response for the stub.
 <4> Defines the response status.
@@ -97,28 +103,35 @@ wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo("/rest/v2/name/Greece"))
 <6> Defines the response body.
 --
 
-. Stop the WireMock server.
-
+. Stop the WireMock server as shown in the following example:
 +
 --
-.Stopping a WireMock server example
+.Example of stopping a WireMock server
 [source,java]
 ----
 wireMockServer.stop();
 ----
 --
 
-=== Starting a WireMock server as a `QuarkusTestResource`
+[[proc-start-wiremock-server-quarkustestresource]]
+=== Starting WireMock server as a `QuarkusTestResource`
 
-The following procedure describes how to start a WireMock server as a `QuarkusTestResource`.
+In the process of adding a mocked OpenAPI service to your tests, you need to start the WireMock server. You can start the WireMock server either as a `QuarkusTestResource` or you can start the server for each test. 
+
+The procedure in this section describes how you can start the WireMock server as a `QuarkusTestResource`. For more information about `QuarkusTestResource`, see link:{quarkus_test_resource_url}[Starting services before the Quarkus application starts] documentation.
+
+.Prerequisites
+* A Serverless Workflow project is created. 
++
+For more information about creating a workflow project, see link:{create-your-first-workflow-service}[Creating your first Serverless Workflow service].
+
+* WireMock dependency is added in the `pom.xml` file.
 
 .Procedure
-
-. Create a class that implements the `QuarkusTestResource` interface.
-
+. Create a class that implements the `QuarkusTestResource` interface as shown in the following example:
 +
 --
-.QuarkusTestResource implementation example
+.Example implementation of `QuarkusTestResource`
 [source,java]
 ----
 import com.fasterxml.jackson.databind.JsonNode;
@@ -171,13 +184,12 @@ public class RestCountriesMockServer implements QuarkusTestResourceLifecycleMana
     }
 }
 ----
-<1> Start the test resource. This method is called once before all tests.
-<2> Returns a map of application properties that will be set in the test environment. In this case, it sets the `quarkus.rest-client.restcountries_json.url` property to the base URL of the WireMock server.
-<3> Stop the test resource. This method is called once after all tests.
+<1> Starts the test resource. This method is called once before running all the tests.
+<2> Returns a map of application properties that are set in the test environment. In this case, the `quarkus.rest-client.restcountries_json.url` property is set as the base URL of the WireMock server.
+<3> Stops the test resource. This method is called once after running all the tests.
 --
 
-. Use the `QuarkusTestResource` implementation in your test class.
-
+. Use the `QuarkusTestResource` implementation in your test class as shown in the following example:
 +
 --
 .Example of a test class using the `QuarkusTestResource` implementation
@@ -205,19 +217,20 @@ class CountryServiceWorkflowTest {
 <1> Uses the `RestCountriesMockServer` class as a test resource.
 --
 
+[[proc-start-wiremock-server-specific-test]]
+=== Starting WireMock server for a specific test
+
+You can also start the WireMock server to be used in a specific server.
+
+.Prerequisites
+* A Serverless Workflow project is created. 
 +
---
-For more information about `QuarkusTestResource`, see {quarkus_test_resource_url}[Starting services before the Quarkus application starts].
---
+For more information about creating a workflow project, see link:{create-your-first-workflow-service}[Creating your first Serverless Workflow service].
 
-=== Starting a WireMock server to be used in a specific test
-
-The following procedure describes how to start a WireMock server to be used in a specific test.
+* WireMock dependency is added in the `pom.xml` file.
 
 .Procedure
-
-. Wrap the test logic between starting and stopping the WireMock server.
-
+. Wrap the logic of a test between starting and stopping the WireMock server as shown in the following example:
 +
 --
 .Example of a test using a specific WireMock server instance
@@ -287,8 +300,10 @@ class CountryServiceWorkflowTest {
 ----
 --
 
-== Testing your Serverless Workflow application
+You can test your Serverless Workflow application using the instructions described in xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Testing your Serverless Workflow application using REST Assured] document. 
 
-To test your Serverless Workflow application, you can follow the instructions in the xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Basic Integration Test with RestAssured] guide.
+== Additional resources
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
+* xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Testing your Serverless Workflow application using REST Assured]
 
 include::../../pages/_common-content/report-issue.adoc[]
