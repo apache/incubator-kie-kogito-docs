@@ -19,7 +19,7 @@ link:{wiremock_url}[WireMock] is an open source Mocking API for unit, integratio
 The examples used in this document assumes that you have the following prerequisites:
 
 * Required tooling is installed. For more information, see link:{getting-familiar-with-our-tooling}[Getting familiar with our tooling].
-* A Serverless Worlfow project is created and orchestrates the OpenAPI services.
+* A Serverless Workflow project is created and orchestrates OpenAPI services.
 +
 For more information about creating a Serverless Workflow project and orchestrating OpenAPI services, see link:{create-your-first-workflow-service}[Creating your first Serverless Workflow service] and link:{orchestration-of-openapi-based-services}[Orchestrating the OpenAPI services].
 
@@ -65,7 +65,7 @@ Replace `{wiremock.version}` variable with the version of WireMock that you want
 For more information about starting the WireMock server, see <<proc-start-wiremock-server-quarkustestresource, Starting WireMock server as a `QuarkusTestResource`>> and <<proc-start-wiremock-server-specific-test, Starting WireMock server for a specific test>>.
 --
 
-. Define the method that you selected to start the WireMock server as shown in the following example:
+. Start the WireMock server as shown in the following example:
 +
 --
 .Example of starting a WireMock server
@@ -75,7 +75,7 @@ WireMockConfiguration config = WireMockConfiguration.wireMockConfig().dynamicPor
 WireMockServer wireMockServer = new WireMockServer(config); <2>
 wireMockServer.start(); <3>
 ----
-<1> Creates the configuration for the WireMock server. You must use a dynamic port when possible since it prevents the tests from failing due to port conflicts. When you cannot use a dynamic port, you can use the `WireMockConfiguration#port(int)` method to use a fixed port number.
+<1> Creates the configuration for the WireMock server. You can use a dynamic port since it prevents the tests from failing due to port conflicts. When you cannot use a dynamic port, you can use the `WireMockConfiguration#port(int)` method to use a fixed port number.
 <2> Creates the WireMock server instance.
 <3> Starts the WireMock server.
 --
@@ -220,7 +220,7 @@ class CountryServiceWorkflowTest {
 [[proc-start-wiremock-server-specific-test]]
 === Starting WireMock server for a specific test
 
-You can also start the WireMock server to be used in a specific server.
+You can also start the WireMock server to be used in a specific test.
 
 .Prerequisites
 * A Serverless Workflow project is created. 
