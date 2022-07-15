@@ -3,9 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Mocking OpenAPI services with WireMock :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Mocking OpenAPI services with WireMock">
-    <meta name="keywords" content="kogito, workflow, quarkus, serverless, quarkus-cli, test, wiremock, openapi">
+    <title>Mocking OpenAPI services using WireMock :: Kogito Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -146,7 +144,7 @@
     <span class="nav-text">Testing and Troubleshooting</span>
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="mocking-opnapi-services-with-wiremock.html">Mocking OpenAPI Services with Wiremock</a>
+    <a class="nav-link" href="mocking-opnapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
@@ -197,7 +195,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Testing and Troubleshooting</li>
-    <li><a href="mocking-opnapi-services-with-wiremock.html">Mocking OpenAPI Services with Wiremock</a></li>
+    <li><a href="mocking-opnapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/testing-and-troubleshooting/mocking-opnapi-services-with-wiremock.adoc">Edit this Page</a></div>
@@ -207,55 +205,60 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Mocking OpenAPI services with WireMock</h1>
+<h1 class="page">Mocking OpenAPI services using WireMock</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how to mock OpenAPI services using WireMock. The testing procedure in this document is based on the <code>serverless-workflow-examples/serverless-workflow-service-calls-quarkus</code> example application. You can access this example application in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-service-calls-quarkus">GitHub repository</a>.</p>
+<p>This document describes how to mock OpenAPI services using WireMock. The testing procedure described in this document is based on the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-service-calls-quarkus"><code>serverless-workflow-service-calls-quarkus</code></a> example application.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>Prerequisites</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>The examples in this document assumes that you have the following prerequisites:</p>
+<p><a href="https://wiremock.org/docs/">WireMock</a> is an open source Mocking API for unit, integration, and performance tests. You can use WireMock to isolate your tests from third party APIs and prototype APIs that do not exist.</p>
+</div>
+<div class="paragraph">
+<div class="title">Prerequisites</div>
+<p>The examples used in this document assumes that you have the following prerequisites:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>You have installed the <a href="#getting-started/getting-familiar-with-our-tooling.adoc">Kogito tooling</a>.</p>
+<p>Required tooling is installed. For more information, see <a href="xref:getting-started/getting-familiar-with-our-tooling.adoc">Getting familiar with our tooling</a>.</p>
 </li>
 <li>
-<p>You have <a href="#getting-started/create-your-first-workflow-service.adoc">created a Serverless Workflow project</a> that <a href="#service-orchestration/orchestration-of-openapi-based-services.adoc">orchestrates OpenAPI services</a>.</p>
+<p>A Serverless Workflow project is created and orchestrates OpenAPI services.</p>
+<div class="paragraph">
+<p>For more information about creating a Serverless Workflow project and orchestrating OpenAPI services, see <a href="xref:getting-started/create-your-first-workflow-service.adoc">Creating your first Serverless Workflow service</a> and <a href="xref:service-orchestration/orchestration-of-openapi-based-services.adoc">Orchestrating the OpenAPI services</a>.</p>
+</div>
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_about_wiremock"><a class="anchor" href="#_about_wiremock"></a>About WireMock</h2>
+<h2 id="proc-add-mocked-openapi-service-tests"><a class="anchor" href="#proc-add-mocked-openapi-service-tests"></a>Adding a mocked OpenAPI service to your tests</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="https://wiremock.org/docs/">WireMock</a> is an open source Mocking API for unit, integration and performance tests. You can use it to isolate your tests from 3rd party APIs and prototype APIs that still don&#8217;t exist.</p>
+<p>The procedure in this section describes how you can add WireMock to your Serverless Workflow application.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_adding_a_mocked_openapi_service_to_your_tests"><a class="anchor" href="#_adding_a_mocked_openapi_service_to_your_tests"></a>Adding a mocked OpenAPI service to your tests</h2>
-<div class="sectionbody">
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A Serverless Workflow project is created.</p>
 <div class="paragraph">
-<p>The following procedure describes how to add WireMock to your Serverless Workflow application:</p>
+<p>For more information about creating a workflow project, see <a href="xref:getting-started/create-your-first-workflow-service.adoc">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+</ul>
 </div>
 <div class="olist arabic">
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Add the WireMock dependency to your <code>pom.xml</code> file.</p>
+<p>Add the following WireMock dependency to the <code>pom.xml</code> file of your project:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">WireMock dependency</div>
+<div class="title">Add WireMock dependency to <code>pom.xml</code></div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;com.github.tomakehurst&lt;/groupId&gt;
@@ -273,7 +276,7 @@
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Replace <code>{wiremock.version}</code> with the version of WireMock you want to use.</p>
+<p>Replace <code>{wiremock.version}</code> variable with the version of WireMock that you want to use.</p>
 </div>
 </td>
 </tr>
@@ -283,24 +286,31 @@
 </div>
 </li>
 <li>
-<p>Choose when you want to start your WireMock server. There are two options:</p>
+<p>Select one of the following methods to start your WireMock server:</p>
+<div class="openblock">
+<div class="content">
 <div class="ulist">
 <ul>
 <li>
-<p>Start WireMock server as a <code>QuarkusTestResource</code>. This means that your WireMock server will be started once before to run any test and will be stopped once the tests finishes. This is the option that fits most use cases.</p>
+<p>You can start the WireMock server as a <code>QuarkusTestResource</code>. If you select this method, then the WireMock server is started once before you run any test, and the server is stopped when the test finishes. This option is suitable for most use cases.</p>
 </li>
 <li>
-<p>Start a WireMock server independently for each test. This is useful if you need different behavior for each test.</p>
+<p>You can start the WireMock server independently for each test. This option is useful when you want each test to behave differently.</p>
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>For more information about starting the WireMock server, see <a href="#proc-start-wiremock-server-quarkustestresource">Starting WireMock server as a <code>QuarkusTestResource</code></a> and <a href="#proc-start-wiremock-server-specific-test">Starting WireMock server for a specific test</a>.</p>
+</div>
+</div>
+</div>
 </li>
 <li>
-<p>Define how the WireMock server should be started.</p>
+<p>Start the WireMock server as shown in the following example:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Starting a WireMock server example</div>
+<div class="title">Example of starting a WireMock server</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">WireMockConfiguration config = WireMockConfiguration.wireMockConfig().dynamicPort(); <i class="conum" data-value="1"></i><b>(1)</b>
 WireMockServer wireMockServer = new WireMockServer(config); <i class="conum" data-value="2"></i><b>(2)</b>
@@ -311,7 +321,7 @@ wireMockServer.start(); <i class="conum" data-value="3"></i><b>(3)</b></code></p
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Creates the configuration for the WireMock server. It&#8217;s a good practice to use a dynamic port when possible. This way, you prevent the tests from failing due to port conflicts. When using a dynamic port is not possible, you can use the <code>WireMockConfiguration#port(int)</code> method to use a fixed port number.</td>
+<td>Creates the configuration for the WireMock server. You can use a dynamic port since it prevents the tests from failing due to port conflicts. When you cannot use a dynamic port, you can use the <code>WireMockConfiguration#port(int)</code> method to use a fixed port number.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -327,11 +337,11 @@ wireMockServer.start(); <i class="conum" data-value="3"></i><b>(3)</b></code></p
 </div>
 </li>
 <li>
-<p>Mock the endpoints.</p>
+<p>Mock the endpoints as shown in the following example:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Mocking endpoints example</div>
+<div class="title">Example of mocking endpoints</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">ObjectMapper objectMapper = new ObjectMapper();
 JsonNode greecePayload = objectMapper.readTree(getClass().getResourceAsStream("/country_mock.json")); <i class="conum" data-value="1"></i><b>(1)</b>
@@ -347,7 +357,7 @@ wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo("/rest/v2/name/Greece"))
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Creates the JSON payload that will be returned by the WireMock server. Alternatively, you can use the <code>ResponseDefinitionBuilder#withBody</code> method to define a <code>String</code> or a <code>byte[]</code> as the response body.</td>
+<td>Creates the JSON payload, which the WireMock server returns. Alternatively, you can use the <code>ResponseDefinitionBuilder#withBody</code> method to define a <code>String</code> or a <code>byte[]</code> as the response body.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -375,11 +385,11 @@ wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo("/rest/v2/name/Greece"))
 </div>
 </li>
 <li>
-<p>Stop the WireMock server.</p>
+<p>Stop the WireMock server as shown in the following example:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Stopping a WireMock server example</div>
+<div class="title">Example of stopping a WireMock server</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">wireMockServer.stop();</code></pre>
 </div>
@@ -390,19 +400,36 @@ wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo("/rest/v2/name/Greece"))
 </ol>
 </div>
 <div class="sect2">
-<h3 id="_starting_a_wiremock_server_as_a_quarkustestresource"><a class="anchor" href="#_starting_a_wiremock_server_as_a_quarkustestresource"></a>Starting a WireMock server as a <code>QuarkusTestResource</code></h3>
+<h3 id="proc-start-wiremock-server-quarkustestresource"><a class="anchor" href="#proc-start-wiremock-server-quarkustestresource"></a>Starting WireMock server as a <code>QuarkusTestResource</code></h3>
 <div class="paragraph">
-<p>The following procedure describes how to start a WireMock server as a <code>QuarkusTestResource</code>.</p>
+<p>In the process of adding a mocked OpenAPI service to your tests, you need to start the WireMock server. You can start the WireMock server either as a <code>QuarkusTestResource</code> or you can start the server for each test.</p>
+</div>
+<div class="paragraph">
+<p>The procedure in this section describes how you can start the WireMock server as a <code>QuarkusTestResource</code>. For more information about <code>QuarkusTestResource</code>, see <a href="https://quarkus.io/guides/getting-started-testing#quarkus-test-resource">Starting services before the Quarkus application starts</a> documentation.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A Serverless Workflow project is created.</p>
+<div class="paragraph">
+<p>For more information about creating a workflow project, see <a href="xref:getting-started/create-your-first-workflow-service.adoc">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+<li>
+<p>WireMock dependency is added in the <code>pom.xml</code> file.</p>
+</li>
+</ul>
 </div>
 <div class="olist arabic">
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Create a class that implements the <code>QuarkusTestResource</code> interface.</p>
+<p>Create a class that implements the <code>QuarkusTestResource</code> interface as shown in the following example:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">QuarkusTestResource implementation example</div>
+<div class="title">Example implementation of <code>QuarkusTestResource</code></div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -459,15 +486,15 @@ public class RestCountriesMockServer implements QuarkusTestResourceLifecycleMana
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Start the test resource. This method is called once before all tests.</td>
+<td>Starts the test resource. This method is called once before running all the tests.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Returns a map of application properties that will be set in the test environment. In this case, it sets the <code>quarkus.rest-client.restcountries_json.url</code> property to the base URL of the WireMock server.</td>
+<td>Returns a map of application properties that are set in the test environment. In this case, the <code>quarkus.rest-client.restcountries_json.url</code> property is set as the base URL of the WireMock server.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Stop the test resource. This method is called once after all tests.</td>
+<td>Stops the test resource. This method is called once after running all the tests.</td>
 </tr>
 </table>
 </div>
@@ -475,7 +502,7 @@ public class RestCountriesMockServer implements QuarkusTestResourceLifecycleMana
 </div>
 </li>
 <li>
-<p>Use the <code>QuarkusTestResource</code> implementation in your test class.</p>
+<p>Use the <code>QuarkusTestResource</code> implementation in your test class as shown in the following example:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -511,27 +538,34 @@ class CountryServiceWorkflowTest {
 </div>
 </div>
 </div>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>For more information about <code>QuarkusTestResource</code>, see <a href="https://quarkus.io/guides/getting-started-testing#quarkus-test-resource">Starting services before the Quarkus application starts</a>.</p>
-</div>
-</div>
-</div>
 </li>
 </ol>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_starting_a_wiremock_server_to_be_used_in_a_specific_test"><a class="anchor" href="#_starting_a_wiremock_server_to_be_used_in_a_specific_test"></a>Starting a WireMock server to be used in a specific test</h3>
+<h3 id="proc-start-wiremock-server-specific-test"><a class="anchor" href="#proc-start-wiremock-server-specific-test"></a>Starting WireMock server for a specific test</h3>
 <div class="paragraph">
-<p>The following procedure describes how to start a WireMock server to be used in a specific test.</p>
+<p>You can also start the WireMock server to be used in a specific test.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A Serverless Workflow project is created.</p>
+<div class="paragraph">
+<p>For more information about creating a workflow project, see <a href="xref:getting-started/create-your-first-workflow-service.adoc">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+<li>
+<p>WireMock dependency is added in the <code>pom.xml</code> file.</p>
+</li>
+</ul>
 </div>
 <div class="olist arabic">
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Wrap the test logic between starting and stopping the WireMock server.</p>
+<p>Wrap the logic of a test between starting and stopping the WireMock server as shown in the following example:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -605,14 +639,24 @@ class CountryServiceWorkflowTest {
 </li>
 </ol>
 </div>
+<div class="paragraph">
+<p>You can test your Serverless Workflow application using the instructions described in <a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your Serverless Workflow application using REST Assured</a> document.</p>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_testing_your_serverless_workflow_application"><a class="anchor" href="#_testing_your_serverless_workflow_application"></a>Testing your Serverless Workflow application</h2>
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>To test your Serverless Workflow application, you can follow the instructions in the <a href="#testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc">Basic Integration Test with RestAssured</a> guide.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+</li>
+<li>
+<p><a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your Serverless Workflow application using REST Assured</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
