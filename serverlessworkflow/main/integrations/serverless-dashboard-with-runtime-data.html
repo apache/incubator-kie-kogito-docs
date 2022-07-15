@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title> Displaying workflow runtime data in Serverless Dashboards :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Displaying workflow runtime data in Serverless Dashboards">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, dashboards, monitoring">
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -163,6 +165,15 @@
   </li>
 </ul>
   </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="serverless-dashboard-with-runtime-data.html">Displaying workflow runtime data in serverless dashboards</a>
+  </li>
+</ul>
+  </li>
 </ul>
   </li>
 </ul>
@@ -192,6 +203,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Integrations</li>
+    <li><a href="serverless-dashboard-with-runtime-data.html">Displaying workflow runtime data in serverless dashboards</a></li>
+  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/integrations/serverless-dashboard-with-runtime-data.adoc">Edit this Page</a></div>
   </div>
@@ -200,7 +216,422 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page"> Displaying workflow runtime data in Serverless Dashboards</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>To build dashboards we need data and it can be easily acquired from Kogito Serverless Workflow using any of the following approaches:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enabling <strong>Metrics</strong></p>
+</li>
+<li>
+<p>Integrating with <strong>Data Index</strong> to consume data using its REST API</p>
+</li>
+<li>
+<p>Using custom mechanisms (such as <code>ProcessInstanceListener</code>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In this document we will explore creating dashboards for metrics and for Data Index GraphQL REST API.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_serverless_dashboards_with_dashbuilder"><a class="anchor" href="#_serverless_dashboards_with_dashbuilder"></a>Serverless Dashboards with Dashbuilder</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Serverless Dashboards are visualizations that run entirely on the client side. We will use <a href="https://www.dashbuilder.org">Dashbuilder</a> to create Dashboards: it consumes data from any JSON source and the dashboard is defined in YAML format.</p>
+</div>
+<div class="paragraph">
+<p>To use Dashbuilder you need to download, uncompress the <code>dashbuilder-client</code> NPM package and edit the file <strong>setup.js</strong> to link your YAML files. For further information please check <a href="https://www.dashbuilder.org/docs/#_client_only">Dashbuilder documentation</a>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/integrations/dashbuilder-sample-report.png" alt="dashbuilder sample report">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_metrics_for_building_dashboards"><a class="anchor" href="#_using_metrics_for_building_dashboards"></a>Using Metrics for building Dashboards</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To enable metrics for your Serverless Workflow application add the <code>org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus</code> dependency to your apps&#8217;s classpath and the metrics will be available at <code>/q/metrics</code> path.</p>
+</div>
+<div class="listingblock">
+<div class="title">Metrics Dependency to be added to <code>pom.xml</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">    &lt;dependency&gt;
+      &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+      &lt;artifactId&gt;kogito-addons-quarkus-monitoring-prometheus&lt;/artifactId&gt;
+    &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Dashbuilder can consume data directly from metrics endpoints. Using a <a href="https://docs.jsonata.org/overview.html">JSONAta expression</a> to format some metrics we can simply show metrics in a table using the following YML:</p>
+</div>
+<div class="listingblock">
+<div class="title">Show metrics in a table</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">datasets:
+  - uuid: swf_metrics
+    url: http://localhost:8080/q/metrics
+    expression: &gt;-
+        $map($, function($l) {
+                [
+                    $l[0],
+                    $contains($l[1], "process_id") ?
+                                            $replace($match($l[1], /process_id=".*?"/).match,
+                                            "process_id",
+                                            "workflow") :
+                                            $l[1],
+                    $l[2] = "NaN" ? -1 : $l[2]
+                ]
+            }
+        )
+pages:
+    - components:
+        - settings:
+            lookup:
+               uuid: swf_metrics</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/integrations/dashbuilder-metrics-table.png" alt="dashbuilder metrics table">
+</div>
+<div class="title">Figure 1. Metrics in a table</div>
+</div>
+<div class="paragraph">
+<p>To extract a specific information from the Workflow, you can use specific Kogito metrics, and when displaying the metric we filter the data to only include it. Metrics related to Serverless Workflow:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>kogito_process_instance_completed_total</strong>: Completed Workflows</p>
+</li>
+<li>
+<p><strong>kogito_process_instance_started_total</strong>: Started Workflows</p>
+</li>
+<li>
+<p><strong>kogito_process_instance_running_total</strong>: Running Workflows</p>
+</li>
+<li>
+<p><strong>kogito_process_instance_duration_seconds_sum</strong>: Workflows Total Duration</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Dashbuilder <strong>metrics</strong> and <strong>bar chart</strong> components are useful to display these metrics. After filtering specific metrics we can put the information in bar charts as you can see the YML below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">datasets:
+  - uuid: metrics
+    url: http://localhost:8080/q/metrics
+    expression: &gt;-
+        $map($, function($l) {
+                [
+                    $l[0],
+                    $contains($l[1], "process_id") ?
+                                            $replace($match($l[1], /process_id=".*?"/).match,
+                                            "process_id",
+                                            "workflow") :
+                                            $l[1],
+                    $l[2] = "NaN" ? -1 : $l[2]
+                ]
+            }
+        )
+    columns:
+      - id: metric
+        type: label
+      - id: labels
+        type: label
+      - id: value
+        type: number
+pages:
+  - rows:
+      - columns:
+          - span: "6"
+            components:
+              - html: &gt;-
+                  &lt;p style="font-size: large"&gt;Started &lt;/p&gt;
+              - settings:
+                  type: BARCHART
+                  chart:
+                    resizable: 'true'
+                    width: '2000'
+                  lookup:
+                    uuid: metrics
+                    sort:
+                      - column: value
+                        sortOrder: DESCENDING
+                    filter:
+                      - column: metric
+                        function: EQUALS_TO
+                        args:
+                          - "kogito_process_instance_started_total"
+                    group:
+                      - columnGroup:
+                          source: labels
+                        groupFunctions:
+                          - source: labels
+                          - source: value
+          - span: "6"
+            components:
+              - html: &gt;-
+                  &lt;p style="font-size: large"&gt;Running &lt;/p&gt;
+              - settings:
+                  type: BARCHART
+                  chart:
+                    resizable: 'true'
+                    width: '2000'
+                  lookup:
+                    uuid: metrics
+                    sort:
+                      - column: value
+                        sortOrder: DESCENDING
+                    filter:
+                      - column: metric
+                        function: EQUALS_TO
+                        args:
+                          - "kogito_process_instance_running_total"
+                    group:
+                      - columnGroup:
+                          source: labels
+                        groupFunctions:
+                          - source: labels
+                          - source: value
+      - columns:
+          - span: "6"
+            components:
+              - html: &gt;-
+                  &lt;p style="font-size: large"&gt;Completed &lt;/p&gt;
+              - settings:
+                  type: BARCHART
+                  chart:
+                    resizable: 'true'
+                    width: '2000'
+                  dataSetLookup:
+                    uuid: metrics
+                    sort:
+                      - column: value
+                        sortOrder: DESCENDING
+                    filter:
+                      - column: metric
+                        function: EQUALS_TO
+                        args:
+                          - "kogito_process_instance_completed_total"
+                    group:
+                      - columnGroup:
+                          source: labels
+                        groupFunctions:
+                          - source: labels
+                          - source: value
+          - span: "6"
+            components:
+              - html: &gt;-
+                  &lt;p style="font-size: large"&gt;Total Duration &lt;/p&gt;
+              - settings:
+                  type: BARCHART
+                  chart:
+                    resizable: 'true'
+                    width: '2000'
+                  lookup:
+                    uuid: metrics
+                    sort:
+                      - column: value
+                        sortOrder: DESCENDING
+                    filter:
+                      - column: metric
+                        function: EQUALS_TO
+                        args:
+                          - "kogito_process_instance_duration_seconds_sum"
+                    group:
+                      - columnGroup:
+                          source: labels
+                        groupFunctions:
+                          - source: labels
+                          - source: value</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/integrations/dashbuilder-workflows-metrics-dashboard.png" alt="dashbuilder workflows metrics dashboard">
+</div>
+<div class="title">Figure 2. Workflow Metrics Dashboard</div>
+</div>
+<div class="paragraph">
+<p>If you are using Prometheus, we can use PROMQL with Prometheus REST API and transform the result to the JSON format supported by Dashbuilder to build dashboards. For further information about Dashbuilder and Prometheus check the article <a href="https://blog.kie.org/2022/07/creating-prometheus-dashboards-using-dashbuilder.html">Creating Prometheus Dashboards with Dashbuilder</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_data_index"><a class="anchor" href="#_using_data_index"></a>Using Data Index</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Data index is a service available during development mode, containing all data about the execution of workflow steps. By default, the data index is available at <code><a href="http://localhost:8180" class="bare">http://localhost:8180</a></code>, and it uses GraphQL, so Dashbuilder can connect to it using its REST API and transform the result to the supported format.</p>
+</div>
+<div class="olist arabic">
+<div class="title">The steps to create a dashboard with data from Data Index:</div>
+<ol class="arabic">
+<li>
+<p>Go to the Data Index GraphQL interface (default is <code><a href="http://localhost:8180/graphiql" class="bare">http://localhost:8180/graphiql</a></code>) and test your query. Let&#8217;s use as an example this query that lists all workflows:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example GraphQL query to retrieve all workflows</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  ProcessInstances {
+    processId
+    processName
+    state
+    start
+    end
+    businessKey
+    error {message}
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Notice that when you run the query it modifies the URL to include the query. Copy the URL, but modify <code>graphiql</code> to <code>graphql</code>. When accessing it you will notice that it returns the result in a JSON format, such as:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">GraphQL JSON result when using the query above</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "data": {
+    "ProcessInstances": [
+      {
+        "processId": "yamlgreet",
+        "processName": "Greeting workflow",
+        "state": "COMPLETED",
+        "start": "2022-07-01T16:08:12.038Z",
+        "end": "2022-07-01T16:08:12.061Z",
+        "businessKey": null,
+        "error": null
+      },
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Internally, Workflows are referenced as process hence the fields <code>processId</code> and <code>processName</code> are actually the workflow id and name.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Now it is required to transform the response, so a transform expression is used. Notice also that it includes the columns metadata for the dataset</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Transform expression to get the fields from the JSON response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "columns" :[
+        {"id": "Workflow Id", "type": "label"},
+        {"id": "Workflow Name", "type": "label"},
+        {"id": "State", "type": "label"},
+        {"id": "Start", "type": "label"},
+        {"id": "End", "type": "label"},
+        {"id": "Business Key", "type": "label"},
+        {"id": "Error", "type": "label"}
+    ],
+    "values" : $.data.ProcessInstances.[ processId, processName, state, start, end, businessKey ? businessKey : "", error ? error.message : ""]
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Finally we can create our dashboard using the expression and the URL mentioned previously. Our dashboard has a bar chart that counts the process instances by State and list all dashboards in a table:</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">Example Dashboard for Kogito Data Index</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">datasets:
+    - uuid: workflows
+      url: http://localhost:8180/graphql/?query=%7BProcessInstances%7BprocessId%20processName%20state%20start%20end%20businessKey%20error%7Bmessage%7D%7D%7D%0A
+      expression: &gt;-
+            {
+                "columns" :[
+                    {"id": "Workflow Id", "type": "label"},
+                    {"id": "Workflow Name", "type": "label"},
+                    {"id": "State", "type": "label"},
+                    {"id": "Start", "type": "label"},
+                    {"id": "End", "type": "label"},
+                    {"id": "Business Key", "type": "label"},
+                    {"id": "Error", "type": "label"}
+                ],
+                "values" : $.data.ProcessInstances.[ processId, processName, state, start, end, businessKey ? businessKey : "", error ? error.message : ""]
+            }
+pages:
+    - components:
+        - settings:
+            type: BARCHART
+            lookup:
+                uuid: workflows
+                group:
+                    - columnGroup:
+                        source: State
+                      functions:
+                          - source: State
+                          - source: State
+                            function: COUNT
+        - settings:
+            lookup:
+                uuid: workflows</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The YML above results in the following dashboard:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/integrations/data-index-workflow-list-report.png" alt="data index workflow list report">
+</div>
+<div class="title">Figure 3. Dashboard with data from Data Index</div>
+</div>
+<div class="paragraph">
+<p>For more examples check <a href="https://www.dashbuilder.org">Dashbuilder Website</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
