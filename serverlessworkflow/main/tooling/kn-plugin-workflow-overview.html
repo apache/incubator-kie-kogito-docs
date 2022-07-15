@@ -3,9 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Workflow plugin for Knative CLI :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Overview of the Workflow plugin for the Knative CLI">
-    <meta name="keywords" content="kogito, workflow, serverless, knative, plugin">
+    <title>Serverless Workflow plug-in for Knative CLI :: Kogito Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -65,7 +63,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Create your first workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -116,7 +114,7 @@
 </ul>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="kn-plugin-workflow-overview.html">Workflow plugin for Knative CLI</a>
+    <a class="nav-link" href="kn-plugin-workflow-overview.html">Serverless Workflow plug-in for Knative CLI</a>
   </li>
 </ul>
   </li>
@@ -197,7 +195,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Tooling</li>
-    <li><a href="kn-plugin-workflow-overview.html">Workflow plugin for Knative CLI</a></li>
+    <li><a href="kn-plugin-workflow-overview.html">Serverless Workflow plug-in for Knative CLI</a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/tooling/kn-plugin-workflow-overview.adoc">Edit this Page</a></div>
@@ -207,91 +205,104 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Workflow plugin for Knative CLI</h1>
+<h1 class="page">Serverless Workflow plug-in for Knative CLI</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>kn-plugin-workflow</code> is a plugin for the Knative Client to enable users to quickly set up a local Kogito Serverless Workflow project from the command line.</p>
+<p>Serverless Workflow provides a plug-in named <code>kn-plugin-workflow</code> for Knative CLI, which enables you to set up a local Serverless Workflow project quickly using the command line.</p>
+</div>
+<div class="paragraph">
+<p>This document describes how you can install and use the <code>kn-plugin-workflow</code> plug-in in Serverless Workflow.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-install-sw-plugin-kn-cli"><a class="anchor" href="#proc-install-sw-plugin-kn-cli"></a>Installing the Serverless Workflow plug-in for Knative CLI</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can use the Serverless Workflow plug-in to set up your local Serverless Workflow project quickly using Knative CLI.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p><a href="https://www.java.com/en/download/help/download_options.html">Java</a> at least version 11+</p>
+<p><a href="https://www.java.com/en/download/help/download_options.html">Java</a> 11+ is installed.</p>
 </li>
 <li>
-<p><a href="https://maven.apache.org/install.html">Maven</a> at least version 3.8.1</p>
+<p><a href="https://maven.apache.org/install.html">Maven</a> 3.8.1 or later is installed.</p>
 </li>
 <li>
-<p><a href="https://docs.docker.com/engine/install/">Docker</a> (Optional)</p>
+<p>(Optional) <a href="https://docs.docker.com/engine/install/">Docker</a> is installed.</p>
 </li>
 <li>
-<p><a href="https://docs.podman.io/en/latest/">Podman</a> (Optional)</p>
+<p>(Optional) <a href="https://docs.podman.io/en/latest/">Podman</a> is installed.</p>
 </li>
 <li>
-<p><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl">Kubernetes CLI</a>.</p>
+<p><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl">Kubernetes CLI</a> is installed.</p>
 </li>
 </ul>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_installation"><a class="anchor" href="#_installation"></a>Installation</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You can download the latest binaries from the <a href="https://github.com/kiegroup/kie-tools/releases">KIE Tooling Releases</a> page.</p>
-</div>
-<div class="paragraph">
-<p>There are two ways to run <code>kn workflow</code>:</p>
-</div>
 <div class="olist arabic">
+<div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>You can run it standalone, just put it on your system path and make sure it is executable.</p>
+<p>Download the latest binaries from the <a href="https://github.com/kiegroup/kie-tools/releases">KIE Tooling Releases</a> page.</p>
 </li>
 <li>
-<p>You can install it as a plugin of the <code>kn</code> client to run:</p>
+<p>Run the <code>kn workflow</code> command using one of the following methods:</p>
+<div class="openblock">
+<div class="content">
 <div class="ulist">
 <ul>
 <li>
-<p>Follow the <a href="https://github.com/knative/client/blob/main/docs/README.md#installing-kn">documentation</a> to install <code>kn</code> CLI if you don&#8217;t have it.</p>
+<p>Add <code>kn workflow</code> command in your system path and ensure that it is executable.</p>
 </li>
 <li>
-<p>Copy the <code>kn-workflow</code> binary to a directory on your <code>PATH</code> (for example, <code>/usr/local/bin</code>) and make sure its filename is <code>kn-workflow</code>.</p>
+<p>Install <code>kn workflow</code> command as a plugin of the Knative CLI using the following steps:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Install the Knative CLI. For installation instructions, see <a href="https://github.com/knative/client/blob/main/docs/README.md#installing-kn">Installing kn</a> documentation in GitHub.</p>
 </li>
 <li>
-<p>On macOS give the ownership to the root user:
-<code>sudo chown root: /usr/local/bin/kn-workflow</code></p>
+<p>Copy the <code>kn-workflow</code> binary to a directory in your <code>PATH</code>, such as <code>/usr/local/bin</code> and ensure that the file name is <code>kn-workflow</code>.</p>
 </li>
 <li>
-<p>Run <code>kn plugin list</code> to verify that the <code>kn-workflow</code> plugin is installed successfully.</p>
+<p>On Mac, add ownership to the root user as follows:</p>
+<div class="paragraph">
+<p><code>sudo chown root: /usr/local/bin/kn-workflow</code></p>
+</div>
 </li>
-</ul>
+<li>
+<p>Run the following command to verify that <code>kn-workflow</code> plug-in is installed successfully:</p>
+<div class="paragraph">
+<p><code>kn plugin list</code></p>
 </div>
 </li>
 </ol>
 </div>
+</li>
+</ul>
+</div>
 <div class="paragraph">
-<p>After installing the plugin, you can use <code>kn workflow</code> to run its related subcommands.</p>
+<p>After installing the Serverless Workflow plug-in, you can use <code>kn workflow</code> to run the related subcommands.</p>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_usage"><a class="anchor" href="#_usage"></a>Usage</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>After the installation, you will be able to use the <code>workflow</code> subcommand in the Knative CLI. It&#8217;s possible to use in two ways:</p>
-</div>
+</li>
+<li>
+<p>Use the <code>workflow</code> subcommand in Knative CLI as follows:</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
+<div class="title">Methods to use workflow subcommand</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow
 kn-workflow</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The following help message will appear after running the command above:</p>
-</div>
 <div class="listingblock">
+<div class="title">Example output</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Manage Kogito Serverless Workflow projects
 
@@ -312,38 +323,70 @@ Flags:
 Use "kn workflow [command] --help" for more information about a command.</code></pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_create"><a class="anchor" href="#_create"></a>Create</h3>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-create-sw-project-kn-cli"><a class="anchor" href="#proc-create-sw-project-kn-cli"></a>Creating a Serverless Wokflow project using Knative CLI</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>The <code>create</code> command scaffolds a new Kogito Serverless Workflow project in the current directory.</p>
+<p>After installing the Serverless Workflow plug-in, you can use the <code>create</code> command with <code>kn workflow</code> to scaffold a new Serverless Workflow project in your current directory.</p>
 </div>
 <div class="paragraph">
-<p>It sets up a Quarkus project with minimal extensions to build a Kogito Serverless Workflow project. Also, the generated project has a "hello world" workflow.sw.json located on the
-<code>./&lt;project-name&gt;/src/main/resources</code> directory.</p>
+<p>The <code>create</code> command sets up Quarkus project containing minimal extensions to build a Serverless Workflow project. Also, the generated Serverless Workflow project contains a "hello world" <code>workflow.sw.json</code> file in your <code>./&lt;project-name&gt;/src/main/resources</code> directory.</p>
 </div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Serverless Workflow plug-in for Knative CLI is installed.</p>
+<div class="paragraph">
+<p>For more information about installing the plug-in, see <a href="#proc-install-sw-plugin-kn-cli">Installing the Serverless Workflow plug-in for Knative CLI</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In Knative CLI, enter the following command to create a new project:</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
-<div class="title">Creates a new project called "new-project"</div>
+<div class="title">Creates a project named <code>new-project</code></div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow create</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>By default, the generated project is named "new-project". This name can be overwritten with the <code>[-n|--name]</code> flag.</p>
+<p>By default, the generated project is named as <code>new-project</code>. You can overwrite the project name by using the <code>[-n|--name]</code> flag as follows:</p>
 </div>
 <div class="listingblock">
-<div class="title">Creates a new project called "my-project"</div>
+<div class="title">Create a project named <code>my-project</code></div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow create --name my-project</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Also, it&#8217;s possible to add more extensions to the Quarkus project during its creation by using the <code>[-e|--extension]</code> flag. You can pass more than one extension, but they need to be separated by a comma.</p>
 </div>
+</div>
+</li>
+<li>
+<p>Add more extensions to the Quarkus project during its creation by using the <code>[-e|--extension]</code> flag as follows:</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
-<div class="title">Creates a new project with "quarkus-jsonp" and "quarkus-smallrye-openapi" extensions</div>
+<div class="title">Create a project with <code>quarkus-jsonp</code> and <code>quarkus-smallrye-openapi</code> extensions</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow create --extension quarkus-jsonp,quarkus-smallrye-openapi</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>You can add multiple extensions using the comma-separated names of the extensions in the previous command.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -353,47 +396,61 @@ Use "kn workflow [command] --help" for more information about a command.</code><
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The first time you use the <code>create</code> command, it can take a while due to the necessity to download all dependencies for the Quarkus project.</p>
+<p>When you run the <code>create</code> command for the first time, it might take a while due to the necessity of downloading the required dependencies for the Quarkus project.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_build"><a class="anchor" href="#_build"></a>Build</h3>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-build-sw-project-kn-cli"><a class="anchor" href="#proc-build-sw-project-kn-cli"></a>Building a Serverless Workflow project using Knative CLI</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>The <code>build</code> command builds a Kogito Serverless Workflow project in the current directory and generates a container image. The build process produces a <code>knative.yml</code> deploy file in the <code>./target/kubernetes</code> folder. If your workflow has <strong>events</strong>, it&#8217;ll also generate a <code>kogito.yml</code> deploy file.</p>
+<p>After creating your Serverless Workflow project, you can use the <code>build</code> command with <code>kn workflow</code> to build your Serverless Workflow project in your current directory and to generate a container image.</p>
 </div>
 <div class="paragraph">
-<p>To use the the <code>build</code> you need to provide at least one of the two flags: <code>--image</code> or <code>--image-name</code>.</p>
+<p>The process of building your Serverless Workflow project produces a <code>knative.yml</code> file in the <code>./target/kubernetes</code> folder. If your workflow contains events, then the building process also generates a <code>kogito.yml</code> file.</p>
 </div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Serverless Workflow plug-in for Knative CLI is installed.</p>
+<div class="paragraph">
+<p>For more information about installing the plug-in, see <a href="#proc-install-sw-plugin-kn-cli">Installing the Serverless Workflow plug-in for Knative CLI</a>.</p>
+</div>
+</li>
+<li>
+<p>Serverless Workflow project is created.</p>
+<div class="paragraph">
+<p>For more information about created a workflow project, see <a href="#proc-create-sw-project-kn-cli">Creating Serverless Wokflow project using Knative CLI</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In Knative CLI, enter the following command to build your Serverless Workflow project:</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
-<div class="title">Builds the project and generates a local image called "quay.io/my-project"</div>
+<div class="title">Build the project and generate a local image named <code>quay.io/my-project</code></div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project
 kn workflow build --image-name my-project</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The "registry" and "tag" defaults are "quay.io" and "latest" respectively.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_image_naming_options"><a class="anchor" href="#_image_naming_options"></a>Image naming options</h4>
 <div class="paragraph">
-<p>Let&#8217;s take a better look at the image naming options.</p>
-</div>
-<div class="paragraph">
-<p>The <code>[-i|--image]</code> flag can be used in several ways.</p>
+<p>To use the <code>build</code> command, you need to provide either <code>--image</code> or <code>--image-name</code> flag. In the previous command, you can use the <code>[-i|--image]</code> in several ways, such as:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -417,8 +474,22 @@ The "registry" and "tag" defaults are "quay.io" and "latest" respectively.
 </li>
 </ul>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>Also, it&#8217;s possible to use specific flags to compose the image&#8217;s full name.</p>
+<p>The default value for <code>registry</code> and <code>tag</code> is <code>quay.io</code> and <code>latest</code> respectively.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Also, you can use specific flags to compose the full name of the image as follows:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -436,97 +507,158 @@ The "registry" and "tag" defaults are "quay.io" and "latest" respectively.
 </li>
 </ul>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
 <div class="paragraph">
-<p>If the "--image" flag is provided together with any of these flags, the specific value will override "--image".</p>
-</div>
-</td>
-</tr>
-</table>
+<p>In case the <code>--image</code> flag is composed with specific flags as shown in the following command, then the specific value overrides the <code>--image</code> flag:</p>
 </div>
 <div class="listingblock">
-<div class="title">Builds the project and generates a local image called "quay.io/other-user/my-project:1.0.1"</div>
+<div class="title">Build the project and generate a local image named <code>quay.io/other-user/my-project:1.0.1</code></div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-user/my-project:1.0.0 --image-repository other-user --image-tag 1.0.1</code></pre>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_building_strategy"><a class="anchor" href="#_building_strategy"></a>Building strategy</h4>
+</div>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="con-build-strategy-kn-cli"><a class="anchor" href="#con-build-strategy-kn-cli"></a>Strategy for building a Severless Worlflow project</h3>
 <div class="paragraph">
-<p>We have two different strategies to build the project and generate the image.</p>
+<p>You can use the following strategies to build a Serverless Workflow project and to generate the container image:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Using Jib</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p><a href="https://github.com/GoogleContainerTools/jib">Jib</a> is an extension that builds a container image without the necessity of a container runtime. When using the Jib extension, the rebuilds are fast and the resultant container image is optimized.</p>
 </div>
 <div class="paragraph">
-<div class="title">Jib</div>
-<p>Jib is an extension that enables building a container image without the necessity of a container runtime. Rebuilds are fast, and the resultant image is optimized.</p>
+<p>You can use the following commands to build a Serverless Workflow project and to generate a local image using Jib:</p>
 </div>
 <div class="listingblock">
-<div class="title">Builds the project and generates a local image using Jib (Save it in the Docker runtime)</div>
+<div class="title">Build a project and generate a local image using Jib</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project --jib</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>The generated container image can be saved in the Docker runtime.</p>
+</div>
 <div class="listingblock">
-<div class="title">Builds the project and generates a local image using Jib (Save it in the Podman runtime)</div>
+<div class="title">Build a project and generate a local image using Jib</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project --jib-podman</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you don&#8217;t want to use any container runtime, use the <code>--push</code> option, so the built image will be immediately pushed to the respective registry.</p>
+<p>Using the previous command, the generated container image can be saved in the Podman runtime.</p>
+</div>
+<div class="paragraph">
+<p>If you do not want to use any container runtime, then use <code>--push</code> to push the generated container image to the respective registry as shown in the following command:</p>
 </div>
 <div class="listingblock">
-<div class="title">Builds the project and pushes the image using Jib (No container runtime required)</div>
+<div class="title">Build a project and push the image using Jib</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project --jib --push</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock important">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Remember to have access to your registry before using the "--push" option. You can do it using the "docker login", "podman login", or any other equivalent method.</p>
+<p>Before using the <code>--push</code> option, ensure that you have access to your registry. You can get the access using Docker or Podman login.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Using Docker</dt>
+<dd>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<div class="title">Docker</div>
-<p>Building with Docker is straightforward as it&#8217;s the default option. Also, it&#8217;s possible to automatically push the image to the respective registry by using the <code>--push</code> option.</p>
+<p>The process of building your Serverless Workflow project using Docker is straightforward and also a default approach.</p>
+</div>
+<div class="paragraph">
+<p>When using Docker, you can automatically push the container image to the respective registry by using the <code>--push</code> option as shown in the following command:</p>
 </div>
 <div class="listingblock">
-<div class="title">Builds the project and pushes the image using Docker</div>
+<div class="title">Build a project and push the image using Docker</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project --push</code></pre>
 </div>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_deploy"><a class="anchor" href="#_deploy"></a>Deploy</h3>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-deploy-sw-project-kn-cli"><a class="anchor" href="#proc-deploy-sw-project-kn-cli"></a>Deploying a Serverless Wokflow project using Knative CLI</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>The <code>deploy</code> command deploys a Kogito Serverless Workflow project in the current directory (build command is required). It uses the <code>./target/kubernetes</code> folder to find the generated <code>knative.yml</code> and, if exists, the <code>kogito.yml</code>. If your deployment files are saved in another folder, it&#8217;s possible to override the path with the <code>--path</code> flag.</p>
+<p>You can use the <code>deploy</code> command combined with <code>kn workflow</code> to deploy your Serverless Workflow project in your current directory. However, before deploying the project, you must build your Serverless Workflow project as the build process produces deployment files, such as <code>knative.yml</code> and <code>kogito.yml</code> (In case of events) in the <code>./target/kubernetes</code> folder.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Serverless Workflow plug-in for Knative CLI is installed.</p>
+<div class="paragraph">
+<p>For more information about installing the plug-in, see <a href="#proc-install-sw-plugin-kn-cli">Installing the Serverless Workflow plug-in for Knative CLI</a>.</p>
+</div>
+</li>
+<li>
+<p>Serverless Workflow project is created.</p>
+<div class="paragraph">
+<p>For more information about created a workflow project, see <a href="#proc-create-sw-project-kn-cli">Creating Serverless Wokflow project using Knative CLI</a>.</p>
+</div>
+</li>
+<li>
+<p>Serverlesss Workflow project is built.</p>
+<div class="paragraph">
+<p>For more information about building your workflow project, see <a href="#proc-build-sw-project-kn-cli">Building Serverless Workflow project using Knative CLI</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In Knative CLI, enter the following command to deploy your Serverless Workflow project:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Deploy a workflow project</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow deploy</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Also, remember to have access to your cluster, and your cluster needs to have access to your image.</p>
+<p>If the deployment files (<code>knative.yml</code> and <code>kogito.yml</code>) are saved in any other folder instead of <code>./target/kubernetes</code>, then you can override the path using the <code>--path</code> flag with deployment command as follows:</p>
 </div>
 <div class="listingblock">
-<div class="title">Deploys the project to authenticated cluster</div>
+<div class="title">Deploy a workflow project using <code>--path</code></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow deploy
-kn workflow deploy --path other-path</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow deploy --path other-path</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Also, ensure that you have access to your cluster and your cluster can access the generated container image.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -536,7 +668,7 @@ kn workflow deploy --path other-path</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>If you need to use a more complex deploy setup, we recommend directly using the "kubectl" command line.</p>
+<p>You can use the kubectl command line if you want to use a complex deployment setup for your Serverless Workflow project.</p>
 </div>
 </td>
 </tr>
@@ -544,22 +676,86 @@ kn workflow deploy --path other-path</code></pre>
 </div>
 </div>
 </div>
+</li>
+</ol>
+</div>
+</div>
 </div>
 <div class="sect1">
-<h2 id="_building_from_source"><a class="anchor" href="#_building_from_source"></a>Building from Source</h2>
+<h2 id="proc-build-sw-project-source"><a class="anchor" href="#proc-build-sw-project-source"></a>Building a Serverless Workflow project from source</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If you want to build the project from source, follow the steps:</p>
+<p>As an alternative, you can build your Serverless Workflow project from source.</p>
 </div>
-<div class="listingblock">
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Serverless Workflow project is created.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In a command terminal, enter the following command to clone the <code>kie-tools</code> GitHub repository:</p>
+<div class="openblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">git clone git@github.com:kie-group/kie-tools.git
-cd kie-tools
+<div class="listingblock">
+<div class="title">Clone <code>kie-tools</code> repository</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">git clone git@github.com:kie-group/kie-tools.git</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Navigate to the cloned <code>kie-tools</code> directory and enter the following command to access the Serverless Workflow plug-in:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Access Serverless Workflow plug-in</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd kie-tools
 pnpm bootstrap
-pnpm -F @kie-tools/kn-plugin-workflow... build:dev
-cd packages/kn-plugin-workflow
+pnpm -F @kie-tools/kn-plugin-workflow... build:dev</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Go to the plug-in folder and enter the following command to build the workflow project:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Build Serverless Workflow project from source</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd packages/kn-plugin-workflow
 go mod tidy</code></pre>
 </div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You have successfully built your Serverless Workflow project from source.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
