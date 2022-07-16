@@ -11,58 +11,58 @@ Mocking HTTP CloudEvents Sink with WireMock
 :consume-produce-events-with-knative-eventing_guide: xref:eventing/consume-produce-events-with-knative-eventing.adoc
 :mocking_http_cloudevents_with_wiremock_test_class: xref:testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc#ref-create_test_class
 // External pages
-:knative_sink_binding_overview: https://knative.dev/docs/eventing/sinks/
-:knative_sink_binding_impl: https://knative.dev/docs/eventing/custom-event-source/sinkbinding/
-:knative_eventing_components: https://knative.dev/docs/getting-started/first-broker/
-:knative_eventing: https://knative.dev/docs/eventing/
-:event_driven_architecture: https://en.wikipedia.org/wiki/Event-driven_architecture
-:kogito_sw_order_processing_example: {kogito_sw_examples_url}/serverless-workflow-order-processing
-:kogito_sw_order_processing_example_VerifyWorkflowExecutionIT_class: {kogito_sw_order_processing_example}/src/test/java/org/kie/kogito/examples/sw/orders/processing/VerifyWorkflowExecutionIT.java
-:kogito_sw_order_processing_example_pom: {kogito_sw_order_processing_example}/pom.xml
-:kogito_sw_order_processing_example_test_application_properties: {kogito_sw_order_processing_example}/src/test/resources/application.properties
-:recap_of_http_based_testing_in_jvm_mode: {quarkus_testing_guide_url}#recap-of-http-based-testing-in-jvm-mode
-:awaitility: http://www.awaitility.org/
-:awaitility_class: https://javadoc.io/static/org.awaitility/awaitility/4.2.0/org/awaitility/Awaitility.html
-:wiremockserver_class: https://javadoc.io/doc/com.github.tomakehurst/wiremock/latest/com/github/tomakehurst/wiremock/WireMockServer.html
-:wiremock: https://wiremock.org/
-:wiremock_verifying: {wiremock}/docs/verifying/
+:knative_sink_binding_overview_url: https://knative.dev/docs/eventing/sinks/
+:knative_sink_binding_impl_url: https://knative.dev/docs/eventing/custom-event-source/sinkbinding/
+:knative_eventing_components_url: https://knative.dev/docs/getting-started/first-broker/
+:knative_eventing_url: https://knative.dev/docs/eventing/
+:event_driven_architecture_url: https://en.wikipedia.org/wiki/Event-driven_architecture
+:kogito_sw_order_processing_example_url: {kogito_sw_examples_url}/serverless-workflow-order-processing
+:kogito_sw_order_processing_example_VerifyWorkflowExecutionIT_class_url: {kogito_sw_order_processing_example_url}/src/test/java/org/kie/kogito/examples/sw/orders/processing/VerifyWorkflowExecutionIT.java
+:kogito_sw_order_processing_example_pom_url: {kogito_sw_order_processing_example_url}/pom.xml
+:kogito_sw_order_processing_example_test_application_properties_url: {kogito_sw_order_processing_example_url}/src/test/resources/application.properties
+:recap_of_http_based_testing_in_jvm_mode_url: {quarkus_testing_guide_url}#recap-of-http-based-testing-in-jvm-mode
+:awaitility_url: http://www.awaitility.org/
+:awaitility_class_url: https://javadoc.io/static/org.awaitility/awaitility/4.2.0/org/awaitility/Awaitility.html
+:wiremockserver_class_url: https://javadoc.io/doc/com.github.tomakehurst/wiremock/latest/com/github/tomakehurst/wiremock/WireMockServer.html
+:wiremock_url: https://wiremock.org/
+:wiremock_verifying_url: {wiremock_url}/docs/verifying/
 
-This document describes how to test your Serverless Workflow application that uses HTTP {cloud_events_url}[*CloudEvents*] and {knative_sink_binding_impl}[*sink binding*].
+This document describes how to test your Serverless Workflow application that uses HTTP {cloud_events_url}[*CloudEvents*] and {knative_sink_binding_impl_url}[*Knative Sink Binding*].
 
-The testing case followed in this document is based on the {kogito_sw_order_processing_example}[`serverless-workflow-order-processing`] example application.
+The testing case followed in this document is based on the {kogito_sw_order_processing_example_url}[`serverless-workflow-order-processing`] example application.
 
 [[sinkbinding-test-overview]]
-== Overview of HTTP CloudEvents, SinkBinding and testing
+== Overview of HTTP CloudEvents, Knative SinkBinding and testing
 --
-The application we want to test must be configured to use {knative_eventing}[*Knative Eventing*], using standard HTTP POST requests to send and receive events between event producers and {knative_sink_binding_overview}[*sinks*].
+The application we want to test must be configured to use {knative_eventing_url}[*Knative Eventing*], using standard HTTP POST requests to send and receive events between event producers and {knative_sink_binding_overview_url}[*sinks*].
 These events conform to the {cloud_events_url}[*CloudEvents*] specification, which enables creating, parsing, sending, and receiving events in any programming language.
 
-When you create an event source, you can specify a {knative_sink_binding_overview}[*sink*] where events are sent to, from the source.
-A {knative_sink_binding_overview}[*sink*] is an Addressable or a Callable resource that can receive incoming events from other resources.
+When you create an event source, you can specify a {knative_sink_binding_overview_url}[*sink*] where events are sent to, from the source.
+A {knative_sink_binding_overview_url}[*sink*] is an Addressable or a Callable resource that can receive incoming events from other resources.
 Kubernetes Deployments, Services, Knative Services, Channels, and Brokers are all examples of sinks.
-This guide covers the testing of the Knative Service configured as {knative_sink_binding_overview}[*sink*].
+This guide covers the testing of the Knative Service configured as {knative_sink_binding_overview_url}[*sink*].
 
-The purpose of this guide is to mock that service to verify the cloud events are correctly received by the sink.
-The {wiremock}[*WireMok*] framework will add the mocked server that will verify the different Cloud Events received by the sink in the Serverless Workflow service execution.
+The purpose of this guide is to mock that service to verify if the Cloud Events are correctly received by the sink.
+The {wiremock_url}[*WireMok*] framework will add the mocked server that will verify the different Cloud Events received by the sink in the Serverless Workflow service execution.
 --
 
 [[mocking_sink_binding]]
-== Testing the application with {knative_sink_binding_impl}[*SinkBinding*]
+== Testing the application with {knative_sink_binding_impl_url}[*SinkBinding*]
 
 .Prerequisites
 * A completed Kogito Serverless Workflow application working. More information available in {getting_started_create_first_workflow_guide}[Creating your first Serverless Workflow service guide].
-* Configure the workflow application to use HTTP CloudEvents with {knative_sink_binding_impl}[*SinkBinding*].
+* Configure the workflow application to use HTTP CloudEvents with {knative_sink_binding_impl_url}[*SinkBinding*].
 Follow {consume-produce-events-with-knative-eventing_guide}[Consume and produce events with Knative eventing guide]
-to enable {event_driven_architecture}[event-driven architecture] in the application using {knative_eventing}[*Knative Eventing*].
+to enable {event_driven_architecture_url}[event-driven architecture] in the application using {knative_eventing_url}[*Knative Eventing*].
 
 === Adding test dependencies
 Add the needed test dependencies to Serverless Workflow's application `pom.xml`.
 
-** HTTP based Testing in JVM mode dependencies: *quarkus-junit5* and *rest-assured*. More detailed in {recap_of_http_based_testing_in_jvm_mode}[Testing your application Quarkus guide].
-** {wiremock}[WireMock] framework: *wiremock-jre8*. Allowing to mock the server that plays as the sink.
-** {awaitility}[Awaitility]: *awaitility* used to express expectations of an asynchronous system.
+** HTTP based Testing in JVM mode dependencies: *quarkus-junit5* and *rest-assured*. More detailed in {recap_of_http_based_testing_in_jvm_mode_url}[Testing your application Quarkus guide].
+** {wiremock_url}[WireMock] framework: *wiremock-jre8*. Allowing to mock the server that plays as the sink.
+** {awaitility_url}[Awaitility]: *awaitility* used to express expectations of an asynchronous system.
 
-.Application testing dependencies. See the example {kogito_sw_order_processing_example_pom}[`pom.xml`] for more details.
+.Application testing dependencies. See the example {kogito_sw_order_processing_example_pom_url}[`pom.xml`] for more details.
 [source,xml]
 ----
 <dependency>
@@ -91,7 +91,7 @@ Add the needed test dependencies to Serverless Workflow's application `pom.xml`.
 === Create the test class
 Create a test class mocking the sink using WireMock The following excerpt explores the different elements that should compose it:
 anchor:test_class_bookmark[]
-.Test class example. The full class in  {kogito_sw_order_processing_example_VerifyWorkflowExecutionIT_class}[`VerifyWorkflowExecutionIT`].
+.Test class example. The full class in  {kogito_sw_order_processing_example_VerifyWorkflowExecutionIT_class_url}[`VerifyWorkflowExecutionIT`].
 [source,java]
 ----
 @QuarkusTest<1>
@@ -153,18 +153,18 @@ public class VerifyWorkflowExecutionIT { <2>
 
 ----
 <1> @QuarkusTest starts a Quarkus server for the whole lifetime of the tests execution run.
-More details in {recap_of_http_based_testing_in_jvm_mode}[enable quarkus testing resources].
+More details in {recap_of_http_based_testing_in_jvm_mode_url}[enable quarkus testing resources].
 <2> The naming of the test would end with 'IT' to identify which test needs to be executed as an integration test.
-<3> {wiremockserver_class}[WireMockServer] mocked server instance used for Sink Binding for testing.
+<3> {wiremockserver_class_url}[WireMockServer] mocked server instance used for Sink Binding for testing.
 <4> Used to test interactions with the application, more explained in the guide {basic_integration_test_with_restassured_guide}[Testing your Serverless Workflow application using REST Assured].
 <5> `@BeforeAll` annotation used to signal that the annotated method should be executed before all the tests run.
-<6> Creates the {wiremockserver_class}[WireMockServer] instance listening at the port passed as parameter and must match with the sink configuration.
+<6> Creates the {wiremockserver_class_url}[WireMockServer] instance listening at the port passed as parameter and must match with the sink configuration.
 <7> Start the server before the tests executed.
 <8> Stub the mock API response. It accepts a MappingBuilder instance that we can use to build API mapping information such as URL, request parameters and body, headers, authorization etc.
 <9> `@AfterAll` annotation used to signal that the annotated method should be executed after all the tests execution.
 <10> Stop the server after all test execution.
-<11> {awaitility_class}[`await()`] added to waiting for asynchronous operations.
-<12> {wiremock_verifying}[`verify`] if the request has hit the mock API with the expected event content.
+<11> {awaitility_class_url}[`await()`] added to waiting for asynchronous operations.
+<12> {wiremock_verifying_url}[`verify`] if the request has hit the mock API with the expected event content.
 
 [NOTE]
 ====
@@ -175,9 +175,9 @@ We can reset the mock stubs in between the tests.
 
 === Configure the Quarkus test
 The test application needs to be configured to use the WireMockServer as the sink.
-The test {kogito_sw_order_processing_example_test_application_properties}[`application.properties`] file must contain the reference to the WireMockServer created.
+The test {kogito_sw_order_processing_example_test_application_properties_url}[`application.properties`] file must contain the reference to the WireMockServer created.
 
-.Test {kogito_sw_order_processing_example_test_application_properties}[`application.properties`] sink connection property
+.Test {kogito_sw_order_processing_example_test_application_properties_url}[`application.properties`] sink connection property
 [source,properties]
 ----
 mp.messaging.outgoing.kogito_outgoing_stream.url=http://0.0.0.0:8181 <1>
@@ -196,9 +196,9 @@ mvn clean verify
 
 === Testing execution cycle example
 
-The testing case followed in this document is based on the {kogito_sw_order_processing_example}[`serverless-workflow-order-processing`] example application.
+The testing case followed in this document is based on the {kogito_sw_order_processing_example_url}[`serverless-workflow-order-processing`] example application.
 
-The {kogito_sw_order_processing_example}[example] is composed by three workflows:
+The {kogito_sw_order_processing_example_url}[example] is composed by three workflows:
 
 .Example Order Processing workflows
 image::testing-and-troubleshooting/order-example-worflows.png[]
@@ -263,7 +263,7 @@ Now, the test needs to check the sink is receiving the expected events with:
                 });
 ----
 
-{awaitility_class}[`await()`] Allows the test to retry the validations until assert the verifications, or until the specified time expires (in this case after 60 seconds).
+{awaitility_class_url}[`await()`] Allows the test to retry the validations until assert the verifications, or until the specified time expires (in this case after 60 seconds).
 
 Checking if the sink (WireMockServer) receives two events for that order id with:
 [source]
@@ -286,6 +286,6 @@ After assert the validations on received events, the test ends with success and 
 * {basic_integration_test_with_restassured_guide}[Testing your Serverless Workflow application using REST Assured]
 * {mocking_openapi_services_with_wiremock_guide}[Mocking OpenAPI services using WireMock]
 * {quarkus_testing_guide_url}[Testing a Quarkus application]
-* {knative_eventing_components}[Knative Eventing components interaction: Source, Trigger, Broker, and Sink]
+* {knative_eventing_components_url}[Knative Eventing components interaction: Source, Trigger, Broker, and Sink]
 
 include::../../pages/_common-content/report-issue.adoc[]
