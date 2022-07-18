@@ -1,45 +1,63 @@
-= Workflow plugin for Knative CLI
-06-30-2022
+= Serverless Workflow plug-in for Knative CLI
+
 :compat-mode!:
 // Metadata:
 :description: Overview of the Workflow plugin for the Knative CLI
 :keywords: kogito, workflow, serverless, knative, plugin
+// links
+:java_install_url: https://www.java.com/en/download/help/download_options.html
+:maven_install_url: https://maven.apache.org/install.html
+:docker_install_url: https://docs.docker.com/engine/install/
+:podman_install_url: https://docs.podman.io/en/latest/
+:kubectl_install_url: https://kubernetes.io/docs/tasks/tools/install-kubectl
+:kn_cli_install_url: https://github.com/knative/client/blob/main/docs/README.md#installing-kn
 
-The `kn-plugin-workflow` is a plugin for the Knative Client to enable users to quickly set up a local Kogito Serverless Workflow project from the command line.
+Serverless Workflow provides a plug-in named `kn-plugin-workflow` for Knative CLI, which enables you to set up a local Serverless Workflow project quickly using the command line.
+
+This document describes how you can install and use the `kn-plugin-workflow` plug-in in Serverless Workflow.
+
+[[proc-install-sw-plugin-kn-cli]]
+== Installing the Serverless Workflow plug-in for Knative CLI
+
+You can use the Serverless Workflow plug-in to set up your local Serverless Workflow project quickly using Knative CLI. 
 
 .Prerequisites
-* link:{java_install_url}[Java] at least version {java_min_version}
-* link:{maven_install_url}[Maven] at least version {maven_min_version}
-* link:{docker_install_url}[Docker] (Optional)
-* link:{podman_install_url}[Podman] (Optional)
-* link:{kubectl_install_url}[Kubernetes CLI].
+* link:{java_install_url}[Java] {java_min_version} is installed.
+* link:{maven_install_url}[Maven] {maven_min_version} or later is installed.
+* (Optional) link:{docker_install_url}[Docker] is installed.
+* (Optional) link:{podman_install_url}[Podman] is installed.
+* link:{kubectl_install_url}[Kubernetes CLI] is installed.
 
-== Installation
-
-You can download the latest binaries from the link:{kie_tools_releases_page_url}[KIE Tooling Releases] page.
-
-There are two ways to run `kn workflow`:
-
-. You can run it standalone, just put it on your system path and make sure it is executable.
-. You can install it as a plugin of the `kn` client to run:
-* Follow the link:{kn_cli_install_url}[documentation] to install `kn` CLI if you don't have it.
-* Copy the `kn-workflow` binary to a directory on your `PATH` (for example, `/usr/local/bin`) and make sure its filename is `kn-workflow`.
-* On macOS give the ownership to the root user:
+.Procedure
+. Download the latest binaries from the link:{kie_tools_releases_page_url}[KIE Tooling Releases] page.
+. Run the `kn workflow` command using one of the following methods:
++
+--
+* Add `kn workflow` command in your system path and ensure that it is executable.
+* Install `kn workflow` command as a plugin of the Knative CLI using the following steps:
+.. Install the Knative CLI. For installation instructions, see link:{kn_cli_install_url}[Installing kn] documentation in GitHub.
+.. Copy the `kn-workflow` binary to a directory in your `PATH`, such as `/usr/local/bin` and ensure that the file name is `kn-workflow`.
+.. On Mac, add ownership to the root user as follows:
++
 `sudo chown root: /usr/local/bin/kn-workflow`
-* Run `kn plugin list` to verify that the `kn-workflow` plugin is installed successfully.
+.. Run the following command to verify that `kn-workflow` plug-in is installed successfully:
++
+`kn plugin list`
 
-After installing the plugin, you can use `kn workflow` to run its related subcommands.
+After installing the Serverless Workflow plug-in, you can use `kn workflow` to run the related subcommands.
+--
 
-== Usage
-After the installation, you will be able to use the `workflow` subcommand in the Knative CLI. It's possible to use in two ways:
-
+. Use the `workflow` subcommand in Knative CLI as follows:
++
+--
+.Methods to use workflow subcommand
 [source,shell]
 ----
 kn workflow
 kn-workflow
 ----
 
-The following help message will appear after running the command above:
+.Example output
 [source,text]
 ----
 Manage Kogito Serverless Workflow projects
@@ -60,57 +78,84 @@ Flags:
 
 Use "kn workflow [command] --help" for more information about a command.
 ----
+--
 
-=== Create
-The `create` command scaffolds a new Kogito Serverless Workflow project in the current directory.
+[[proc-create-sw-project-kn-cli]]
+== Creating a Serverless Wokflow project using Knative CLI
 
-It sets up a Quarkus project with minimal extensions to build a Kogito Serverless Workflow project. Also, the generated project has a "hello world" workflow.sw.json located on the
-`./<project-name>/src/main/resources` directory.
+After installing the Serverless Workflow plug-in, you can use the `create` command with `kn workflow` to scaffold a new Serverless Workflow project in your current directory.
 
-.Creates a new project called "new-project"
+The `create` command sets up Quarkus project containing minimal extensions to build a Serverless Workflow project. Also, the generated Serverless Workflow project contains a "hello world" `workflow.sw.json` file in your `./<project-name>/src/main/resources` directory.
+
+.Prerequisites
+* Serverless Workflow plug-in for Knative CLI is installed.
++
+For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the Serverless Workflow plug-in for Knative CLI>>.
+
+.Procedure
+. In Knative CLI, enter the following command to create a new project:
++
+--
+.Creates a project named `new-project`
 [source,shell]
 ----
 kn workflow create
 ----
 
-By default, the generated project is named "new-project". This name can be overwritten with the `[-n|--name]` flag.
+By default, the generated project is named as `new-project`. You can overwrite the project name by using the `[-n|--name]` flag as follows:
 
-.Creates a new project called "my-project"
+.Create a project named `my-project`
 [source,shell]
 ----
 kn workflow create --name my-project
 ----
+--
 
-Also, it's possible to add more extensions to the Quarkus project during its creation by using the `[-e|--extension]` flag. You can pass more than one extension, but they need to be separated by a comma.
-
-.Creates a new project with "quarkus-jsonp" and "quarkus-smallrye-openapi" extensions
+. Add more extensions to the Quarkus project during its creation by using the `[-e|--extension]` flag as follows:
++
+--
+.Create a project with `quarkus-jsonp` and `quarkus-smallrye-openapi` extensions
 [source,shell]
 ----
 kn workflow create --extension quarkus-jsonp,quarkus-smallrye-openapi
 ----
 
+You can add multiple extensions using the comma-separated names of the extensions in the previous command.
+
 [NOTE]
+==== 
+When you run the `create` command for the first time, it might take a while due to the necessity of downloading the required dependencies for the Quarkus project.
 ====
-The first time you use the `create` command, it can take a while due to the necessity to download all dependencies for the Quarkus project.
-====
+--
 
-=== Build
-The `build` command builds a Kogito Serverless Workflow project in the current directory and generates a container image. The build process produces a `knative.yml` deploy file in the `./target/kubernetes` folder. If your workflow has **events**, it'll also generate a `kogito.yml` deploy file.
+[[proc-build-sw-project-kn-cli]]
+== Building a Serverless Workflow project using Knative CLI
 
-To use the the `build` you need to provide at least one of the two flags: `--image` or `--image-name`.
+After creating your Serverless Workflow project, you can use the `build` command with `kn workflow` to build your Serverless Workflow project in your current directory and to generate a container image. 
 
-.Builds the project and generates a local image called "quay.io/my-project"
+The process of building your Serverless Workflow project produces a `knative.yml` file in the `./target/kubernetes` folder. If your workflow contains events, then the building process also generates a `kogito.yml` file.
+
+.Prerequisites
+* Serverless Workflow plug-in for Knative CLI is installed.
++
+For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the Serverless Workflow plug-in for Knative CLI>>.
+
+* Serverless Workflow project is created.
++
+For more information about created a workflow project, see <<proc-create-sw-project-kn-cli, Creating Serverless Wokflow project using Knative CLI>>.
+
+.Procedure
+. In Knative CLI, enter the following command to build your Serverless Workflow project:
++
+--
+.Build the project and generate a local image named `quay.io/my-project`
 [source,shell]
 ----
 kn workflow build --image my-project
 kn workflow build --image-name my-project
 ----
-NOTE: The "registry" and "tag" defaults are "quay.io" and "latest" respectively.
 
-==== Image naming options
-Let's take a better look at the image naming options.
-
-The `[-i|--image]` flag can be used in several ways.
+To use the `build` command, you need to provide either `--image` or `--image-name` flag. In the previous command, you can use the `[-i|--image]` in several ways, such as:
 
 * --image=[name]
 * --image=[name]:[tag]
@@ -119,92 +164,171 @@ The `[-i|--image]` flag can be used in several ways.
 * --image=[registry]/[repository]/[name]
 * --image=[registry]/[repository]/[name]:[tag]
 
-Also, it's possible to use specific flags to compose the image's full name.
+[NOTE]
+====
+The default value for `registry` and `tag` is `quay.io` and `latest` respectively.
+====
+
+Also, you can use specific flags to compose the full name of the image as follows:
 
 * --image-registry
 * --image-repository
 * --image-name
 * --image-tag
 
-[NOTE]
-====
-If the "--image" flag is provided together with any of these flags, the specific value will override "--image".
-====
+In case the `--image` flag is composed with specific flags as shown in the following command, then the specific value overrides the `--image` flag:
 
-.Builds the project and generates a local image called "quay.io/other-user/my-project:1.0.1"
+.Build the project and generate a local image named `quay.io/other-user/my-project:1.0.1`
 [source,shell]
 ----
 kn workflow build --image my-user/my-project:1.0.0 --image-repository other-user --image-tag 1.0.1
 ----
+--
 
-==== Building strategy
-We have two different strategies to build the project and generate the image.
+[[con-build-strategy-kn-cli]]
+=== Strategy for building a Severless Worlflow project
 
-.Jib
-Jib is an extension that enables building a container image without the necessity of a container runtime. Rebuilds are fast, and the resultant image is optimized.
+You can use the following strategies to build a Serverless Workflow project and to generate the container image:
 
-.Builds the project and generates a local image using Jib (Save it in the Docker runtime)
+Using Jib::
++
+--
+link:https://github.com/GoogleContainerTools/jib[Jib] is an extension that builds a container image without the necessity of a container runtime. When using the Jib extension, the rebuilds are fast and the resultant container image is optimized.
+
+You can use the following commands to build a Serverless Workflow project and to generate a local image using Jib:
+
+.Build a project and generate a local image using Jib
 [source,shell]
 ----
 kn workflow build --image my-project --jib
 ----
+The generated container image can be saved in the Docker runtime.
 
-.Builds the project and generates a local image using Jib (Save it in the Podman runtime)
+.Build a project and generate a local image using Jib
 [source,shell]
 ----
 kn workflow build --image my-project --jib-podman
 ----
+Using the previous command, the generated container image can be saved in the Podman runtime.
 
-If you don't want to use any container runtime, use the `--push` option, so the built image will be immediately pushed to the respective registry.
+If you do not want to use any container runtime, then use `--push` to push the generated container image to the respective registry as shown in the following command:
 
-.Builds the project and pushes the image using Jib (No container runtime required)
+.Build a project and push the image using Jib
 [source,shell]
 ----
 kn workflow build --image my-project --jib --push
 ----
 
-[NOTE]
+[IMPORTANT]
 ====
-Remember to have access to your registry before using the "--push" option. You can do it using the "docker login", "podman login", or any other equivalent method.
+Before using the `--push` option, ensure that you have access to your registry. You can get the access using Docker or Podman login.
 ====
+--
 
-.Docker
+Using Docker::
++
+--
+The process of building your Serverless Workflow project using Docker is straightforward and also a default approach. 
 
-Building with Docker is straightforward as it's the default option. Also, it's possible to automatically push the image to the respective registry by using the `--push` option.
+When using Docker, you can automatically push the container image to the respective registry by using the `--push` option as shown in the following command:
 
-.Builds the project and pushes the image using Docker
+.Build a project and push the image using Docker
 [source,shell]
 ----
 kn workflow build --image my-project --push
 ----
+--
 
-=== Deploy
-The `deploy` command deploys a Kogito Serverless Workflow project in the current directory (build command is required). It uses the `./target/kubernetes` folder to find the generated `knative.yml` and, if exists, the `kogito.yml`. If your deployment files are saved in another folder, it's possible to override the path with the `--path` flag.
+[[proc-deploy-sw-project-kn-cli]]
+== Deploying a Serverless Wokflow project using Knative CLI
 
-Also, remember to have access to your cluster, and your cluster needs to have access to your image.
+You can use the `deploy` command combined with `kn workflow` to deploy your Serverless Workflow project in your current directory. However, before deploying the project, you must build your Serverless Workflow project as the build process produces deployment files, such as `knative.yml` and `kogito.yml` (In case of events) in the `./target/kubernetes` folder.
 
-.Deploys the project to authenticated cluster
+.Prerequisites
+* Serverless Workflow plug-in for Knative CLI is installed.
++
+For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the Serverless Workflow plug-in for Knative CLI>>.
+
+* Serverless Workflow project is created.
++
+For more information about created a workflow project, see <<proc-create-sw-project-kn-cli, Creating Serverless Wokflow project using Knative CLI>>.
+
+* Serverlesss Workflow project is built.
++
+For more information about building your workflow project, see <<proc-build-sw-project-kn-cli, Building Serverless Workflow project using Knative CLI>>.
+
+.Procedure
+. In Knative CLI, enter the following command to deploy your Serverless Workflow project:
++
+--
+.Deploy a workflow project
 [source,shell]
 ----
 kn workflow deploy
+----
+
+If the deployment files (`knative.yml` and `kogito.yml`) are saved in any other folder instead of `./target/kubernetes`, then you can override the path using the `--path` flag with deployment command as follows:
+
+.Deploy a workflow project using `--path`
+[source,shell]
+----
 kn workflow deploy --path other-path
 ----
 
+Also, ensure that you have access to your cluster and your cluster can access the generated container image.
+
 [NOTE]
 ====
-If you need to use a more complex deploy setup, we recommend directly using the "kubectl" command line.
+You can use the kubectl command line if you want to use a complex deployment setup for your Serverless Workflow project.
 ====
+--
 
-== Building from Source
-If you want to build the project from source, follow the steps:
+[[proc-build-sw-project-source]]
+== Building a Serverless Workflow project from source
+
+As an alternative, you can build your Serverless Workflow project from source.
+
+.Prerequisites
+* Serverless Workflow project is created.
+
+.Procedure
+. In a command terminal, enter the following command to clone the `kie-tools` GitHub repository:
++
+--
+.Clone `kie-tools` repository
 [source,shell]
 ----
 git clone git@github.com:kie-group/kie-tools.git
+----
+--
+
+. Navigate to the cloned `kie-tools` directory and enter the following command to access the Serverless Workflow plug-in:
++
+--
+.Access Serverless Workflow plug-in
+[source,shell]
+----
 cd kie-tools
 pnpm bootstrap
 pnpm -F @kie-tools/kn-plugin-workflow... build:dev
+----
+--
+
+. Go to the plug-in folder and enter the following command to build the workflow project:
++
+--
+.Build Serverless Workflow project from source
+[source,shell]
+----
 cd packages/kn-plugin-workflow
 go mod tidy
 ----
+--
+
+You have successfully built your Serverless Workflow project from source.
+
+== Additional resources
+
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
 
 include::../../pages/_common-content/report-issue.adoc[]

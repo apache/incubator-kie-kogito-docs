@@ -1,1 +1,700 @@
-//= Orchestrating third party services with OAuth2 authentication
+Orchestrating third party services with OAuth2 authentication
+=============================================================
+:compat-mode!:
+// Metadata:
+:description: Orchestrating third party services with OAuth2 authentication
+:keywords: kogito, workflow, serverless, authentication, oauth2
+// Referenced documentation pages.
+:orchestration-of-opnapi-based-services: xref:service-orchestration/orchestration-of-openapi-based-services.adoc
+:configuring-openapi-services-endpoints: xref:service-orchestration/configuring-openapi-services-endpoints.adoc
+:authentication-support-for-openapi-services: xref:security/authention-support-for-openapi-services.adoc
+:authentication-support-for-openapi-services-oauth-example: xref:security/authention-support-for-openapi-services.adoc#ref-example-oauth-authentication
+// Other links
+:kogito_sw_examples_serverless_workflow_oauth2_orchestration_url: {kogito_sw_examples_url}/serverless-workflow-oauth2-orchestration-quarkus
+:kogito_sw_examples_serverless_workflow_oauth2_orchestration_workflow_definition_url: {kogito_sw_examples_url}/serverless-workflow-oauth2-orchestration-quarkus/currency-exchange-workflow/src/main/resources/currency-exchange-workflow.sw.json
+:kogito_sw_examples_serverless_workflow_oauth2_orchestration_running_the_example_url: {kogito_sw_examples_url}/serverless-workflow-oauth2-orchestration-quarkus
+
+:quarkus_guide_security_openid_connect_client_url: {quarkus_guides_base_url}/security-openid-connect-client
+:quarkus_guide_credentials_provider_url: {quarkus_guides_base_url}/credentials-provider
+:quarkus_guide_config_reference_url: {quarkus_guides_base_url}/config-reference
+:quarkus_guide_config_reference_environment_variables_url: {quarkus_guides_base_url}/config-reference#environment-variables
+
+:spec_doc_functions_for_custom_function_types_url: {spec_doc_url}#defining-custom-function-types
+:spec_doc_functions_for_restful_service_invocation_url: {spec_doc_url}#using-functions-for-restful-service-invocations
+:spec_doc_functions_for_expression_evaluation_url: {spec_doc_url}#Using-Functions-For-Expression-Evaluation
+:spec_doc_action_data_filters_url: {spec_doc_url}#Action-data-filters
+
+This guide shows how to implement and configure a Serverless Workflow that orchestrate the interaction with an Oauth2 secured REST service.
+
+For information about orchestrating and configuring the OpenAPI based services, you must see the following documents:
+
+* {orchestration-of-opnapi-based-services}[Orchestration of OpenAPI based services]
+* {configuring-openapi-services-endpoints}[Configuring OpenAPI services endpoints in different environments]
+* {authentication-support-for-openapi-services}[Authentication support for OpenAPI services]
+
+== Introduction
+
+Imagine that you have a set of applications that must resolve currency exchange calculations as part of their regular operations. For that, you need an accurate source of information to get the different exchange rates.
+
+Fortunately, your company has a commercial agreement with Acme Financial Services, and those rates can be queried using their Oauth2 secured services. Additionally, as confidential client, you were granted with proper credentials to access these services as part of the agreement.
+
+However, you don't want to expose Acme's services to the applications.
+
+== Solution
+
+Implement a Serverless Workflow that resolves:
+
+* The orchestration with Acme's services and the currency exchange calculation.
+* The authentication requirements to access that service.
+* Potential vendor lock-in problems if you want to change the provider in the future.
+* Domain specific validations, optimizations, etc.
+
+The next sections shows how to create the end-to-end solution by following the {kogito_sw_examples_serverless_workflow_oauth2_orchestration_url}[serverless-workflow-oauth2-orchestration-quarkus] example.
+
+[NOTE]
+====
+To get the source code of the example you must clone the {kogito_examples_repository_url}[GitHub repository] and go to the `serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus` directory.
+====
+
+=== Services
+
+The following services compose the solution:
+
+* `currency-exchange-workflow`: Is the Serverless Workflow that implement the currency exchange calculation.
+
+* `acme-financial-service`: Is the REST service that provides the exchange rates.
+
+* `acme-oauth2-server`: Is the Keycloak server that secures Acme's REST services.
+
+=== Architecture
+
+The following diagram shows the architecture of the solution:
+
+.Architecture diagram
+
+image::security/orchestrating-third-party-services-with-oauth2/architecture-diagram.png[Architecture diagram]
+
+. The application creates a Serverless Workflow instance to calculate the currency exchange.
+. The workflow executes the OpenAPI operation to get the exchange rates information.
+. Authorizations are produced to validate the access.
+. The workflow receives the exchange rates information and execute the calculations.
+. The workflow execution finalize by sending the result to the application.
+
+[NOTE]
+====
+The interactions with the Oauth2 server are managed automatically by the Serverless Workflow.
+And you must only configure a {quarkus_guide_security_openid_connect_client_url}[Quarkus OpenId Connect Client (OIDC)] as described <<Configuration, here>>.
+====
+
+== Currency Exchange Workflow
+
+=== Diagram
+
+The following figure shows the `currency-exchange-workflow` diagram:
+
+.currency-exchange-workflow diagram
+image::security/orchestrating-third-party-services-with-oauth2/currency-exchange-workflow-diagram.png[]
+
+. Input data is validated.
+. Check the validation results:
+.. If validation is successful, transition to (3).
+.. If validation failed, no transition, finalize the workflow with the error execution status.
+. Call `acme-financial-service` to get the exchange rate:
+.. If the call is successful, transition to (4).
+.. If the call fails, transition to (6).
+. Calculate the currency exchange and transition to (5).
+. Set the successful execution status and finalize the workflow execution.
+. Set the error execution status and finalize the workflow execution.
+
+=== Definition
+
+The following Serverless Workflow specification defines the `currency-exchange-workflow`:
+
+.currency-exchange-workflow.sw.json file
+[source, json]
+----
+{
+  "id": "currency_exchange_workflow",
+  "version": "1.0",
+  "name": "Currency Exchange SW",
+  "dataInputSchema": "currency-exchange-workflow-schema.json",
+  "start": "ValidateInputs",
+  "functions": [
+    {
+      "name": "validateInputs",
+      "type": "custom",
+      "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::validateInputs"
+    },
+    {
+      "name": "getExchangeRate",
+      "type": "rest",
+      "operation": "specs/acme-financial-service.yml#exchangeRate"
+    },
+    {
+      "name": "calculateExchange",
+      "type": "expression",
+      "operation": "${ { calculateExchangeResult: .amount * .exchangeRate } }"
+    }
+  ],
+  "errors": [
+    {
+      "name": "service_error",
+      "code": "java.lang.Exception"
+    }
+  ],
+  "states": [
+    {
+      "name": "ValidateInputs", <1>
+      "type": "operation",
+      "actions": [
+        {
+          "name": "validateInputsAction",
+          "functionRef": {
+            "refName": "validateInputs",
+            "arguments": {
+              "currencyFrom": "${ .currencyFrom }",
+              "currencyTo": "${ .currencyTo }",
+              "amount": "${ .amount }",
+              "exchangeDate": "${ .exchangeDate }"
+            }
+          }
+        }
+      ],
+      "transition": "CheckValidation"
+    },
+    {
+      "name": "CheckValidation", <2>
+      "type": "switch",
+      "dataConditions": [
+        {
+          "condition": "${ .executionStatus == \"ERROR\" }",
+          "end": true
+        }
+      ],
+      "defaultCondition": {
+        "transition": "GetExchangeRate"
+      }
+    },
+    {
+      "name": "GetExchangeRate", <3>
+      "type": "operation",
+      "actions": [
+        {
+          "name": "getExchangeRateAction",
+          "functionRef": {
+            "refName": "getExchangeRate",
+            "arguments": {
+              "currencyFrom": "${ .currencyFrom }",
+              "currencyTo": "${ .currencyTo }",
+              "exchangeDate": "${ .exchangeDate }"
+            }
+          },
+          "actionDataFilter": {
+            "results": "${ {exchangeRate: .rate} }"
+          }
+        }
+      ],
+      "transition": "CalculateExchange",
+      "onErrors": [
+        {
+          "errorRef": "service_error",
+          "transition": "EndWithError"
+        }
+      ]
+    },
+    {
+      "name": "CalculateExchange", <4>
+      "type": "operation",
+      "actions": [
+        {
+          "name": "calculateExchangeAction",
+          "functionRef": {
+            "refName": "calculateExchange"
+          },
+          "actionDataFilter": {
+            "results": "${ {result: .calculateExchangeResult} }"
+          }
+        }
+      ],
+      "transition": "EndSuccessful"
+    },
+    {
+      "name": "EndWithError", <5>
+      "type": "inject",
+      "data": {
+        "executionStatus": "ERROR",
+        "executionStatusMessage": "Execution failed: The acme-financial-service invocation has failed, check that the service is running and that you have configured the OAuth2 client properly"
+      },
+      "end": true
+    },
+    {
+      "name": "EndSuccessful", <6>
+      "type": "inject",
+      "data": {
+        "executionStatus": "OK",
+        "executionStatusMessage": "Execution successful"
+      },
+      "end": true
+    }
+  ]
+}
+----
+<1> <<ValidateInputs, ValidateInputs>> state: executes the `validateInputs` function to validate the input data.
+<2> `CheckValidation` state: determines the next state to go by evaluating the validation results.
+<3> <<GetExchangeRate, GetExchangeRate>> state: executes the `getExchangeRate`  to get the exchange rate from the remote server.
+<4> <<CalculateExchange, CalculateExchange>> state: executes the `calculateExchange` function to calculate the currency exchange.
+<5> `EndWithError` state: finalize the process with the `ERROR`.
+<6> `EndSuccessful` state: finalize the process with the successful `OK` status.
+
+=== ValidateInputs
+
+To execute custom Java processing as part of the Serverless Workflow, you can use a {spec_doc_functions_for_custom_function_types_url}[CNCF Serverless Workflow custom function] such as `validateInputs`.
+
+--
+.validateInputs function definition
+[source, json]
+----
+{
+  "name": "validateInputs", <1>
+  "type": "custom", <2>
+  "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::validateInputs" <3>
+}
+----
+
+<1> `validateInputs` function declaration.
+<2> The `custom` type implements the ability use your own Java class to implement a function.
+<3> Specifies that the function is implemented by the method `validateIntpus` in the Java class `org.kie.kogito.examples.ExchangeWorkflowHelper`.
+--
+
+[NOTE]
+====
+The parameters and results for a custom function are processed like any other function type.
+====
+
+To implement the function you must create a Java class such as `ExchangeWorkflowHelper` in your project:
+
+--
+.ExchangeWorkflowHelper.java file
+[source, java]
+----
+package org.kie.kogito.examples;
+
+@ApplicationScoped
+public class ExchangeWorkflowHelper {
+
+    public ValidationResult validateInputs(String currencyFrom,
+                                           String currencyTo,
+                                           double amount,
+                                           String exchangeDate) {
+        // Implement your custom Java processing here and return
+        // a Java POJO to the Serverless Workflow.
+        if (!good) {
+            return new ValidationResult("ERROR", "Not good!");
+        }
+        return new ValidationResult();
+    }
+
+    public static class ValidationResult {
+        private String executionStatus;
+        private String executionStatusMessage;
+        // getters, setters, etc.
+    }
+}
+----
+--
+
+=== GetExchangeRate
+
+To access the `acme-financial-service` you can use a {spec_doc_functions_for_restful_service_invocation_url}[CNCF Serverless Workflow function], such as `getExchangeRate`:
+
+--
+.getExchangeRate function definition
+[source, json]
+----
+{
+  "name": "getExchangeRate", <1>
+  "type": "rest",
+  "operation": "specs/acme-financial-service.yml#exchangeRate" <2>
+}
+----
+
+<1> `getExchangeRate` function declaration.
+<2> Specifies that the function is implemented by the `exchangeRate` operation in the `acme-financial-service.yml`.
+--
+
+[NOTE]
+====
+For the configuration above the file `acme-financial-service.yml` must be located in the `src/main/resources/specs` directory of the project.
+====
+
+You can find more information in {orchestration-of-opnapi-based-services}[Orchestration of OpenAPI based services].
+
+To filter the information that must be returned to the workflow you can use a {spec_doc_action_data_filters_url}[CNCF Serverless Workflow actionDataFilter] such as:
+
+--
+.actionDataFilter to pass the `getExchangeRate` results:
+[source, json]
+----
+  "actionDataFilter": {
+    "results": "${ {exchangeRate: .rate} }" <1>
+  }
+----
+<1> Merge the `"rate"` property value coming in the `acme-financial-service` invocation result, into a workflowdata property `"exchangeRate"`.
+--
+
+=== CalculateExchange
+
+To calculate the currency exchange you can use a {spec_doc_functions_for_expression_evaluation_url}[CNCF Serverless Workflow function], such as `calculateExchange`:
+
+--
+.calculateExchange function definition
+[source, json]
+----
+{
+  "name": "calculateExchange", <1>
+  "type": "expression", <2>
+  "operation": "${ { calculateExchangeResult: .amount * .exchangeRate } }" <3>
+}
+----
+
+<1> `calculateExchange` function declaration.
+<2> The `expression` type implements the ability use an expression to implement a function.
+<3> Specifies that the function returns a JSON object with a property `"calculateExchangeResult"` that contains the calculation.
+--
+
+To filter the information that must be returned to the workflow you can use a {spec_doc_action_data_filters_url}[CNCF Serverless Workflow actionDataFilter] such as:
+
+--
+.actionDataFilter to pass the `calculateExchange` results:
+[source, json]
+----
+  "actionDataFilter": {
+    "results": "${ {result: .calculateExchangeResult} }" <1>
+  }
+----
+<1> Merge the `"calculateExchangeResult"` property value coming from the expression result into a workflowdata property `"result"`.
+--
+
+== Acme Financial Service
+
+The following OpenAPI specification defines the `acme-financial-service`.
+
+--
+.acme-financial-service.yml OpenAPI specification
+[source#acme-financial-service-yml, yaml]
+----
+---
+openapi: 3.0.3
+info:
+  title: Acme Financial Service API
+  version: 1.0.1
+paths:
+  /financial-service/exchange-rate: <1>
+    get:
+      tags:
+        - Acme Financial Resource
+      operationId: exchangeRate
+      parameters: <2>
+        - name: currencyFrom
+          in: query
+          schema:
+            type: string
+        - name: currencyTo
+          in: query
+          schema:
+            type: string
+        - name: exchangeDate
+          in: query
+          schema:
+            type: string
+      responses: <3>
+        "200":
+          description: OK
+          content: <4>
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExchangeRateResult'
+      security:
+        - acme-financial-oauth: [ ] <5>
+components:
+  schemas:
+    ExchangeRateResult: <6>
+      type: object
+      properties:
+        rate:
+          format: double
+          type: number
+  securitySchemes:
+    acme-financial-oauth: <7>
+      type: oauth2 <8>
+      flows:
+        clientCredentials: <9>
+          authorizationUrl: http://localhost:8281/auth/realms/kogito/protocol/openid-connect/auth
+          tokenUrl: http://localhost:8281/auth/realms/kogito/protocol/openid-connect/token
+          scopes: { }
+----
+
+<1> REST path to access the `exchangeRate` operation in the remote server.
+<2> `exchangeRate` operation parameters.
+<3> `exchangeRate` operation responses.
+<4> Response type and data exchange format.
+<5> Specifies that the `exchangeRate` operation is secured with the `acme-financial-oauth` security scheme.
+<6> Response type specification.
+<7> `acme-financial-oauth` security scheme specification.
+<8> Security scheme type. This information indicates that you must configure a {quarkus_guide_security_openid_connect_client_url}[Quarkus OpenId Connect Client (OIDC)] with name `acme_financial_oauth` to execute the operation.
+<9> Authentication flow to use, and flow information.
+--
+
+[NOTE]
+====
+You can find the full implementation of this service in the `serverless-workflow-oauth2-orchestration-quarkus/acme-financial-service` directory.
+====
+
+== Configuration
+
+Most relevant configurations for the Serverless Workflow:
+
+.Example application.properties file
+[source, properties]
+----
+quarkus.openapi-generator.codegen.spec.acme_financial_service_yml.base-package=com.acme <1>
+
+quarkus.rest-client.acme_financial_service_yml.url=http://localhost:8483 <2>
+
+quarkus.oidc-client.acme_financial_oauth.discovery-enabled=false <3>
+quarkus.oidc-client.acme_financial_oauth.auth-server-url=http://localhost:8281/auth/realms/kogito/protocol/openid-connect/auth <4>
+quarkus.oidc-client.acme_financial_oauth.token-path=http://localhost:8281/auth/realms/kogito/protocol/openid-connect/token <5>
+quarkus.oidc-client.acme_financial_oauth.client-id=kogito-app <6>
+quarkus.oidc-client.acme_financial_oauth.grant.type=client
+quarkus.oidc-client.acme_financial_oauth.credentials.client-secret.method=basic <7>
+quarkus.oidc-client.acme_financial_oauth.credentials.client-secret.value=secret <8>
+----
+
+<1> Is the package name for the automatically generated classes that implements the access to the all operations defined in the file `acme-financial-service.yml`.
+<2> Is the root URL to access all the operations defined in the file `acme-financial-service.yml`. For the `exchangeRate` operation, an absolute URL such as \http://localhost:8483/financial-service/exchange-rate is automatically generated.
+
+<3> Disable the Oauth2 server endpoints discovery since the endpoints provided in the <<acme-financial-service-yml, acme-financial-service.yml>> file will be used instead.
+<4> Is the authentication URL of the Oauth2 server.
+<5> Is the relative path or absolute URL of the Oauth2 token endpoint which issues access and refresh tokens.
+<6> Is the client-id to identify the Serverless Workflow against the authorization service, such as `kogito-app`. This identifier must be provided by Acme.
+<7> Is the method to use at the time to send the client-secret for the authentications when the client grant type is used.
+<8> Is the client secret to authenticate the Serverless Workflow against the authorization service when the client grant type is used. This secret must be provided by Acme.
+
+To configure the `acme_financial_service_oauth` {quarkus_guide_security_openid_connect_client_url}[Quarkus OpenId Connect Client (OIDC)] you must follow the rules described in {authentication-support-for-openapi-services-oauth-example}[Example of OAuth2 authentication].
+And the particular attributes depends on the Oauth2 server and authorization flow to use, you can get this information from the OpenAPI specification of the target service <<acme-financial-service-yml, acme-financial-service.yml>>.
+
+[NOTE]
+====
+You can use the alternatives defined in the {quarkus_guide_config_reference_url}[Quarkus configuration reference guide] to configure these properties.
+A common usage is to define {quarkus_guide_config_reference_environment_variables_url}[environment variables] to set the authentication secrets, and you can also use the {quarkus_guide_credentials_provider_url}[Quarkus Credentials Provider] framework.
+====
+
+== Running the example
+
+To run the example you must follow these steps:
+
+=== Get the example
+
+. In a new terminal, git clone the kogito-examples repository and navigate to this directory:
+
+[source, bash]
+----
+git clone https://github.com/kiegroup/kogito-examples.git
+
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus
+----
+
+=== Build the example
+
+[start=2]
+. Build the example using Maven:
+
+[source, bash]
+----
+mvn clean install
+----
+
+=== Start Keycloak
+
+[start=3]
+. In a new terminal, start the Keycloak server:
+
+[source, bash]
+----
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/scripts
+
+cd ./startKeycloak.sh
+----
+
+Alternatively, you can use docker-compose following this procedure:
+
+[source, bash]
+----
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/docker-compose
+
+docker-compose up
+----
+
+=== Start Acme Financial Service
+
+[start=4]
+. In a new terminal, navigate to the `acme-financial-service` directory, and start the Acme Financial Service Quarkus application.
+
+[source, bash]
+----
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/acme-financial-service
+
+java -jar target/quarkus-app/quarkus-run.jar
+----
+
+=== Start Currency Exchange Workflow
+
+[start=5]
+. In a new terminal, navigate to the `currency-exchange-workflow` directory, and start the Currency Exchange Workflow Quarkus application.
+
+[source, bash]
+----
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/currency-exchange-workflow
+
+java -jar target/quarkus-app/quarkus-run.jar
+----
+
+== Execution examples
+
+When all the services are running you can use the following `curl` commands to run the Currency Exchange Workflow.
+
+=== Successful execution
+
+Calculate the currency exchange from `EUR` to `USD`:
+
+[tabs]
+====
+Request::
++
+[source,bash]
+--
+curl -X 'POST' \
+  'http://localhost:8080/currency_exchange_workflow' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "workflowdata": {
+           "currencyFrom": "EUR",
+           "currencyTo": "USD",
+           "exchangeDate": "2022-06-10",
+           "amount": 2.0
+       }
+    }'
+--
+Response::
++
+[source,json]
+--
+{
+  "id": "399ce304-037c-486d-b4bf-1564baf907a1",
+  "workflowdata": {
+    "currencyFrom": "EUR",
+    "currencyTo": "USD",
+    "exchangeDate": "2022-06-10",
+    "amount": 2.0,
+    "executionStatus": "OK",
+    "executionStatusMessage": "Execution successful",
+    "exchangeRate": 1.0578,
+    "result": 2.1156
+  }
+}
+--
+====
+
+=== Unsuccessful validation
+
+Calculate the currency exchange from `EUR` to `MXN`:
+
+[tabs]
+====
+Request::
++
+[source,bash]
+--
+curl -X 'POST' \
+  'http://localhost:8080/currency_exchange_workflow' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "workflowdata": {
+    "currencyFrom": "EUR",
+    "currencyTo": "MXN",
+    "exchangeDate": "2022-06-10",
+    "amount": 2.0
+  }
+}'
+--
+Response::
++
+[source,json]
+--
+{
+  "id": "e0e7708d-c82c-47d7-9354-09ccd1e972bb",
+  "workflowdata": {
+    "currencyFrom": "EUR",
+    "currencyTo": "MXN",
+    "exchangeDate": "2022-06-10",
+    "amount": 2,
+    "executionStatus": "ERROR",
+    "executionStatusMessage": "Invalid currencyTo: MXN, only the following currencies are supported [EUR, USD, JPY, GBP, CAD, BRL, AUD]",
+    "exchangeRate": null
+  }
+}
+--
+====
+
+[NOTE]
+====
+As you can see the currencies currently supported by the `currency-exchange-workflow` are `EUR, USD, JPY, GBP, CAD, BRL and AUD`.
+However, the `acme-financial-service` is a very reliable and can resolve any exchange type.
+This was done to show that a Serverless Workflow can also implement intermediate data filtering, transforming and validations.
+====
+
+=== Unexpected error
+
+Unexpected error when accessing the `acme-financial-service`:
+
+[tabs]
+====
+Request::
++
+[source,bash]
+--
+curl -X 'POST' \
+  'http://localhost:8080/currency_exchange_workflow' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "workflowdata": {
+    "currencyFrom": "EUR",
+    "currencyTo": "USD",
+    "exchangeDate": "2022-06-10",
+    "amount": 2.0
+  }
+}'
+--
+Response::
++
+[source,json]
+--
+{
+  "id": "0044ffa0-7b2b-4fdc-af60-cd98c6bd3ade",
+  "workflowdata": {
+    "currencyFrom": "EUR",
+    "currencyTo": "USD",
+    "exchangeDate": "2022-06-10",
+    "amount": 2.0,
+    "executionStatus": "ERROR",
+    "executionStatusMessage": "Execution failed: The acme-financial-service invocation has failed, check that the service is running and that you have configured the OAuth2 client properly",
+    "exchangeRate": null
+  }
+}
+--
+====
+
+include::../../pages/_common-content/report-issue.adoc[]
