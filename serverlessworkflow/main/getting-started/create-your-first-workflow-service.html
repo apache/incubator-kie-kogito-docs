@@ -319,6 +319,7 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
     -x=quarkus-container-image-jib \
     -x=quarkus-resteasy-jackson \
     -x=quarkus-smallrye-openapi \
+    --no-code \
     org.kie.kogito.examples:serverless-workflow-hello-world:1.0</code></pre>
 </div>
 </div>
@@ -339,6 +340,9 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
 <li>
 <p><code>quarkus-smallrye-openapi</code>: Adds support for Swagger documentation when you run the application in development mode</p>
 </li>
+<li>
+<p><code>--no-code</code>: Prevents workflow example code from being generated</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -352,12 +356,13 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn io.quarkus.platform:quarkus-maven-plugin:2.10.2.Final:create \
     -DprojectGroupId=org.kie.kogito.examples \
     -DprojectArtifactId=serverless-workflow-hello-world \
-    -Dextensions="kogito-quarkus-serverless-workflow,quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi"
+    -Dextensions="kogito-quarkus-serverless-workflow,quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi" \
+    -DnoCode
 cd serverless-workflow-hello-world</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In the previous command, <code>org.kie.kogito.examples</code>, <code>serverless-workflow-hello-world</code>, and <code>1.0</code> is group id, artifact id, and version of your project respectively.</p>
+<p>In the previous command, <code>org.kie.kogito.examples</code>, <code>serverless-workflow-hello-world</code>, and <code>1.0</code> is group id, artifact id, and version of your project respectively.  <code>-DnoCode</code> prevents the generation of workflow example code.</p>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_knative-cli">
