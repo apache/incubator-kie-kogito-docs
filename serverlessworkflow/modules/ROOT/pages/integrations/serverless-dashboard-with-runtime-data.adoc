@@ -1,36 +1,47 @@
- Displaying workflow runtime data in Serverless Dashboards
-==========================================================
+= Displaying Serverless Workflow data in dashboards
+
 :compat-mode!:
 // Metadata:
 :description: Displaying workflow runtime data in Serverless Dashboards
 :keywords: kogito, workflow, quarkus, serverless, dashboards, monitoring
+// links
 :dashbuilder_url: https://www.dashbuilder.org
 :jsonata_url: https://docs.jsonata.org/overview.html
-This document describes steps to create Dashboards to monitor Kogito Serverless Workflows. 
 
-To build dashboards we need data and it can be easily acquired from Kogito Serverless Workflow using any of the following approaches:
+This document describes how you can build dashboards to monitor your Serverless Workflows data. 
 
-* Enabling **Metrics**
-* Integrating with **Data Index** to consume data using its REST API
-* Using custom mechanisms (such as `ProcessInstanceListener`)
+To build the dashboards, you need data, which you can acquire from your Serverless Workflows using one of the following methods:
 
-In this document we will explore creating dashboards for metrics and for Data Index GraphQL REST API.
+* Enable metrics
+* Integrate with Data Index to consume data using the REST API
+* Use custom mechanisms, such as `ProcessInstanceListener`
 
-== Serverless Dashboards with Dashbuilder
+The following sections describes the process of creating dashboards using metrics and Data Index GraphQL REST API. 
 
+[[con-sw-dashboard]]
+== Dashboards for Serverless Workflows
 
-Serverless Dashboards are visualizations that run entirely on the client side. We will use link:{dashbuilder_url}[Dashbuilder] to create Dashboards: it consumes data from any JSON source and the dashboard is defined in YAML format.
+The dashboards for Serverless Workflows are visualization of data that run on the client side. The dashboards are created using link:{dashbuilder_url}[Dashbuilder], which consumes data from any JSON source. You can define a dashboard in YAML format.
 
-To use Dashbuilder you need to download, uncompress the `dashbuilder-client` NPM package and edit the file *setup.js* to link your YAML files. For further information please check link:https://www.dashbuilder.org/docs/#_client_only[Dashbuilder documentation].
+To use the Dashbuilder, download and uncompress the `dashbuilder-client` NPM package. Also, edit the `setup.js` file to link your YAML files. For more information about using Dashbuilder, see link:https://www.dashbuilder.org/docs/#_client_only[Dashbuilder documentation].
 
 image::integrations/dashbuilder-sample-report.png[]
 
+[[proc-sw-dashboard-metrics]]
+== Building dashboards using metrics
 
-== Using Metrics for building Dashboards
+You can build dashboards to monitor the data of your Serverless Workflows using metrics.
 
-To enable metrics for your Serverless Workflow application add the `org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus` dependency to your apps's classpath and the metrics will be available at `/q/metrics` path.
+.Prerequisites
+* Serverless Workflow application is created. 
++
+For more information about creating Serverless Workflow, see xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service].
 
-.Metrics Dependency to be added to `pom.xml`
+.Procedure
+. To enable metrics for your Serverless Workflow application add `org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus` dependency in `pom.xml` file of your application:
++
+--
+.Add metrics dependency to `pom.xml` file
 [source,xml]
 ----
     <dependency>
@@ -39,9 +50,11 @@ To enable metrics for your Serverless Workflow application add the `org.kie.kogi
     </dependency>
 ----
 
-Dashbuilder can consume data directly from metrics endpoints. Using a link:{jsonata_url}[JSONAta expression] to format some metrics we can simply show metrics in a table using the following YML:
+You can find the metrics in `/q/metrics` path.
 
-.Show metrics in a table
+The dashbuilder can consume the data of your Serverless Workflow directly from the metrics endpoints. Therefore, you can use a link:{jsonata_url}[JSONAta expression] to format the metrics and display the metrics in a table using the following example of YAML code:
+
+.Example YAML to show metrics in a table
 [source,yaml]
 ----
 datasets:
@@ -67,19 +80,21 @@ pages:
                uuid: swf_metrics
 ----
 
-.Metrics in a table
+.Example metrics in a table
 image::integrations/dashbuilder-metrics-table.png[]
+--
 
-To extract a specific information from the Workflow, you can use specific Kogito metrics, and when displaying the metric we filter the data to only include it. Metrics related to Serverless Workflow:
+. To extract a specific information from your Serverless Workflow, use specific metrics. Metrics related to Serverless Workflows include:
++
+--
+* `kogito_process_instance_completed_total`: Completed Serverless Workflows
+* `kogito_process_instance_started_total`: Started Serverless Workflows
+* `kogito_process_instance_running_total`: Running Serverless Workflows
+* `kogito_process_instance_duration_seconds_sum`: Serverless Workflows total duration
 
-* *kogito_process_instance_completed_total*: Completed Workflows
-* *kogito_process_instance_started_total*: Started Workflows
-* *kogito_process_instance_running_total*: Running Workflows
-* *kogito_process_instance_duration_seconds_sum*: Workflows Total Duration 
+When you display the metrics, you can filter the data to include the specific metrics. You can use the *metrics* and *bar chart* components in dashbuilder to display the specific metrics and after filtering the metrics, you can put the information in bar charts as shown in the following example YAML code:
 
-Dashbuilder *metrics* and *bar chart* components are useful to display these metrics. After filtering specific metrics we can put the information in bar charts as you can see the YML below:
-
-
+.Example YAML to display bar charts
 [source,yaml]
 ----
 datasets:
@@ -211,20 +226,32 @@ pages:
                           - source: value
 ----
 
-.Workflow Metrics Dashboard
+.Example Serverless Workflow metrics dashboard
 image::integrations/dashbuilder-workflows-metrics-dashboard.png[]
+--
 
-If you are using Prometheus, we can use PROMQL with Prometheus REST API and transform the result to the JSON format supported by Dashbuilder to build dashboards. For further information about Dashbuilder and Prometheus check the article https://blog.kie.org/2022/07/creating-prometheus-dashboards-using-dashbuilder.html[Creating Prometheus Dashboards with Dashbuilder].
+If you are using Prometheus, you can use PROMQL with Prometheus REST API and transform the result to JSON format that is supported by dashbuilder to build the dashoards.
 
-== Using Data Index
+For more information about dashbuilder and Prometheus, see link:https://blog.kie.org/2022/07/creating-prometheus-dashboards-using-dashbuilder.html[Creating Prometheus Dashboards using Dashbuilder].
 
-Data index is a service available during development mode, containing all data about the execution of workflow steps. By default, the data index is available at `http://localhost:8180`, and it uses GraphQL, so Dashbuilder can connect to it using its REST API and transform the result to the supported format.
+[[proc-sw-dashboard-data-index]]
+== Building dashboards using Data Index
 
-.The steps to create a dashboard with data from Data Index:
+Data Index is a service that contains all the data related to the execution of your Serverless Workflow. The Data Index service is available during the development mode. By default, you can access the Data Index at `http://localhost:8180`. 
 
-. Go to the Data Index GraphQL interface (default is `http://localhost:8180/graphiql`) and test your query. Let's use as an example this query that lists all workflows:
+The Data Index service uses GraphQL, so that dashbuilder can connect with the service using its REST API and transform the result to the supported format.
+
+.Prerequisites
+* Serverless Workflow application is created. 
++
+For more information about creating Serverless Workflow, see xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service].
+
+.Procedure
+. Go to the Data Index GraphQL interface (default to `http://localhost:8180/graphiql`) and test your query.
 +
 --
+The following is an example of GraphQL query that lists all the Serverless Workflows:
+
 .Example GraphQL query to retrieve all workflows
 [source,json]
 ----
@@ -240,12 +267,18 @@ Data index is a service available during development mode, containing all data a
   }
 }
 ----
-
 --
-. Notice that when you run the query it modifies the URL to include the query. Copy the URL, but modify `graphiql` to `graphql`. When accessing it you will notice that it returns the result in a JSON format, such as:
+
+. Run the GraphQL query. 
++
+When you run the query, note that the URL is modified to includes the query.
+
+. Copy the URL and modify `graphiql` to `graphql`.
 +
 --
-.GraphQL JSON result when using the query above
+When you access the URL with `graphql`, it returns the result in a JSON format as shown in the following example:
+
+.GraphQL JSON result when using the query
 [source,json]
 ----
 {
@@ -264,15 +297,19 @@ Data index is a service available during development mode, containing all data a
   }
 }
 ----
+
 [NOTE]
 ====
-Internally, Workflows are referenced as process hence the fields `processId` and `processName` are actually the workflow id and name.
+Internally, Serverless Workflows are referenced as processes, therefore the `processId` is the workflow ID and `processName` is the workflow name.
 ====
 --
-. Now it is required to transform the response, so a transform expression is used. Notice also that it includes the columns metadata for the dataset
+
+. Transform the response to the transform expression.
 +
 --
-.Transform expression to get the fields from the JSON response
+When you transform the response, note that the response includes the columns metdata for the data set.
+
+.Example transform expression to retrieve fields from JSON response
 [source,json]
 ----
 {
@@ -289,9 +326,11 @@ Internally, Workflows are referenced as process hence the fields `processId` and
 }
 ----
 --
-. Finally we can create our dashboard using the expression and the URL mentioned previously. Our dashboard has a bar chart that counts the process instances by State and list all dashboards in a table:
 
-.Example Dashboard for Kogito Data Index
+. Create your dashboard using the transform expression and the URL mentioned in the previous step. 
++
+--
+.Example dashboard created using Data Index
 [source,yml]
 ----
 datasets:
@@ -328,12 +367,19 @@ pages:
                 uuid: workflows
 ----
 
-The YML above results in the following dashboard:
+The previous example of dashboard contains bar chart that counts the workflow instances by `State` and lists all the dashboards in a table.
 
-.Dashboard with data from Data Index
+Following is the graphical dashboard resulted from the previous example:
+
+.Example dashboard created using Data Index
 image::integrations/data-index-workflow-list-report.png[]
+--
 
-For more examples check link:{dashbuilder_url}[Dashbuilder Website].
+For more examples of dashboards, see link:{dashbuilder_url}[Dashbuilder] website.
+
+== Additional resources
+
+xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
 
 
 include::../../pages/_common-content/report-issue.adoc[]
