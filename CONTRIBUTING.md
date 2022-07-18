@@ -71,7 +71,7 @@ Use active voice.
 
 Use second person (you). Avoid first person (I, we, us). Be gender neutral. Use the appropriate tone. Write for a global audience.
 
-:x: We can add a model to the project that we created in the previous step.
+:x: We can add a model to the project that we created in the previous step.  
 :white_check_mark: You can add a model to the project that you created in the previous step.
 
 :x: It is important that the file be saved...  
