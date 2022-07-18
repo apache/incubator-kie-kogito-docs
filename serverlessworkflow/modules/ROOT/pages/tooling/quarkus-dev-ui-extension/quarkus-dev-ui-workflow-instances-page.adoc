@@ -1,0 +1,105 @@
+Workflow Instances in Kogito Serverless Workflow Tools extension
+================================================================
+:compat-mode!:
+// Metadata:
+:description: Workflow Instances page in Kogito Serverless Workflow Tools extension
+:keywords: kogito, workflow, serverless, Quarkus, Dev UI, instances
+
+In Kogito Serverless Workflow Tools, the Workflow Instances page is used to monitor and manage the available instances. The Workflow Instances page displays a list of available instances and add filters to the list.
+
+.Workflow Instances page with no instances
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instances-empty.png[]
+
+To create a workflow instance, you can use the Workflow Definitions page. For more information, see xref:tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.adoc[Workflow Definitions in Kogito Serverless Workflow Tools extension].
+
+When you create a workflow instance, the instance appears in the workflow instances table on the page, containig the following details:
+
+* *Id*: Displays the name and business key of an instance. Also, when you hover on the name of the workflow instance, a unique ID is displayed for the instance. You can click on the ID to navigate to the *Workflow Details* page.
+* *Status*: Displays the current state of the instance. This column can contain *Active*, *Completed*, *Aborted*, *Error*, and *Suspended* as values.
+* *Created*: Displays the time reference indicating when the instance is created.
+* *Last Update*: Displays the time reference indicating when the instance is last updated.
+
+.Workflow Instances page with an instance
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instance-completed.png[]
+
+You can also sort the columns of the workflow instances table.
+
+On the Workflow Instances page, you can filter the list of workflow instances based on the states and business keys. By default, *Active*, *Completed*, *Aborted*, *Error*, and *Suspended* are applied on the list. You can use the *Status* drop-down to see the available states. To filter the workflow instances based on the states, select or unselect the states in the *Status* drop-down and click *Apply filter* button.
+
+To filter the workflow instances based on business keys, enter a business key in the *Filter by business key* field and click *Apply filter* button.
+
+.Example filters applied on the workflow instances
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-filters-in-workflow-instances.png[]
+
+To fetch the newly added workflow instances, click on the refresh icon next to the *Apply Filter* button. Also, to clear the applied filters and reset to the default state, click *Reset to default* button.
+
+In the workflow instances table, the *Id* column contains a clickable link, which enables you to navigate to the *Workflow Details* page. The *Workflow Details* page contains various panels, providing detailed information about a workflow instance.
+
+.Example Workflow Details page
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-details-page.png[]
+
+The Workflow Details page consists of the following panels:
+
+* Diagram panel
+* Timeline panel
+* Details panel
+* Variables panel
+
+Diagram panel::
++
+--
+The Diagram panel enables you to explore the workflow diagram and execution path of the workflow instance. The workflow diagram and execution path are displayed when the Kogito process SVG configuration is added in your project.
+
+.Diagram panel
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-diagram-panel.png[]
+
+To add the Kogito SVG process add-on configuration, add the following dependency to `pom.xml` file of your project:
+
+.Process-SVG dependency in `pom.xml` file
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-addons-quarkus-process-svg</artifactId>
+</dependency>
+----
+
+You can also generate SVG file using the VS Code extension for Serverless Workflow editor and then place the generated SVG in the `src/main/resources/META-INF/processSVG` folder of your project. The Kogito SVG process add-on exposes the SVG diagram to Quarkus Dev UI, and Dev UI reads the diagram and provides the workflow *Diagram* panel.
+--
+
+Timeline panel::
++
+--
+The Timeline panel displays the list of nodes that are related to a worflow instance. Each node in the Timeline panel consists of an icon, indicating the state of the node, such as *Active*, *Completed*, or *Error*.
+
+.Timeline panel
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-timeline-panel.png[]
+--
+
+Details panel::
++
+--
+The Details panel displays the basic information related to a workflow instance, including:
+
+* *Name*: Name of the workflow instance.
+* *Business key*: Business key related to the workflow instance.
+* *State*: Current state of the workflow instance.
+* *Id*: Unique ID of the workflow instance.
+* *Start*: Time reference indicating when the workflow instance is started.
+* *Last Updated*: Time reference indicating when the workflow instance is last updated.
+* *End*: Time reference indicating when the workflow instance is completed.
+
+.Details panel
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-details-panel.png[]
+--
+
+Variables panel::
++
+--
+The Variables panel displays the data of a Serverless Workflow in the form of JSON.
+
+.Variables panel
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-variables-panel.png[]
+--
+
+include::../../../pages/_common-content/report-issue.adoc[]
