@@ -7,7 +7,8 @@ Consuming and producing events with Kafka
 // links
 :kogito_messaging_url: https://docs.jboss.org/kogito/release/latest/html_single/#_kogito_messaging_add_on
 :kogito_kafka_integration_url: https://docs.jboss.org/kogito/release/latest/html_single/#proc-messaging-enabling_kogito-configuring
-:configuration_example_url: {kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/resources/application.properties}
+:callback_example_url: {kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/resources/application.properties}
+:events_example_url: {kogito_sw_examples_url}/serverless-workflow-events-quarkus/src/main/resources/application.properties}
 :smallrye_connector_doc_url: {smallrye_messaging_url}/connectors/connectors.html
 :kafka_connector_properties_url: {smallrye_messaging_url}/kafka/kafka.html#_configuration_reference
 
@@ -69,10 +70,13 @@ There are two mandatory properties that you need to setup for every channel defi
 
 Another relevant, although optional, property is the `topic`. If present, it should contain the Kafka topic name to be used for that channel. If missing, the channel name will be used as topic name. 
 
-=== Channel Mapping Example 
+=== Channel Mapping Examples
 
-Let's illustrate the previous explanation by reviewing the properties configured in the link:{configuration_example_url}[Callback example].
-This example uses two Cloud Event types: `wait`, which is incoming, and `resume`, which is outgoing. 
+Let's illustrate previous explanation by reviewing the properties configured in several examples. 
+
+==== Channel per event type 
+
+link:{callback_example_url}[Callback example] uses two Cloud Event types: `wait`, which is incoming, and `resume`, which is outgoing. 
 
 Kafka topic names matches the cloud event types, therefore it makes sense to chose one channel per Cloud Event type mapping strategy. This implies two channels must be configured. Since the channel name matches the cloud event type, we do not need to indicate the optional `topic` property.
 
@@ -83,6 +87,21 @@ mp.messaging.incoming.wait.value.deserializer=org.apache.kafka.common.serializat
 
 mp.messaging.outgoing.resume.connector=smallrye-kafka
 mp.messaging.outgoing.resume.value.serializer=org.apache.kafka.common.serialization.StringSerializer
+----
+
+==== Using default channel
+
+link:{events_example_url}[Events example] uses two Cloud Event types: `applicants`, which are incoming, and `decisions`, which is outgoing. The topic names matches the Cloud Event Types. Nevertheless, to illustrate the default channel functionality, `kogito_incoming_stream` and `kogito_outgoing_stream` are used as channel names. Since there is not an specific channel name for the Cloud event type, the default channels are used. They need to be mapped to the desired topic name by using the `topic` property. 
+ 
+[source,properties]
+----
+mp.messaging.incoming.kogito_incoming_stream.connector=smallrye-kafka
+mp.messaging.incoming.kogito_incoming_stream.topic=applicants
+mp.messaging.incoming.kogito_incoming_stream.value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+
+mp.messaging.outgoing.kogito_outgoing_stream.connector=smallrye-kafka
+mp.messaging.outgoing.kogito_outgoing_stream.topic=decisions
+mp.messaging.outgoing.kogito_outgoing_stream.value.serializer=org.apache.kafka.common.serialization.StringSerializer
 ----
 
 include::../../pages/_common-content/report-issue.adoc[]
