@@ -65,8 +65,8 @@ There are two mandatory properties that you need to setup for every channel defi
 
 * `connector`, which has to be set to `smallrye-kafka`
 * Depending on the channel being input or output: 
-** if incoming, `value.deserializer`. Unless you have specific marshaling needs, will be set to `org.apache.kafka.common.serialization.ByteArrayDeserializer` or `org.apache.kafka.common.serialization.StringDeserializer`
-** if outgoing, `value.serializer`. Unless you have specific marshaling needs, will be set to `org.apache.kafka.common.serialization.ByteArraySerializer` or `org.apache.kafka.common.serialization.StringSerializer`
+** if incoming, `value.deserializer`. Unless you have specific marshaling needs, you should set it to `org.apache.kafka.common.serialization.ByteArrayDeserializer` or `org.apache.kafka.common.serialization.StringDeserializer`
+** if outgoing, `value.serializer`. Unless you have specific marshaling needs, you should set it to `org.apache.kafka.common.serialization.ByteArraySerializer` or `org.apache.kafka.common.serialization.StringSerializer`
 
 Another relevant, although optional, property is the `topic`. If present, it should contain the Kafka topic name to be used for that channel. If missing, the channel name will be used as topic name. 
 
