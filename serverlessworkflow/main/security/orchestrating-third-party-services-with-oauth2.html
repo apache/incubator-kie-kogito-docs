@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>Orchestrating third party services with OAuth2 authentication :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Orchestrating third party services with OAuth2 authentication">
+    <meta name="keywords" content="kogito, workflow, serverless, authentication, oauth2">
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -137,6 +139,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="authention-support-for-openapi-services.html">Authentication for OpenAPI services in Serverless Workflow</a>
   </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="orchestrating-third-party-services-with-oauth2.html">Orchestrating third party services with OAuth2 authentication</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -201,6 +206,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Security</li>
+    <li><a href="orchestrating-third-party-services-with-oauth2.html">Orchestrating third party services with OAuth2 authentication</a></li>
+  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/security/orchestrating-third-party-services-with-oauth2.adoc">Edit this Page</a></div>
   </div>
@@ -209,7 +219,1091 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
+<h1 class="page">Orchestrating third party services with OAuth2 authentication</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This guide shows how to implement and configure a Serverless Workflow that orchestrate the interaction with an Oauth2 secured REST service.</p>
+</div>
+<div class="paragraph">
+<p>For information about orchestrating and configuring the OpenAPI based services, you must see the following documents:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../service-orchestration/orchestration-of-openapi-based-services.html" class="xref page">Orchestration of OpenAPI based services</a></p>
+</li>
+<li>
+<p><a href="../service-orchestration/configuring-openapi-services-endpoints.html" class="xref page">Configuring OpenAPI services endpoints in different environments</a></p>
+</li>
+<li>
+<p><a href="authention-support-for-openapi-services.html" class="xref page">Authentication support for OpenAPI services</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_introduction"><a class="anchor" href="#_introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Imagine that you have a set of applications that must resolve currency exchange calculations as part of their regular operations. For that, you need an accurate source of information to get the different exchange rates.</p>
+</div>
+<div class="paragraph">
+<p>Fortunately, your company has a commercial agreement with Acme Financial Services, and those rates can be queried using their Oauth2 secured services. Additionally, as confidential client, you were granted with proper credentials to access these services as part of the agreement.</p>
+</div>
+<div class="paragraph">
+<p>However, you don&#8217;t want to expose Acme&#8217;s services to the applications.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_solution"><a class="anchor" href="#_solution"></a>Solution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Implement a Serverless Workflow that resolves:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The orchestration with Acme&#8217;s services and the currency exchange calculation.</p>
+</li>
+<li>
+<p>The authentication requirements to access that service.</p>
+</li>
+<li>
+<p>Potential vendor lock-in problems if you want to change the provider in the future.</p>
+</li>
+<li>
+<p>Domain specific validations, optimizations, etc.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The next sections shows how to create the end-to-end solution by following the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus">serverless-workflow-oauth2-orchestration-quarkus</a> example.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>To get the source code of the example you must clone the <a href="https://github.com/kiegroup/kogito-examples">GitHub repository</a> and go to the <code>serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus</code> directory.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_services"><a class="anchor" href="#_services"></a>Services</h3>
+<div class="paragraph">
+<p>The following services compose the solution:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>currency-exchange-workflow</code>: Is the Serverless Workflow that implement the currency exchange calculation.</p>
+</li>
+<li>
+<p><code>acme-financial-service</code>: Is the REST service that provides the exchange rates.</p>
+</li>
+<li>
+<p><code>acme-oauth2-server</code>: Is the Keycloak server that secures Acme&#8217;s REST services.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_architecture"><a class="anchor" href="#_architecture"></a>Architecture</h3>
+<div class="paragraph">
+<p>The following diagram shows the architecture of the solution:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/security/orchestrating-third-party-services-with-oauth2/architecture-diagram.png" alt="Architecture diagram">
+</div>
+<div class="title">Figure 1. Architecture diagram</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The application creates a Serverless Workflow instance to calculate the currency exchange.</p>
+</li>
+<li>
+<p>The workflow executes the OpenAPI operation to get the exchange rates information.</p>
+</li>
+<li>
+<p>Authorizations are produced to validate the access.</p>
+</li>
+<li>
+<p>The workflow receives the exchange rates information and execute the calculations.</p>
+</li>
+<li>
+<p>The workflow execution finalize by sending the result to the application.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The interactions with the Oauth2 server are managed automatically by the Serverless Workflow.
+And you must only configure a <a href="https://quarkus.io/guides/security-openid-connect-client">Quarkus OpenId Connect Client (OIDC)</a> as described <a href="#_configuration">here</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_currency_exchange_workflow"><a class="anchor" href="#_currency_exchange_workflow"></a>Currency Exchange Workflow</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_diagram"><a class="anchor" href="#_diagram"></a>Diagram</h3>
+<div class="paragraph">
+<p>The following figure shows the <code>currency-exchange-workflow</code> diagram:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/security/orchestrating-third-party-services-with-oauth2/currency-exchange-workflow-diagram.png" alt="currency exchange workflow diagram">
+</div>
+<div class="title">Figure 2. currency-exchange-workflow diagram</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Input data is validated.</p>
+</li>
+<li>
+<p>Check the validation results:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>If validation is successful, transition to (3).</p>
+</li>
+<li>
+<p>If validation failed, no transition, finalize the workflow with the error execution status.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Call <code>acme-financial-service</code> to get the exchange rate:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>If the call is successful, transition to (4).</p>
+</li>
+<li>
+<p>If the call fails, transition to (6).</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Calculate the currency exchange and transition to (5).</p>
+</li>
+<li>
+<p>Set the successful execution status and finalize the workflow execution.</p>
+</li>
+<li>
+<p>Set the error execution status and finalize the workflow execution.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_definition"><a class="anchor" href="#_definition"></a>Definition</h3>
+<div class="paragraph">
+<p>The following Serverless Workflow specification defines the <code>currency-exchange-workflow</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">currency-exchange-workflow.sw.json file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "currency_exchange_workflow",
+  "version": "1.0",
+  "name": "Currency Exchange SW",
+  "dataInputSchema": "currency-exchange-workflow-schema.json",
+  "start": "ValidateInputs",
+  "functions": [
+    {
+      "name": "validateInputs",
+      "type": "custom",
+      "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::validateInputs"
+    },
+    {
+      "name": "getExchangeRate",
+      "type": "rest",
+      "operation": "specs/acme-financial-service.yml#exchangeRate"
+    },
+    {
+      "name": "calculateExchange",
+      "type": "expression",
+      "operation": "${ { calculateExchangeResult: .amount * .exchangeRate } }"
+    }
+  ],
+  "errors": [
+    {
+      "name": "service_error",
+      "code": "java.lang.Exception"
+    }
+  ],
+  "states": [
+    {
+      "name": "ValidateInputs", <i class="conum" data-value="1"></i><b>(1)</b>
+      "type": "operation",
+      "actions": [
+        {
+          "name": "validateInputsAction",
+          "functionRef": {
+            "refName": "validateInputs",
+            "arguments": {
+              "currencyFrom": "${ .currencyFrom }",
+              "currencyTo": "${ .currencyTo }",
+              "amount": "${ .amount }",
+              "exchangeDate": "${ .exchangeDate }"
+            }
+          }
+        }
+      ],
+      "transition": "CheckValidation"
+    },
+    {
+      "name": "CheckValidation", <i class="conum" data-value="2"></i><b>(2)</b>
+      "type": "switch",
+      "dataConditions": [
+        {
+          "condition": "${ .executionStatus == \"ERROR\" }",
+          "end": true
+        }
+      ],
+      "defaultCondition": {
+        "transition": "GetExchangeRate"
+      }
+    },
+    {
+      "name": "GetExchangeRate", <i class="conum" data-value="3"></i><b>(3)</b>
+      "type": "operation",
+      "actions": [
+        {
+          "name": "getExchangeRateAction",
+          "functionRef": {
+            "refName": "getExchangeRate",
+            "arguments": {
+              "currencyFrom": "${ .currencyFrom }",
+              "currencyTo": "${ .currencyTo }",
+              "exchangeDate": "${ .exchangeDate }"
+            }
+          },
+          "actionDataFilter": {
+            "results": "${ {exchangeRate: .rate} }"
+          }
+        }
+      ],
+      "transition": "CalculateExchange",
+      "onErrors": [
+        {
+          "errorRef": "service_error",
+          "transition": "EndWithError"
+        }
+      ]
+    },
+    {
+      "name": "CalculateExchange", <i class="conum" data-value="4"></i><b>(4)</b>
+      "type": "operation",
+      "actions": [
+        {
+          "name": "calculateExchangeAction",
+          "functionRef": {
+            "refName": "calculateExchange"
+          },
+          "actionDataFilter": {
+            "results": "${ {result: .calculateExchangeResult} }"
+          }
+        }
+      ],
+      "transition": "EndSuccessful"
+    },
+    {
+      "name": "EndWithError", <i class="conum" data-value="5"></i><b>(5)</b>
+      "type": "inject",
+      "data": {
+        "executionStatus": "ERROR",
+        "executionStatusMessage": "Execution failed: The acme-financial-service invocation has failed, check that the service is running and that you have configured the OAuth2 client properly"
+      },
+      "end": true
+    },
+    {
+      "name": "EndSuccessful", <i class="conum" data-value="6"></i><b>(6)</b>
+      "type": "inject",
+      "data": {
+        "executionStatus": "OK",
+        "executionStatusMessage": "Execution successful"
+      },
+      "end": true
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#_validateinputs">ValidateInputs</a> state: executes the <code>validateInputs</code> function to validate the input data.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>CheckValidation</code> state: determines the next state to go by evaluating the validation results.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#_getexchangerate">GetExchangeRate</a> state: executes the <code>getExchangeRate</code>  to get the exchange rate from the remote server.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#_calculateexchange">CalculateExchange</a> state: executes the <code>calculateExchange</code> function to calculate the currency exchange.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code>EndWithError</code> state: finalize the process with the <code>ERROR</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><code>EndSuccessful</code> state: finalize the process with the successful <code>OK</code> status.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_validateinputs"><a class="anchor" href="#_validateinputs"></a>ValidateInputs</h3>
+<div class="paragraph">
+<p>To execute custom Java processing as part of the Serverless Workflow, you can use a <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#defining-custom-function-types">CNCF Serverless Workflow custom function</a> such as <code>validateInputs</code>.</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">validateInputs function definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "name": "validateInputs", <i class="conum" data-value="1"></i><b>(1)</b>
+  "type": "custom", <i class="conum" data-value="2"></i><b>(2)</b>
+  "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::validateInputs" <i class="conum" data-value="3"></i><b>(3)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>validateInputs</code> function declaration.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>custom</code> type implements the ability use your own Java class to implement a function.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Specifies that the function is implemented by the method <code>validateIntpus</code> in the Java class <code>org.kie.kogito.examples.ExchangeWorkflowHelper</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The parameters and results for a custom function are processed like any other function type.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To implement the function you must create a Java class such as <code>ExchangeWorkflowHelper</code> in your project:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">ExchangeWorkflowHelper.java file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package org.kie.kogito.examples;
 
+@ApplicationScoped
+public class ExchangeWorkflowHelper {
+
+    public ValidationResult validateInputs(String currencyFrom,
+                                           String currencyTo,
+                                           double amount,
+                                           String exchangeDate) {
+        // Implement your custom Java processing here and return
+        // a Java POJO to the Serverless Workflow.
+        if (!good) {
+            return new ValidationResult("ERROR", "Not good!");
+        }
+        return new ValidationResult();
+    }
+
+    public static class ValidationResult {
+        private String executionStatus;
+        private String executionStatusMessage;
+        // getters, setters, etc.
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_getexchangerate"><a class="anchor" href="#_getexchangerate"></a>GetExchangeRate</h3>
+<div class="paragraph">
+<p>To access the <code>acme-financial-service</code> you can use a <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#using-functions-for-restful-service-invocations">CNCF Serverless Workflow function</a>, such as <code>getExchangeRate</code>:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">getExchangeRate function definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "name": "getExchangeRate", <i class="conum" data-value="1"></i><b>(1)</b>
+  "type": "rest",
+  "operation": "specs/acme-financial-service.yml#exchangeRate" <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>getExchangeRate</code> function declaration.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Specifies that the function is implemented by the <code>exchangeRate</code> operation in the <code>acme-financial-service.yml</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For the configuration above the file <code>acme-financial-service.yml</code> must be located in the <code>src/main/resources/specs</code> directory of the project.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can find more information in <a href="../service-orchestration/orchestration-of-openapi-based-services.html" class="xref page">Orchestration of OpenAPI based services</a>.</p>
+</div>
+<div class="paragraph">
+<p>To filter the information that must be returned to the workflow you can use a <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Action-data-filters">CNCF Serverless Workflow actionDataFilter</a> such as:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">actionDataFilter to pass the <code>getExchangeRate</code> results:</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  "actionDataFilter": {
+    "results": "${ {exchangeRate: .rate} }" <i class="conum" data-value="1"></i><b>(1)</b>
+  }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Merge the <code>"rate"</code> property value coming in the <code>acme-financial-service</code> invocation result, into a workflowdata property <code>"exchangeRate"</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_calculateexchange"><a class="anchor" href="#_calculateexchange"></a>CalculateExchange</h3>
+<div class="paragraph">
+<p>To calculate the currency exchange you can use a <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Using-Functions-For-Expression-Evaluation">CNCF Serverless Workflow function</a>, such as <code>calculateExchange</code>:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">calculateExchange function definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "name": "calculateExchange", <i class="conum" data-value="1"></i><b>(1)</b>
+  "type": "expression", <i class="conum" data-value="2"></i><b>(2)</b>
+  "operation": "${ { calculateExchangeResult: .amount * .exchangeRate } }" <i class="conum" data-value="3"></i><b>(3)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>calculateExchange</code> function declaration.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>expression</code> type implements the ability use an expression to implement a function.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Specifies that the function returns a JSON object with a property <code>"calculateExchangeResult"</code> that contains the calculation.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>To filter the information that must be returned to the workflow you can use a <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Action-data-filters">CNCF Serverless Workflow actionDataFilter</a> such as:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">actionDataFilter to pass the <code>calculateExchange</code> results:</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  "actionDataFilter": {
+    "results": "${ {result: .calculateExchangeResult} }" <i class="conum" data-value="1"></i><b>(1)</b>
+  }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Merge the <code>"calculateExchangeResult"</code> property value coming from the expression result into a workflowdata property <code>"result"</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_acme_financial_service"><a class="anchor" href="#_acme_financial_service"></a>Acme Financial Service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following OpenAPI specification defines the <code>acme-financial-service</code>.</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div id="acme-financial-service-yml" class="listingblock">
+<div class="title">acme-financial-service.yml OpenAPI specification</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
+openapi: 3.0.3
+info:
+  title: Acme Financial Service API
+  version: 1.0.1
+paths:
+  /financial-service/exchange-rate: <i class="conum" data-value="1"></i><b>(1)</b>
+    get:
+      tags:
+        - Acme Financial Resource
+      operationId: exchangeRate
+      parameters: <i class="conum" data-value="2"></i><b>(2)</b>
+        - name: currencyFrom
+          in: query
+          schema:
+            type: string
+        - name: currencyTo
+          in: query
+          schema:
+            type: string
+        - name: exchangeDate
+          in: query
+          schema:
+            type: string
+      responses: <i class="conum" data-value="3"></i><b>(3)</b>
+        "200":
+          description: OK
+          content: <i class="conum" data-value="4"></i><b>(4)</b>
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExchangeRateResult'
+      security:
+        - acme-financial-oauth: [ ] <i class="conum" data-value="5"></i><b>(5)</b>
+components:
+  schemas:
+    ExchangeRateResult: <i class="conum" data-value="6"></i><b>(6)</b>
+      type: object
+      properties:
+        rate:
+          format: double
+          type: number
+  securitySchemes:
+    acme-financial-oauth: <i class="conum" data-value="7"></i><b>(7)</b>
+      type: oauth2 <i class="conum" data-value="8"></i><b>(8)</b>
+      flows:
+        clientCredentials: <i class="conum" data-value="9"></i><b>(9)</b>
+          authorizationUrl: http://localhost:8281/auth/realms/kogito/protocol/openid-connect/auth
+          tokenUrl: http://localhost:8281/auth/realms/kogito/protocol/openid-connect/token
+          scopes: { }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>REST path to access the <code>exchangeRate</code> operation in the remote server.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>exchangeRate</code> operation parameters.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>exchangeRate</code> operation responses.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Response type and data exchange format.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Specifies that the <code>exchangeRate</code> operation is secured with the <code>acme-financial-oauth</code> security scheme.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Response type specification.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><code>acme-financial-oauth</code> security scheme specification.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Security scheme type. This information indicates that you must configure a <a href="https://quarkus.io/guides/security-openid-connect-client">Quarkus OpenId Connect Client (OIDC)</a> with name <code>acme_financial_oauth</code> to execute the operation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Authentication flow to use, and flow information.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can find the full implementation of this service in the <code>serverless-workflow-oauth2-orchestration-quarkus/acme-financial-service</code> directory.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuration"><a class="anchor" href="#_configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Most relevant configurations for the Serverless Workflow:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example application.properties file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.openapi-generator.codegen.spec.acme_financial_service_yml.base-package=com.acme <i class="conum" data-value="1"></i><b>(1)</b>
+
+quarkus.rest-client.acme_financial_service_yml.url=http://localhost:8483 <i class="conum" data-value="2"></i><b>(2)</b>
+
+quarkus.oidc-client.acme_financial_oauth.discovery-enabled=false <i class="conum" data-value="3"></i><b>(3)</b>
+quarkus.oidc-client.acme_financial_oauth.auth-server-url=http://localhost:8281/auth/realms/kogito/protocol/openid-connect/auth <i class="conum" data-value="4"></i><b>(4)</b>
+quarkus.oidc-client.acme_financial_oauth.token-path=http://localhost:8281/auth/realms/kogito/protocol/openid-connect/token <i class="conum" data-value="5"></i><b>(5)</b>
+quarkus.oidc-client.acme_financial_oauth.client-id=kogito-app <i class="conum" data-value="6"></i><b>(6)</b>
+quarkus.oidc-client.acme_financial_oauth.grant.type=client
+quarkus.oidc-client.acme_financial_oauth.credentials.client-secret.method=basic <i class="conum" data-value="7"></i><b>(7)</b>
+quarkus.oidc-client.acme_financial_oauth.credentials.client-secret.value=secret <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Is the package name for the automatically generated classes that implements the access to the all operations defined in the file <code>acme-financial-service.yml</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Is the root URL to access all the operations defined in the file <code>acme-financial-service.yml</code>. For the <code>exchangeRate</code> operation, an absolute URL such as http://localhost:8483/financial-service/exchange-rate is automatically generated.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Disable the Oauth2 server endpoints discovery since the endpoints provided in the <a href="#acme-financial-service-yml">acme-financial-service.yml</a> file will be used instead.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Is the authentication URL of the Oauth2 server.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Is the relative path or absolute URL of the Oauth2 token endpoint which issues access and refresh tokens.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Is the client-id to identify the Serverless Workflow against the authorization service, such as <code>kogito-app</code>. This identifier must be provided by Acme.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Is the method to use at the time to send the client-secret for the authentications when the client grant type is used.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Is the client secret to authenticate the Serverless Workflow against the authorization service when the client grant type is used. This secret must be provided by Acme.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To configure the <code>acme_financial_service_oauth</code> <a href="https://quarkus.io/guides/security-openid-connect-client">Quarkus OpenId Connect Client (OIDC)</a> you must follow the rules described in <a href="authention-support-for-openapi-services.html#ref-example-oauth-authentication" class="xref page">Example of OAuth2 authentication</a>.
+And the particular attributes depends on the Oauth2 server and authorization flow to use, you can get this information from the OpenAPI specification of the target service <a href="#acme-financial-service-yml">acme-financial-service.yml</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can use the alternatives defined in the <a href="https://quarkus.io/guides/config-reference">Quarkus configuration reference guide</a> to configure these properties.
+A common usage is to define <a href="https://quarkus.io/guides/config-reference#environment-variables">environment variables</a> to set the authentication secrets, and you can also use the <a href="https://quarkus.io/guides/credentials-provider">Quarkus Credentials Provider</a> framework.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_running_the_example"><a class="anchor" href="#_running_the_example"></a>Running the example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To run the example you must follow these steps:</p>
+</div>
+<div class="sect2">
+<h3 id="_get_the_example"><a class="anchor" href="#_get_the_example"></a>Get the example</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In a new terminal, git clone the kogito-examples repository and navigate to this directory:</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone https://github.com/kiegroup/kogito-examples.git
+
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_build_the_example"><a class="anchor" href="#_build_the_example"></a>Build the example</h3>
+<div class="olist arabic">
+<ol class="arabic" start="2">
+<li>
+<p>Build the example using Maven:</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_start_keycloak"><a class="anchor" href="#_start_keycloak"></a>Start Keycloak</h3>
+<div class="olist arabic">
+<ol class="arabic" start="3">
+<li>
+<p>In a new terminal, start the Keycloak server:</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/scripts
+
+cd ./startKeycloak.sh</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can use docker-compose following this procedure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/docker-compose
+
+docker-compose up</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_start_acme_financial_service"><a class="anchor" href="#_start_acme_financial_service"></a>Start Acme Financial Service</h3>
+<div class="olist arabic">
+<ol class="arabic" start="4">
+<li>
+<p>In a new terminal, navigate to the <code>acme-financial-service</code> directory, and start the Acme Financial Service Quarkus application.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/acme-financial-service
+
+java -jar target/quarkus-app/quarkus-run.jar</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_start_currency_exchange_workflow"><a class="anchor" href="#_start_currency_exchange_workflow"></a>Start Currency Exchange Workflow</h3>
+<div class="olist arabic">
+<ol class="arabic" start="5">
+<li>
+<p>In a new terminal, navigate to the <code>currency-exchange-workflow</code> directory, and start the Currency Exchange Workflow Quarkus application.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/currency-exchange-workflow
+
+java -jar target/quarkus-app/quarkus-run.jar</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_execution_examples"><a class="anchor" href="#_execution_examples"></a>Execution examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When all the services are running you can use the following <code>curl</code> commands to run the Currency Exchange Workflow.</p>
+</div>
+<div class="sect2">
+<h3 id="_successful_execution"><a class="anchor" href="#_successful_execution"></a>Successful execution</h3>
+<div class="paragraph">
+<p>Calculate the currency exchange from <code>EUR</code> to <code>USD</code>:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_request"></a>Request</p>
+</li>
+<li>
+<p><a id="tabset1_response"></a>Response</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_request">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -X 'POST' \
+  'http://localhost:8080/currency_exchange_workflow' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "workflowdata": {
+           "currencyFrom": "EUR",
+           "currencyTo": "USD",
+           "exchangeDate": "2022-06-10",
+           "amount": 2.0
+       }
+    }'</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_response">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "399ce304-037c-486d-b4bf-1564baf907a1",
+  "workflowdata": {
+    "currencyFrom": "EUR",
+    "currencyTo": "USD",
+    "exchangeDate": "2022-06-10",
+    "amount": 2.0,
+    "executionStatus": "OK",
+    "executionStatusMessage": "Execution successful",
+    "exchangeRate": 1.0578,
+    "result": 2.1156
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_unsuccessful_validation"><a class="anchor" href="#_unsuccessful_validation"></a>Unsuccessful validation</h3>
+<div class="paragraph">
+<p>Calculate the currency exchange from <code>EUR</code> to <code>MXN</code>:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_request"></a>Request</p>
+</li>
+<li>
+<p><a id="tabset2_response"></a>Response</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_request">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -X 'POST' \
+  'http://localhost:8080/currency_exchange_workflow' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "workflowdata": {
+    "currencyFrom": "EUR",
+    "currencyTo": "MXN",
+    "exchangeDate": "2022-06-10",
+    "amount": 2.0
+  }
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_response">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "e0e7708d-c82c-47d7-9354-09ccd1e972bb",
+  "workflowdata": {
+    "currencyFrom": "EUR",
+    "currencyTo": "MXN",
+    "exchangeDate": "2022-06-10",
+    "amount": 2,
+    "executionStatus": "ERROR",
+    "executionStatusMessage": "Invalid currencyTo: MXN, only the following currencies are supported [EUR, USD, JPY, GBP, CAD, BRL, AUD]",
+    "exchangeRate": null
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>As you can see the currencies currently supported by the <code>currency-exchange-workflow</code> are <code>EUR, USD, JPY, GBP, CAD, BRL and AUD</code>.
+However, the <code>acme-financial-service</code> is a very reliable and can resolve any exchange type.
+This was done to show that a Serverless Workflow can also implement intermediate data filtering, transforming and validations.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_unexpected_error"><a class="anchor" href="#_unexpected_error"></a>Unexpected error</h3>
+<div class="paragraph">
+<p>Unexpected error when accessing the <code>acme-financial-service</code>:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset3_request"></a>Request</p>
+</li>
+<li>
+<p><a id="tabset3_response"></a>Response</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset3_request">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -X 'POST' \
+  'http://localhost:8080/currency_exchange_workflow' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "workflowdata": {
+    "currencyFrom": "EUR",
+    "currencyTo": "USD",
+    "exchangeDate": "2022-06-10",
+    "amount": 2.0
+  }
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_response">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "0044ffa0-7b2b-4fdc-af60-cd98c6bd3ade",
+  "workflowdata": {
+    "currencyFrom": "EUR",
+    "currencyTo": "USD",
+    "exchangeDate": "2022-06-10",
+    "amount": 2.0,
+    "executionStatus": "ERROR",
+    "executionStatusMessage": "Execution failed: The acme-financial-service invocation has failed, check that the service is running and that you have configured the OAuth2 client properly",
+    "exchangeRate": null
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
