@@ -24,7 +24,7 @@
 :spec_doc_functions_for_expression_evaluation_url: {spec_doc_url}#Using-Functions-For-Expression-Evaluation
 :spec_doc_action_data_filters_url: {spec_doc_url}#Action-data-filters
 
-This document describes the examples of how you can implement and configure a Serverless Workflow that orchestrates the interaction with an OAuth 2.0 secured REST service.
+This document describes the example of how you can implement and configure a Serverless Workflow that orchestrates the interaction with an OAuth 2.0 secured REST service.
 
 For more information about orchestrating and configuring OpenAPI services, see {orchestration-of-opnapi-based-services}[Orchestrating the OpenAPI services], {configuring-openapi-services-endpoints}[Configuring OpenAPI services endpoints in different environments], and {authentication-support-for-openapi-services}[Authentication for OpenAPI services in Serverless Workflow].
 
@@ -37,8 +37,8 @@ Suppose you have a set of applications that must resolve the currency exchange c
 
 When you use the Acme Financial Services, you can query the exchange rates using their OAuth 2.0 secured services, which you can access using the granted credentials. However, you do not want to expose the services provided by Acme to the applications. In this case, you can implement a Serverless Workflow that resolves the following aspects:
 
-* Orchestration with services provided by Acme Financial and currency exchange calculations.
-* Authentication requirements to access the services provided by Acme Financial.
+* Orchestration with services provided by Acme and currency exchange calculations.
+* Authentication requirements to access the services provided by Acme.
 * Potential vendor lock-in problems, in case you want to change the provider in future.
 * Domain-specific validations and optimizations.
 
@@ -439,7 +439,7 @@ quarkus.oidc-client.acme_financial_oauth.credentials.client-secret.value=secret 
 <7> Method that is used at the time of sending the `client-secret` for the authentications when the client grant type is used.
 <8> `client-secret` to authenticate the Serverless Workflow against the authorization service when the client grant type is used. This secret must be provided by Acme.
 
-To configure the link:{quarkus_guide_security_openid_connect_client_url}[Quarkus OpenId Connect Client (OIDC)] for `acme_financial_service_oauth` service, you must follow the rules described in link:{authentication-support-for-openapi-services-oauth-example}[Example of OAuth 2.0 authentication].
+To configure the link:{quarkus_guide_security_openid_connect_client_url}[Quarkus OpenId Connect Client (OIDC)] for `acme_financial_service_oauth` service, you must follow the rules described in {authentication-support-for-openapi-services-oauth-example}[Example of OAuth 2.0 authentication].
 
 Also, the particular attributes depend on the OAuth 2.0 server and authorization flow to use. You can get the information about the OAuth 2.0 server and authorization flow from the `acme-financial-service.yml` file. 
 
