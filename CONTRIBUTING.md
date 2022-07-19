@@ -89,7 +89,7 @@ In general, use a lowercase style in text and use sentence-style capitalization 
 
 ## Quick Reference
 
-### Page cross reference
+### Page cross-reference
 
 - To refer a page in same module
   - `xref:file_name.adoc[optional text]`
@@ -138,7 +138,7 @@ issues_url: https://github.com/asciidoctor/asciidoctor/issues`
 Submit bug fixes to the link:{issues_url}[issue tracker]
 ```
 
-> Every attribute that's an URL should have the sufix `_url`. Use underscore (`_`) to separate words.
+> Every attribute that's an URL should have the suffix `_url`. Use underscore (`_`) to separate words.
 
 More details at the [AsciiDoc Documentation](https://asciidoctor.org/docs/asciidoc-recommended-practices/#dry-urls)
 
