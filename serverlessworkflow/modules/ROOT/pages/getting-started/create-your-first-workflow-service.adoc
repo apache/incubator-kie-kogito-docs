@@ -47,6 +47,7 @@ quarkus create app \
     -x=quarkus-container-image-jib \
     -x=quarkus-resteasy-jackson \
     -x=quarkus-smallrye-openapi \
+    --no-code \
     org.kie.kogito.examples:serverless-workflow-hello-world:1.0
 ----
 
@@ -56,6 +57,7 @@ The previous command creates a Maven Quarkus project in the `serverless-workflow
 * `quarkus-container-image-jib`: Adds support for Container Image Builds
 * `quarkus-resteasy-jackson`: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request
 * `quarkus-smallrye-openapi`: Adds support for Swagger documentation when you run the application in development mode
+* `--no-code`: Prevents workflow example code from being generated
 
 The SwaggerUI is available at `http://localhost:8080/q/swagger-ui/` when you run the application.
 --
@@ -68,11 +70,12 @@ Maven::
 mvn io.quarkus.platform:quarkus-maven-plugin:{quarkus_version}:create \
     -DprojectGroupId=org.kie.kogito.examples \
     -DprojectArtifactId=serverless-workflow-hello-world \
-    -Dextensions="kogito-quarkus-serverless-workflow,quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi"
+    -Dextensions="kogito-quarkus-serverless-workflow,quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi" \
+    -DnoCode
 cd serverless-workflow-hello-world
 ----
 
-In the previous command, `org.kie.kogito.examples`, `serverless-workflow-hello-world`, and `1.0` is group id, artifact id, and version of your project respectively.
+In the previous command, `org.kie.kogito.examples`, `serverless-workflow-hello-world`, and `1.0` is group id, artifact id, and version of your project respectively.  `-DnoCode` prevents the generation of workflow example code.
 --
 Knative CLI::
 +
