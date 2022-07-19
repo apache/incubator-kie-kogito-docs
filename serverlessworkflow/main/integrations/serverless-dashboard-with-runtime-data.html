@@ -3,9 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title> Displaying workflow runtime data in Serverless Dashboards :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Displaying workflow runtime data in Serverless Dashboards">
-    <meta name="keywords" content="kogito, workflow, quarkus, serverless, dashboards, monitoring">
+    <title>Displaying Serverless Workflow data in dashboards :: Kogito Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -173,7 +171,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="serverless-dashboard-with-runtime-data.html">Displaying workflow runtime data in serverless dashboards</a>
+    <a class="nav-link" href="serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -209,7 +207,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Integrations</li>
-    <li><a href="serverless-dashboard-with-runtime-data.html">Displaying workflow runtime data in serverless dashboards</a></li>
+    <li><a href="serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/integrations/serverless-dashboard-with-runtime-data.adoc">Edit this Page</a></div>
@@ -219,38 +217,41 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page"> Displaying workflow runtime data in Serverless Dashboards</h1>
+<h1 class="page">Displaying Serverless Workflow data in dashboards</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>To build dashboards we need data and it can be easily acquired from Kogito Serverless Workflow using any of the following approaches:</p>
+<p>This document describes how you can build dashboards to monitor your Serverless Workflows data.</p>
+</div>
+<div class="paragraph">
+<p>To build the dashboards, you need data, which you can acquire from your Serverless Workflows using one of the following methods:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Enabling <strong>Metrics</strong></p>
+<p>Enable metrics</p>
 </li>
 <li>
-<p>Integrating with <strong>Data Index</strong> to consume data using its REST API</p>
+<p>Integrate with Data Index to consume data using the REST API</p>
 </li>
 <li>
-<p>Using custom mechanisms (such as <code>ProcessInstanceListener</code>)</p>
+<p>Use custom mechanisms, such as <code>ProcessInstanceListener</code></p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>In this document we will explore creating dashboards for metrics and for Data Index GraphQL REST API.</p>
+<p>The following sections describes the process of creating dashboards using metrics and Data Index GraphQL REST API.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_serverless_dashboards_with_dashbuilder"><a class="anchor" href="#_serverless_dashboards_with_dashbuilder"></a>Serverless Dashboards with Dashbuilder</h2>
+<h2 id="con-sw-dashboard"><a class="anchor" href="#con-sw-dashboard"></a>Dashboards for Serverless Workflows</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Serverless Dashboards are visualizations that run entirely on the client side. We will use <a href="https://www.dashbuilder.org">Dashbuilder</a> to create Dashboards: it consumes data from any JSON source and the dashboard is defined in YAML format.</p>
+<p>The dashboards for Serverless Workflows are visualization of data that run on the client side. The dashboards are created using <a href="https://www.dashbuilder.org">Dashbuilder</a>, which consumes data from any JSON source. You can define a dashboard in YAML format.</p>
 </div>
 <div class="paragraph">
-<p>To use Dashbuilder you need to download, uncompress the <code>dashbuilder-client</code> NPM package and edit the file <strong>setup.js</strong> to link your YAML files. For further information please check <a href="https://www.dashbuilder.org/docs/#_client_only">Dashbuilder documentation</a>.</p>
+<p>To use the Dashbuilder, download and uncompress the <code>dashbuilder-client</code> NPM package. Also, edit the <code>setup.js</code> file to link your YAML files. For more information about using Dashbuilder, see <a href="https://www.dashbuilder.org/docs/#_client_only">Dashbuilder documentation</a>.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -260,13 +261,31 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="_using_metrics_for_building_dashboards"><a class="anchor" href="#_using_metrics_for_building_dashboards"></a>Using Metrics for building Dashboards</h2>
+<h2 id="proc-sw-dashboard-metrics"><a class="anchor" href="#proc-sw-dashboard-metrics"></a>Building dashboards using metrics</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To enable metrics for your Serverless Workflow application add the <code>org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus</code> dependency to your apps&#8217;s classpath and the metrics will be available at <code>/q/metrics</code> path.</p>
+<p>You can build dashboards to monitor the data of your Serverless Workflows using metrics.</p>
 </div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Serverless Workflow application is created.</p>
+<div class="paragraph">
+<p>For more information about creating Serverless Workflow, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>To enable metrics for your Serverless Workflow application add <code>org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus</code> dependency in <code>pom.xml</code> file of your application:</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
-<div class="title">Metrics Dependency to be added to <code>pom.xml</code></div>
+<div class="title">Add metrics dependency to <code>pom.xml</code> file</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">    &lt;dependency&gt;
       &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
@@ -275,10 +294,13 @@
 </div>
 </div>
 <div class="paragraph">
-<p>Dashbuilder can consume data directly from metrics endpoints. Using a <a href="https://docs.jsonata.org/overview.html">JSONAta expression</a> to format some metrics we can simply show metrics in a table using the following YML:</p>
+<p>You can find the metrics in <code>/q/metrics</code> path.</p>
+</div>
+<div class="paragraph">
+<p>The dashbuilder can consume the data of your Serverless Workflow directly from the metrics endpoints. Therefore, you can use a <a href="https://docs.jsonata.org/overview.html">JSONAta expression</a> to format the metrics and display the metrics in a table using the following example of YAML code:</p>
 </div>
 <div class="listingblock">
-<div class="title">Show metrics in a table</div>
+<div class="title">Example YAML to show metrics in a table</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">datasets:
   - uuid: swf_metrics
@@ -307,31 +329,36 @@ pages:
 <div class="content">
 <img src="../_images/integrations/dashbuilder-metrics-table.png" alt="dashbuilder metrics table">
 </div>
-<div class="title">Figure 1. Metrics in a table</div>
+<div class="title">Figure 1. Example metrics in a table</div>
 </div>
-<div class="paragraph">
-<p>To extract a specific information from the Workflow, you can use specific Kogito metrics, and when displaying the metric we filter the data to only include it. Metrics related to Serverless Workflow:</p>
 </div>
+</div>
+</li>
+<li>
+<p>To extract a specific information from your Serverless Workflow, use specific metrics. Metrics related to Serverless Workflows include:</p>
+<div class="openblock">
+<div class="content">
 <div class="ulist">
 <ul>
 <li>
-<p><strong>kogito_process_instance_completed_total</strong>: Completed Workflows</p>
+<p><code>kogito_process_instance_completed_total</code>: Completed Serverless Workflows</p>
 </li>
 <li>
-<p><strong>kogito_process_instance_started_total</strong>: Started Workflows</p>
+<p><code>kogito_process_instance_started_total</code>: Started Serverless Workflows</p>
 </li>
 <li>
-<p><strong>kogito_process_instance_running_total</strong>: Running Workflows</p>
+<p><code>kogito_process_instance_running_total</code>: Running Serverless Workflows</p>
 </li>
 <li>
-<p><strong>kogito_process_instance_duration_seconds_sum</strong>: Workflows Total Duration</p>
+<p><code>kogito_process_instance_duration_seconds_sum</code>: Serverless Workflows total duration</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Dashbuilder <strong>metrics</strong> and <strong>bar chart</strong> components are useful to display these metrics. After filtering specific metrics we can put the information in bar charts as you can see the YML below:</p>
+<p>When you display the metrics, you can filter the data to include the specific metrics. You can use the <strong>metrics</strong> and <strong>bar chart</strong> components in dashbuilder to display the specific metrics and after filtering the metrics, you can put the information in bar charts as shown in the following example YAML code:</p>
 </div>
 <div class="listingblock">
+<div class="title">Example YAML to display bar charts</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">datasets:
   - uuid: metrics
@@ -466,26 +493,51 @@ pages:
 <div class="content">
 <img src="../_images/integrations/dashbuilder-workflows-metrics-dashboard.png" alt="dashbuilder workflows metrics dashboard">
 </div>
-<div class="title">Figure 2. Workflow Metrics Dashboard</div>
+<div class="title">Figure 2. Example Serverless Workflow metrics dashboard</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>If you are using Prometheus, we can use PROMQL with Prometheus REST API and transform the result to the JSON format supported by Dashbuilder to build dashboards. For further information about Dashbuilder and Prometheus check the article <a href="https://blog.kie.org/2022/07/creating-prometheus-dashboards-using-dashbuilder.html">Creating Prometheus Dashboards with Dashbuilder</a>.</p>
+<p>If you are using Prometheus, you can use PROMQL with Prometheus REST API and transform the result to JSON format that is supported by dashbuilder to build the dashoards.</p>
+</div>
+<div class="paragraph">
+<p>For more information about dashbuilder and Prometheus, see <a href="https://blog.kie.org/2022/07/creating-prometheus-dashboards-using-dashbuilder.html">Creating Prometheus Dashboards using Dashbuilder</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_using_data_index"><a class="anchor" href="#_using_data_index"></a>Using Data Index</h2>
+<h2 id="proc-sw-dashboard-data-index"><a class="anchor" href="#proc-sw-dashboard-data-index"></a>Building dashboards using Data Index</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Data index is a service available during development mode, containing all data about the execution of workflow steps. By default, the data index is available at <code><a href="http://localhost:8180" class="bare">http://localhost:8180</a></code>, and it uses GraphQL, so Dashbuilder can connect to it using its REST API and transform the result to the supported format.</p>
+<p>Data Index is a service that contains all the data related to the execution of your Serverless Workflow. The Data Index service is available during the development mode. By default, you can access the Data Index at <code><a href="http://localhost:8180" class="bare">http://localhost:8180</a></code>.</p>
+</div>
+<div class="paragraph">
+<p>The Data Index service uses GraphQL, so that dashbuilder can connect with the service using its REST API and transform the result to the supported format.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Serverless Workflow application is created.</p>
+<div class="paragraph">
+<p>For more information about creating Serverless Workflow, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+</ul>
 </div>
 <div class="olist arabic">
-<div class="title">The steps to create a dashboard with data from Data Index:</div>
+<div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Go to the Data Index GraphQL interface (default is <code><a href="http://localhost:8180/graphiql" class="bare">http://localhost:8180/graphiql</a></code>) and test your query. Let&#8217;s use as an example this query that lists all workflows:</p>
+<p>Go to the Data Index GraphQL interface (default to <code><a href="http://localhost:8180/graphiql" class="bare">http://localhost:8180/graphiql</a></code>) and test your query.</p>
 <div class="openblock">
 <div class="content">
+<div class="paragraph">
+<p>The following is an example of GraphQL query that lists all the Serverless Workflows:</p>
+</div>
 <div class="listingblock">
 <div class="title">Example GraphQL query to retrieve all workflows</div>
 <div class="content">
@@ -506,11 +558,20 @@ pages:
 </div>
 </li>
 <li>
-<p>Notice that when you run the query it modifies the URL to include the query. Copy the URL, but modify <code>graphiql</code> to <code>graphql</code>. When accessing it you will notice that it returns the result in a JSON format, such as:</p>
+<p>Run the GraphQL query.</p>
+<div class="paragraph">
+<p>When you run the query, note that the URL is modified to includes the query.</p>
+</div>
+</li>
+<li>
+<p>Copy the URL and modify <code>graphiql</code> to <code>graphql</code>.</p>
 <div class="openblock">
 <div class="content">
+<div class="paragraph">
+<p>When you access the URL with <code>graphql</code>, it returns the result in a JSON format as shown in the following example:</p>
+</div>
 <div class="listingblock">
-<div class="title">GraphQL JSON result when using the query above</div>
+<div class="title">GraphQL JSON result when using the query</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "data": {
@@ -537,7 +598,7 @@ pages:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Internally, Workflows are referenced as process hence the fields <code>processId</code> and <code>processName</code> are actually the workflow id and name.</p>
+<p>Internally, Serverless Workflows are referenced as processes, therefore the <code>processId</code> is the workflow ID and <code>processName</code> is the workflow name.</p>
 </div>
 </td>
 </tr>
@@ -547,11 +608,14 @@ pages:
 </div>
 </li>
 <li>
-<p>Now it is required to transform the response, so a transform expression is used. Notice also that it includes the columns metadata for the dataset</p>
+<p>Transform the response to the transform expression.</p>
 <div class="openblock">
 <div class="content">
+<div class="paragraph">
+<p>When you transform the response, note that the response includes the columns metdata for the data set.</p>
+</div>
 <div class="listingblock">
-<div class="title">Transform expression to get the fields from the JSON response</div>
+<div class="title">Example transform expression to retrieve fields from JSON response</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
     "columns" :[
@@ -571,12 +635,11 @@ pages:
 </div>
 </li>
 <li>
-<p>Finally we can create our dashboard using the expression and the URL mentioned previously. Our dashboard has a bar chart that counts the process instances by State and list all dashboards in a table:</p>
-</li>
-</ol>
-</div>
+<p>Create your dashboard using the transform expression and the URL mentioned in the previous step.</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
-<div class="title">Example Dashboard for Kogito Data Index</div>
+<div class="title">Example dashboard created using Data Index</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">datasets:
     - uuid: workflows
@@ -613,16 +676,32 @@ pages:
 </div>
 </div>
 <div class="paragraph">
-<p>The YML above results in the following dashboard:</p>
+<p>The previous example of dashboard contains bar chart that counts the workflow instances by <code>State</code> and lists all the dashboards in a table.</p>
+</div>
+<div class="paragraph">
+<p>Following is the graphical dashboard resulted from the previous example:</p>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="../_images/integrations/data-index-workflow-list-report.png" alt="data index workflow list report">
 </div>
-<div class="title">Figure 3. Dashboard with data from Data Index</div>
+<div class="title">Figure 3. Example dashboard created using Data Index</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>For more examples check <a href="https://www.dashbuilder.org">Dashbuilder Website</a>.</p>
+<p>For more examples of dashboards, see <a href="https://www.dashbuilder.org">Dashbuilder</a> website.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
 </div>
 </div>
 </div>
