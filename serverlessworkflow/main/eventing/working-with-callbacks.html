@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>Working with Callbacks :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Working with callbacks">
+    <meta name="keywords" content="kogito, workflow, serverless, callback, event">
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -132,6 +134,15 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
+    <span class="nav-text">Eventing</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="working-with-callbacks.html">Working with callbacks</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
     <span class="nav-text">Security</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
@@ -204,6 +215,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Eventing</li>
+    <li><a href="working-with-callbacks.html">Working with callbacks</a></li>
+  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/eventing/working-with-callbacks.adoc">Edit this Page</a></div>
   </div>
@@ -212,7 +228,157 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
+<h1 class="page">Working with Callbacks</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This guide discuss the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Callback-State">Callback State</a>. This is a state that performs an action and waits for an event produced as a result of that action to resume the workflow. So it is suitable to perform <em>fire&amp;wait-for-result</em> operations. The action will normally be an external service invocation. This service is expected to be async.</p>
+</div>
+<div class="paragraph">
+<p>From the flow perspective, async means that the control will be returned to the caller almost immediately, without waiting for the actual operation to be finished. Once it ends, a <a href="https://cloudevents.io/">Cloud Event</a> will be published to resume the flow.</p>
+</div>
+<div class="paragraph">
+<p>For the flow to know this published event is the one it is waiting for, the external service developer might include the Kogito process instance id in the event header or, preferably, use the <a href="#event-correlation-with-workflows">Serverless Workflow correlation mechanism</a>. This guide will focus on the former mechanism, which is based on the fact that every Kogito Workflow instance has an automatically generated and unique identifier.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_error_callback_example"><a class="anchor" href="#_error_callback_example"></a>Error callback example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The workflow in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-quarkus">Serverless Workflow Callback Quarkus</a> example illustrates the callback feature. Once started (this workflow does not have an initial model), it publishes a Cloud Event of type <code>resume</code> and waits for a Cloud Event of <code>wait</code> type.</p>
+</div>
+<div class="paragraph">
+<p>The Cloud Event with type <code>resume</code> is consumed by a listener that simulates the behavior of an external service. Consequently, as an external service will do, once the actions associated with that event reception have finished, this listener publishes a new Cloud Event with type <code>wait</code>. Once this event is received, the workflow moves to the next state and successfully ends.</p>
+</div>
+<div class="paragraph">
+<p>The first step to be done is to declare the event types being used by the workflow: <code>resume</code> and <code>wait</code>, as shown in the excerpt bellow:</p>
+</div>
+<div class="listingblock">
+<div class="title">Excerpt of the events declaration in a workflow definition</div>
+<div class="content">
+<pre>"events": [
+    {
+      "name": "resumeEvent",
+      "source": "",
+      "type": "resume"
+    },
+    {
+      "name": "waitEvent",
+      "source": "",
+      "type": "wait"
+    }
+  ]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then it declares a Callback state that will publish an event of type <code>resume</code> and wait for an event of type <code>wait</code>. The Cloud Event being published contains a <code>move</code> data field. The event being received is expected to have a <code>result</code> data field, which according to the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#event-data-filters">eventDataFilter</a>, will be added to the workflow model as <code>move</code> field.</p>
+</div>
+<div class="listingblock">
+<div class="title">Excerpt of the Callback State declaration handling the wait event</div>
+<div class="content">
+<pre>{
+      "name": "waitForEvent",
+      "type": "callback",
+      "action": {
+        "name": "publishAction",
+        "eventRef": {
+          "triggerEventRef": "resumeEvent",
+          "data": "{move: \"This is the initial data in the model\"}"
+        }
+      },
+      "eventRef": "waitEvent",
+      "eventDataFilter": {
+        "data": ".result",
+        "toStateData": ".move"
+      },
+      "transition": "finish"
+    }</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The event of type <code>resume</code> is consumed by a <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-quarkus/src/main/java/org/kie/kogito/examples/PrintService.java">event listener</a>. This event listener publishes a new event of type <code>wait</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Excerpt of the Java method that publishes the wait event</div>
+<div class="content">
+<pre>    private String generateCloudEvent(String id, String input) {
+        Map&lt;String, Object&gt; eventBody = new HashMap&lt;&gt;();
+        eventBody.put("result", input + " and has been modified by the event publisher");
+        eventBody.put("dummyEventVariable", "This will be discarded by the process");
+        try {
+            return objectMapper.writeValueAsString(CloudEventBuilder.v1()
+                    .withId(UUID.randomUUID().toString())
+                    .withSource(URI.create(""))
+                    .withType("wait")
+                    .withTime(OffsetDateTime.now())
+                    .withExtension(CloudEventExtensionConstants.PROCESS_REFERENCE_ID, id)
+                    .withData(objectMapper.writeValueAsBytes(eventBody))
+                    .build());
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(e);
+        }
 
+    }</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This cloud event modifies the original value of the <code>move</code> field and publishes it as the <code>result</code> field. Moreover, it contains a Cloud Event attribute, named <code>kogitoprocrefid</code>, holding the process instance id of the workflow that published the consumed event.</p>
+</div>
+<div class="paragraph">
+<p>As mentioned before, the <code>kogitoprocrefid</code> header is pivotal because, when not using correlation, it is the only way for the callback state to know that this event should be used to resume the flow.</p>
+</div>
+<div class="paragraph">
+<p>Remember that every workflow has a unique instance id that is automatically included in any event published by Kogito. As you can see in the code snippet below, the event listener takes the process instance id from a cloud event attribute named <code>kogitoprocinstanceid</code> of the event being consumed.</p>
+</div>
+<div class="listingblock">
+<div class="title">Excerpt of the Java method that consumes the resume event</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">    @Incoming("in-resume")
+    @Outgoing("out-wait")
+    @Acknowledgment(Strategy.POST_PROCESSING)
+    public String onEvent(Message&lt;String&gt; message) {
+        Optional&lt;CloudEvent&gt; ce = CloudEventUtils.decode(message.getPayload());
+        JsonCloudEventData cloudEventData = (JsonCloudEventData) ce.get().getData();
+        return generateCloudEvent(ce.get().getExtension(CloudEventExtensionConstants.PROCESS_INSTANCE_ID).toString(), cloudEventData.getNode().get("move").asText());
+    }</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_kafka_configuration"><a class="anchor" href="#_kafka_configuration"></a>Kafka configuration</h3>
+<div class="paragraph">
+<p>This example requires an external broker that handles the involved events in order to work. In this case, the default setup uses <a href="https://kafka.apache.org/documentation/">Kafka</a>, but you might use <a href="xref:consume-produce-events-with-knative-eventing.adoc">Knative Eventing</a> instead.</p>
+</div>
+<div class="paragraph">
+<p>Kakfa use topics to publish/consume messages. In this example we are using two of them, which matches the name of the Cloud Event types defined in the workflow: <code>wait</code> and <code>resume</code>. They are configured in <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-quarkus/src/main/resources/application.properties}">application.properties</a>. If you are interested on details, take a look to <a href="xref:consume-producing-events-with-kafka.adoc">Consume and Produce Events with Kafka</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Create your first Workflow Service</a>.</p>
+</li>
+<li>
+<p><a href="#event-correlation-with-workflows">Event Correlation with Workflows</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
