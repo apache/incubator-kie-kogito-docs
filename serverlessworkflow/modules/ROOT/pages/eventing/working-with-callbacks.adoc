@@ -1,1 +1,122 @@
-//= Working with callbacks
+Working with Callbacks
+======================
+:compat-mode!:
+// Metadata:
+:description: Working with callbacks
+:keywords: kogito, workflow, serverless, callback, event
+
+
+This guide discuss the link:{spec_doc_url}#Callback-State[Callback State]. This is a state that performs an action and waits for an event produced as a result of that action to resume the workflow. So it is suitable to perform __fire&wait-for-result__ operations. The action will normally be an external service invocation. This service is expected to be async.
+
+From the flow perspective, async means that the control will be returned to the caller almost immediately, without waiting for the actual operation to be finished. Once it ends, a link:{cloud_events_url}[Cloud Event] will be published to resume the flow.
+
+For the flow to know this published event is the one it is waiting for, the external service developer might include the Kogito process instance id in the event header or, preferably, use the xref:event-correlation-with-workflows[Serverless Workflow correlation mechanism]. This guide will focus on the former mechanism, which is based on the fact that every Kogito Workflow instance has an automatically generated and unique identifier.
+
+== Error callback example 
+
+The workflow in the link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus[Serverless Workflow Callback Quarkus] example illustrates the callback feature. Once started (this workflow does not have an initial model), it publishes a Cloud Event of type `resume` and waits for a Cloud Event of `wait` type.
+
+The Cloud Event with type `resume` is consumed by a listener that simulates the behavior of an external service. Consequently, as an external service will do, once the actions associated with that event reception have finished, this listener publishes a new Cloud Event with type `wait`. Once this event is received, the workflow moves to the next state and successfully ends. 
+
+The first step to be done is to declare the event types being used by the workflow: `resume` and `wait`, as shown in the excerpt bellow:
+
+.Excerpt of the events declaration in a workflow definition
+[code,json]
+----
+"events": [
+    {
+      "name": "resumeEvent",
+      "source": "",
+      "type": "resume"
+    },
+    {
+      "name": "waitEvent",
+      "source": "",
+      "type": "wait"
+    }
+  ]
+----
+
+Then it declares a Callback state that will publish an event of type `resume` and wait for an event of type `wait`. The Cloud Event being published contains a `move` data field. The event being received is expected to have a `result` data field, which according to the link:{spec_doc_url}#event-data-filters[eventDataFilter], will be added to the workflow model as `move` field. 
+
+.Excerpt of the Callback State declaration handling the wait event
+[code,json]
+----
+{
+      "name": "waitForEvent",
+      "type": "callback",
+      "action": {
+        "name": "publishAction",
+        "eventRef": {
+          "triggerEventRef": "resumeEvent",
+          "data": "{move: \"This is the initial data in the model\"}"
+        }
+      },
+      "eventRef": "waitEvent",
+      "eventDataFilter": {
+        "data": ".result",
+        "toStateData": ".move"
+      },
+      "transition": "finish"
+    }
+----
+
+The event of type `resume` is consumed by a link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/java/org/kie/kogito/examples/PrintService.java[event listener]. This event listener publishes a new event of type `wait`.
+
+.Excerpt of the Java method that publishes the wait event
+[code,java]
+----
+
+    private String generateCloudEvent(String id, String input) {
+        Map<String, Object> eventBody = new HashMap<>();
+        eventBody.put("result", input + " and has been modified by the event publisher");
+        eventBody.put("dummyEventVariable", "This will be discarded by the process");
+        try {
+            return objectMapper.writeValueAsString(CloudEventBuilder.v1()
+                    .withId(UUID.randomUUID().toString())
+                    .withSource(URI.create(""))
+                    .withType("wait")
+                    .withTime(OffsetDateTime.now())
+                    .withExtension(CloudEventExtensionConstants.PROCESS_REFERENCE_ID, id)
+                    .withData(objectMapper.writeValueAsBytes(eventBody))
+                    .build());
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(e);
+        }
+
+    }
+----
+
+This cloud event modifies the original value of the `move` field and publishes it as the `result` field. Moreover, it contains a Cloud Event attribute, named `kogitoprocrefid`, holding the process instance id of the workflow that published the consumed event.
+
+As mentioned before, the `kogitoprocrefid` header is pivotal because, when not using correlation, it is the only way for the callback state to know that this event should be used to resume the flow. 
+
+Remember that every workflow has a unique instance id that is automatically included in any event published by Kogito. As you can see in the code snippet below, the event listener takes the process instance id from a cloud event attribute named `kogitoprocinstanceid` of the event being consumed. 
+
+.Excerpt of the Java method that consumes the resume event 
+[source,java]
+----
+    @Incoming("in-resume")
+    @Outgoing("out-wait")
+    @Acknowledgment(Strategy.POST_PROCESSING)
+    public String onEvent(Message<String> message) {
+        Optional<CloudEvent> ce = CloudEventUtils.decode(message.getPayload());
+        JsonCloudEventData cloudEventData = (JsonCloudEventData) ce.get().getData();
+        return generateCloudEvent(ce.get().getExtension(CloudEventExtensionConstants.PROCESS_INSTANCE_ID).toString(), cloudEventData.getNode().get("move").asText());
+    }
+---- 
+
+=== Kafka configuration
+
+This example requires an external broker that handles the involved events in order to work. In this case, the default setup uses link:{kafka_doc_url}[Kafka], but you might use link:xref:consume-produce-events-with-knative-eventing.adoc[Knative Eventing] instead.
+
+Kakfa use topics to publish/consume messages. In this example we are using two of them, which matches the name of the Cloud Event types defined in the workflow: `wait` and `resume`. They are configured in link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/resources/application.properties}[application.properties]. If you are interested on details, take a look to link:xref:consume-producing-events-with-kafka.adoc[Consume and Produce Events with Kafka]. 
+
+== Additional resources
+
+* xref:getting-started/create-your-first-workflow-service.adoc[Create your first Workflow Service].
+* xref:event-correlation-with-workflows[Event Correlation with Workflows]
+
+include::../../pages/_common-content/report-issue.adoc[]
+
+
