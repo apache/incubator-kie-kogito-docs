@@ -121,7 +121,7 @@ You can create attributes in `{project_root}/{component_name}/antora.yml` file. 
 ```yaml
 asciidoc:
   attributes:
-    example_url: https://www.myexample.com
+    :example_url: https://www.myexample.com
 ```
 
 More details at [Antora documentation](https://docs.antora.org/antora/latest/playbook/asciidoc-attributes)
@@ -131,20 +131,20 @@ More details at [Antora documentation](https://docs.antora.org/antora/latest/pla
 You should assign the URL to a short, easy to remember attribute. For example:
 
 ```asciidoc
-issues_url: https://github.com/asciidoctor/asciidoctor/issues`
+:issues_url: https://github.com/asciidoctor/asciidoctor/issues`
 
 // later in the document
 
 Submit bug fixes to the link:{issues_url}[issue tracker]
 ```
 
-> Every attribute that's an URL should have the suffix `_url`. Use underscore (`_`) to separate words.
+> Every attribute which consists of a URL must have the suffix `_url`. Use underscore (`_`) to separate words.
 
 More details at the [AsciiDoc Documentation](https://asciidoctor.org/docs/asciidoc-recommended-practices/#dry-urls)
 
 ### Creating new category for docs
 
-In the same component to add new category create a new folder with category name under `modules/ROOT/pages/` folder of the component.
+In the same component to add a new category, create a new folder with a category name under the `modules/ROOT/pages/` folder of the component.
 
 For example, to add a page `hello.adoc` you can create a page at `modules/ROOT/pages/hello/hello.adoc`.
 
