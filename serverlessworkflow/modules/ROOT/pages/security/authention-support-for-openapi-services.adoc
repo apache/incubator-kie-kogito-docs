@@ -6,7 +6,7 @@ Authentication for OpenAPI services in Serverless Workflow
 :description: Authentication support for OpenAPI services
 :keywords: kogito, workflow, serverless, authentication
 // Referenced documentation pages.
-:orchestration-of-opnapi-based-services: xref:service-orchestration/orchestration-of-opnapi-based-services.adoc
+:orchestration-of-opnapi-based-services: xref:service-orchestration/orchestration-of-openapi-based-services.adoc
 :configuring-openapi-services-endpoints: xref:service-orchestration/configuring-openapi-services-endpoints.adoc
 :orchestrating-third-party-services-with-oauth2: xref:security/orchestrating-third-party-services-with-oauth2.adoc
 
@@ -14,18 +14,18 @@ This document describes the supported authentication types and how to configure 
 
 For information about orchestrating and configuring the OpenAPI based services, you must see the following documents:
 
-* {orchestration-of-opnapi-based-services}[Orchestrating OpenAPI based services]
+* {orchestration-of-opnapi-based-services}[Orchestrating the OpenAPI services]
 * {configuring-openapi-services-endpoints}[Configuring OpenAPI services endpoints in different environments]
 
 [NOTE]
 ====
-The OpenAPI support for Serverless Workflow is based on the Quarkus OpenAPI generator extension. For more information about Quarkus OpenAPI generator, see link:https://github.com/quarkiverse/quarkus-openapi-generator[Quarkus - OpenAPI Generator].
+The OpenAPI support for Serverless Workflow is based on the Quarkus OpenAPI generator extension. For more information about Quarkus OpenAPI generator, see link:{quarkus_openapi_gen_url}[Quarkus - OpenAPI Generator].
 ====
 
 [[con-openapi-services-authentication]]
 == Overview of OpenAPI services authentication
 
-According to the OpenAPI specification, you can secure an OpenAPI service operation by using a security scheme. These security schemes are defined in the link:https://spec.openapis.org/oas/v3.1.0#security-scheme-object[Security Scheme Object] definitions of the OpenAPI specification file.
+According to the OpenAPI specification, you can secure an OpenAPI service operation by using a security scheme. These security schemes are defined in the link:{open_api_spec_url}#security-scheme-object[Security Scheme Object] definitions of the OpenAPI specification file.
 
 The security scheme type defined for an OpenAPI service operation is used to identify the required configuration, when a Serverless Workflow invokes the same operation.
 
@@ -47,6 +47,18 @@ The following shows the example of security scheme definitions:
     }
 ----
 
+If the OpenAPI specification file contains `securitySchemes` definitions, but not link:{open_api_spec_url}[Security Requirement Object] definitions, the generator can be configured to create the security requirement objects by default. In this case, for all operations without a security requirement, the default one is created. Note that the property value needs to match the name of a security scheme object definition, such as `http-basic-example` or `api-key-example` in the previous `securitySchemes` list.
+
+[cols="20%,40%,40%", options="header"]
+|===
+|Description |Property Key |Example
+
+|Create security for the referenced security scheme
+|`quarkus.openapi-generator.codegen.default.security.scheme`
+|`quarkus.openapi-generator.codegen.default.security.scheme=http-basic-example`
+
+|===
+
 To configure the credentials that are used to access the secured OpenAPI service operations and related parameters, you must use the application properties that are related to the security schemes.
 
 To compose the configuration keys, use the following format:
@@ -54,7 +66,7 @@ To compose the configuration keys, use the following format:
 .Format for configuration keys
 [source, properties]
 ----
-quarkus.openapi-generator.[filename].[security_scheme_name].auth.[auth_property_name]
+quarkus.openapi-generator.[filename].auth.[security_scheme_name].[auth_property_name]
 ----
 
 The previous format includes the following parameters:
@@ -75,7 +87,7 @@ The security schemes defined in an OpenAPI specification file are global to all 
 
 You can use the alternatives defined in the link:https://quarkus.io/guides/config-reference[Quarkus configuration reference guide] to configure the required properties. A common usage is to define link:https://quarkus.io/guides/config-reference#environment-variables[environment variables] to set the authentication secrets.
 
-For a complete example, see {orchestrating-third-party-services-with-oauth2}[Orchestrating third party services using OAuth2 authentication].
+For a complete example, see {orchestrating-third-party-services-with-oauth2}[Orchestration of third-party services using OAuth 2.0 authentication].
 
 [[ref-example-http-authentication]]
 == Example of basic HTTP authentication
@@ -267,11 +279,11 @@ However, this is automatically managed without additional configurations.
 Following the previous example, the API key is passed as an `http` request parameter, such as `api-key-name` with the value `MY_KEY`.
 
 [[ref-example-oauth-authentication]]
-== Example of OAuth2 authentication
+== Example of OAuth 2.0 authentication
 
 The following example shows `security-example.json` file, defining a `sayHelloOauth2` operation, which is secured using the `oauth-example` security scheme and supported configurations:
 
-.Example `security-example.json` file for OAuth2 authentication
+.Example `security-example.json` file for OAuth 2.0 authentication
 [source, json]
 ----
 {
@@ -441,6 +453,6 @@ The authorization tokens are propagated till the Serverless Workflow does not re
 
 == Additional resources
 
-* {orchestrating-third-party-services-with-oauth2}[Orchestrating third party services using OAuth2 authentication]
+* {orchestrating-third-party-services-with-oauth2}[Orchestration of third-party services using OAuth 2.0 authentication in Serverless Workflow]
 
 include::../../pages/_common-content/report-issue.adoc[]
