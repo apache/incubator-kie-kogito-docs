@@ -31,9 +31,9 @@ For more information about orchestrating and configuring OpenAPI services, see {
 [[ref-example-oauth2-orchestration]]
 == Example of OAuth 2.0 orchestration in Serverless Workflow
 
-To understand the example of OAuth 2.0 orchestration in Serverless Workflow, you can use the link:{kogito_sw_examples_serverless_workflow_oauth2_orchestration_url}[`serverless-workflow-oauth2-orchestration-quarkus`] example application. This example application implements a workflow related to currency exchange calculations, which orchestrates an OAuth 2.0 secured REST service provided by Acme Financial Services.  
+To understand the example of OAuth 2.0 orchestration in Serverless Workflow, you can use the link:{kogito_sw_examples_serverless_workflow_oauth2_orchestration_url}[`serverless-workflow-oauth2-orchestration-quarkus`] example application. This example application implements a workflow related to currency exchange calculations, which orchestrates an OAuth 2.0 secured REST service provided by Acme Financial Services.
 
-Suppose you have a set of applications that must resolve the currency exchange calculations as their regular operations, and to resolve the currency exchange calculations, you need to get the accurate exchange rates. For this purpose, you can use the Acme Financial Services. 
+Suppose you have a set of applications that must resolve the currency exchange calculations as their regular operations, and to resolve the currency exchange calculations, you need to get the accurate exchange rates. For this purpose, you can use the Acme Financial Services.
 
 When you use the Acme Financial Services, you can query the exchange rates using their OAuth 2.0 secured services, which you can access using the granted credentials. However, you do not want to expose the services provided by Acme to the applications. In this case, you can implement a Serverless Workflow that resolves the following aspects:
 
@@ -73,7 +73,7 @@ The `currency-exchange-workflow` in `serverless-workflow-oauth2-orchestration-qu
 
 The following figure describes the workflow in `currency-exchange-workflow`:
 
-.Example `currency-exchange-workflow` 
+.Example `currency-exchange-workflow`
 image::security/orchestrating-third-party-services-with-oauth2/currency-exchange-workflow-diagram.png[]
 
 . First, validate the input data.
@@ -441,7 +441,7 @@ quarkus.oidc-client.acme_financial_oauth.credentials.client-secret.value=secret 
 
 To configure the link:{quarkus_guide_security_openid_connect_client_url}[Quarkus OpenId Connect Client (OIDC)] for `acme_financial_service_oauth` service, you must follow the rules described in {authentication-support-for-openapi-services-oauth-example}[Example of OAuth 2.0 authentication].
 
-Also, the particular attributes depend on the OAuth 2.0 server and authorization flow to use. You can get the information about the OAuth 2.0 server and authorization flow from the `acme-financial-service.yml` file. 
+Also, the particular attributes depend on the OAuth 2.0 server and authorization flow to use. You can get the information about the OAuth 2.0 server and authorization flow from the `acme-financial-service.yml` file.
 
 [TIP]
 ====
@@ -610,7 +610,7 @@ Example response::
 
 [NOTE]
 ====
-In the previous examples, the currencies supported by the `currency-exchange-workflow` include `EUR`, `USD`, `JPY`, `GBP`, `CAD`, `BRL`, and `AUD`. However, the `acme-financial-service` REST service can resolve any type of currency exchange. This is an example of a Serverless Workflow implementing the intermediate data filtering, transforming, and validations. 
+In the previous examples, the currencies supported by the `currency-exchange-workflow` include `EUR`, `USD`, `JPY`, `GBP`, `CAD`, `BRL`, and `AUD`. However, the `acme-financial-service` REST service can resolve any type of currency exchange. This is an example of a Serverless Workflow implementing the intermediate data filtering, transforming, and validations.
 ====
 
 .Example of unexpected errors when accessing `acme-financial-service`
