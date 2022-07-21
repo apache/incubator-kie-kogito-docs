@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>Orchestration-based SAGA pattern :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Saga Pattern use case example">
+    <meta name="keywords" content="kogito, workflow, serverless, saga, saga pattern, consistency, microservices, orchestration, orchestrator">
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -184,6 +186,15 @@
   </li>
 </ul>
   </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="orchestration-based-saga-pattern.html">Orchestration-based SAGA pattern</a>
+  </li>
+</ul>
+  </li>
 </ul>
   </li>
 </ul>
@@ -213,6 +224,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Use Cases</li>
+    <li><a href="orchestration-based-saga-pattern.html">Orchestration-based SAGA pattern</a></li>
+  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/use-cases/orchestration-based-saga-pattern.adoc">Edit this Page</a></div>
   </div>
@@ -221,7 +237,364 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page">Orchestration-based SAGA pattern</h1>
+<div class="sect1">
+<h2 id="_brief_introduction_to_saga_pattern"><a class="anchor" href="#_brief_introduction_to_saga_pattern"></a>Brief introduction to Saga pattern</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Saga is a design pattern to manage data consistency across participants in distributed transaction scenarios, the initial <a href="https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf">publication</a> is a good reference.</p>
+</div>
+<div class="paragraph">
+<p>In a microservice architecture, a participant could be defined as a microservice, responsible to perform actions related to its business domain.
+Saga is meant to provide transaction management using a sequence of steps.</p>
+</div>
+<div class="paragraph">
+<p>While executing a step, failures might happen. In this situation, a sequence of compensating actions is executed to undo the changes made during the execution or leave the system in a known termination state, aiming for consistency.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_order_fulfillment_example"><a class="anchor" href="#_the_order_fulfillment_example"></a>The order fulfillment example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is a very common use case, present in many e-commerce companies and for sure it should be familiar to you.</p>
+</div>
+<div class="paragraph">
+<p>The basic idea in this scenario is a user buys some item through an e-commerce application inputting the payment method and delivery information, and waits for this item to be delivered at the specified address.</p>
+</div>
+<div class="paragraph">
+<p>Given this use case, what happens behind the scenes is a sequence of steps that should be executed to complete the order, as shown in the picture:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/use-cases/orchestration-based-saga-pattern/order-fulfillment-example.png" alt="order fulfillment example">
+</div>
+<div class="title">Figure 1. Example Order fulfillment</div>
+</div>
+<div class="paragraph">
+<p>In the example, there are the mainly following steps:</p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><em>Order checkout</em>: the user confirms the order with the chosen items, payment method, and delivery address.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><em>Stock reservation</em>: where this item from the order is selected from the stock and reserved, being removed from the total stock item.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><em>Payment processing</em>: based on the payment method and the user information, for instance, the credit card, the credit is checked and allocated to that payment.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><em>Shipping processing</em>: it represents a mechanism that could communicate with third-party systems responsible to deliver orders or even an internal system responsible for logistics and delivery.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The below picture makes it possible to visualize the two main flows in case of success or failure during the order fulfillment flow, which describes a Saga pattern.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/use-cases/orchestration-based-saga-pattern/order-fulfillment-saga.png" alt="order fulfillment saga">
+</div>
+<div class="title">Figure 2. Example Order fulfillment Saga</div>
+</div>
+<div class="paragraph">
+<p>In the first case, the happy path, the item stock is reserved. After that, the payment is successfully processed, the order shipping is scheduled, and the flow is completed for that order.</p>
+</div>
+<div class="paragraph">
+<p>The second case describes an example of a failure or any error thrown during the shipping process for a given order. In this situation, a sequence of compensation actions is executed, which cancels the payment, and releases the stock for the items related to that order.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_saga_orchestration_with_serverless_workflow"><a class="anchor" href="#_saga_orchestration_with_serverless_workflow"></a>Saga orchestration with Serverless workflow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As a developer, you can use <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md">Serverless Workflow</a> to create a workflow that impletemens the Saga pattern where you can define all the steps and compensations.</p>
+</div>
+<div class="paragraph">
+<p>In this scenario, Kogito Serverless Workflow plays the Saga Executor Coordinator (SEC) role, which orchestrates the calls to the participants in the Saga.</p>
+</div>
+<div class="paragraph">
+<p>The order fulfillment example showcases how to define the Saga with Kogito Serverless Workflow. The source code can be found here in <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-saga-quarkus">serverless-workflow-saga-quarkus</a>.</p>
+</div>
+<div class="paragraph">
+<p>The workflow definition used to define the order saga is <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-saga-quarkus/src/main/resources/order-saga-error-handling.sw.json">order-saga-error-handling.sw.json</a>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/use-cases/orchestration-based-saga-pattern/order-fulfillment-saga-workflow.png" alt="order fulfillment saga workflow">
+</div>
+<div class="title">Figure 3. Example Order fulfillment Saga Workflow</div>
+</div>
+<div class="paragraph">
+<p>In the workflow diagram, you can see the calls to the participants, the possible errors each service can throw, and how to define compensations for each step to be executed once an error happens during workflow execution.</p>
+</div>
+<div class="sect2">
+<h3 id="_saga_participants_interactions"><a class="anchor" href="#_saga_participants_interactions"></a>Saga participants interactions</h3>
+<div class="paragraph">
+<p>To define the interactions among participants in the Saga using Serverless Workflow Specification, you can use <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-states">states</a> with <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Transitions">transitions</a> corresponding to the participant&#8217;s interactions.</p>
+</div>
+<div class="paragraph">
+<p>Each state represents a step to be achieved in the Saga, and an action associated with the state represents how to invoke a participant to execute a given step. So, for instance, the <code>processPayment</code> state has the <code>processPaymentAction</code> action responsible for invoking the function to execute the payment processing, which the participant <code>Payment Service</code> might do.</p>
+</div>
+<div class="paragraph">
+<p>The <code>transition</code> attribute represents the next step to be started, to perform the order shipping scheduling for the Saga.</p>
+</div>
+<div id="payment-state" class="listingblock">
+<div class="title">Example the state declaration representing the process payment step in the Saga</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+   "name":"processPayment",
+   "type":"operation",
+   "actions":[
+      {
+         "name":"processPaymentAction",
+         "functionRef":{
+            "refName":"processPayment",
+            "arguments":{
+               "orderId":".orderId",
+               "failService":".failService"
+            }
+         },
+         "actionDataFilter":{
+            "results":".",
+            "toStateData":".paymentResponse"
+         }
+      }
+   ],
+   "transition":"scheduleShipping",
+   "compensatedBy":"CancelPayment",
+   "onErrors":[
+      {
+         "errorRef":"process payment failed",
+         "transition":"ServiceError"
+      }
+   ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_compensations"><a class="anchor" href="#_compensations"></a>Compensations</h3>
+<div class="paragraph">
+<p>The core functionality when designing the Saga is the compensation for each step to be executed by a participant.</p>
+</div>
+<div class="paragraph">
+<p>In Serverless Workflow, each state should define how it should be compensated using its <code>compensatedBy</code> attribute, which indicates another state responsible to perform the compensation for it, i.e. <code>processPayment</code> defines the <code>CancelPayment</code> as the compensation on the  <a href="#payment-state">payment state</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"compensatedBy": "CancelPayment"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_errors"><a class="anchor" href="#_errors"></a>Errors</h3>
+<div class="paragraph">
+<p>Once an error occurs during the workflow execution, a compensation flow is then triggered.</p>
+</div>
+<div class="paragraph">
+<p>Errors are identified by a name and can be associated with a state, for instance, for the <code>processPayment</code> state, there is the <code>process payment failed</code> error, which is a reference to the <a href="#errors-definitions">errors section</a> in the workflow definition.</p>
+</div>
+<div id="errors-definitions" class="listingblock">
+<div class="title">Example the error declaration for the Saga</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+   "errors":[
+      {
+         "name":"reserve stock failed",
+         "code":"org.kie.kogito.ServiceException"
+      },
+      {
+         "name":"process payment failed",
+         "code":"org.kie.kogito.ServiceException"
+      },
+      {
+         "name":"shipping failed",
+         "code":"org.kie.kogito.ServiceException"
+      }
+   ]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>An error definition uses the FQCN of Java exceptions thrown by functions, in the given example, <code>org.kie.kogito.ServiceException</code> is thrown by they service calls defined as a  <a href="#custom-function">Java method</a> here is the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-saga-quarkus/src/main/java/org/kie/kogito/PaymentService.java">source</a>, however, they could be any type of <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-functions">functions</a>, i.e REST, OpenAPI, gRPC, etc.</p>
+</div>
+<div class="paragraph">
+<p>For more details about error handling see <a href="../core/understanding-workflow-error-handling.html" class="xref page">Understanding workflow error handling</a>.</p>
+</div>
+<div id="custom-function" class="listingblock">
+<div class="title">Example custom function using a Java class and method</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+   "name":"reserveStock",
+   "type":"custom",
+   "operation":"service:org.kie.kogito.PaymentService::processPayment"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Kogito workflow engine controls the execution flow keeping track of the steps that need compensation. The engine also ensures that the compensation states are executed in reverse order of each completed step.</p>
+</div>
+<div class="paragraph">
+<p>The engine is a stateful, which allows Saga to be long-lived containing wait states, such as callbacks. After each wait state, the workflow is persisted and can continue once it receives another request or event.</p>
+</div>
+<div class="paragraph">
+<p>For simplicity, the current example shows a Saga workflow executed as a request-response. This is also called straight-through workflow, meaning that an entire workflow is executed from start to end in a single request.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_running_and_testing_the_example"><a class="anchor" href="#_running_and_testing_the_example"></a>Running and testing the example</h3>
+<div class="sect3">
+<h4 id="_creating_a_new_success_order"><a class="anchor" href="#_creating_a_new_success_order"></a>Creating a new Success Order</h4>
+<div class="listingblock">
+<div class="title">Example success request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -L -X POST "http://localhost:8080/order_saga_error_workflow" -H 'Content-Type: application/json' --data-raw '{
+ "workflowdata": {
+  "orderId": "03e6cf79-3301-434b-b5e1-d6899b5639aa"
+ }
+}'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example success response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+   "id":"b5c0bf16-1e37-4d7a-82cd-610809090d9c",
+   "workflowdata":{
+      "orderId":"03e6cf79-3301-434b-b5e1-d6899b5639aa",
+      "stockResponse":{
+         "type":"SUCCESS",
+         "resourceId":"dc32abe6-9706-4061-8e96-910d8e06728d"
+      },
+      "paymentResponse":{
+         "type":"SUCCESS",
+         "resourceId":"505259d9-1c12-40ea-af5d-679e2cd89394"
+      },
+      "shippingResponse":{
+         "type":"SUCCESS",
+         "resourceId":"d6e2d538-0229-4b8e-a363-17ebabdb3585"
+      },
+      "orderResponse":{
+         "type":"SUCCESS",
+         "resourceId":"03e6cf79-3301-434b-b5e1-d6899b5639aa"
+      }
+   }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The response contains the workflow data with nested attributes representing the responses related to the execution of each step, either success or failure.
+The <code>orderResponse</code> attribute indicates if the order can be confirmed by the client starting the Saga workflow, in case the value is <code>success</code> the order can be confirmed otherwise it can be canceled.</p>
+</div>
+<div class="paragraph">
+<p>In the console executing the application, you can check the log with information related to the executed steps.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example console output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">2022-06-24 13:44:36,666 INFO  [org.kie.kog.StockService] (executor-thread-0) Reserve Stock for order 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:44:36,669 INFO  [org.kie.kog.PaymentService] (executor-thread-0) Process Payment for order 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:44:36,673 INFO  [org.kie.kog.ShippingService] (executor-thread-0) Schedule Shipping for order 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:44:36,676 INFO  [org.kie.kog.OrderService] (executor-thread-0) Order Success 03e6cf79-3301-434b-b5e1-d6899b5639aa</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_simulating_errors_to_activate_the_compensations"><a class="anchor" href="#_simulating_errors_to_activate_the_compensations"></a>Simulating errors to activate the compensations</h4>
+<div class="paragraph">
+<p>To make testing the workflow easier it was introduced an optional attribute <code>failService</code> that indicates which service should respond with an error. The attribute is the simple class name of the service to return an error. In the following request example, the <code>ShippingService</code> should throw an error that breaks the workflow execution triggering the compensations.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example compensation request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -L -X POST 'http://localhost:8080/order_saga_error_workflow' -H 'Content-Type: application/json' --data-raw '{
+ "workflowdata": {
+  "orderId": "03e6cf79-3301-434b-b5e1-d6899b5639aa",
+  "failService": "ShippingService"
+ }
+}'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example compensation response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+   "id":"217050a3-6676-4c0e-8555-2fcda936e00e",
+   "workflowdata":{
+      "orderId":"03e6cf79-3301-434b-b5e1-d6899b5639aa",
+      "failService":"ShippingService",
+      "stockResponse":{
+         "type":"SUCCESS",
+         "resourceId":"6ab362c6-a6c4-4517-b232-3349741271d5"
+      },
+      "paymentResponse":{
+         "type":"SUCCESS",
+         "resourceId":"2114cc5b-1912-4b34-b869-734907f0fef2"
+      },
+      "cancelPaymentResponse":{
+         "type":"SUCCESS",
+         "resourceId":"2114cc5b-1912-4b34-b869-734907f0fef2"
+      },
+      "cancelStockResponse":{
+         "type":"SUCCESS",
+         "resourceId":"6ab362c6-a6c4-4517-b232-3349741271d5"
+      },
+      "orderResponse":{
+         "type":"ERROR",
+         "resourceId":"03e6cf79-3301-434b-b5e1-d6899b5639aa"
+      }
+   }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the console executing the application, you can check the log with the executed steps.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example console output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">2022-06-24 13:43:45,077 INFO  [org.kie.kog.StockService] (executor-thread-0) Reserve Stock for order 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:43:45,215 INFO  [org.kie.kog.PaymentService] (executor-thread-0) Process Payment for order 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:43:45,219 INFO  [org.kie.kog.ShippingService] (executor-thread-0) Schedule Shipping for order 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:43:45,219 ERROR [org.kie.kog.MockService] (executor-thread-0) Error in ShippingService for 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:43:45,230 INFO  [org.kie.kog.PaymentService] (executor-thread-0) Cancel Payment 4b94408d-8cad-432d-85bb-63dd79c4071e
+2022-06-24 13:43:45,239 INFO  [org.kie.kog.StockService] (executor-thread-0) Cancel Stock 9d543764-8a8b-4d94-aaee-e6ccbe9c94c3
+2022-06-24 13:43:45,244 INFO  [org.kie.kog.OrderService] (executor-thread-0) Order Failed 03e6cf79-3301-434b-b5e1-d6899b5639aa</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../core/understanding-workflow-error-handling.html" class="xref page">Understanding workflow error handling</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
