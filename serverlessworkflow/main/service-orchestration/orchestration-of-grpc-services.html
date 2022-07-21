@@ -370,7 +370,7 @@ The response of the method execution is <a href="https://developers.google.com/p
 <p>The reason for this snippet to exist is to guarantee that the proto file is included in the classpath. Remember that in the Serverless Workflow file, the  URI for the proto file does not contain any scheme, therefore the proto file is expected to be accessible in the classpath.</p>
 </div>
 <div class="paragraph">
-<p>The previous, Maven based, approach can be used when the source code of the  Serverless Workflow and the gRPC server are stored in the same repository, but normally this will not be the case. If the proto file can be downloaded from a remote server, you might use the <code>http</code> scheme. If the proto file is not remotely accessible, you will need to manually obtain a copy of it and store in a directory that is included in the classpath (for example <code>src/main/resources</code>). Another possibility is to copy the proto file in a well known absolute path (that might a be a shared network file system) and use the <code>file</code> scheme.</p>
+<p>The previous, Maven based, approach can be used when the source code of the  Serverless Workflow and the gRPC server are stored in the same repository, but normally this will not be the case. If the proto file can be downloaded from a remote server, you might use the <code>http</code> scheme. If the proto file is not remotely accessible, you will need to manually obtain a copy of it and store in a directory that is included in the classpath (for example <code>src/main/resources</code>). Another possibility is to copy the proto file in a well known absolute path (that might be a shared network file system) and use the <code>file</code> scheme.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -405,7 +405,7 @@ quarkus.grpc.clients.Greeter.port=50051</code></pre>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Before running the Serverless Workflow application, you need to start the gRPC server the workflow invokes. To run the gRPC server, navigate to the <code>serverless-workflow-greeting-server-rpc-quarkus</code> directory in a commmand terminal and enter the command</p>
+<p>Before running the Serverless Workflow application, you need to start the gRPC server the workflow invokes. To run the gRPC server, navigate to the <code>serverless-workflow-greeting-server-rpc-quarkus</code> directory in a command terminal and enter the command</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn compile exec:java -Dexec.mainClass="org.kie.kogito.examples.sw.greeting.GreeterService"</code></pre>
