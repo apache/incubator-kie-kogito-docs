@@ -4,25 +4,12 @@
 // Metadata:
 :description: Working with callbacks
 :keywords: kogito, workflow, serverless, callback, event
-// links:
-:java_install: https://www.java.com/en/download/help/download_options.html
-:maven_install: https://maven.apache.org/install.html
-:docker_install: https://docs.docker.com/engine/install/
-:podman_install: https://docs.podman.io/en/latest/
-:kubectl_install: https://kubernetes.io/docs/tasks/tools/install-kubectl
-:java_install_url: https://www.java.com/en/download/help/download_options.html
-:maven_install_url: https://maven.apache.org/install.html
-:docker_install_url: https://docs.docker.com/engine/install/
-:podman_install_url: https://docs.podman.io/en/latest/
-:kubectl_install_url: https://kubernetes.io/docs/tasks/tools/install-kubectl
-:kn_cli_install_url: https://github.com/knative/client/blob/main/docs/README.md#installing-kn
-:kafka_doc_url: https://kafka.apache.org/documentation/ 
 
-This document describes the link:{spec_doc_url}#Callback-State[Callback state] and related examples. The Callback state peforms an action and waits for an event to produce the result of the action to resume the workflow. The action peformed by a Callback state is an asynchronous external service invocation. Therefore, the Callback state is suitable to perform  _fire&wait-for-result_ operations.
+This document describes the link:{spec_doc_url}#Callback-State[Callback state] and related examples. The Callback state performs an action and waits for an event to be produced as a result of the action to resume the workflow. The action peformed by a Callback state is an asynchronous external service invocation. Therefore, the Callback state is suitable to perform  _fire&wait-for-result_ operations.
 
 From a Serverless Workflow perspective, asynchronous service indicates that the control is returned to the caller immediately without waiting for the action to be completed. Once the action is completed, a link:{cloud_events_url}[CloudEvent] is published to resume the Serverless Workflow.
 
-For the Serverless Workflow to identify the published CloudEvent it is waiting for, the external service developer includes the process instance ID in the CloudEvent header or use the xref:event-correlation-with-workflows[Serverless Workflow correlation mechanism]. 
+For the Serverless Workflow to identify the published CloudEvent it is waiting for, the external service developer includes the process instance ID in the CloudEvent header or uses the xref:event-correlation-with-workflows[Serverless Workflow correlation mechanism]. 
 
 The Serverless Workflow correlation mechanism document focuses on the former mechanism that is based on the fact that each Serverless Workflow instance contains a unique identifier, which is generated automatically.
 
@@ -31,9 +18,9 @@ The Serverless Workflow correlation mechanism document focuses on the former mec
 
 To understand the Callback state, see the link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus[`serverless-workflow-callback-quarkus`] example application in GitHub repository. 
 
-The Serverless Workflow in the `serverless-workflow-callback-quarkus` example application does not consist of an initial model. However, once the workflow is started, it publishes a CloudEvent of the `resume` type and waits for a CloudEvent, which contains the type `wait`.
+The initial model of the `serverless-workflow-callback-quarkus` example application is empty. Therefore, once the workflow is started, it publishes a CloudEvent of the `resume` type and waits for a CloudEvent, which contains the type `wait`.
 
-A listener consumes the CloudEvent with the `resume` type, which affects the behavior of an external service. Consequently, on the external service side, when the actions associated with the `resume` type CloudEvent are completed, the listener publishes a `wait` type CloudEvent. Once the `wait` type CloudEvent is received, the workflow moves to the next state and ends successfully.
+A listener consumes the CloudEvent with the `resume` type, which simulates the behavior of an external service. Consequently, on the external service side, when the actions associated with the `resume` type CloudEvent are completed, the listener publishes a `wait` type CloudEvent. Once the `wait` type CloudEvent is received, the workflow moves to the next state and ends successfully.
 
 To use the Callback state in a Serverless Workflow, first CloudEvent types such as `resume` and `wait` are declared that the Serverless Workflow uses. Following is an example of CloudEvents declaration in a workflow definition:
 
@@ -80,7 +67,7 @@ Following is an example of declaring a Callback state that handles the `wait` ty
     }
 ----
 
-In the previous example, an link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/java/org/kie/kogito/examples/PrintService.java[event listener] consumes the `resume` type CloudEvent and publishes a new `wait` type CloudEvent. Following is an example of a Java method that publishes the `wait` type CloudEvent:
+An link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/java/org/kie/kogito/examples/PrintService.java[event listener] consumes the `resume` type CloudEvent and publishes a new `wait` type CloudEvent. Following is an example of a Java method that publishes the `wait` type CloudEvent:
 
 .Example of a Java method that publishes the `wait` CloudEvent
 [code,java]
@@ -106,7 +93,7 @@ In the previous example, an link:{kogito_sw_examples_url}/serverless-workflow-ca
     }
 ----
 
-After that, the published CloudEvent modifies the value of `move` field and publishes the `move` field as a `result` field. Also, the published CloudEvent contains an attribute named `kogitoprocrefid`, which holds the process instance ID of the workflow that published the consumed CloudEvent. 
+After that, the published CloudEvent modifies the value of `move` field and publishes the `move` field as a `result` field. Also, the consumed CloudEvent contains an attribute named `kogitoprocrefid`, which holds the process instance ID of the workflow that published the consumed CloudEvent. 
 
 The `kogitoprocrefid` attribute is crucial because when the correlation is not used, then this attribute is the only way for the Callback state to identify that the related CloudEvent needs to be used to resume the workflow.
 
@@ -127,7 +114,7 @@ The following example shows that the event listener takes the process instance I
     }
 ---- 
 
-Kafka configuration in `serverless-workflow-callback-quarkus`::
+Apache Kafka configuration in `serverless-workflow-callback-quarkus`::
 +
 --
 The `serverless-workflow-callback-quarkus` example application requires an external broker to manage the associated CloudEvents. The default setup in the `serverless-workflow-callback-quarkus` example application uses link:{kafka_doc_url}[Apache Kafka]. However, you can also use Knative Eventing.
