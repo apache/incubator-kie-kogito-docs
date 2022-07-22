@@ -60,7 +60,9 @@ Ensure that the typographic style is consistent for each heading level in your c
 Always use the following convention when creating a new article for the main heading:
 
 ```asciidoc
-= Kogito Guide Title
+= Kogito Guide Title (first-level heading)
+== Example section (second-level heading)
+...
 ```
 
 ### Writing style
