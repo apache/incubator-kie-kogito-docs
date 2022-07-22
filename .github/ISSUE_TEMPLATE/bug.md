@@ -1,7 +1,7 @@
 ---
 name: Bug Report
 about: Report a bug encountered in the Kogito Guides
-labels: bug
+labels: bug :bug:
 
 ---
 
