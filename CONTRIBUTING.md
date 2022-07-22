@@ -8,6 +8,13 @@ We accept all kinds of contributions:
 
 > To include a new guide or documentation content, please **open an issue first** so we can discuss in more detail what needs to be done. We use [JIRA](https://issues.redhat.com/) to track our tasks, so the issue is likely to turn into a JIRA issue.
 
+## Including a new guide
+
+1. Open a JIRA issue
+2. Write the guide
+3. Add a link to the guide in [serverlessworkflow/modules/ROOT/nav.adoc](serverlessworkflow/modules/ROOT/nav.adoc)
+4. Add a card for the guide in [serverlessworkflow/modules/ROOT/pages/index.adoc](serverlessworkflow/modules/ROOT/pages/index.adoc)
+
 ## Opening a JIRA Issue
 
 1. Make sure to add a description of the guide you plan to add followed by the `[Kogito Guides]` prefix

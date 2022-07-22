@@ -12,3 +12,4 @@ Please make sure that your PR meets the following requirements:
 - [ ] Pull Request title is properly formatted: `KOGITO-XYZ Subject`
 - [ ] Pull Request title contains the target branch if not targeting main: `[0.9.x] KOGITO-XYZ Subject`
 - [ ] The nav.adoc file has a link to this guide in the proper category
+- [ ] The index.adoc file has a card for this guide in the proper category
