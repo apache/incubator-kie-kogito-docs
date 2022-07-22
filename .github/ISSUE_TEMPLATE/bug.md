@@ -13,7 +13,7 @@ please open a PR directly.
 ### Target document
 <!-- Please link the document you saw the bug. -->
 
-### What seems off
+### Describe the issue
 
 ### What you expected to be
 
