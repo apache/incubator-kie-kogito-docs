@@ -53,11 +53,11 @@ Kogito checks whether the message of the Java exception matches the value provid
 |`Unknown error, status code 400`|`(.*)status code 4[0-9]\{2\}` or `status code 4[0-9]\{2\}`
 |=======================
 
-==== HTTP status code
+==== Status code
 
-Define the mapping as a HTTP status code returned by the invoked service.
+Define the mapping as a status code returned by the invoked service.
 
-For exceptions of type `javax.ws.rs.WebApplicationException`, Kogito checks the defined error `code` against the HTTP code from the underlying response object.  Such exceptions can be encountered when using REST or OpenAPI service invocations. The error code can be defined either as the HTTP code itself, or as colon separated string where the error code is in the second part.
+External services could return status codes in the event of a failure. Typical example are HTTP status codes returned by REST or OpenAPI service invocations. In this case, Kogito checks the defined error `code` against the HTTP code from the underlying response object. The error code can be defined either as the HTTP code itself, or as colon separated string where the error code is in the last part of the error code definition.
 
 **Examples**:
 [options="header"]
