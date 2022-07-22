@@ -64,7 +64,7 @@ Then apply it:
 oc apply -f service-monitor.yaml
 ----
 
-What we have just done is to create a Service Monitor named `prometheus-app-monitor` that will select apps with the label `app-with-metrics: serverless-workflow-app`, make sure that your Serverless Workflow application has this label. Then, OpenShift will call the endpoint `/q/metrics` for all the services labeled with  `app-with-metrics: serverless-workflow-app` every 30 seconds. For more details check the link:{openshift_micrometer_url}:[Monitoring Quarkus apps using Micrometer and Prometheus into OpenShift] guide.
+What we have just done is to create a Service Monitor named `prometheus-app-monitor` that will select apps with the label selector `app-with-metrics: serverless-workflow-app`, make sure that your Serverless Workflow application has this label. Then, OpenShift will call the endpoint `/q/metrics` for all the services labeled with  `app-with-metrics: serverless-workflow-app` every 30 seconds. For more details check the link:{openshift_micrometer_url}:[Monitoring Quarkus apps using Micrometer and Prometheus into OpenShift] guide.
 
 
 == Consuming metrics from Prometheus
