@@ -1,7 +1,7 @@
 ---
 name: Enhancement Request
 about: Suggest an enhancement to the Kogito Guides
-labels: enhancement
+labels: enhancement :heart:
 
 ---
 
