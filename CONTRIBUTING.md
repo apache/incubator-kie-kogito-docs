@@ -10,7 +10,7 @@ We accept all kinds of contributions:
 
 ## Including a new guide
 
-1. Open a JIRA issue
+1. Open a JIRA issue and add a sub-task for Doc review. 
 2. Write the guide
 3. Add a link to the guide in [serverlessworkflow/modules/ROOT/nav.adoc](serverlessworkflow/modules/ROOT/nav.adoc)
 4. Add a card for the guide in [serverlessworkflow/modules/ROOT/pages/index.adoc](serverlessworkflow/modules/ROOT/pages/index.adoc)
