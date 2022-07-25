@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>Mocking HTTP CloudEvents Sink with WireMock :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Mocking HTTP CloudEvents sink with WireMock">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, test, integration, wiremock, cloudevents">
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -155,8 +157,11 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Testing and Troubleshooting</span>
 <ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink with WireMock</a>
+  </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
+    <a class="nav-link" href="#testing-and-troubleshooting/mocking-opnapi-services-with-wiremock.adoc">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
@@ -222,6 +227,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Testing and Troubleshooting</li>
+    <li><a href="mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink with WireMock</a></li>
+  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc">Edit this Page</a></div>
   </div>
@@ -230,7 +240,419 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
+<h1 class="page">Mocking HTTP CloudEvents Sink with WireMock</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes how to test your Serverless Workflow application that uses HTTP <a href="https://cloudevents.io/"><strong>CloudEvents</strong></a> and <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/"><strong>Knative Sink Binding</strong></a>.</p>
+</div>
+<div class="paragraph">
+<p>The testing case followed in this document is based on the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing"><code>serverless-workflow-order-processing</code></a> example application.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="sinkbinding-test-overview"><a class="anchor" href="#sinkbinding-test-overview"></a>Overview of HTTP CloudEvents, Knative SinkBinding and testing</h2>
+<div class="sectionbody">
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The application we want to test must be configured to use <a href="https://knative.dev/docs/eventing/"><strong>Knative Eventing</strong></a>, using standard HTTP POST requests to send and receive events between event producers and <a href="https://knative.dev/docs/eventing/sinks/"><strong>sinks</strong></a>.
+These events conform to the <a href="https://cloudevents.io/"><strong>CloudEvents</strong></a> specification, which enables creating, parsing, sending, and receiving events in any programming language.</p>
+</div>
+<div class="paragraph">
+<p>When you create an event source, you can specify a <a href="https://knative.dev/docs/eventing/sinks/"><strong>sink</strong></a> where events are sent to, from the source.
+A <a href="https://knative.dev/docs/eventing/sinks/"><strong>sink</strong></a> is an Addressable or a Callable resource that can receive incoming events from other resources.
+Kubernetes Deployments, Services, Knative Services, Channels, and Brokers are all examples of sinks.
+This guide covers the testing of the Knative Service configured as <a href="https://knative.dev/docs/eventing/sinks/"><strong>sink</strong></a>.</p>
+</div>
+<div class="paragraph">
+<p>The purpose of this guide is to mock that service to verify if the Cloud Events are correctly received by the sink.
+The <a href="https://wiremock.org/"><strong>WireMok</strong></a> framework will add the mocked server that will verify the different Cloud Events received by the sink in the Serverless Workflow service execution.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="mocking_sink_binding"><a class="anchor" href="#mocking_sink_binding"></a>Testing the application with <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/"><strong>SinkBinding</strong></a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A completed Kogito Serverless Workflow application working. More information available in <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service guide</a>.</p>
+</li>
+<li>
+<p>Configure the workflow application to use HTTP CloudEvents with <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/"><strong>SinkBinding</strong></a>.
+Follow <a href="../eventing/consume-produce-events-with-knative-eventing.html" class="xref page">Consume and produce events with Knative eventing guide</a>
+to enable <a href="https://en.wikipedia.org/wiki/Event-driven_architecture">event-driven architecture</a> in the application using <a href="https://knative.dev/docs/eventing/"><strong>Knative Eventing</strong></a>.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_adding_test_dependencies"><a class="anchor" href="#_adding_test_dependencies"></a>Adding test dependencies</h3>
+<div class="paragraph">
+<p>Add the needed test dependencies to Serverless Workflow&#8217;s application <code>pom.xml</code>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP based Testing in JVM mode dependencies: <strong>quarkus-junit5</strong> and <strong>rest-assured</strong>. More detailed in <a href="https://quarkus.io/guides/getting-started-testing#recap-of-http-based-testing-in-jvm-mode">Testing your application Quarkus guide</a>.</p>
+</li>
+<li>
+<p><a href="https://wiremock.org/">WireMock</a> framework: <strong>wiremock-jre8</strong>. Allowing to mock the server that plays as the sink.</p>
+</li>
+<li>
+<p><a href="http://www.awaitility.org/">Awaitility</a>: <strong>awaitility</strong> used to express expectations of an asynchronous system.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">Application testing dependencies. See the example <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing/pom.xml"><code>pom.xml</code></a> for more details.</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
+    &lt;artifactId&gt;quarkus-junit5&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+    &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;com.github.tomakehurst&lt;/groupId&gt;
+  &lt;artifactId&gt;wiremock-jre8&lt;/artifactId&gt;
+  &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.awaitility&lt;/groupId&gt;
+  &lt;artifactId&gt;awaitility&lt;/artifactId&gt;
+  &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ref-create_test_class"><a class="anchor" href="#ref-create_test_class"></a>Create the test class</h3>
+<div class="paragraph">
+<p>Create a test class mocking the sink using WireMock The following excerpt explores the different elements that should compose it:
+<a id="test_class_bookmark"></a>
+.Test class example. The full class in  <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing/src/test/java/org/kie/kogito/examples/sw/orders/processing/VerifyWorkflowExecutionIT.java"><code>VerifyWorkflowExecutionIT</code></a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@QuarkusTest<i class="conum" data-value="1"></i><b>(1)</b>
+public class VerifyWorkflowExecutionIT { <i class="conum" data-value="2"></i><b>(2)</b>
 
+    private static WireMockServer sink; <i class="conum" data-value="3"></i><b>(3)</b>
+
+    static { <i class="conum" data-value="4"></i><b>(4)</b>
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+    }
+
+    /**
+     * Starts the "sink" server, which is the endpoint that will receive our produced events
+     */
+    @BeforeAll <i class="conum" data-value="5"></i><b>(5)</b>
+    public static void startSink() {
+        sink = new WireMockServer(options().port(8181)); <i class="conum" data-value="6"></i><b>(6)</b>
+        sink.start(); <i class="conum" data-value="7"></i><b>(7)</b>
+        sink.stubFor(post("/").willReturn(aResponse().withBody("ok").withStatus(200))); <i class="conum" data-value="8"></i><b>(8)</b>
+    }
+
+    @AfterAll <i class="conum" data-value="9"></i><b>(9)</b>
+    public static void stopSink() {
+        if (sink != null) {
+            sink.stop(); <i class="conum" data-value="10"></i><b>(10)</b>
+        }
+    }
+
+    @Test
+    void processDomesticOrderUnderFraudEval() throws JsonProcessingException, InterruptedException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final Order order = new Order();
+        order.setId(UUID.randomUUID().toString());
+        order.setDescription("iPhone 12");
+        order.setTotal(1001);
+        order.setCountry("US");
+
+        given() <i class="conum" data-value="4"></i><b>(4)</b>
+                .header("ce-specversion", "1.0")
+                .header("ce-id", order.getId())
+                .header("ce-source", "/from/test")
+                .header("ce-type", "orderEvent")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(objectMapper.writeValueAsString(order))
+                .post("/")
+                .then()
+                .statusCode(200);
+
+        await() <i class="conum" data-value="11"></i><b>(11)</b>
+                .atMost(60, SECONDS)
+                .with().pollInterval(1, SECONDS)
+                .untilAsserted(() -&gt; {
+                    sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(order.getId())));
+                    sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"fraudEvaluation\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+                    sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"domesticShipping\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+                }); <i class="conum" data-value="12"></i><b>(12)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>@QuarkusTest starts a Quarkus server for the whole lifetime of the tests execution run.
+More details in <a href="https://quarkus.io/guides/getting-started-testing#recap-of-http-based-testing-in-jvm-mode">enable quarkus testing resources</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The naming of the test would end with 'IT' to identify which test needs to be executed as an integration test.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="https://javadoc.io/doc/com.github.tomakehurst/wiremock/latest/com/github/tomakehurst/wiremock/WireMockServer.html">WireMockServer</a> mocked server instance used for Sink Binding for testing.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Used to test interactions with the application, more explained in the guide <a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your Serverless Workflow application using REST Assured</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code>@BeforeAll</code> annotation used to signal that the annotated method should be executed before all the tests run.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Creates the <a href="https://javadoc.io/doc/com.github.tomakehurst/wiremock/latest/com/github/tomakehurst/wiremock/WireMockServer.html">WireMockServer</a> instance listening at the port passed as parameter and must match with the sink configuration.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Start the server before the tests executed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Stub the mock API response. It accepts a MappingBuilder instance that we can use to build API mapping information such as URL, request parameters and body, headers, authorization etc.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><code>@AfterAll</code> annotation used to signal that the annotated method should be executed after all the tests execution.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Stop the server after all test execution.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><a href="https://javadoc.io/static/org.awaitility/awaitility/4.2.0/org/awaitility/Awaitility.html"><code>await()</code></a> added to waiting for asynchronous operations.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td><a href="https://wiremock.org//docs/verifying/"><code>verify</code></a> if the request has hit the mock API with the expected event content.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>It is very important to start the server before the tests execute, and stop the server after the tests finish.
+We can reset the mock stubs in between the tests.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configure_the_quarkus_test"><a class="anchor" href="#_configure_the_quarkus_test"></a>Configure the Quarkus test</h3>
+<div class="paragraph">
+<p>The test application needs to be configured to use the WireMockServer as the sink.
+The test <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing/src/test/resources/application.properties"><code>application.properties</code></a> file must contain the reference to the WireMockServer created.</p>
+</div>
+<div class="listingblock">
+<div class="title">Test <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing/src/test/resources/application.properties"><code>application.properties</code></a> sink connection property</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">mp.messaging.outgoing.kogito_outgoing_stream.url=http://0.0.0.0:8181 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The port needs to match with the one passed in the WireMockServer creation moment in the test class created.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_execute_testing"><a class="anchor" href="#_execute_testing"></a>Execute Testing</h3>
+<div class="paragraph">
+<p>To run the tests execute the following command:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean verify</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_testing_execution_cycle_example"><a class="anchor" href="#_testing_execution_cycle_example"></a>Testing execution cycle example</h3>
+<div class="paragraph">
+<p>The testing case followed in this document is based on the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing"><code>serverless-workflow-order-processing</code></a> example application.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing">example</a> is composed by three workflows:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/testing-and-troubleshooting/order-example-worflows.png" alt="order example worflows">
+</div>
+<div class="title">Figure 1. Example Order Processing workflows</div>
+</div>
+<div class="paragraph">
+<p>The main workflow process the incoming Order event and start a parallel state calling two subflows: Fraud Handling and Shipping Handling.
+The workflow will end once <strong>both</strong> subflows end.</p>
+</div>
+<div class="paragraph">
+<p>Fraud Handling will produce a new <code>FraudEvaluation</code> event if the order is above 1000 USD.
+Any other system or service in the architecture can then read this event and react upon it, like canceling the order for example.</p>
+</div>
+<div class="paragraph">
+<p>In parallel, regarding or not the order would need fraud evaluation, the workflow will produce events classifying the required Shipping service: International or Domestic.
+For this example, domestic shipping is any order with address within US.</p>
+</div>
+<div class="paragraph">
+<p>The event flow between components in the example application is shown in this diagram</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/testing-and-troubleshooting/example-components-interaction.png" alt="example components interaction">
+</div>
+<div class="title">Figure 2. Example event flow between components</div>
+</div>
+<div class="paragraph">
+<p>Here, how the testing components replicates these relationships to verify the events received by the sink</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/testing-and-troubleshooting/testing-eventing-sink.png" alt="]">
+</div>
+<div class="title">Figure 3. Example testing events flow.</div>
+</div>
+<div class="paragraph">
+<p>Before the test execution, the WireMockServer will start listening to the configured port as the sink, listening the events produced by the workflows.
+Every time the workflow produce an event to the sink, it will be received by the WireMockServer, and the test can verify the event content.</p>
+</div>
+<div class="paragraph">
+<p>Focusing in the <code>processDomesticOrderUnderFraudEval</code> described in this guide <a href="#ref-create_test_class">test class</a>, the use case covered is the production of <code>fraudEvaluation</code> (<code>Total &gt; 1000</code>) and <code>domesticShipping</code> (<code>country = "US")</code>.
+The <code>Order Event</code> consumed by the <code>Order</code> Workflow, needs to match the requirements:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">        final ObjectMapper objectMapper = new ObjectMapper();
+        final Order order = new Order();
+        order.setId(UUID.randomUUID().toString());
+        order.setDescription("iPhone 12");
+        order.setTotal(1001);
+        order.setCountry("US");
+
+        given()
+                .header("ce-specversion", "1.0")
+                .header("ce-id", order.getId())
+                .header("ce-source", "/from/test")
+                .header("ce-type", "orderEvent")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(objectMapper.writeValueAsString(order))
+                .post("/")
+                .then()
+                .statusCode(200);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now, the test needs to check the sink is receiving the expected events with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">        await()
+                .atMost(60, SECONDS)
+                .with().pollInterval(1, SECONDS)
+                .untilAsserted(() -&gt; {
+                    sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(order.getId())));
+                    sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"fraudEvaluation\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+                    sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"domesticShipping\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+                });</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><a href="https://javadoc.io/static/org.awaitility/awaitility/4.2.0/org/awaitility/Awaitility.html"><code>await()</code></a> Allows the test to retry the validations until assert the verifications, or until the specified time expires (in this case after 60 seconds).</p>
+</div>
+<div class="paragraph">
+<p>Checking if the sink (WireMockServer) receives two events for that order id with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(order.getId())));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To check the content of the received events, perform these verifications on the <code>types</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"fraudEvaluation\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"domesticShipping\"").and(containing("\"id\":\"" + order.getId() + "\""))));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After assert the validations on received events, the test ends with success and the used WireMockServer will stop.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+</li>
+<li>
+<p><a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your Serverless Workflow application using REST Assured</a></p>
+</li>
+<li>
+<p><a href="#testing-and-troubleshooting/mocking-opnapi-services-with-wiremock.adoc" class="xref unresolved">Mocking OpenAPI services using WireMock</a></p>
+</li>
+<li>
+<p><a href="https://quarkus.io/guides/getting-started-testing">Testing a Quarkus application</a></p>
+</li>
+<li>
+<p><a href="https://knative.dev/docs/getting-started/first-broker/">Knative Eventing components interaction: Source, Trigger, Broker, and Sink</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
