@@ -22,9 +22,9 @@ Note that error definition for a Serverless Workflow is optional. If error handl
 
 An link:{spec_doc_url}#error-definition[error definition] in Serverless Workflow is composed of a `name` and `code` parameters. The `name` is a short and natural language description of an error, such as `wrong parameter`. The `code` parameter helps the implementation to identify the error.
 
-In Kogito, the `code` parameter is mandatory, and the engine uses different strategies to map the provided value to an exception encountered at runtime:
+In Kogito, the `code` parameter is mandatory and the engine uses different strategies to map the provided value to an exception encountered at runtime. The available strategies include _Fully Qualified Class Name_, _Error Message_ and _Status Code_ and are described in more details below.
 
-==== Fully Qualified Class Name (FQCN)
+=== Fully Qualified Class Name (FQCN)
 
 Define the mapping as the fully qualified Java class name of an link:{java_exception_url}[exception type].
 
@@ -38,7 +38,7 @@ To determine if an exception is handled by an error definition, Kogito first che
 |`java.lang.IllegalStateException`|`java.lang.RuntimeException`
 |=======================
 
-==== Error message
+=== Error message
 
 Define the mapping as a partial match of the error message using link:{java_regex_url}[regex] patterns.
 
@@ -53,7 +53,7 @@ Kogito checks whether the message of the Java exception matches the value provid
 |`Unknown error, status code 400`|`(.*)status code 4[0-9]\{2\}` or `status code 4[0-9]\{2\}`
 |=======================
 
-==== Status code
+=== Status code
 
 Define the mapping as a status code returned by the invoked service.
 
