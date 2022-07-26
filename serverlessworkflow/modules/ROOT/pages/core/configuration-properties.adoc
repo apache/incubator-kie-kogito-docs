@@ -1,0 +1,127 @@
+Configuration Properties
+========================
+:compat-mode!:
+// Metadata:
+:description: Configuration Properties
+:keywords: kogito, workflow, serverless, configuration, properties
+
+Kogito configuration properties reference.
+
+[[configuration-reference]]
+== Configuration reference
+
+|===
+|Property|Description|Type|Default|Override at runtime
+
+|kogito.persistence.type
+|Persistence DB type. Possible values are: `jdbc`, `mongodb`, `filesystem`, `kafka`, `infinispan` or `postgresql`.
+|string
+|
+|true
+
+|kogito.persistence.query.timeout.millis
+|Query execution timeout
+|long
+|10000
+|true
+
+|kogito.persistence.optimistic.lock
+|Use optimistic locking
+|boolean
+|false
+|true
+
+|kogito.persistence.auto.ddl
+|Automatically apply database schema changes
+|boolean
+|true
+|true
+
+|kogito.workflow.version-strategy
+|Strategy to resolve a Process version to use. Possible values are: `workflow` and `project`.
+|string
+|workflow
+|false
+
+|kogito.service.url
+|The service URL needed to connect to the runtime endpoint from outside the service.
+|string
+|
+|true
+
+|kogito.messaging.as-cloudevents
+|If this is enabled the service will use Cloud Events
+|boolean
+|true
+|false
+
+|kogito.jackson.fail-on-empty-bean
+|If this property is `true`, Jackson will fail on an empty bean
+|boolean
+|false
+|false
+
+|kogito.sw.operationIdStrategy
+|Strategy for generating the configuration key of open API specifications. Possible values are: `file_name`, `full_uri`, `spec_title` or `function_name`.
+|string
+|file_name
+|false
+
+|kogito.sw.states.foreach.outputVarName
+|Variable name for foreach loop
+|string
+|_swf_eval_temp
+|false
+
+|kogito.quarkus.events.threads.poolSize
+|ThreadPoolExecutor maximum number of threads to allow in the pool.
+|int
+|10
+|true
+
+|kogito.quarkus.events.threads.queueSize
+|ThreadPoolExecutor queue size to use for holding tasks before they are executed.
+|int
+|1
+|true
+
+|quarkus.kogito.logger.always-include
+|Always include the Workflow debug logger. By default, this will only be included in dev and test.
+|boolean
+|false
+|false
+
+|quarkus.kogito.devservices.enabled
+|If Dev Services for Kogito has been explicitly enabled or disabled. Dev Services are generally enabled by default, unless there is an existing configuration present.
+|boolean
+|true
+|false
+
+|quarkus.kogito.devservices.port
+|Optional fixed port the dev service will listen to.
+|int
+|8180
+|false
+
+|quarkus.kogito.devservices.image-name
+|The Data Index image to use.
+|string
+|quay.io/kiegroup/kogito-data-index-ephemeral:{version}
+|false
+
+|quarkus.kogito.devservices.shared
+|Indicates if the Data Index instance managed by Quarkus Dev Services is shared.
+|boolean
+|true
+|false
+
+|quarkus.kogito.devservices.service-name
+|The value of the label attached to the started container. This property is used when `shared` is set to `true`.
+|string
+|kogito-data-index
+|false
+
+
+|===
+
+include::../../pages/_common-content/report-issue.adoc[]
