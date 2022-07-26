@@ -6,5 +6,194 @@
 :keywords: kogito, workflow, serverless, correlation, association, domain, events
 // links:
 
+ link:{cloud_events_url}[Cloud Event]
+link:{spec_doc_url}#workflow-expressions[Serverless Workflow Specification]
+link:{kogito_sw_examples_url}/serverless-workflow-greeting-quarkus
+xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services].
+
+[[ref-example-jq-expression-switch-conditions]]
 
 
+Event correlation plays a big role in large event-driven applications, correlating one or more events with a particular workflow instance. They define rules, which can be used when defining consumed event definitions as a way to match a workflow instance, as a more practical alternative to the internal identifier (processInstanceId).
+
+A correlation can be one or more attributes associated with an event and the respective workflow to which it belongs. In the workflow definition, the correlation property defines the possible correlations for a given event, each element should contain a contextAttributeName set for the value that should match an attribute from an event. Optionally, a contextAttributeValue property defines a constant value that should be used to match an event instead of a value set during the instance creation.
+
+
+[NOTE]
+====
+The incoming events consumed by the workflow engine should contain the correlation attributes, set in the definition, as extension context attributes, in compliance with the CloudEvent format, thus they are not part of the event payload.
+====
+
+Once an event is consumed and the correlation rules are evaluated, if any workflow instance matches them, the engine continues the execution of that matched instance.
+
+When starting a new workflow instance, the correlation attributes set in the event definition, are extracted from the event and associated with the workflow instance which is being created. Thus, the start event does not trigger a correlation evaluation, instead, it is where correlation attributes and values are set, which are used to evaluate against other incoming events that might trigger this instance.
+
+.Event correlation evaluation process
+image::getting-started/hello-world-workflow.png[]
+
+== Setting event correlation in serverless workflow
+
+An example to show the correlation setup and usage in a workflow can be found at this repository https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-correlation-quarkus
+
+The correlation information is set in the workflow definition file https://github.com/kiegroup/kogito-examples/blob/main/serverless-workflow-examples/serverless-workflow-correlation-quarkus/src/main/resources/correlation.sw.json, in the events section, as follow:
+
+.Example content for `hello.sw.json` file
+[source,json]
+----
+  "events": [
+    {
+      "name": "newAccountEvent",
+      "source": "",
+      "type": "newAccountEventType",
+      "correlation": [
+        {
+          "contextAttributeName": "userid"
+        }
+      ]
+    },
+    {
+      "name": "validateAccountEmailEvent",
+      "source": "workflow",
+      "type": "validateAccountEmail"
+    },
+    {
+      "name": "validatedAccountEmailEvent",
+      "source": "workflow",
+      "type": "validatedAccountEmail",
+      "correlation": [
+        {
+          "contextAttributeName": "userid"
+        }
+      ]
+    },
+    {
+      "name": "activateAccountEvent",
+      "source": "workflow",
+      "type": "activateAccount"
+    },
+    {
+      "name": "activatedAccountEvent",
+      "source": "workflow",
+      "type": "activatedAccount",
+      "correlation": [
+        {
+          "contextAttributeName": "userid"
+        }
+      ]
+    }
+  ]
+----
+
+A workflow can be created by consuming events as defined by the Event state ("New User Account Request") which has a reference to the event "newAccountEvent" containing a correlation definition for attribute userid.
+
+.New User Account Request state definition
+[source,json]
+----
+{
+  "name": "New User Account Request",
+  "type": "event",
+  "onEvents": [
+    {
+      "eventRefs": [
+        "newAccountEvent"
+      ]
+    }
+  ],
+  "transition": "Validate User Email"
+}
+----
+
+When a new event of type "newAccountEventType" is consumed the workflow is created and any other events consumed by this workflow should contain the same correlation attribute (userid) with the same value (value) set, which is used to evaluate and match the workflow instance to continue the execution.
+
+.New Incoming Start Event `newAccountEvent`
+[source,json]
+----
+{
+  "specversion": "0.3",
+  "id": "1d174d25-46ac-4785-bc76-457c2d37d2fe",
+  "source": "",
+  "type": "newAccountEventType",
+  "time": "2022-07-25T16:30:35.461988261-03:00",
+  "userid": "12345",
+  "data": {
+    "email": "test@test.com",
+    "userId": "12345"
+  }
+}
+----
+
+[NOTE]
+====
+It is not supported to correlate multiple events together, events are evaluated with correlations independently.
+====
+
+=== Producing and consuming events with correlation
+
+Following the workflow definition, it is possible to define other events that are supposed to be published and consumed by this workflow, in the given example it is used Callback States ("Validate User Email"), indicating once the execution achieves this state it publishes an event of type (validateAccountEmailEvent) and wait to receive an event of type (validatedAccountEmailEvent), more information on the guide(link).
+
+.Callback State Definition
+[source,json]
+----
+{
+  "name": "Validate User Email",
+  "type": "callback",
+  "action": {
+    "name": "publish validate event",
+    "eventRef": {
+      "triggerEventRef": "validateAccountEmailEvent"
+    }
+  },
+  "eventRef": "validatedAccountEmailEvent",
+  "transition": "Activate User Account"
+}
+----
+
+[IMPORTANT]
+The produced events contain the same correlation attributes set once the workflow was created.
+
+.Outgoing Callback Event `validateAccountEmailEvent`
+[source,json]
+----
+{
+  "id": "7640a0af-b7fb-4d94-9d9d-3aa1ace60e79",
+  "source": "/process/correlation",
+  "type": "validateAccountEmail",
+  "time": "2022-07-25T16:22:53.735128049-03:00",
+  "data": {
+    "email": "test@test.com",
+    "userId": "12345"
+  },
+  "specversion": "1.0",
+  "kogitoprocinstanceid": "69019826-daef-4fb4-880b-c1658c4e49bc",
+  "kogitoprocid": "correlation",
+  "kogitoprocversion": "1.0",
+  "kogitousertaskist": "1",
+  "kogitoproctype": "SW",
+  "userid": "12345"
+}
+----
+
+All consumed events must contain the same correlation attributes since they are used to identify the workflow instance.
+
+.Incoming Callback Response Event `validatedAccountEmailEvent`
+[source,json]
+----
+{
+  "specversion": "1.0",
+  "id": "953f07a7-aea8-4956-8775-85ab59366fe6",
+  "source": "",
+  "type": "validatedAccountEmail",
+  "time": "2022-07-25T16:29:27.320408379-03:00",
+  "userid": "12345",
+  "data": null
+}
+----
+
+== Kogito correlation configuration
+
+Kogito (tag) engine store the correlation information in the same persistence mechanism configured in the application. In a similar approach, if no persistence addon is configured, the correlation information is stored in memory, this means that this information is lost upon application restart, so it should only be used for testing purposes. For more information about persistence configuration, see the guide(link).
+
+[NOTE]
+====
+Currently, the only persistency addon that supports correlation is the jdbc-addon with PostgreSQL. In the next releases, other addons and databases will be supported.
+====
