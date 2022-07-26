@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>Working with parallelism :: Kogito Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -79,6 +79,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="working-with-parallelism.html">Working with parallelism</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
@@ -225,6 +228,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Core</li>
+    <li><a href="working-with-parallelism.html">Working with parallelism</a></li>
+  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/core/working-with-parallelism.adoc">Edit this Page</a></div>
   </div>
@@ -233,7 +241,415 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page">Working with parallelism</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes how to run parallel tasks in Serverless Workflow.
+The testing procedure in this document is based on the <code>serverless-workflow-examples/serverless-workflow-service-calls-quarkus</code> example application.
+You can access this example application in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-parallel-execution">GitHub repository</a>.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Kogito Serverless Workflow serialize parallel execution. Therefore, "parallel" does not mean simultaneous execution. It means there is no logical dependency between branches. An inactive branch can start/resume execution without waiting completion of the active branch if the latter suspends execution (for example, wait for an event reception).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The example application is a workflow that concatenates 3 strings and returns the result.
+The concatenation is done in parallel, one branch per each of the 3 strings.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-creating-the-workflow"><a class="anchor" href="#proc-creating-the-workflow"></a>Creating the workflow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The procedure in this section describes how you can create the workflow that is going to perform the concatenation.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A Serverless Workflow project is created.</p>
+<div class="paragraph">
+<p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Create a serverless workflow file under the <code>src/main/resources/</code> directory with the name <code>parallel.sw.json</code>.</p>
+</li>
+<li>
+<p>Add the following content to the file:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "parallel",
+  "version": "1.0",
+  "specVersion": "0.8",
+  "name": "Welcome to the Parallel dimension",
+  "description": "Testing parallelism",
+  "start": "Parallel",
+  "functions": [
+    {
+      "name": "concatA",
+      "type": "expression",
+      "operation": ".result|=.+\"A\"" <i class="conum" data-value="1"></i><b>(1)</b>
+    },
+    {
+      "name": "concatB",
+      "type": "expression",
+      "operation": ".result|=.+\"B\"" <i class="conum" data-value="2"></i><b>(2)</b>
+    },
+    {
+      "name": "concatC",
+      "type": "expression",
+      "operation": ".result|=.+\"C\"" <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+  ],
+  "states": [
+    {
+      "name": "Parallel",
+      "type": "parallel", <i class="conum" data-value="4"></i><b>(4)</b>
+      "branches": [ <i class="conum" data-value="5"></i><b>(5)</b>
+        {
+          "name": "branchA",
+          "actions": [
+            {
+              "functionRef": "concatA" <i class="conum" data-value="6"></i><b>(6)</b>
+            }
+          ]
+        },
+        {
+          "name": "branchB",
+          "actions": [
+            {
+              "functionRef": "concatB" <i class="conum" data-value="7"></i><b>(7)</b>
+            }
+          ]
+        },
+        {
+          "name": "branchC",
+          "actions": [
+            {
+              "functionRef": "concatC" <i class="conum" data-value="8"></i><b>(8)</b>
+            }
+          ]
+        }
+      ],
+      "completionType": "allOf", <i class="conum" data-value="9"></i><b>(9)</b>
+      "end": {
+        "terminate": true
+      }
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Function that concatenates the string <code>A</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Function that concatenates the string <code>B</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Function that concatenates the string <code>C</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Defines the type of the state as <code>parallel</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Defines the branches that is going to run in parallel</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Defines the function that is going to run in the branch <code>branchA</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Defines the function that is going to run in the branch <code>branchB</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Defines the function that is going to run in the branch <code>branchC</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Defines the completion type of the parallel state as <code>allOf</code>.
+This means that the parallel state will be completed when all the branches are completed.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_running_the_workflow"><a class="anchor" href="#_running_the_workflow"></a>Running the workflow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The procedure in this section describes how you can run the workflow.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You have created the parallel workflow as described in <a href="#proc-creating-the-workflow">Creating the workflow</a></p>
+</li>
+<li>
+<p>The workflow application is up and running.
+You can start it in dev mode by running:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">`mvn quarkus:dev`</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Run the workflow by sending a request to the <code>/parallel</code> endpoint.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
+  'http://localhost:8080/parallel' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "workflowdata": {}
+}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see an output similar to:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{"id":"358f97ba-f0f9-4f25-86cc-4b35e85c2406","workflowdata":{"result":"ABC"}}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>"result":"ABC"</code> may be different in each request, since the branches are running in parallel and the execution order of the branches is unpredictable.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Note that the workflow data shows the concatenated string as result.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_running_only_some_branches"><a class="anchor" href="#_running_only_some_branches"></a>Running only some branches</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Rather than defining <code>"completionType": "allOf"</code> to run all branches, like in the previous example, you can define <code>"completionType": "atLeast"</code> to run only some branches if needed.</p>
+</div>
+<div class="paragraph">
+<p>When you do that, you also need to define the minimum number of branches that you want to run, by defining the <code>"numCompleted":</code> property.</p>
+</div>
+<div class="paragraph">
+<p>The procedure in this section describes how you can run the workflow with only two branches.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You have created the parallel workflow as described in <a href="#proc-creating-the-workflow">Creating the workflow</a></p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Change the <code>completionType</code> property to <code>"atLeast"</code> and add the <code>"numCompleted": 2</code> property to the parallel state. Your workflow should look like:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "parallel",
+  "version": "1.0",
+  "specVersion": "0.8",
+  "name": "Welcome to the Parallel dimension",
+  "description": "Testing parallelism",
+  "start": "Parallel",
+  "functions": [
+    {
+      "name": "concatA",
+      "type": "expression",
+      "operation": ".result|=.+\"A\""
+    },
+    {
+      "name": "concatB",
+      "type": "expression",
+      "operation": ".result|=.+\"B\""
+    },
+    {
+      "name": "concatC",
+      "type": "expression",
+      "operation": ".result|=.+\"C\""
+    }
+  ],
+  "states": [
+    {
+      "name": "Parallel",
+      "type": "parallel",
+      "branches": [
+        {
+          "name": "branchA",
+          "actions": [
+            {
+              "functionRef": "concatA"
+            }
+          ]
+        },
+        {
+          "name": "branchB",
+          "actions": [
+            {
+              "functionRef": "concatB"
+            }
+          ]
+        },
+        {
+          "name": "branchC",
+          "actions": [
+            {
+              "functionRef": "concatC"
+            }
+          ]
+        }
+      ],
+      "completionType": "atLeast", <i class="conum" data-value="1"></i><b>(1)</b>
+      "numCompleted": "2", <i class="conum" data-value="2"></i><b>(2)</b>
+      "end": {
+        "terminate": true
+      }
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Defines the completion type of the parallel state as <code>atLeast</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Defines the minimum number of branches that you want to run. This means that the parallel state will be completed when at least two branches are completed.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Run the workflow by sending a request to the <code>/parallel</code> endpoint.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
+  'http://localhost:8080/parallel' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "workflowdata": {}
+}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see an output similar to:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"3da62df1-c4e7-48c9-a3e4-7f63872c92f4","workflowdata":{"result":"BC"}}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>"result":"BC"</code> may be different in each request.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Note that the workflow data shows the concatenated string as result, but now the workflow concatenated only 2 letters.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
