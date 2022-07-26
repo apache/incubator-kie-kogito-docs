@@ -36,7 +36,7 @@ The example described in this document is based on the link:{kogito_sw_order_pro
 
 The Serverless Workflow application that you want to test must be configured to use link:{knative_eventing_url}[Knative Eventing]. You must configure Knative Eventing using standard HTTP POST requests to send and receive events between event producers and link:{knative_sink_binding_overview_url}[sinks]. The events between the event producers and sinks follow the link:{cloud_events_url}[CloudEvents] specification, which enables creating, parsing, sending, and receiving events in any programming language.
 
-When you create an event source, you can specify a sink where events are sent to, from the source. A sink is an transferable or a callable resource that can receive incoming events from other resources. The examples of sink include Kubernetes deployments, Knative services, channels, and brokers.
+When you create an event source, you can specify a sink where events are sent to, from the source. A sink is a transferable or a callable resource that can receive incoming events from other resources. The examples of sink include Kubernetes deployments, Knative services, channels, and brokers.
 
 This document describes the testing of Knative service that is configured as a sink, and the same Knative service is mocked to verify if the CloudEvents are received correctly by the sink. In this process, the link:{wiremock_url}[WireMock] framework adds the mocked server, verifying the CloudEvents received by the sink during the Serverless Workflow service execution.
 
@@ -211,7 +211,7 @@ image::testing-and-troubleshooting/order-example-worflows.png[]
 
 The *Order Workflow* in the `serverless-workflow-order-processing` example application processes the incoming order event and starts a parallel state, which sends requests to two workflows including *Fraud Handling* and *Shipping Handling*. The Order Workflow ends when both Fraud Handling and Shipping Handling workflows are completed.
 
-The Fraud Handling worklflow produces a `FraudEvaluation` event if the received order is more than 1000 USD. In the workflow architecture, any other system or service can read the `FraudEvaluation` event and react upon it, such as canceling the order. 
+The Fraud Handling workflow produces a `FraudEvaluation` event if the received order is more than 1000 USD. In the workflow architecture, any other system or service can read the `FraudEvaluation` event and react upon it, such as canceling the order. 
 
 Simultaneously, regardless of evaluating the fraud, the Shipping Handling workflow produces events that classify the required shipping service, such as international or domestic. In this example, domestic shipping is classified for any order, containing the address within the United States. 
 
@@ -270,7 +270,7 @@ The `await()` method in the previous example allows the test to retry the valida
 
 The following example shows how to check if the sink (`WireMockServer`) receives two events for the same order ID:
 
-.Example if sink recevies the events
+.Example if sink receives the events
 [source]
 ----
 sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(order.getId())));
@@ -285,7 +285,7 @@ sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"t
 sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"domesticShipping\"").and(containing("\"id\":\"" + order.getId() + "\""))));
 ----
 
-After declaring the verfications on received events, the test successfully ends and the WireMockServer stops. 
+After declaring the verifications on received events, the test successfully ends and the WireMockServer stops. 
 
 == Additional resources
 
