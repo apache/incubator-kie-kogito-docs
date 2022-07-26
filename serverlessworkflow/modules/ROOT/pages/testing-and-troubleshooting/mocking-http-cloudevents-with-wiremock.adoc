@@ -230,7 +230,7 @@ Before executing a test, the `WireMockServer` starts listening to the configured
 The `processDomesticOrderUnderFraudEval` in the <<testclass, `VerifyWorkflowExecutionIT`>> class, produces events, such as `fraudEvaluation` (`Total > 1000`) and `domesticShipping` (`country = "US"`). Also, the order event consumed by the Order Workflow needs to match the requirements as shown in the following example:
 
 .Example requirements for Order Workflow
-[source]
+[source,java]
 ----
         final ObjectMapper objectMapper = new ObjectMapper();
         final Order order = new Order();
@@ -254,7 +254,7 @@ The `processDomesticOrderUnderFraudEval` in the <<testclass, `VerifyWorkflowExec
 After matching the requirements, the test verifies if the sink is receiving the expected events as shown in the following example:
 
 .Example of a sink verification
-[source]
+[source,java]
 ----
         await()
                 .atMost(60, SECONDS)
@@ -271,7 +271,7 @@ The `await()` method in the previous example allows the test to retry the valida
 The following example shows how to check if the sink (`WireMockServer`) receives two events for the same order ID:
 
 .Example if sink receives the events
-[source]
+[source,java]
 ----
 sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(order.getId())));
 ----
@@ -279,7 +279,7 @@ sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(orde
 To check the content of the received events, the following verifications can be declared or performed on the `types`:
 
 .Example of verifications
-[source]
+[source,java]
 ----
 sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"fraudEvaluation\"").and(containing("\"id\":\"" + order.getId() + "\""))));
 sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"domesticShipping\"").and(containing("\"id\":\"" + order.getId() + "\""))));
