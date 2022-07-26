@@ -8,9 +8,9 @@
 [[con-saga-overview]]
 == Overview of Saga pattern
 
-The Saga design pattern manages data consistency across services that are available in distributed transaction scenarios. For more information about Saga pattern, see the initial link:https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf[publication]. 
+The Saga design pattern manages data consistency across participants that are available in distributed transaction scenarios. For more information about Saga pattern, see the initial link:https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf[publication]. 
 
-In a microservice architecture, you can define a service as microservice, which is responsible to perform actions related to the business domain. 
+In a microservice architecture, you can define a participant as microservice, which is responsible to perform actions related to the business domain. 
 
 The Saga pattern manages the transactions using a sequence of steps. If a failure occurs while executing a step, then a sequence of compensating actions is executed to undo the changes that are made during the execution. As an alternative, you can leave the system in a known termination state to be consistent.
 
@@ -27,7 +27,7 @@ image::use-cases/orchestration-based-saga-pattern/order-fulfillment-example.png[
 The previous figure contains the following steps:
 
 1. *Order checkout*: User confirms the order with selected items, payment method, and delivery address.
-2. *Stock reservation*: The selected item in the order is removed from the reserved stock.
+2. *Stock reservation*: The selected items in the order are reserved in the stock.
 3. *Payment processing*: Payment is processed based on the selected payment method and user information. For example, in case of processing payment using credit card, then the credit is verified and allocated to the payment.
 4. *Shipping processing*: The shipping processing represents a mechanism, which communicates with a third-party or an internal system who are responsible for logistics and delivery.
 
@@ -44,18 +44,18 @@ The success workflow in the previous figure consists of the following steps:
 
 However, in the failure workflow an error occurred during the shipping process. In this situation, a sequence of compensation actions is executed, including canceling the payment and releasing the stock for the items in the order.
 
-In the `serverless-workflow-saga-quarkus` example application, a link:{spec_doc_url}[Serverless Workflow] is used that implements the Saga pattern, in which all the steps and compensation actions are defined. Also, the Serverless Workflow plays the role of Saga Executor Coordinator (SEC), which orchestrates the calls to the microservices in the Saga pattern.
+In the `serverless-workflow-saga-quarkus` example application, a link:{spec_doc_url}[Serverless Workflow] is used that implements the Saga pattern, in which all the steps and compensation actions are defined. Also, the Serverless Workflow plays the role of Saga Executor Coordinator (SEC), which orchestrates the calls to the participants in the Saga pattern.
 
 The workflow definition used to define the Saga pattern is available in the link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus/src/main/resources/order-saga-error-handling.sw.json[`order-saga-error-handling.sw.json`] file. 
 
 .Example of order fulfillment Saga workflow
 image::use-cases/orchestration-based-saga-pattern/order-fulfillment-saga-workflow.png[]
 
-In the previous example figure of workflow, the calls are orchestrated to the microservices, each microservice can throw possible errors, and compensations for each step are defined, that are executed once an error appears during the workflow execution.
+In the previous example figure of workflow, the calls are orchestrated to the participants (for example, order service, payment service), each participant can throw possible errors, and compensations for each step are defined, that are executed once an error appears during the workflow execution.
 
-To define the interactions among microservices in the Saga pattern using Serverless Workflow specification, you can use link:{spec_doc_url}#workflow-states[workflow states] with link:{spec_doc_url}#Transitions[transitions]. 
+To define the interactions among participants in the Saga pattern using Serverless Workflow specification, you can use link:{spec_doc_url}#workflow-states[workflow states] with link:{spec_doc_url}#Transitions[transitions]. 
 
-In Serverless Workflow specification, each workflow state represents a step to be completed in the Saga pattern. Also, an action associated with the workflow state represents how a microservice is invoked to execute a given step.
+In Serverless Workflow specification, each workflow state represents a step to be completed in the Saga pattern. Also, an action associated with the workflow state represents how a participant is invoked to execute a given step.
 
 [#payment-state]
 .Example of workflow state declaration representing the payment process in Saga
@@ -91,12 +91,12 @@ In Serverless Workflow specification, each workflow state represents a step to b
 }
 ----
 
-In the previous example, the `processPayment` state contains a `processPaymentAction` action, which invokes a function to execute the payment processing that `Payment Service` microservice might process. The `transition` attribute represents the next step to be started, which schedules the order shipping for the Saga pattern.
+In the previous example, the `processPayment` state contains a `processPaymentAction` action, which invokes a function to execute the payment processing that `Payment Service` participant might process. The `transition` attribute represents the next step to be started, which schedules the order shipping for the Saga pattern.
 
 Compensation actions::
 +
 --
-When designing a Saga pattern, compensation actions for each step is considered as a core functionality, which is executed by a microservice.
+When designing a Saga pattern, compensation actions for each step is considered as a core functionality, which is executed by a participant.
 
 In Serverless Workflow, each workflow state must define a compensation action using `compensatedBy` attribute, indicating another workflow state that performs the compensation action. For example, in `serverless-workflow-saga-quarkus`, `processPayment` state defines `CancelPayment` as a compensation action in the <<payment-state, payment process>>.
 
@@ -154,7 +154,7 @@ The function that are throwing errors can be any type of functions, such as REST
 
 The Serverless Workflow engine controls the execution of the flow and keeps the track of the steps that need to be compensated. Also, the engine ensures that compensated states are executed in reverse order of each completed step. 
 
-The engine is a stateful, allowing Saga to contain wait states, such as callbacks. After each wait state, the workflow is persisted and can continue once it recevies a request or event.
+The engine is a stateful, allowing Saga to contain wait states, such as callbacks. After each wait state, the workflow is persisted and can continue once it receives a request or event.
 
 The `serverless-workflow-saga-quarkus` example application shows a Saga workflow that is executed as request-response. This is called a straight through process, in which an entire workflow is executed in a single request.
 
@@ -224,7 +224,7 @@ When executing the application, you can also verify the log with information rel
 Activate compensation actions::
 +
 --
-To test the workflow, an optional `failService` attribute is introduced, indicating which microservice must respond with an error. In the following example, the `ShippingService` state throws an error, which breaks the workflow execution and triggers the compensation actions:
+To test the workflow, an optional `failService` attribute is introduced, indicating which participant must respond with an error. In the following example, the `ShippingService` state throws an error, which breaks the workflow execution and triggers the compensation actions:
 
 .Example compensation request
 [source,shell]
