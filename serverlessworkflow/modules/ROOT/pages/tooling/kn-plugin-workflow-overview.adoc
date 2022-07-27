@@ -11,6 +11,7 @@
 :podman_install_url: https://docs.podman.io/en/latest/
 :kubectl_install_url: https://kubernetes.io/docs/tasks/tools/install-kubectl
 :kn_cli_install_url: https://github.com/knative/client/blob/main/docs/README.md#installing-kn
+:apple_support_url: https://support.apple.com/guide/mac-help/mh40616/mac
 
 Serverless Workflow provides a plug-in named `kn-plugin-workflow` for Knative CLI, which enables you to set up a local Serverless Workflow project quickly using the command line.
 
@@ -39,7 +40,12 @@ You can use the Serverless Workflow plug-in to set up your local Serverless Work
 .. Copy the `kn-workflow` binary to a directory in your `PATH`, such as `/usr/local/bin` and ensure that the file name is `kn-workflow`.
 .. On Mac, add ownership to the root user as follows:
 +
-`sudo chown root: /usr/local/bin/kn-workflow`
+`chmod +x /usr/local/bin/kn-workflow`
++
+[WARN]
+==== 
+Some systems might block the application to run due to Apple inforcing policies. To fix this problem, check the "Security & Privacy" section in the "System Preferences", "General" tab to approve the application to run. More information available at link:{apple_support_url}[this Apple support article].
+====
 .. Run the following command to verify that `kn-workflow` plug-in is installed successfully:
 +
 `kn plugin list`
