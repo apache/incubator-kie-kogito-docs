@@ -574,23 +574,23 @@ public class VerifyWorkflowExecutionIT { <i class="conum" data-value="2"></i><b>
 <div class="listingblock">
 <div class="title">Example requirements for Order Workflow</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">        final ObjectMapper objectMapper = new ObjectMapper();
-        final Order order = new Order();
-        order.setId(UUID.randomUUID().toString());
-        order.setDescription("iPhone 12");
-        order.setTotal(1001);
-        order.setCountry("US");
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">final ObjectMapper objectMapper = new ObjectMapper();
+final Order order = new Order();
+order.setId(UUID.randomUUID().toString());
+order.setDescription("iPhone 12");
+order.setTotal(1001);
+order.setCountry("US");
 
-        given()
-                .header("ce-specversion", "1.0")
-                .header("ce-id", order.getId())
-                .header("ce-source", "/from/test")
-                .header("ce-type", "orderEvent")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(objectMapper.writeValueAsString(order))
-                .post("/")
-                .then()
-                .statusCode(200);</code></pre>
+given()
+        .header("ce-specversion", "1.0")
+        .header("ce-id", order.getId())
+        .header("ce-source", "/from/test")
+        .header("ce-type", "orderEvent")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(objectMapper.writeValueAsString(order))
+        .post("/")
+        .then()
+        .statusCode(200);</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -599,14 +599,14 @@ public class VerifyWorkflowExecutionIT { <i class="conum" data-value="2"></i><b>
 <div class="listingblock">
 <div class="title">Example of a sink verification</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">        await()
-                .atMost(60, SECONDS)
-                .with().pollInterval(1, SECONDS)
-                .untilAsserted(() -&gt; {
-                    sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(order.getId())));
-                    sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"fraudEvaluation\"").and(containing("\"id\":\"" + order.getId() + "\""))));
-                    sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"domesticShipping\"").and(containing("\"id\":\"" + order.getId() + "\""))));
-                });</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">await()
+        .atMost(60, SECONDS)
+        .with().pollInterval(1, SECONDS)
+        .untilAsserted(() -&gt; {
+            sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(order.getId())));
+            sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"fraudEvaluation\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+            sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"domesticShipping\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+        });</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -618,7 +618,7 @@ public class VerifyWorkflowExecutionIT { <i class="conum" data-value="2"></i><b>
 <div class="listingblock">
 <div class="title">Example if sink receives the events</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(order.getId())));</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(order.getId())));</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -627,7 +627,7 @@ public class VerifyWorkflowExecutionIT { <i class="conum" data-value="2"></i><b>
 <div class="listingblock">
 <div class="title">Example of verifications</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"fraudEvaluation\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"fraudEvaluation\"").and(containing("\"id\":\"" + order.getId() + "\""))));
 sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"domesticShipping\"").and(containing("\"id\":\"" + order.getId() + "\""))));</code></pre>
 </div>
 </div>
