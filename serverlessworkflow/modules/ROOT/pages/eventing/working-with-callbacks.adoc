@@ -93,7 +93,7 @@ An link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/j
     }
 ----
 
-After that, the published CloudEvent modifies the value of `move` field and publishes the `move` field as a `result` field. Also, the consumed CloudEvent contains an attribute named `kogitoprocrefid`, which holds the process instance ID of the workflow that published the consumed CloudEvent. 
+After that, the Serverless Workflow application consumes the event published by the listener and sets the result field. The consumed CloudEvent contains an attribute named `kogitoprocrefid`, which holds the process instance ID of the workflow.
 
 The `kogitoprocrefid` attribute is crucial because when the correlation is not used, then this attribute is the only way for the Callback state to identify that the related CloudEvent needs to be used to resume the workflow.
 
