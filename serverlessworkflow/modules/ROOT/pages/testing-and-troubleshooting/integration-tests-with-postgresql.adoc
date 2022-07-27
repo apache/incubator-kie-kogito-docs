@@ -16,10 +16,11 @@ Serverless Workflow integration test with PostgreSQL
 :quarkus_testing_guide_launching_containers_url: {quarkus_testing_guide_url}#launching-containers
 :quarkus_dev_services_url: {quarkus_guides_base_url}/dev-services
 :quarkus_database_dev_services_url: {quarkus_guides_base_url}/databases-dev-services
-:quarkus_database_dev_services_enabling_url: {quarkus_database_dev_services_url}#enabling-disabling-dev-services-for-database
 :awaitility_url: http://www.awaitility.org/
 :postgresql_url: https://www.postgresql.org/
 :postgresql_doc_url: https://www.postgresql.org/docs/current/
+:failsafe_pluggin_doc: https://maven.apache.org/surefire/maven-failsafe-plugin/index.html
+:failsafe_pluggin_inclusions: https://maven.apache.org/surefire/maven-failsafe-plugin/examples/inclusion-exclusion.html
 :kogito_sw_callback_example_url: {kogito_sw_examples_url}/serverless-workflow-callback-quarkus
 
 This document describes how you can test your Kogito Serverless Workflow application integrated with PostgreSQL persistence.
@@ -45,12 +46,6 @@ details see link:{quarkus_testing_guide_integration_test_url}[@QuarkusIntegratio
 include::../../pages/_common-content/getting-started-requirement.adoc[]
 * Enable the application persistence using PostgresSQL. More details in {persistence_with_postgresql_guide}[Running Serverless Workflow service using PostgresSQL] guide.
 * Docker is installed.
-* link:{postgresql_url}[PostgreSQL] is installed. For information about PostgreSQL installation and configuration, see link:{postgresql_doc_url}[PostgreSQL documentation].
-
-[NOTE]
-====
-Although PostgreSQL installation is mentioned as a requirement, this guide relies on running it as a Docker service instead.
-====
 
 .Procedure
 . Add the required test dependencies to the `pom.xml` file of your Kogito Serverless Workflow application:
@@ -121,28 +116,43 @@ Ensure the Application's `pom.xml` has the dependency to the needed PostgreSQL r
 ----
 --
 
+. Add failsafe maven plugin to run integration tests
++
+--
+.maven-failsafe-plugin in the Application's `pom.xml` pluggins section
+[source,xml]
+----
+<plugin>
+  <artifactId>maven-failsafe-plugin</artifactId>
+  <version>${version.failsafe.plugin}</version>
+  <configuration>
+    <systemPropertyVariables>
+      <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+      <maven.home>${maven.home}</maven.home>
+    </systemPropertyVariables>
+  </configuration>
+  <executions>
+    <execution>
+      <goals>
+        <goal>integration-test</goal>
+        <goal>verify</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+More information in link:{failsafe_pluggin_doc}[*maven-failsafe-plugin*] documentation.
+
+--
+
 . Enable Quarkus Database Dev services
 +
 --
-The *Quarkus Database Dev Services* will start under following conditions:
-
-* Quarkus dev services enabled, `quarkus.devservices.enabled=true` (enabled by default).
-* Quarkus Databases dev services enabled, `quarkus.datasource.devservices.enabled=true` (enabled by default).
-* Dependencies to a reactive or JDBC datasource extension is present, in this case PostgreSQL.
-* No database URL configuration is provided.
-* Application running in Test or Development mode.
-
 For more information see link:{quarkus_database_dev_services_url}[*Quarkus Dev Services for Databases*] guide.
 
-[NOTE]
-====
-Properties `quarkus.devservices.enabled` and `quarkus.datasource.devservices.enabled` let to enable /disable the *Dev Services*.
-for more information see link:{quarkus_database_dev_services_enabling_url}[Enabling / Disabling Dev Services for Database] guide.
-====
-
-The additional containers has a full set of default configuration, such as PostgreSQL docker image name, default user, default password.
+The additional containers have a full set of default configurations, such as the PostgreSQL docker image name, default user, default password.
 All the required configuration to link the Kogito Serverless Workflow service with the Quarkus Dev PostgreSQL container is added automatically to the integration test.
-Quarkus will provide properties as `quarkus.datasource.reactive.url`, `quarkus.datasource.jdbc.url`, `quarkus.datasource.username` or `quarkus.datasource.password` after starting the container.
+Quarkus will provide properties such as `quarkus.datasource.reactive.url`, `quarkus.datasource.jdbc.url`, `quarkus.datasource.username` or `quarkus.datasource.password` after starting the container.
 --
 
 . Create a test class as shown in the following example:
@@ -184,7 +194,7 @@ class CallbackRestIT { <2>
 }
 ----
 <1> Allows launch and test the artifact produced by the Quarkus build. Supports testing a jar (of whichever type), a native image or container image
-<2> The naming of the test would end with 'IT' to identify which test needs to be executed as an integration test.
+<2> The naming of the test would end with 'IT' to identify which test needs to be executed as an integration test. More details in link:{failsafe_pluggin_inclusions}[maven-failsafe-plugin] documentation.
 <3> Testing application interactions using REST Assured.
 <4> link:{awaitility_url}[`await()`] allows the test to retry the validations until the verifications are declared or until the specified time expectations expire.
 
