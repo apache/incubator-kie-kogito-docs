@@ -1,36 +1,36 @@
-= Working with parallelism
-
+= Parallelism in Serverless Workflow
+:compat-mode!:
 // Metadata:
 :description: Working with parallelism in Serverless Workflow
 :keywords: kogito, workflow, quarkus, serverless, parallelism
 
-This document describes how to run parallel tasks in Serverless Workflow.
-The testing procedure in this document is based on the `serverless-workflow-examples/serverless-workflow-service-calls-quarkus` example application.
-You can access this example application in the link:{kogito_sw_examples_url}/serverless-workflow-parallel-execution[GitHub repository].
+This document describes how you can run parallel tasks in Serverless Workflow. 
+
+The testing procedure described in this document is based on the link:{kogito_sw_examples_url}/serverless-workflow-service-calls-quarkus[`serverless-workflow-service-calls-quarkus`] example application in GitHub repository.
 
 [WARNING]
 ====
-Kogito Serverless Workflow serialize parallel execution. Therefore, "parallel" does not mean simultaneous execution. It means there is no logical dependency between branches. An inactive branch can start/resume execution without waiting completion of the active branch if the latter suspends execution (for example, wait for an event reception).
+Kogito serializes the execution of parallel tasks. Therefore, the word "parallel" does not indicate simultaneous execution, but it means that there is no logical dependency between the execution of branches. An inactive branch can start or resume the execution of a task without waiting for an active branch to be completed, in case the latter suspends the execution (for example, wait for an event reception).
 ====
 
-The example application is a workflow that concatenates 3 strings and returns the result.
-The concatenation is done in parallel, one branch per each of the 3 strings.
+The `serverless-workflow-service-calls-quarkus` example application is a workflow that concatenates three strings and returns a result. The concatenation in the example application is done in parallel, which includes one branch per three strings.
 
-[[proc-creating-the-workflow]]
-== Creating the workflow
+[[proc-parallel-creating-the-workflow]]
+== Creating a parallel Serverless Workflow
 
-The procedure in this section describes how you can create the workflow that is going to perform the concatenation.
+You can create a Serverless Workflow, which performs a series of parallel tasks. 
 
 .Prerequisites
 
 include::../../pages/_common-content/getting-started-requirement.adoc[]
 
 .Procedure
-. Create a serverless workflow file under the `src/main/resources/` directory with the name `parallel.sw.json`.
+. Create a Serverless Workflow file named as `parallel.sw.json` under the `src/main/resources/` directory.
 
-. Add the following content to the file:
+. Add the following content to the `parallel.sw.json` file:
 +
 --
+.Example content for `parallel.sw.json` file
 [source,json]
 ----
 {
@@ -96,31 +96,32 @@ include::../../pages/_common-content/getting-started-requirement.adoc[]
 }
 ----
 
-<1> Function that concatenates the string `A`
-<2> Function that concatenates the string `B`
-<3> Function that concatenates the string `C`
-<4> Defines the type of the state as `parallel`
-<5> Defines the branches that is going to run in parallel
-<6> Defines the function that is going to run in the branch `branchA`
-<7> Defines the function that is going to run in the branch `branchB`
-<8> Defines the function that is going to run in the branch `branchC`
-<9> Defines the completion type of the parallel state as `allOf`.
-This means that the parallel state will be completed when all the branches are completed.
-
+<1> Function that concatenates the string `A`.
+<2> Function that concatenates the string `B`.
+<3> Function that concatenates the string `C`.
+<4> Defines the type of the state as `parallel`.
+<5> Defines the branches that run in parallel.
+<6> Defines the function that runs in `branchA`.
+<7> Defines the function that runs in `branchB`.
+<8> Defines the function that runs in `branchC`.
+<9> Defines the completion type of the parallel state as `allOf`. This means that the parallel state is completed when all the branches are completed.
 --
 
-== Running the workflow
+[[proc-parallel-run-workflow]]
+== Running a parallel Serverless Workflow
 
-The procedure in this section describes how you can run the workflow.
+After you create a Serverless Workflow that perform a series of parallel tasks, you can run the workflow.
 
 .Prerequisites
 
-* You have created the parallel workflow as described in <<proc-creating-the-workflow>>
+* A parallel workflow is created. 
++
+For more information, see <<proc-parallel-creating-the-workflow, Creating a parallel Serverless Workflow>>.
 
-* The workflow application is up and running.
-You can start it in dev mode by running:
+* The Serverless Workflow application is up and running.
 +
 --
+You can start the Serverless Workflow application in development mode by using the following command:
 [source,shell]
 ----
 `mvn quarkus:dev`
@@ -128,9 +129,10 @@ You can start it in dev mode by running:
 --
 
 .Procedure
-. Run the workflow by sending a request to the `/parallel` endpoint.
+. To run the created parallel workflow, send a request to the `/parallel` endpoint as shown in the following example request:
 +
 --
+.Example request
 [source,shell]
 ----
 curl -X 'POST' \
@@ -142,7 +144,7 @@ curl -X 'POST' \
 }'
 ----
 
-You should see an output similar to:
+.Example response
 [source,json]
 ----
 {"id":"358f97ba-f0f9-4f25-86cc-4b35e85c2406","workflowdata":{"result":"ABC"}}
@@ -150,29 +152,28 @@ You should see an output similar to:
 
 [NOTE]
 ====
-`"result":"ABC"` may be different in each request, since the branches are running in parallel and the execution order of the branches is unpredictable.
+The `"result":"ABC"` in the previous example response might be different in each request since the branches are running in parallel and the execution order of the branches is unpredictable.
 ====
 
-Note that the workflow data shows the concatenated string as result.
+Note that the parallel workflow data shows the concatenated string as result.
 --
 
-== Running only some branches
+[[proc-parallel-run-branches]]
+=== Running some branches in parallel Serverless Workflow
 
-Rather than defining `"completionType": "allOf"` to run all branches, like in the previous example, you can define `"completionType": "atLeast"` to run only some branches if needed.
-
-When you do that, you also need to define the minimum number of branches that you want to run, by defining the `"numCompleted":` property.
-
-The procedure in this section describes how you can run the workflow with only two branches.
+You can define the `"completionType": "atLeast"` to run only some branches in parallel workflow, instead of defining `"completionType": "allOf"`. When you define `"completionType": "atLeast"`, you also need to define the minimum number of branches that you want to run by defining the `"numCompleted":` property.
 
 .Prerequisites
 
-* You have created the parallel workflow as described in <<proc-creating-the-workflow>>
+* A parallel workflow is created. 
++
+For more information, see <<proc-parallel-creating-the-workflow, Creating a parallel Serverless Workflow>>.
 
 .Procedure
-. Change the `completionType` property to `"atLeast"` and add the `"numCompleted": 2` property to the parallel state. Your workflow should look like:
-
+. Change the `completionType` property to `"atLeast"` and add the `"numCompleted": 2` property to the parallel state.
 +
 --
+.Example parallel Serverless Workflow
 [source,json]
 ----
 {
@@ -238,14 +239,14 @@ The procedure in this section describes how you can run the workflow with only t
   ]
 }
 ----
-<1> Defines the completion type of the parallel state as `atLeast`
-<2> Defines the minimum number of branches that you want to run. This means that the parallel state will be completed when at least two branches are completed.
+<1> Defines the completion type of the parallel state as `atLeast`.
+<2> Defines the minimum number of branches that you want to run. This means that the parallel state is completed when at least two branches are completed.
 --
 
-. Run the workflow by sending a request to the `/parallel` endpoint.
-
+. To run the created parallel workflow, send a request to the `/parallel` endpoint as shown in the following example:
 +
 --
+.Example request
 [source,shell]
 ----
 curl -X 'POST' \
@@ -257,7 +258,7 @@ curl -X 'POST' \
 }'
 ----
 
-You should see an output similar to:
+.Example response
 [source,shell]
 ----
 {"id":"3da62df1-c4e7-48c9-a3e4-7f63872c92f4","workflowdata":{"result":"BC"}}
@@ -265,10 +266,14 @@ You should see an output similar to:
 
 [NOTE]
 ====
-`"result":"BC"` may be different in each request.
+The `"result":"BC"` in the response might be different in each request.
 ====
 
-Note that the workflow data shows the concatenated string as result, but now the workflow concatenated only 2 letters.
+The parallel workflow data shows the concatenated string as result, but in this case, the workflow concatenates only two letters.
 --
+
+== Additional resources
+
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
 
 include::../../pages/_common-content/report-issue.adoc[]
