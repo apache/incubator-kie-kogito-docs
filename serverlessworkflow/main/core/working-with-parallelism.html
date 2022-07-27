@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Working with parallelism :: Kogito Serverless Workflow Guides</title>
+    <title>Parallelism in Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Working with parallelism in Serverless Workflow">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, parallelism">
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -81,7 +83,7 @@
     <a class="nav-link" href="understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="working-with-parallelism.html">Working with parallelism</a>
+    <a class="nav-link" href="working-with-parallelism.html">Parallelism in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
@@ -231,7 +233,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Core</li>
-    <li><a href="working-with-parallelism.html">Working with parallelism</a></li>
+    <li><a href="working-with-parallelism.html">Parallelism in Serverless Workflow</a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/core/working-with-parallelism.adoc">Edit this Page</a></div>
@@ -241,13 +243,14 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Working with parallelism</h1>
+<h1 class="page">Parallelism in Serverless Workflow</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how to run parallel tasks in Serverless Workflow.
-The testing procedure in this document is based on the <code>serverless-workflow-examples/serverless-workflow-service-calls-quarkus</code> example application.
-You can access this example application in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-parallel-execution">GitHub repository</a>.</p>
+<p>This document describes how you can run parallel tasks in Serverless Workflow.</p>
+</div>
+<div class="paragraph">
+<p>The testing procedure described in this document is based on the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-service-calls-quarkus"><code>serverless-workflow-service-calls-quarkus</code></a> example application in GitHub repository.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -257,23 +260,22 @@ You can access this example application in the <a href="https://github.com/kiegr
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Kogito Serverless Workflow serialize parallel execution. Therefore, "parallel" does not mean simultaneous execution. It means there is no logical dependency between branches. An inactive branch can start/resume execution without waiting completion of the active branch if the latter suspends execution (for example, wait for an event reception).</p>
+<p>Kogito serializes the execution of parallel tasks. Therefore, the word "parallel" does not indicate simultaneous execution, but it means that there is no logical dependency between the execution of branches. An inactive branch can start or resume the execution of a task without waiting for an active branch to be completed, in case the latter suspends the execution (for example, wait for an event reception).</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The example application is a workflow that concatenates 3 strings and returns the result.
-The concatenation is done in parallel, one branch per each of the 3 strings.</p>
+<p>The <code>serverless-workflow-service-calls-quarkus</code> example application is a workflow that concatenates three strings and returns a result. The concatenation in the example application is done in parallel, which includes one branch per three strings.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="proc-creating-the-workflow"><a class="anchor" href="#proc-creating-the-workflow"></a>Creating the workflow</h2>
+<h2 id="proc-parallel-creating-the-workflow"><a class="anchor" href="#proc-parallel-creating-the-workflow"></a>Creating a parallel Serverless Workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The procedure in this section describes how you can create the workflow that is going to perform the concatenation.</p>
+<p>You can create a Serverless Workflow, which performs a series of parallel tasks.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
@@ -290,13 +292,14 @@ The concatenation is done in parallel, one branch per each of the 3 strings.</p>
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Create a serverless workflow file under the <code>src/main/resources/</code> directory with the name <code>parallel.sw.json</code>.</p>
+<p>Create a Serverless Workflow file named as <code>parallel.sw.json</code> under the <code>src/main/resources/</code> directory.</p>
 </li>
 <li>
-<p>Add the following content to the file:</p>
+<p>Add the following content to the <code>parallel.sw.json</code> file:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
+<div class="title">Example content for <code>parallel.sw.json</code> file</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "id": "parallel",
@@ -365,40 +368,39 @@ The concatenation is done in parallel, one branch per each of the 3 strings.</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Function that concatenates the string <code>A</code></td>
+<td>Function that concatenates the string <code>A</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Function that concatenates the string <code>B</code></td>
+<td>Function that concatenates the string <code>B</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Function that concatenates the string <code>C</code></td>
+<td>Function that concatenates the string <code>C</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Defines the type of the state as <code>parallel</code></td>
+<td>Defines the type of the state as <code>parallel</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Defines the branches that is going to run in parallel</td>
+<td>Defines the branches that run in parallel.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Defines the function that is going to run in the branch <code>branchA</code></td>
+<td>Defines the function that runs in <code>branchA</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Defines the function that is going to run in the branch <code>branchB</code></td>
+<td>Defines the function that runs in <code>branchB</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Defines the function that is going to run in the branch <code>branchC</code></td>
+<td>Defines the function that runs in <code>branchC</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Defines the completion type of the parallel state as <code>allOf</code>.
-This means that the parallel state will be completed when all the branches are completed.</td>
+<td>Defines the completion type of the parallel state as <code>allOf</code>. This means that the parallel state is completed when all the branches are completed.</td>
 </tr>
 </table>
 </div>
@@ -410,22 +412,27 @@ This means that the parallel state will be completed when all the branches are c
 </div>
 </div>
 <div class="sect1">
-<h2 id="_running_the_workflow"><a class="anchor" href="#_running_the_workflow"></a>Running the workflow</h2>
+<h2 id="proc-parallel-run-workflow"><a class="anchor" href="#proc-parallel-run-workflow"></a>Running a parallel Serverless Workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The procedure in this section describes how you can run the workflow.</p>
+<p>After you create a Serverless Workflow that perform a series of parallel tasks, you can run the workflow.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>You have created the parallel workflow as described in <a href="#proc-creating-the-workflow">Creating the workflow</a></p>
+<p>A parallel workflow is created.</p>
+<div class="paragraph">
+<p>For more information, see <a href="#proc-parallel-creating-the-workflow">Creating a parallel Serverless Workflow</a>.</p>
+</div>
 </li>
 <li>
-<p>The workflow application is up and running.
-You can start it in dev mode by running:</p>
+<p>The Serverless Workflow application is up and running.</p>
 <div class="openblock">
 <div class="content">
+<div class="paragraph">
+<p>You can start the Serverless Workflow application in development mode by using the following command:</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">`mvn quarkus:dev`</code></pre>
@@ -440,10 +447,11 @@ You can start it in dev mode by running:</p>
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Run the workflow by sending a request to the <code>/parallel</code> endpoint.</p>
+<p>To run the created parallel workflow, send a request to the <code>/parallel</code> endpoint as shown in the following example request:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
+<div class="title">Example request</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
   'http://localhost:8080/parallel' \
@@ -454,10 +462,8 @@ You can start it in dev mode by running:</p>
 }'</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>You should see an output similar to:</p>
-</div>
 <div class="listingblock">
+<div class="title">Example response</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{"id":"358f97ba-f0f9-4f25-86cc-4b35e85c2406","workflowdata":{"result":"ABC"}}</code></pre>
 </div>
@@ -470,39 +476,33 @@ You can start it in dev mode by running:</p>
 </td>
 <td class="content">
 <div class="paragraph">
-<p><code>"result":"ABC"</code> may be different in each request, since the branches are running in parallel and the execution order of the branches is unpredictable.</p>
+<p>The <code>"result":"ABC"</code> in the previous example response might be different in each request since the branches are running in parallel and the execution order of the branches is unpredictable.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Note that the workflow data shows the concatenated string as result.</p>
+<p>Note that the parallel workflow data shows the concatenated string as result.</p>
 </div>
 </div>
 </div>
 </li>
 </ol>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_running_only_some_branches"><a class="anchor" href="#_running_only_some_branches"></a>Running only some branches</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="proc-parallel-run-branches"><a class="anchor" href="#proc-parallel-run-branches"></a>Running some branches in parallel Serverless Workflow</h3>
 <div class="paragraph">
-<p>Rather than defining <code>"completionType": "allOf"</code> to run all branches, like in the previous example, you can define <code>"completionType": "atLeast"</code> to run only some branches if needed.</p>
-</div>
-<div class="paragraph">
-<p>When you do that, you also need to define the minimum number of branches that you want to run, by defining the <code>"numCompleted":</code> property.</p>
-</div>
-<div class="paragraph">
-<p>The procedure in this section describes how you can run the workflow with only two branches.</p>
+<p>You can define the <code>"completionType": "atLeast"</code> to run only some branches in parallel workflow, instead of defining <code>"completionType": "allOf"</code>. When you define <code>"completionType": "atLeast"</code>, you also need to define the minimum number of branches that you want to run by defining the <code>"numCompleted":</code> property.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>You have created the parallel workflow as described in <a href="#proc-creating-the-workflow">Creating the workflow</a></p>
+<p>A parallel workflow is created.</p>
+<div class="paragraph">
+<p>For more information, see <a href="#proc-parallel-creating-the-workflow">Creating a parallel Serverless Workflow</a>.</p>
+</div>
 </li>
 </ul>
 </div>
@@ -510,10 +510,11 @@ You can start it in dev mode by running:</p>
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Change the <code>completionType</code> property to <code>"atLeast"</code> and add the <code>"numCompleted": 2</code> property to the parallel state. Your workflow should look like:</p>
+<p>Change the <code>completionType</code> property to <code>"atLeast"</code> and add the <code>"numCompleted": 2</code> property to the parallel state.</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
+<div class="title">Example parallel Serverless Workflow</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "id": "parallel",
@@ -583,11 +584,11 @@ You can start it in dev mode by running:</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Defines the completion type of the parallel state as <code>atLeast</code></td>
+<td>Defines the completion type of the parallel state as <code>atLeast</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Defines the minimum number of branches that you want to run. This means that the parallel state will be completed when at least two branches are completed.</td>
+<td>Defines the minimum number of branches that you want to run. This means that the parallel state is completed when at least two branches are completed.</td>
 </tr>
 </table>
 </div>
@@ -595,10 +596,11 @@ You can start it in dev mode by running:</p>
 </div>
 </li>
 <li>
-<p>Run the workflow by sending a request to the <code>/parallel</code> endpoint.</p>
+<p>To run the created parallel workflow, send a request to the <code>/parallel</code> endpoint as shown in the following example:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
+<div class="title">Example request</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
   'http://localhost:8080/parallel' \
@@ -609,10 +611,8 @@ You can start it in dev mode by running:</p>
 }'</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>You should see an output similar to:</p>
-</div>
 <div class="listingblock">
+<div class="title">Example response</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"3da62df1-c4e7-48c9-a3e4-7f63872c92f4","workflowdata":{"result":"BC"}}</code></pre>
 </div>
@@ -625,19 +625,32 @@ You can start it in dev mode by running:</p>
 </td>
 <td class="content">
 <div class="paragraph">
-<p><code>"result":"BC"</code> may be different in each request.</p>
+<p>The <code>"result":"BC"</code> in the response might be different in each request.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Note that the workflow data shows the concatenated string as result, but now the workflow concatenated only 2 letters.</p>
+<p>The parallel workflow data shows the concatenated string as result, but in this case, the workflow concatenates only two letters.</p>
 </div>
 </div>
 </div>
 </li>
 </ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
