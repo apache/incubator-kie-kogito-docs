@@ -10,7 +10,7 @@ The testing procedure described in this document is based on the link:{kogito_sw
 
 [WARNING]
 ====
-Serverless Workflow serializes the execution of parallel tasks. Therefore, the word "parallel" does not indicate simultaneous execution, but it means that there is no logical dependency between the execution of branches. An inactive branch can start or resume the execution of a task without waiting for an active branch to be completed, in case the latter suspends the execution (for example, wait for an event reception).
+Kogito serializes the execution of parallel tasks. Therefore, the word "parallel" does not indicate simultaneous execution, but it means that there is no logical dependency between the execution of branches. An inactive branch can start or resume the execution of a task without waiting for an active branch to be completed, in case the latter suspends the execution (for example, wait for an event reception).
 ====
 
 The `serverless-workflow-service-calls-quarkus` example application is a workflow that concatenates three strings and returns a result. The concatenation in the example application is done in parallel, which includes one branch per three strings.
@@ -104,9 +104,7 @@ include::../../pages/_common-content/getting-started-requirement.adoc[]
 <6> Defines the function that runs in `branchA`.
 <7> Defines the function that runs in `branchB`.
 <8> Defines the function that runs in `branchC`.
-<9> Defines the completion type of the parallel state as `allOf`.
-
-This means that the parallel state is completed when all the branches are completed.
+<9> Defines the completion type of the parallel state as `allOf`. This means that the parallel state is completed when all the branches are completed.
 --
 
 [[proc-parallel-run-workflow]]
@@ -123,7 +121,7 @@ For more information, see <<proc-parallel-creating-the-workflow, Creating a para
 * The Serverless Workflow application is up and running.
 +
 --
-You can start the Serverless Workflow application in developer mode by using the following command:
+You can start the Serverless Workflow application in development mode by using the following command:
 [source,shell]
 ----
 `mvn quarkus:dev`
