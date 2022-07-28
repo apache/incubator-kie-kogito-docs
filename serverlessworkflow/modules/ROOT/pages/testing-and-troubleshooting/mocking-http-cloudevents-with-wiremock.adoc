@@ -26,6 +26,8 @@
 :wiremockserver_class_url: https://javadoc.io/doc/com.github.tomakehurst/wiremock/latest/com/github/tomakehurst/wiremock/WireMockServer.html
 :wiremock_url: https://wiremock.org/
 :wiremock_verifying_url: {wiremock_url}/docs/verifying/
+:failsafe_pluggin_doc: https://maven.apache.org/surefire/maven-failsafe-plugin/index.html
+:failsafe_pluggin_inclusions: https://maven.apache.org/surefire/maven-failsafe-plugin/examples/inclusion-exclusion.html
 
 This document describes how you can test your Serverless Workflow application that uses HTTP link:{cloud_events_url}[CloudEvents] and link:{knative_sink_binding_impl_url}[Knative SinkBinding].
 
@@ -88,6 +90,35 @@ For more information about enabling link:{event_driven_architecture_url}[event-d
 <3> `awaitility` dependency is used to express the expectations of an asynchronous system. For more information, see {awaitility_url}[Awaitility] website.
 
 You can also see the dependencies added in `pom.xml` file of link:{kogito_sw_order_processing_example_url}[`serverless-workflow-order-processing`] example application.
+--
+
+. Add failsafe maven plugin to run integration tests
++
+--
+.maven-failsafe-plugin in the Application's `pom.xml` pluggins section
+[source,xml]
+----
+<plugin>
+  <artifactId>maven-failsafe-plugin</artifactId>
+  <version>${version.failsafe.plugin}</version>
+  <configuration>
+    <systemPropertyVariables>
+      <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+      <maven.home>${maven.home}</maven.home>
+    </systemPropertyVariables>
+  </configuration>
+  <executions>
+    <execution>
+      <goals>
+        <goal>integration-test</goal>
+        <goal>verify</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+More information in link:{failsafe_pluggin_doc}[*maven-failsafe-plugin*] documentation.
+
 --
 
 . Create a test class that mocks the sink using WireMock as shown in the following example:
@@ -156,7 +187,7 @@ public class VerifyWorkflowExecutionIT { <2>
 ----
 
 <1> `@QuarkusTest` starts the Quarkus server for the lifetime of the test execution run. For more information, see {recap_of_http_based_testing_in_jvm_mode_url}[Quarkus - Testing your application].
-<2> The test name ends with `IT` to identify which test needs to be executed as an integration test.
+<2> The test name ends with `IT` to identify which test needs to be executed as an integration test. More details in link:{failsafe_pluggin_inclusions}[maven-failsafe-plugin] documentation.
 <3> link:{wiremockserver_class_url}[`WireMockServer`] is a mocked server instance that is used for SinkBinding for testing.
 <4> `given()` is used to test interactions with the application. For more information about testing interactions, see {basic_integration_test_with_restassured_guide}[Testing your Serverless Workflow application using REST Assured].
 <5> `@BeforeAll` annotation is used to signal that the annotated method must be executed before running all the tests.
