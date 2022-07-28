@@ -1,14 +1,12 @@
-Serverless Workflow integration test with PostgreSQL
-====================================================
+= Serverless Workflow integration test using PostgreSQL
 :compat-mode!:
 // Metadata:
 :description: Serverless Workflow integration test with PostgreSQL
 :keywords: kogito, workflow, quarkus, serverless, quarkus-cli, test, integration, postgresql, persistence
-// Referenced documentation pages.
+// Referenced documentation pages
 :basic_integration_test_with_restassured_guide: xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc
 :getting_started_create_first_workflow_guide: xref:getting-started/create-your-first-workflow-service.adoc
 :persistence_with_postgresql_guide: xref:persistence/persistence-with-postgresql.adoc
-
 // External pages
 :quarkus_testing_guide_url: {quarkus_guides_base_url}/getting-started-testing
 :quarkus_testing_guide_integration_test_url: {quarkus_testing_guide_url}#quarkus-integration-test
@@ -23,36 +21,38 @@ Serverless Workflow integration test with PostgreSQL
 :failsafe_pluggin_inclusions: https://maven.apache.org/surefire/maven-failsafe-plugin/examples/inclusion-exclusion.html
 :kogito_sw_callback_example_url: {kogito_sw_examples_url}/serverless-workflow-callback-quarkus
 
-This document describes how you can test your Kogito Serverless Workflow application integrated with PostgreSQL persistence.
+This document describes how you can test your integrated Serverless Workflow application using PostgreSQL persistence.
 
-The example described in this document bases on the link:{kogito_sw_callback_example_url}[`serverless-workflow-callback-quarkus`] example application.
+The example described in this document is based on the link:{kogito_sw_callback_example_url}[`serverless-workflow-callback-quarkus`] example application.
 
-[[integration-test-overview]]
+[[con-integration-test-overview]]
 == Overview
-The goal is to be able to launch and test the artifact produced by the Quarkus builds and verify its interaction with a PostgreSQL database instance.
 
-In order to simulate that scenario and verify the service behavior, we are using the following Quarkus annotations and tools that simplify this work:
+This document describes the process of launching and testing the artifact that is produced by the Quarkus builds, and verifying the interaction of the artifact with a PostgreSQL database instance. To perform this scenario and verify the service behavior, the following Quarkus annotations and tools are used:
 
-* *@QuarkusIntegrationTest* used to launch and test the artifact produced by the Kogito Serverless Workflow Quarkus build. For more
-details see link:{quarkus_testing_guide_integration_test_url}[@QuarkusIntegrationTest] guide.
-* *Quarkus Dev Services* facilitates writing integration tests that need launching services to support the application. More explained in link:{quarkus_testing_guide_launching_containers_url}[Testing Quarkus application - launching containers] guide.
-
-*@QuarkusIntegrationTest* works out of the box with the additional containers launched via link:{quarkus_dev_services_url}[*Quarkus Dev Services*].
+* `@QuarkusIntegrationTest`: This annotation is used to launch and test the artifact produced by the Serverless Workflow Quarkus build. For more information, see link:{quarkus_testing_guide_integration_test_url}[Testing Quarkus application - Using `@QuarkusIntegrationTest`] in Quarkus documentation.
+* Quarkus Dev Services: This facilitates writing integration tests that need launching services to support the Serverless Workflow application. For more information, see link:{quarkus_testing_guide_launching_containers_url}[Testing Quarkus application - launching containers] in Quarkus documentation.
++
+`@QuarkusIntegrationTest` works immediately with the additional containers that are launched using link:{quarkus_dev_services_url}[Quarkus Dev Services].
 
 [[proc-test-sw-application-postgresql]]
-== Testing a Serverless Workflow application with PostgreSQL persistence
+== Testing a Serverless Workflow application using PostgreSQL persistence
+
+You can test your Serverless Workflow application using PostgreSQL persistence.
 
 .Prerequisites
 include::../../pages/_common-content/getting-started-requirement.adoc[]
-* Enable the application persistence using PostgresSQL. More details in {persistence_with_postgresql_guide}[Running Serverless Workflow service using PostgresSQL] guide.
+* Serverless Workflow application persistence is enabled using PostgreSQL.
++
+For more information, see {persistence_with_postgresql_guide}[Running Serverless Workflow service using PostgreSQL].
+
 * Docker is installed.
 
 .Procedure
-. Add the required test dependencies to the `pom.xml` file of your Kogito Serverless Workflow application:
+. Add the required test dependencies to the `pom.xml` file of your Serverless Workflow application:
 +
 --
-
-.Dependencies required for HTTP-based testing in JVM mode.
+.Dependencies required for HTTP-based testing in JVM mode
 [source,xml]
 ----
 <dependency>
@@ -67,7 +67,7 @@ include::../../pages/_common-content/getting-started-requirement.adoc[]
 </dependency>
 ----
 
-.Awaitility
+.Add `awaitility` dependency in `pom.xml`
 [source,xml]
 ----
 <dependency>
@@ -77,18 +77,17 @@ include::../../pages/_common-content/getting-started-requirement.adoc[]
 </dependency>
 ----
 
-`Awaitility` dependency allows the test to express time expectations of an asynchronous system.
-For more information, see link:{awaitility_url}[Awaitility] website.
-
+The `awaitility` dependency allows the test to express the time expectations of an asynchronous system. For more information, see link:{awaitility_url}[Awaitility] website.
 --
 
-. Check PostgreSQL resources dependencies
+. Check the dependencies of PostgreSQL resources.
 +
 --
-The link:{quarkus_database_dev_services_url}[*Quarkus Dev Services for Databases*] will be enabled when a reactive or JDBC datasource extension is present in the application.
-Ensure the Application's `pom.xml` has the dependency to the needed PostgreSQL resources:
+The link:{quarkus_database_dev_services_url}[Quarkus Dev Services for Databases] is enabled when a reactive or JDBC data source extension is present in the Serverless Workflow application.
 
-.JDBC persistence add-on
+Ensure that the `pom.xml` file of your Serverless Workflow application contains the required dependency for PostgreSQL resources.
+
+.JDBC persistence add-on dependency
 [source,xml]
 ----
 <dependency>
@@ -97,7 +96,7 @@ Ensure the Application's `pom.xml` has the dependency to the needed PostgreSQL r
 </dependency>
 ----
 
-.Quarkus JDBC PostgreSQL
+.Quarkus JDBC PostgreSQL dependency
 [source,xml]
 ----
 <dependency>
@@ -106,7 +105,7 @@ Ensure the Application's `pom.xml` has the dependency to the needed PostgreSQL r
 </dependency>
 ----
 
-.Quarkus Agroal Data Source
+.Quarkus Agroal data source dependency
 [source,xml]
 ----
 <dependency>
@@ -116,10 +115,10 @@ Ensure the Application's `pom.xml` has the dependency to the needed PostgreSQL r
 ----
 --
 
-. Add failsafe maven plugin to run integration tests
+. To run the integration tests, add Apache Maven Failsafe plug-in in the `pom.xml` file of your Serverless Workflow application.
 +
 --
-.maven-failsafe-plugin in the Application's `pom.xml` pluggins section
+.`maven-failsafe-plugin` in `pom.xml` plug-in section
 [source,xml]
 ----
 <plugin>
@@ -141,26 +140,23 @@ Ensure the Application's `pom.xml` has the dependency to the needed PostgreSQL r
   </executions>
 </plugin>
 ----
-More information in link:{failsafe_pluggin_doc}[*maven-failsafe-plugin*] documentation.
+
+For more information about `maven-failsafe-plugin`, see link:{failsafe_pluggin_doc}[Maven Failsafe Plugin] documentation.
 
 --
 
-. Enable Quarkus Database Dev services
+. Enable Quarkus Database Dev Services.
 +
 --
-For more information see link:{quarkus_database_dev_services_url}[*Quarkus Dev Services for Databases*] guide.
+The additional containers contain a full set of default configurations, including PostgreSQL Docker image name, default user, and default password. The required configuration to link the Serverless Workflow application with the Quarkus Dev PostgreSQL container is automatically added to the integration test. Quarkus provides the properties such as `quarkus.datasource.reactive.url`, `quarkus.datasource.jdbc.url`, `quarkus.datasource.username`, or `quarkus.datasource.password`, when you start the container. 
 
-The additional containers have a full set of default configurations, such as the PostgreSQL docker image name, default user, default password.
-All the required configuration to link the Kogito Serverless Workflow service with the Quarkus Dev PostgreSQL container is added automatically to the integration test.
-Quarkus will provide properties such as `quarkus.datasource.reactive.url`, `quarkus.datasource.jdbc.url`, `quarkus.datasource.username` or `quarkus.datasource.password` after starting the container.
+For more information, see link:{quarkus_database_dev_services_url}[Quarkus Dev Services for Databases] in Quarkus documentation.
 --
 
-. Create a test class as shown in the following example:
+. Create a test class and add the test annotations in the test class as shown in the following example:
 +
 --
-Add the test annotations as the example below:
-
-.Integration test annotations
+.Example integration test annotations in a test class
 [source,java]
 ----
 @QuarkusIntegrationTest <1>
@@ -193,12 +189,12 @@ class CallbackRestIT { <2>
     }
 }
 ----
-<1> Allows launch and test the artifact produced by the Quarkus build. Supports testing a jar (of whichever type), a native image or container image
-<2> The naming of the test would end with 'IT' to identify which test needs to be executed as an integration test. More details in link:{failsafe_pluggin_inclusions}[maven-failsafe-plugin] documentation.
+<1> Allows launching and testing the artifact that is produced by the Quarkus build. Also, supports testing of a JAR file, a native image, or a container image.
+<2> Test name ends with 'IT' to identify which test needs to be executed as an integration test.
 <3> Testing application interactions using REST Assured.
-<4> link:{awaitility_url}[`await()`] allows the test to retry the validations until the verifications are declared or until the specified time expectations expire.
+<4> `await()` allows the test to retry the validations until the verifications are declared or until the specified time expectation is expired.
 
-Once you specify the required resources and annotations, you can start testing the different interactions with the application as described in the guide {basic_integration_test_with_restassured_guide}[Testing your Serverless Workflow application using REST Assured].
+Once you specify the required resources and annotations, you can start testing the different interactions with the Serverless Workflow application as described in {basic_integration_test_with_restassured_guide}[Testing your Serverless Workflow application using REST Assured] document.
 --
 
 . To run the tests, execute the following command:
@@ -212,11 +208,10 @@ mvn clean verify
 --
 
 == Additional resources
---
+
 * {getting_started_create_first_workflow_guide}[Creating your first Serverless Workflow service]
 * {persistence_with_postgresql_guide}[Running Serverless Workflow service using PostgresSQL]
 * {basic_integration_test_with_restassured_guide}[Testing your Serverless Workflow application using REST Assured]
 * link:{quarkus_testing_guide_url}[Testing a Quarkus application]
---
 
 include::../../pages/_common-content/report-issue.adoc[]
