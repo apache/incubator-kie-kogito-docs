@@ -269,7 +269,23 @@
 </ul>
 </div>
 <div class="paragraph">
-<p>This file defines a greeter service, which consists of the <code>sayHello</code> method. The <code>sayHello</code> method accepts two parameters, including name of the user and an optional language to use in the greeting message (English by default). The <code>sayHello</code> method returns the greeting message in the appropriate language.</p>
+<p>This file defines a greeter service, which consists of sayHello methods, each covering a different gRPC scenario:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>sayHello</code> method accepts two parameters, including name of the user and an optional language to use in the greeting message (English by default). The <code>sayHello</code> method returns the greeting message in the appropriate language.</p>
+</li>
+<li>
+<p>The <code>SayHelloAllLanguages</code> accepts just the name parameter and streams greetings in all languages supported by the service. This represents the server-side streaming scenario.</p>
+</li>
+<li>
+<p>The <code>SayHelloMultipleLanguagesAtOnce</code> accepts a stream of name-language pairs as parameters and returns corresponding greetings as one block of text after the streaming is finished. This is the client-side streaming scenario.</p>
+</li>
+<li>
+<p>The <code>SayHelloMultipleLanguages</code> accepts a stream of name-language pairs and streams back greetings with a respective name and in a respective language.</p>
+</li>
+</ul>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -277,6 +293,10 @@
 service Greeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply) {}
+  rpc SayHelloAllLanguages (HelloRequest) returns (stream HelloReply) {}
+  rpc SayHelloMultipleLanguagesAtOnce (stream HelloRequest) returns (HelloReply) {}
+  rpc SayHelloMultipleLanguages (stream HelloRequest) returns (stream HelloReply) {}
+  ...
 }
 
 // The request message containing the user's name.
@@ -351,6 +371,42 @@ message HelloReply {
 <div class="paragraph">
 <p>In the previous example, the action invokes the <code>sayHello</code> RPC method using two model variables: <code>name</code> and <code>language</code>. These parameters are provided as part of the REST call that starts the workflow.
 The response of the method execution is <a href="https://developers.google.com/protocol-buffers/docs/proto3#json">mapped</a> to a JSON object and merged with the workflow model.</p>
+</div>
+<div class="paragraph">
+<p>For the remaining scenarios, see the following workflow definition files:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreetServerStream.sw.json">Server streaming</a></p>
+</li>
+<li>
+<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreetClientStream.sw.json">Client streaming</a></p>
+</li>
+<li>
+<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreetBiDiStream.sw.json">Bidirectional streaming</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The only difference to the basic scenario is that workflows with client streaming expect an array of requests as arguments of the gRPC function:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json"> {
+    "name": "SayHelloMultipleLanguagesAtOnce",
+    "functionRef" : {
+        "refName": "SayHelloMultipleLanguagesAtOnce",
+        "arguments": ".helloRequests"
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The function expects an array of requests which is mapped under the <code>helloRequests</code> key in the workflow model.</p>
+</div>
+<div class="paragraph">
+<p>In case of server streaming, the response is returned as an array as well and merged with the workflow model. In these examples, because no <code>stateDataFilter</code> is defined, the response is merged under the default <code>response</code> key in the workflow model.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -434,15 +490,16 @@ quarkus.grpc.clients.Greeter.port=50051</code></pre>
 </li>
 </ol>
 </div>
+<div class="sect2">
+<h3 id="_simple_grpc"><a class="anchor" href="#_simple_grpc"></a>Simple gRPC</h3>
 <div class="listingblock">
+<div class="title">Example request</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://localhost:8080/jsongreet</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The answer should be similar to this one</p>
-</div>
 <div class="listingblock">
+<div class="title">Example response</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"4376cc50-42d4-45ef-8a5e-6e403a654a30","workflowdata":{"name":"John","language":"English","message":"Hello from gRPC service John"}}</code></pre>
 </div>
@@ -457,6 +514,62 @@ quarkus.grpc.clients.Greeter.port=50051</code></pre>
 </div>
 <div class="paragraph">
 <p>In response, you will see the greeting in Spanish language.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_server_side_streaming_grpc"><a class="anchor" href="#_server_side_streaming_grpc"></a>Server-side streaming gRPC</h3>
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John"}}' http://localhost:8080/jsongreetserverstream</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"665911c5-36ee-40b7-93dd-a2328f969c73","workflowdata":{"name":"John","response":[{"message":"Hello from gRPC service John"},{"message":"Saludos desde gRPC service John"}]}}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_client_side_streaming_grpc"><a class="anchor" href="#_client_side_streaming_grpc"></a>Client-side streaming gRPC</h3>
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {
+                                                                                                    "helloRequests" : [
+                                                                                                                        {"name" : "Javierito", "language":"Spanish"},
+                                                                                                                        {"name" : "John", "language":"English"},
+                                                                                                                        {"name" : "Jan", "language":"Czech"}
+                                                                                                                      ]}}' http://localhost:8080/jsongreetclientstream</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"abece3f9-0797-4c10-a1f5-8f3929724689","workflowdata":{"helloRequests":[{"name":"Javierito","language":"Spanish"},{"name":"John","language":"English"},{"name":"Jan","language":"Czech"}],"message":"Saludos desde gRPC service Javierito\nHello from gRPC service John\nHello from gRPC service Jan"}}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bidirectional_streaming_grpc"><a class="anchor" href="#_bidirectional_streaming_grpc"></a>Bidirectional streaming gRPC</h3>
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {
+                                                                                                    "helloRequests" : [
+                                                                                                                        {"name" : "Javierito", "language":"Spanish"},
+                                                                                                                        {"name" : "John", "language":"English"},
+                                                                                                                        {"name" : "Jan", "language":"Czech"}
+                                                                                                                      ]}}' http://localhost:8080/jsongreetbidistream</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"403876ed-0db4-40ca-a19c-158f563fef16","workflowdata":{"helloRequests":[{"name":"Javierito","language":"Spanish"},{"name":"John","language":"English"},{"name":"Jan","language":"Czech"}],"response":[{"message":"Saludos desde gRPC service Javierito"},{"message":"Hello from gRPC service John"},{"message":"Hello from gRPC service Jan"}]}}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
