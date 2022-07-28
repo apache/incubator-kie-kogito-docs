@@ -11,11 +11,11 @@
 :smallrye_connector_doc_url: {smallrye_messaging_url}/connectors/connectors.html
 :kafka_connector_properties_url: {smallrye_messaging_url}/kafka/kafka.html#_configuration_reference
 
-This document describes how you can configure Serverless Workflow to interact with link:{kafka_doc_url}[Apache Kafka]. Apache Kafka uses an abstraction called topic to classify events. The events are published to a topic, and events are consumed from a topic. 
+This document describes how you can configure Serverless Workflow to interact with link:{kafka_doc_url}[Apache Kafka]. Apache Kafka uses an abstraction called topic to classify events. Events are published to a topic, and events are consumed from a topic. 
 
 Kogito uses link:{smallrye_connector_doc_url}[Smallrye connectors] to encapsulate access to several brokers, enabling Kogito to support different brokers by changing the configuration and classpath dependencies. However, Smallrye connectors also introduce an entity called channel. The Smallrye channels are unidirectional and need to be declared as input (`incoming`) or output (`outgoing`). When using Apache Kafka, the Smallrye channels must be mapped to Apache Kafka topics through configuration.
 
-To enable Serverless Workflow to use Apache Kafka Smallrye connector, add the following dependency to the `pom.xml` file of your project if using Maven:
+You need to add the Kafka Quarkus Smallrye connector dependency to indicate that you are using Apache Kafka. To enable Serverless Workflow to use Apache Kafka Smallrye connector, add the following dependency to the `pom.xml` file of your project if using Maven:
 
 .Add dependency for Apache Kafka Smallrye connector in `pom.xml`
 [source,json]
@@ -26,7 +26,7 @@ To enable Serverless Workflow to use Apache Kafka Smallrye connector, add the fo
 </dependency>
 ----
 
-The messaging capabilities are included in the Quarkus Serverless Workflow extension, even though the messaging capabilities are optional. This means you do not need to explicitly add the messaging add-on dependency when using Serverless Workflow. However, you need to add the Kafka Quarkus Smallrye connector dependency to indicate that you are using Apache Kafka.
+The messaging capabilities are included in the Quarkus Serverless Workflow extension, even though the messaging capabilities are optional. This means you do not need to explicitly add the messaging add-on dependency when using Serverless Workflow. 
 
 [[con-sw-smallrye-channel-configuration]]
 == Smallrye channels configuration for a Serverless Workflow
@@ -37,7 +37,7 @@ Serverless Workflow allows the following channel mapping strategies:
 
 * Define one default incoming channel to receive all the incoming messages and one default outgoing channel to store all the published messages.
 * Define a channel for each link:{cloud_events_url}[CloudEvent] type so that every message type has a dedicated channel.
-* Define a channel for certain CloudEvent types. Allow the non-mapped CloudEvent types to use the default incoming or outgoing channel.
+* Define a channel for certain CloudEvent types. The non-mapped CloudEvent types uses the default incoming or outgoing channel.
 
 Kogito first searches for a channel name in the properties that is same as CloudEvent type. If the channel name is found, Kogito uses the channel for that CloudEvent type. However, if the channel name is not found, Kogito searches for the default channel definition. In case the default channel definition is not existing, then an error is reported. 
 
@@ -52,7 +52,7 @@ kogito.addon.messaging.incoming.defaultName=<default channel name>
 kogito.addon.messaging.outgoing.defaultName=<default channel name>
 ----
 
-The following properties are mandatory that you need to set for each channel:
+The following properties are mandatory for each channel:
 
 * `connector`: This property needs to be set to `smallrye-kafka`.
 * Depending on whether the channel is incoming or outgoing:
@@ -61,7 +61,7 @@ The following properties are mandatory that you need to set for each channel:
 
 [TIP]
 ====
-`topic` is another relevant but optional property that needs to be set for a channel. The `topic` property must contain the Apache Kafka topic name to be used for a channel. If `topic` property is not set, then the channel name is used as topic name. 
+`topic` is another relevant but optional property that might be set for a channel. The `topic` property contains the Apache Kafka topic name to be used for a channel. If `topic` property is not set, then the channel name is used as topic name. 
 ====
 
 For more information about the properties that you can use for a channel when using Apache Kafka connector, see the link:{kafka_connector_properties_url}[properties] list.
@@ -69,14 +69,14 @@ For more information about the properties that you can use for a channel when us
 [[ref-example-smallrye-channel-mapping]]
 === Examples of Smallrye channel mapping
 
-This section describes the examples of channel mapping by reviewing the properties that are configured in the previous section. 
+This section describes examples of channel mapping, using the properties mentioned in the previous section.
 
 One Smallrye channel per CloudEvent type::
 +
 --
 The link:{callback_example_url}[`serverless-workflow-callback-quarkus`] example application uses two CloudEvent types, including `wait` (incoming) and `resume` (outgoing).
 
-As mentioned before, Kafka topic names matches the CloudEvent types. Therefore, it is suitable to select the mapping strategy of one channel per CloudEvent type. This suggests that two channels must be configured. Note that you do not need to set the optional `topic` property as the channel name matches the CloudEvent type.
+Kafka topic names matches the CloudEvent types. Therefore, it is suitable to select the mapping strategy of one channel per CloudEvent type. This suggests that two channels must be configured. Note that you do not need to set the optional `topic` property as the channel name matches the CloudEvent type.
 
 .Example property configuration
 [source,properties]
@@ -94,7 +94,7 @@ Default channel mapping::
 --
 The link:{events_example_url}[`serverless-workflow-events-quarkus`] example application uses two CloudEvent types, including `applicants` (incoming) and `decisions` (outgoing).
 
-As mentioned before, Kafka topic names matches the CloudEvent types. However, to use the default channel functionality, `kogito_incoming_stream` and `kogito_outgoing_stream` are used as channel names. If there is no specific channel name for the CloudEvent type, then the default channels are used. Also, the default channels need to be mapped to the desired topic name using the `topic` property.
+As mentioned before, Kafka topic names matches the CloudEvent types. However, to use the default channel functionality, `kogito_incoming_stream` and `kogito_outgoing_stream` are used as channel names. As explained before, since there is no specific channel name for the CloudEvent type, then the default channels are used. Also, the default channels need to be mapped to the desired topic name using the `topic` property.
 
 .Example property configuration
 [source,properties]
