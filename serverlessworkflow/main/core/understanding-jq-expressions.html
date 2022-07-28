@@ -140,7 +140,7 @@
     <span class="nav-text">Eventing</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events with Kafka</a>
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../eventing/working-with-callbacks.html">Callbacks in Serverless Workflow</a>
@@ -389,11 +389,16 @@
 </li>
 <li>
 <p><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#state-data-filters">State data filters</a>: Define the workflow model to the JSON object, which is returned by the expression and discards an existing property.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">State and Action data filter example</dt>
+<dd>
+<p>You can see <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-expression-quarkus"><code>serverless-workflow-expression-quarkus</code></a> example application, in which actions and state data filters are used.</p>
+</dd>
+</dl>
+</div>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>For example, you can see <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-expression-quarkus"><code>serverless-workflow-expression-quarkus</code></a>, in which actions and state data filters are used.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -475,6 +480,27 @@
 </div>
 <div class="paragraph">
 <p>In the previous example, the workflow model is changed by the <code>input</code> property of the filter, which means that the output model is updated before the state is executed. As a final result, the output model consists of a <code>result</code> property, containing the maximum value of <code>x</code>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Event data filter example</dt>
+<dd>
+<p>You can find an example of event data filtering in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-quarkus"><code>serverless-workflow-callback-quarkus</code></a> example application.</p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="title">Example event filter</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  "eventRef": "waitEvent",
+  "eventDataFilter": {
+     "data": ".result",
+     "toStateData": ".move"
+   }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The previous example of the event filter copies the content of Cloud Event data <code>result</code> field into the workflow model <code>move</code> field.</p>
 </div>
 </div>
 </div>
