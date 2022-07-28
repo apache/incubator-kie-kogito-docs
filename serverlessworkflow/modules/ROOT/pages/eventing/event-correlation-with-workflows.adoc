@@ -9,7 +9,9 @@
 
 Event correlation plays a big role in large event-driven applications, it allows to match one or more events with a particular workflow instance. Correlation  rules can be used when defining consumed events as a way to match a workflow instance, it is a more practical alternative to the internal identifier `processInstanceId`, since any external domain identifier can be used as a correlation.
 
-A correlation definition is consisted of one or more attributes associated with an event and the respective workflow to which it belongs.  As described in the link:{spec_doc_url}#correlation-definition[Serverless Workflow Specification], the correlation property defines the possible correlations for a given event, each element should contain a `contextAttributeName` set for the value that should match an attribute from an event. Optionally, a `contextAttributeValue` property defines a constant value that should be used to match an event instead of the value present in the consumed event, during the workflow instance creation.
+A correlation definition consists of one or more attributes associated with an event and the respective workflow to which it belongs.  As described in the link:{spec_doc_url}#correlation-definition[Serverless Workflow Specification], the correlation property defines the possible correlations for a given event, each element should contain a `contextAttributeName` set for the value that should match an attribute from an event.
+
+Optionally, you can set a `contextAttributeValue` property that should match the value for the respective attribute defined in `contextAttributeName` for the consumed events in a workflow.
 
 [NOTE]
 ====
@@ -127,7 +129,9 @@ It is not supported to correlate multiple events together, events are evaluated 
 
 === Producing and consuming events with correlation
 
-Following the link:{kogito_sw_examples_url}/serverless-workflow-correlation-quarkus/src/main/resources/correlation.sw.json[workflow definition], it is possible to define other events that are supposed to be published and consumed by this workflow, given example uses Callback States, such as the  <<ref-validade-user-email-state,`Validate User Email`>>, indicating once the workflow execution achieves this state, it publishes an event of type <<ref-correlation-event-definition,`validateAccountEmailEvent`>> and wait to receive an event of type <<ref-correlation-event-definition,`validatedAccountEmailEvent`>>, more information on xref:eventing/working-with-callbacks.adoc[Working with callbacks].
+Following the link:{kogito_sw_examples_url}/serverless-workflow-correlation-quarkus/src/main/resources/correlation.sw.json[workflow definition], it is possible to define other events that are supposed to be published and consumed by this workflow.
+
+The given example uses Callback States, such as the  <<ref-validade-user-email-state,`Validate User Email`>>, indicating once the workflow execution achieves this state, it publishes an event of type <<ref-correlation-event-definition,`validateAccountEmailEvent`>> and wait to receive an event of type <<ref-correlation-event-definition,`validatedAccountEmailEvent`>>. For more information on xref:eventing/working-with-callbacks.adoc[Working with callbacks].
 
 [[ref-validade-user-email-state]]
 .Callback State Definition
