@@ -1,1 +1,346 @@
-//= Configuring OpenAPI services endpoints in different environments
+= Configuring OpenAPI services endpoints in different environments
+
+:compat-mode!:
+// Metadata:
+:description: Configuring OpenAPI services endpoints in different environments in Serverless Workflow
+:keywords: kogito, workflow, quarkus, serverless, openapi, orchestration
+// links:
+:quarkus-profiles-url: https://quarkus.io/guides/config-reference#profiles
+
+This document describes how you can configure OpenAPI service endpoints in different environments in Serverless Workflow.
+
+The testing procedure described in this document is based on the link:{kogito_sw_examples_url}/serverless-workflow-stock-profit[`serverless-workflow-stock-profit`] example application in GitHub repository.
+
+The `serverless-workflow-stock-profit` example application is a workflow that computes the profit for a given stock based on an existing stock portfolio. It calls two services:
+
+* `stock-portfolio` - to calculate the stock portfolio profit for a given stock based on the current stock price
+
+* `stock-service` - to get the current stock price. As developing an application using a service that returns different results every time can be difficult, the `stock-service` will use two different implementations depending on the environment.
+
+** `real-stock-service` - returns the "real" stock price. This service returns a random price every time to emulate a real stock service. This is the default implementation. It is used in the normal/production environment.
+** `fake-stock-service` - returns always the same price. It is used in the development environment.
+
+The `stock-profit` service contains the workflow definition defined as follows:
+
+[source,json]
+----
+{
+  "id": "stockprofit",
+  "specVersion": "0.8",
+  "version": "2.0.0-SNAPSHOT",
+  "name": "Stock profit Workflow",
+  "start": "GetStockPrice",
+  "functions": [
+    {
+      "name": "getStockPriceFunction",
+      "operation": "openapi/stock-svc.yaml#getStockPrice" <1>
+    },
+    {
+      "name": "getProfitFunction",
+      "operation": "openapi/stock-portfolio-svc.yaml#getStockProfit" <2>
+    }
+  ],
+  "states": [
+    {
+      "name": "GetStockPrice",
+      "type": "operation",
+      "actionMode": "sequential",
+      "actions": [
+        {
+          "name": "getStockPrice",
+          "functionRef": {
+            "refName": "getStockPriceFunction",
+            "arguments": {
+              "symbol": ".symbol"
+            }
+          }
+        }
+      ],
+      "transition": "ComputeProfit"
+    },
+    {
+      "name": "ComputeProfit",
+      "type": "operation",
+      "actionMode": "sequential",
+      "actions": [
+        {
+          "name": "getStockProfit",
+          "functionRef": {
+            "refName": "getProfitFunction",
+            "arguments": {
+              "symbol": ".symbol",
+              "currentPrice": ".currentPrice"
+            }
+          }
+        }
+      ],
+      "end": true
+    }
+  ]
+}
+----
+
+<1> Defines the `stock-service` service operation.
+<2> Defines the `stock-portfolio` service operation.
+
+[[using-profiles]]
+== Using profiles to define different configuration values in different environments
+
+Kogito leverage Quarkus profiles to configure the application depending on the target environment.
+
+To set properties for different profiles, each property needs to be prefixed with a percentage sign `%` followed by the profile name and a dot `.` in the syntax `%<profile-name>.config.name`.
+
+By default, Quarkus provides three profiles, that activate automatically in certain conditions:
+
+* `dev` - Activated when in development mode (i.e. quarkus:dev)
+* `test` - Activated when running tests
+* `prod` - The default profile when not running in development or test mode
+
+It is also possible to create additional profiles and activate them with the `quarkus.profile` configuration property.
+
+For more information about Quarkus profiles, see {quarkus-profiles-url}[Profiles section] in the Quarkus Configuration reference guide.
+
+[[proc-defining-urls-in-different-environments]]
+== Defining the URLs of the services in different environments
+
+You can define the URLs of the services in different environments by using profiles.
+
+.Procedure
+
+. Create a file named `application.properties` in the `src/main/resources` directory of the Serverless Workflow project, if it still does not exist.
+
+. In the `application.properties` file, add the OpenAPI configuration for the default environment:
+
++
+--
+[source,properties]
+----
+quarkus.rest-client."stock_svc_yaml".url=http://localhost:8383/ <1>
+quarkus.rest-client."stock_portfolio_svc_yaml".url=http://localhost:8282/
+----
+<1> The URL of the `real-stock-service` service.
+--
+
+. In the `application.properties` file, add the OpenAPI configuration for the `dev` environment:
+
++
+--
+[source,properties]
+----
+%dev.quarkus.rest-client."stock_svc_yaml".url=http://localhost:8181/ <1>
+----
+
+<1> The URL of the `fake-stock-service` service.
+
+[NOTE]
+====
+The `%dev.` prefix is used to indicate that the configuration is for the `dev` profile, which is the profile used when you run `mvn quarkus:dev` or `quarkus dev`
+====
+--
+
+[[proc-running-the-services]]
+== Running the services that the workflow will call
+
+.Prerequisites
+
+* You have defined the URLs of the services in the different environments
++
+For more information, see <<proc-defining-urls-in-different-environments, Defining the URLs of the services in different environments>>.
+
+.Procedure
+
+. In a separate terminal window, run the `stock-portfolio` service:
+
++
+--
+[source,shell]
+----
+cd stock-portfolio
+mvn quarkus:dev -Ddebug=false
+----
+
+The service will be available at http://localhost:8282/.
+--
+
+. In a separate terminal window, run the `real-stock-service` service:
+
++
+--
+[source,shell]
+----
+cd real-stock-service
+mvn quarkus:dev -Ddebug=false
+----
+
+The service will be available at http://localhost:8383/.
+--
+
+. In a separate terminal window, run the `fake-stock-service` service:
+
++
+--
+[source,shell]
+----
+cd fake-stock-service
+mvn quarkus:dev -Ddebug=false
+----
+
+The service will be available at http://localhost:8181/.
+--
+
+[[proc-running-the-application-in-development-mode]]
+== Running the Serverless Workflow application in development mode
+
+As you defined `%dev.quarkus.rest-client."stock_svc_yaml".url=http://localhost:8181/`, the `fake-stock-service` service will be used in the development mode. This means that you'll get the same result every time you run the workflow.
+
+.Prerequisites
+
+* You have started the services that the Serverless Workflow application will call
++
+For more information, see <<proc-running-the-services, Running the services that the Serverless Workflow application will call>>.
+
+.Procedure
+
+. In a separate terminal window, run the Serverless Workflow application in development mode:
+
++
+--
+[source,shell]
+----
+cd stock-profit
+mvn quarkus:dev -Ddebug=false
+----
+--
+
+. In a separate terminal window, send a request to the Serverless Workflow application:
+
++
+--
+[source,shell]
+----
+curl -X 'POST' \
+  'http://localhost:8080/stockprofit' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{ "workflowdata": {"symbol": "KGTO" } }'
+----
+
+.Example response
+[source,shell]
+----
+{"id":"5ab5dcb8-5952-4730-b526-cace363774bb","workflowdata":{"symbol":"KGTO","currentPrice":75,"profit":"50%"}}
+----
+
+Note that, since you're using the `fake-stock-service`, the computed `profit` property is the same no matter how many times you run the workflow.
+--
+
+[[proc-running-the-application-in-production-mode]]
+== Running the Serverless Workflow application in normal/production mode
+
+As you defined `quarkus.rest-client."stock_svc_yaml".url=http://localhost:8383/`, the `real-stock-service` service will be used in the normal/production mode. This means that you'll get a different result every time you run the workflow.
+
+.Prerequisites
+
+* You have started the services that the Serverless Workflow application will call
++
+For more information, see <<proc-running-the-services, Running the services that the Serverless Workflow application will call>>.
+
+.Procedure
+
+. In a separate terminal window, package the Serverless Workflow application to be run as fat jar:
+
++
+--
+[source,shell]
+----
+cd stock-profit
+mvn package
+----
+--
+
+. In a separate terminal window, run the Serverless Workflow application in normal/production mode:
+
++
+--
+[source,shell]
+----
+java -jar target/quarkus-app/quarkus-run.jar
+----
+--
+
+. In a separate terminal window, send a request to the Serverless Workflow application:
+
++
+--
+[source,shell]
+----
+curl -X 'POST' \
+  'http://localhost:8080/stockprofit' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{ "workflowdata": {"symbol": "KGTO" } }'
+----
+
+.Example response
+[source,shell]
+----
+{"id":"a80c95d6-51fd-4ca9-b689-f779929c9937","workflowdata":{"symbol":"KGTO","currentPrice":59.36,"profit":"19%"}}
+----
+
+Note that, since you're using the `real-stock-service`, the computed `profit` property will be different every time you run the workflow.
+--
+
+== Defining the URLs of the services in different environments using environment variables
+
+You can define the URLs of the services in different environments by using profiles and environment variables.
+
+.Prerequisites
+
+* You have started the services that the Serverless Workflow application will call
++
+For more information, see <<proc-running-the-services, Running the services that the Serverless Workflow application will call>>.
+
+.Procedure
+
+. In a separate terminal window, run the Serverless Workflow application in development mode overwriting the property defined in the `application.properties` file with an environment variable:
+
++
+--
+[source,shell]
+----
+cd stock-profit
+export _DEV_QUARKUS_REST_CLIENT_STOCK_SVC_YAML_URL=http://localhost:8383/ <1>
+mvn quarkus:dev -Ddebug=false
+----
+
+<1> Overwrite the `%dev.quarkus.rest-client."stock_svc_yaml".url=http://localhost:8181/` defined in the `application.properties` file with an environment variable pointing to `real-stock-service`.
+--
+
+. In a separate terminal window, send a request to the Serverless Workflow application:
+
++
+--
+[source,shell]
+----
+curl -X 'POST' \
+  'http://localhost:8080/stockprofit' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{ "workflowdata": {"symbol": "KGTO" } }'
+----
+
+.Example response
+[source,shell]
+----
+{"id":"5ab5dcb8-5952-4730-b526-cace363774bb","workflowdata":{"symbol":"KGTO","currentPrice":56.35,"profit":"13%"}}
+----
+
+Note that, since you overwrote the property defined in `application.properties` file to point to `real-stock-service`, the computed `profit` property will be different every time you run the workflow.
+--
+
+== Additional resources
+
+* xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services]
+* link:{quarkus-profiles-url}[Quarkus configuration guide]
+
+include::../../pages/_common-content/report-issue.adoc[]
