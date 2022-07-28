@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>Serverless Workflow integration test with PostgreSQL :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Serverless Workflow integration test with PostgreSQL">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, quarkus-cli, test, integration, postgresql, persistence">
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="stylesheet" href="../../../_/css/search.css">
@@ -170,6 +172,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
   </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="integration-tests-with-postgresql.html">Integration Test with PostgreSQL</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -231,6 +236,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Testing and Troubleshooting</li>
+    <li><a href="integration-tests-with-postgresql.html">Integration Test with PostgreSQL</a></li>
+  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/testing-and-troubleshooting/integration-tests-with-postgresql.adoc">Edit this Page</a></div>
   </div>
@@ -239,7 +249,305 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
+<h1 class="page">Serverless Workflow integration test with PostgreSQL</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes how you can test your Kogito Serverless Workflow application integrated with PostgreSQL persistence.</p>
+</div>
+<div class="paragraph">
+<p>The example described in this document bases on the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-quarkus"><code>serverless-workflow-callback-quarkus</code></a> example application.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="integration-test-overview"><a class="anchor" href="#integration-test-overview"></a>Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The goal is to be able to launch and test the artifact produced by the Quarkus builds and verify its interaction with a PostgreSQL database instance.</p>
+</div>
+<div class="paragraph">
+<p>In order to simulate that scenario and verify the service behavior, we are using the following Quarkus annotations and tools that simplify this work:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>@QuarkusIntegrationTest</strong> used to launch and test the artifact produced by the Kogito Serverless Workflow Quarkus build. For more
+details see <a href="https://quarkus.io/guides/getting-started-testing#quarkus-integration-test">@QuarkusIntegrationTest</a> guide.</p>
+</li>
+<li>
+<p><strong>Quarkus Dev Services</strong> facilitates writing integration tests that need launching services to support the application. More explained in <a href="https://quarkus.io/guides/getting-started-testing#launching-containers">Testing Quarkus application - launching containers</a> guide.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>@QuarkusIntegrationTest</strong> works out of the box with the additional containers launched via <a href="https://quarkus.io/guides/dev-services"><strong>Quarkus Dev Services</strong></a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-test-sw-application-postgresql"><a class="anchor" href="#proc-test-sw-application-postgresql"></a>Testing a Serverless Workflow application with PostgreSQL persistence</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A Serverless Workflow project is created.</p>
+<div class="paragraph">
+<p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+<li>
+<p>Enable the application persistence using PostgresSQL. More details in <a href="../persistence/persistence-with-postgresql.html" class="xref page">Running Serverless Workflow service using PostgresSQL</a> guide.</p>
+</li>
+<li>
+<p>Docker is installed.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Add the required test dependencies to the <code>pom.xml</code> file of your Kogito Serverless Workflow application:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Dependencies required for HTTP-based testing in JVM mode.</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
+    &lt;artifactId&gt;quarkus-junit5&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+    &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Awaitility</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;org.awaitility&lt;/groupId&gt;
+  &lt;artifactId&gt;awaitility&lt;/artifactId&gt;
+  &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>Awaitility</code> dependency allows the test to express time expectations of an asynchronous system.
+For more information, see <a href="http://www.awaitility.org/">Awaitility</a> website.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Check PostgreSQL resources dependencies</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The <a href="https://quarkus.io/guides/databases-dev-services"><strong>Quarkus Dev Services for Databases</strong></a> will be enabled when a reactive or JDBC datasource extension is present in the application.
+Ensure the Application&#8217;s <code>pom.xml</code> has the dependency to the needed PostgreSQL resources:</p>
+</div>
+<div class="listingblock">
+<div class="title">JDBC persistence add-on</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+  &lt;artifactId&gt;kogito-addons-quarkus-persistence-jdbc&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Quarkus JDBC PostgreSQL</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
+  &lt;artifactId&gt;quarkus-jdbc-postgresql&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Quarkus Agroal Data Source</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
+  &lt;artifactId&gt;quarkus-agroal&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Add failsafe maven plugin to run integration tests</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">maven-failsafe-plugin in the Application&#8217;s <code>pom.xml</code> pluggins section</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+  &lt;artifactId&gt;maven-failsafe-plugin&lt;/artifactId&gt;
+  &lt;version&gt;${version.failsafe.plugin}&lt;/version&gt;
+  &lt;configuration&gt;
+    &lt;systemPropertyVariables&gt;
+      &lt;java.util.logging.manager&gt;org.jboss.logmanager.LogManager&lt;/java.util.logging.manager&gt;
+      &lt;maven.home&gt;${maven.home}&lt;/maven.home&gt;
+    &lt;/systemPropertyVariables&gt;
+  &lt;/configuration&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;goals&gt;
+        &lt;goal&gt;integration-test&lt;/goal&gt;
+        &lt;goal&gt;verify&lt;/goal&gt;
+      &lt;/goals&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>More information in <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/index.html"><strong>maven-failsafe-plugin</strong></a> documentation.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Enable Quarkus Database Dev services</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>For more information see <a href="https://quarkus.io/guides/databases-dev-services"><strong>Quarkus Dev Services for Databases</strong></a> guide.</p>
+</div>
+<div class="paragraph">
+<p>The additional containers have a full set of default configurations, such as the PostgreSQL docker image name, default user, default password.
+All the required configuration to link the Kogito Serverless Workflow service with the Quarkus Dev PostgreSQL container is added automatically to the integration test.
+Quarkus will provide properties such as <code>quarkus.datasource.reactive.url</code>, <code>quarkus.datasource.jdbc.url</code>, <code>quarkus.datasource.username</code> or <code>quarkus.datasource.password</code> after starting the container.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Create a test class as shown in the following example:</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Add the test annotations as the example below:</p>
+</div>
+<div class="listingblock">
+<div class="title">Integration test annotations</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@QuarkusIntegrationTest <i class="conum" data-value="1"></i><b>(1)</b>
+class CallbackRestIT { <i class="conum" data-value="2"></i><b>(2)</b>
+    static {
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();<i class="conum" data-value="3"></i><b>(3)</b>
+    }
 
+    @Test
+    void testCallbackRest() {
+        String id = given() <i class="conum" data-value="3"></i><b>(3)</b>
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .post("/callback")
+                .then()
+                .statusCode(201)
+                .extract()
+                .path("id");
+
+        await() <i class="conum" data-value="4"></i><b>(4)</b>
+                .atLeast(1, SECONDS)
+                .atMost(30, SECONDS)
+                .with().pollInterval(1, SECONDS)
+                .untilAsserted(() -&gt; given()
+                        .contentType(ContentType.JSON)
+                        .accept(ContentType.JSON)
+                        .get("/callback/{id}", id)
+                        .then()
+                        .statusCode(404));
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Allows launch and test the artifact produced by the Quarkus build. Supports testing a jar (of whichever type), a native image or container image</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The naming of the test would end with 'IT' to identify which test needs to be executed as an integration test. More details in <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/examples/inclusion-exclusion.html">maven-failsafe-plugin</a> documentation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Testing application interactions using REST Assured.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="http://www.awaitility.org/"><code>await()</code></a> allows the test to retry the validations until the verifications are declared or until the specified time expectations expire.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Once you specify the required resources and annotations, you can start testing the different interactions with the application as described in the guide <a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your Serverless Workflow application using REST Assured</a>.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>To run the tests, execute the following command:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Run the tests</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean verify</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+</li>
+<li>
+<p><a href="../persistence/persistence-with-postgresql.html" class="xref page">Running Serverless Workflow service using PostgresSQL</a></p>
+</li>
+<li>
+<p><a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your Serverless Workflow application using REST Assured</a></p>
+</li>
+<li>
+<p><a href="https://quarkus.io/guides/getting-started-testing">Testing a Quarkus application</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>

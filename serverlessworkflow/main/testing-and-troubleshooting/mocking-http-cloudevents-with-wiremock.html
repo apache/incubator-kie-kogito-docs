@@ -172,6 +172,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="integration-tests-with-postgresql.html">Integration Test with PostgreSQL</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -349,6 +352,39 @@
 </div>
 </li>
 <li>
+<p>Add failsafe maven plugin to run integration tests</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">maven-failsafe-plugin in the Application&#8217;s <code>pom.xml</code> pluggins section</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+  &lt;artifactId&gt;maven-failsafe-plugin&lt;/artifactId&gt;
+  &lt;version&gt;${version.failsafe.plugin}&lt;/version&gt;
+  &lt;configuration&gt;
+    &lt;systemPropertyVariables&gt;
+      &lt;java.util.logging.manager&gt;org.jboss.logmanager.LogManager&lt;/java.util.logging.manager&gt;
+      &lt;maven.home&gt;${maven.home}&lt;/maven.home&gt;
+    &lt;/systemPropertyVariables&gt;
+  &lt;/configuration&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;goals&gt;
+        &lt;goal&gt;integration-test&lt;/goal&gt;
+        &lt;goal&gt;verify&lt;/goal&gt;
+      &lt;/goals&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>More information in <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/index.html"><strong>maven-failsafe-plugin</strong></a> documentation.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
 <p>Create a test class that mocks the sink using WireMock as shown in the following example:</p>
 <div class="openblock">
 <div class="content">
@@ -421,7 +457,7 @@ public class VerifyWorkflowExecutionIT { <i class="conum" data-value="2"></i><b>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The test name ends with <code>IT</code> to identify which test needs to be executed as an integration test.</td>
+<td>The test name ends with <code>IT</code> to identify which test needs to be executed as an integration test. More details in <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/examples/inclusion-exclusion.html">maven-failsafe-plugin</a> documentation.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
