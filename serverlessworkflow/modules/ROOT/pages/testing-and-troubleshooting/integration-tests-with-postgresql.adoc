@@ -30,10 +30,10 @@ The example described in this document is based on the link:{kogito_sw_callback_
 
 This document describes the process of launching and testing the artifact that is produced by the Quarkus builds, and verifying the interaction of the artifact with a PostgreSQL database instance. To perform this scenario and verify the service behavior, the following Quarkus annotations and tools are used:
 
-* *@QuarkusIntegrationTest*: This annotation is used to launch and test the artifact produced by the Serverless Workflow Quarkus build. For more information, see link:{quarkus_testing_guide_integration_test_url}[Testing Quarkus application - Using @QuarkusIntegrationTest] in Quarkus documentation.
-* *Quarkus Dev Services*: This facilitates writing integration tests that need launching services to support the Serverless Workflow application. For more information, see link:{quarkus_testing_guide_launching_containers_url}[Testing Quarkus application - launching containers] in Quarkus documentation.
+* `@QuarkusIntegrationTest`: This annotation is used to launch and test the artifact produced by the Serverless Workflow Quarkus build. For more information, see link:{quarkus_testing_guide_integration_test_url}[Testing Quarkus application - Using `@QuarkusIntegrationTest`] in Quarkus documentation.
+* Quarkus Dev Services: This facilitates writing integration tests that need launching services to support the Serverless Workflow application. For more information, see link:{quarkus_testing_guide_launching_containers_url}[Testing Quarkus application - launching containers] in Quarkus documentation.
 +
-*@QuarkusIntegrationTest* works immediately with the additional containers that are launched using link:{quarkus_dev_services_url}[*Quarkus Dev Services*].
+`@QuarkusIntegrationTest` works immediately with the additional containers that are launched using link:{quarkus_dev_services_url}[Quarkus Dev Services].
 
 [[proc-test-sw-application-postgresql]]
 == Testing a Serverless Workflow application using PostgreSQL persistence
@@ -189,10 +189,10 @@ class CallbackRestIT { <2>
     }
 }
 ----
-<1> Allows launching and testing the artifact that is produced by the Quarkus build. Also, supports testing of a JAR file, a native image, or container image.
+<1> Allows launching and testing the artifact that is produced by the Quarkus build. Also, supports testing of a JAR file, a native image, or a container image.
 <2> Test name ends with 'IT' to identify which test needs to be executed as an integration test.
 <3> Testing application interactions using REST Assured.
-<4> `await()` allows the test to retry the validations until the verifications are declared or until the specified time expectations are expired.
+<4> `await()` allows the test to retry the validations until the verifications are declared or until the specified time expectation is expired.
 
 Once you specify the required resources and annotations, you can start testing the different interactions with the Serverless Workflow application as described in {basic_integration_test_with_restassured_guide}[Testing your Serverless Workflow application using REST Assured] document.
 --
