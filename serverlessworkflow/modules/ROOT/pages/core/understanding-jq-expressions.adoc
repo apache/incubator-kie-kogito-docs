@@ -110,7 +110,10 @@ The Serverless workflow Specification defines the following filtering mechanisms
 * link:{spec_doc_url}#event-data-filters[Event data filters]: Similar to the action data filters, but apply to the events instead of actions.
 * link:{spec_doc_url}#state-data-filters[State data filters]: Define the workflow model to the JSON object, which is returned by the expression and discards an existing property.
 
-For example, you can see link:{kogito_sw_examples_url}/serverless-workflow-expression-quarkus[`serverless-workflow-expression-quarkus`], in which actions and state data filters are used.
+
+State and Action data filter example::
+
+You can see link:{kogito_sw_examples_url}/serverless-workflow-expression-quarkus[`serverless-workflow-expression-quarkus`] example application, in which actions and state data filters are used.
 
 image::core/expression_diagram.png[]
 
@@ -173,6 +176,22 @@ Therefore, after executing the action, the workflow model consists of a `number`
 The original `numbers` array should not be returned as a result of the workflow execution, therefore the final stage consists of a state data filter defining the content of the output model. The output model should contain a `result` property and the value of `result` property should be the maximum number that is stored by the previous state in the `number` property. 
 
 In the previous example, the workflow model is changed by the `input` property of the filter, which means that the output model is updated before the state is executed. As a final result, the output model consists of a `result` property, containing the maximum value of `x`.
+
+Event data filter example::
+
+You can find an example of event data filtering in the link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus[`serverless-workflow-callback-quarkus`] example application. 
+
+.Example event filter
+[source,json]
+----
+  "eventRef": "waitEvent",
+  "eventDataFilter": {
+     "data": ".result",
+     "toStateData": ".move"
+   }
+----
+
+The previous example of the event filter copies the content of Cloud Event data `result` field into the workflow model `move` field. 
 
 == Additional resources
 
