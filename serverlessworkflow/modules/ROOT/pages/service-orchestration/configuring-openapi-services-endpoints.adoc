@@ -122,7 +122,24 @@ quarkus.rest-client."stock-service API".url=http://localhost:8282/
 
 --
 
+[NOTE]
+Kubernetes service endpoint can be used as a service URL if the target service is within the same cluster. Example: http://myservice.mynamespace.cluster.svc.local
+
 == Configuring OpenAPI services endpoints in different environments
+
+You can use different MicroProfile ConfigSources, like environment variables and Kubernetes ConfigMaps, and MicroProfile Config profiles to configure the OpenAPI services in different environments.
+
+For more information about MicroProfile Config Sources, see the link:https://download.eclipse.org/microprofile/microprofile-config-2.0/microprofile-config-spec-2.0.html#configsource[MicroProfile Config specification].
+
+[IMPORTANT]
+====
+Some operating systems allow only alphabetic characters or an underscore, `_`, in environment variables. Other characters such as `.`, `/`, etc. may be disallowed. In order to set a value for a config property that has a name containing such disallowed characters from an environment variable, you must use link:https://download.eclipse.org/microprofile/microprofile-config-2.0/microprofile-config-spec-2.0.html#default_configsources.env.mapping[this rules].
+====
+
+For more information about MicroProfile Config Sources, see the link:https://download.eclipse.org/microprofile/microprofile-config-2.0/microprofile-config-spec-2.0.html#default_configsources.env.mapping[MicroProfile Config specification].
+
+[[using-profiles]]
+=== Using profiles to define different configuration values in different environments
 
 The testing procedure described in this document is based on the link:{kogito_sw_examples_url}/serverless-workflow-stock-profit[`serverless-workflow-stock-profit`] example application in GitHub repository.
 
@@ -203,9 +220,6 @@ The `stock-profit` service contains the workflow definition defined as follows:
 
 <1> Defines the `stock-service` service operation.
 <2> Defines the `stock-portfolio` service operation.
-
-[[using-profiles]]
-=== Using profiles to define different configuration values in different environments
 
 Kogito leverage Quarkus profiles to configure the application depending on the target environment.
 
