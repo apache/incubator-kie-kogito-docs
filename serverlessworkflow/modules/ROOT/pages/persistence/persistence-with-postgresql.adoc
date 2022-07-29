@@ -1,1 +1,166 @@
-//= Persistence with PostgresSQL databases
+Running Serverless Workflow service using PostgresSQL
+=====================================================
+:compat-mode!:
+// Metadata:
+:description: Running Serverless Workflow service using PostgresSQL
+:keywords: kogito, workflow, quarkus, serverless, quarkus-cli, persistence, postgresql
+// Referenced documentation pages.
+:getting_started_create_first_workflow_guide: xref:getting-started/create-your-first-workflow-service.adoc
+:persistence_with_postgresql_guide: xref:persistence/persistence-with-postgresql.adoc
+// External pages
+:quarkus_datasource_guide: https://quarkus.io/guides/datasource
+:quarkus_datasource_devservices_guide: https://quarkus.io/guides/databases-dev-services
+:kogito_sw_callback_example: {kogito_sw_examples_url}/serverless-workflow-callback-quarkus
+:postgresql_url: https://www.postgresql.org/
+:postgresql_doc_url: https://www.postgresql.org/docs/current/
+
+This document describes how to run your Kogito Serverless Workflow application using PostgreSQL persistence.
+
+.Prerequisites
+include::../../pages/_common-content/getting-started-requirement.adoc[]
+* Docker is installed.
+* link:{postgresql_url}[PostgreSQL] is installed. For information about PostgreSQL installation and configuration, see link:{postgresql_doc_url}[PostgreSQL documentation].
+
+[NOTE]
+====
+Although PostgreSQL installation is mentioned as a requirement, this guide relies on running it as a Docker service instead.
+====
+
+Running a Kogito Serverless Workflow application with persistence enabled, is a recommended approach for when your workflow execution requires wait states. For example, when a process reaches a `callback` or needs to wait for an `event`, the execution is paused and the Kogito engine takes a complete snapshot of the workflow data. This snapshot is persisted in the database as a binary format along with some metadata information about the process. This metadata includes information such as process ID, process instance ID, and process version.
+
+Runtime persistence is intended primarily for storing data that is required to resume workflow execution for a particular process instance. Once a process completes, its data is removed from the database. This persistence behavior means that only the information that is required to resume execution is persisted.
+
+In Kogito, persistence is enabled through addons. Although multiple addons are available for persistence, this guide focuses on using the `kogito-addons-quarkus-persistence-jdbc` addon based on JDBC along with PostgreSQL. This addon also extends on the Quarkus capabilities for JDBC and you can also use any of the features available directly from Quarkus JDBC support. For more information on Quarkus and JDBC, visit {quarkus_datasource_guide}[Quarkus Datasources].
+
+[[postgresql-persistence-example]]
+== Solution
+It is recommended that you follow the instructions in the next sections step by step. However, you can check a completed example below with all steps applied.
+
+.Clone `kogito-examples` repository
+[source,shell]
+----
+git clone git@github.com:kiegroup/kogito-examples.git
+----
+
+The solution is located in the `serverless-workflow-examples/serverless-workflow-callback-quarkus` directory.
+
+Follow the `README` file instructions contained in the root of the project in order to execute it.
+
+[[postgresql-persistence-maven-dependencies]]
+== Add dependencies to Maven project
+
+To use the persistence add-on, add the following code to the `pom.xml` file of your project:
+
+.JDBC persistence add-on
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-addons-quarkus-persistence-jdbc</artifactId>
+</dependency>
+----
+
+.Quarkus JDBC PostgreSQL
+[source,xml]
+----
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-jdbc-postgresql</artifactId>
+</dependency>
+----
+
+.Quarkus Agroal Data Source
+[source,xml]
+----
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-agroal</artifactId>
+</dependency>
+----
+
+[[postgresql-persistence-application-properties]]
+== Configure application.properties
+
+The following properties should be added to your project's application.properties file:
+
+.application.properties
+[source, properties]
+----
+kogito.persistence.type=jdbc
+----
+
+The following Quarkus properties are also recommended to be added:
+
+.application.properties
+[source, properties]
+----
+quarkus.datasource.db-kind=postgresql
+quarkus.datasource.username=postgres
+quarkus.datasource.password=pass
+quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/postgres
+----
+
+[[postgresql-persistence-database-schema]]
+== Create PostgreSQL database schema
+
+By default, the persistence addon creates the required database schema structure. That is usually only recommended for ease of development and can be turned off by setting `kogito.persistence.auto.ddl=false`.
+DDL scripts are available in case there is a need to manually create the required database schema. These scripts are included in the https://repository.jboss.org/org/kie/kogito/kogito-ddl/{version}/kogito-ddl-{version}-db-scripts.zip[kogito-ddl-{version}-db-scripts.zip] artifact.
+
+
+[[postgresql-persistence-optimistic-locking]]
+== Enable optimistic locking
+
+In order to safely handle concurrent requests to shared workflow instances, Kogito handles these requests using persistence enabled optimistic locking for concurrency control with the version on record (using the version field in the database). This feature is optional and can be activated only with persistence by adding `kogito.persistence.optimistic.lock=true` to the application.properties file in your Kogito project.
+
+[[postgresql-persistence-versioning]]
+== Versioning strategy
+
+Versioning strategy can be used to allow different applications to run different versions of the same process at the same time, sharing the same database. This can be useful for instance, when migrating a process from version 1, to version 2. By allowing workflow instances that still inflight to finish executing, while a new version is deployed using a new application setup. By default, the engine will consider that the `version` attribute specified in the Serverless Workflow file is the current version of the asset. This approach requires that you manually change this version, whenever you would like the engine to consider it as a new version.
+
+.Serverless Workflow version
+[source,json]
+----
+{
+  "id": "applicantworkflow",
+  "name": "Applicant Workflow",
+  "version": "1.0"
+}
+----
+
+An alternative to this strategy is to set `kogito.workflow.version-strategy=project` in your application.properties file. This will make the engine to consider the Maven or Gradle project version as the actual version of all workflows in the project. For instance, by releasing a new version of your Maven project, it will automatically update the workflow's version contained in the project.
+
+[[postgresql-persistence-configuration]]
+== Persistence configuration reference
+
+|===
+|Configuration property|Type|Default
+
+|kogito.persistence.type
+|string
+|
+
+|kogito.persistence.query.timeout.millis
+|long
+|10000
+
+|kogito.persistence.optimistic.lock
+|boolean
+|false
+
+|kogito.persistence.auto.ddl
+|boolean
+|true
+
+|kogito.workflow.version-strategy
+|string
+|workflow
+
+|===
+
+
+[[postgresql-persistence-additional-resources]]
+== Additional resources
+
+* xref:testing-and-troubleshooting/integration-tests-with-postgresql.adoc[Integration Test with PostgreSQL]
+
+include::../../pages/_common-content/report-issue.adoc[]
