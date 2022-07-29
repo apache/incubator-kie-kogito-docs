@@ -7,18 +7,20 @@
 
 [[ref-example-jq-expression-switch-conditions]]
 
-Event correlation plays a big role in large event-driven applications, it allows to match one or more events with a particular workflow instance. Correlation  rules can be used when defining consumed events as a way to match a workflow instance, it is a more practical alternative to the internal identifier `processInstanceId`, since any external domain identifier can be used as a correlation.
+Event correlation plays a significant role in large event-driven applications. It allows matching one or more events with a particular workflow instance. Correlation rules with domain information can be used when defining consumed events to match a workflow instance. It is a more practical alternative to the internal identifier `processInstanceId` since you can use any external domain identifier as a correlation.
 
-A correlation definition consists of one or more attributes associated with an event and the respective workflow to which it belongs.  As described in the link:{spec_doc_url}#correlation-definition[Serverless Workflow Specification], the correlation property defines the possible correlations for a given event, each element should contain a `contextAttributeName` set for the value that should match an attribute from an event.
+A correlation definition consists of one or more attributes associated with an event and the respective workflow to which it belongs.  As described in the link:{spec_doc_url}#correlation-definition[Serverless Workflow Specification], the correlation property defines the possible correlations for a given event. Each element should contain a `contextAttributeName` set for the value that should match an attribute from an event.
 
-Optionally, you can set a `contextAttributeValue` property that should match the value for the respective attribute defined in `contextAttributeName` for the consumed events in a workflow.
+You can optionally set a `contextAttributeValue` property that should match the value for the respective attribute defined in `contextAttributeName` for the consumed events in a workflow.
 
 [NOTE]
 ====
 The incoming events consumed by the workflow engine should contain the correlation attributes, set in the definition, as extension context attributes, in compliance with the link:{cloud_events_url}[Cloud Event] format, thus they are not part of the event payload.
 ====
 
-When starting a new workflow instance, the correlation attributes set in the event definition, are extracted from the event and associated with the workflow instance which is being created. Thus, the start event does not trigger a correlation evaluation, instead, it is where correlation attributes and values are set, which are used to evaluate against other incoming events that might trigger this instance. Once an event is consumed and the correlation rules are evaluated, if any workflow instance matches them, the engine continues the execution of that matched instance.
+When starting a new workflow instance, the correlation attributes set in the event definition, are extracted from the event and associated with the workflow instance which is being created. Thus, the start event does not trigger a correlation evaluation, instead, it is where correlation attributes and values are set, which are used to evaluate against other incoming events that might trigger this instance.
+
+Once an event is consumed and the correlation rules are evaluated, if any workflow instance matches them, the engine continues the execution of that matched instance.
 
 The following flowchart diagram shows how the correlation is processed by the workflow engine.
 
@@ -102,7 +104,7 @@ A workflow can be created by consuming events as defined by the Event state <<re
 }
 ----
 
-When a new event of type <<ref-new-user-account-event,`newAccountEventType`>> is consumed the workflow is created and then any other events consumed by this workflow should contain the same correlation attribute `userid` with the same value `12345` set, which is used to evaluate and match the workflow instance to continue the execution.
+When the workflow consumes a new event of type <<ref-new-user-account-event,`newAccountEventType`>> the instance is created, and then any other events consumed by this workflow should contain the same correlation attribute `userid` with the same value `12345` set, which is used to evaluate and match the workflow instance to continue the execution.
 
 [[ref-new-user-account-event]]
 .New Incoming Start Event `newAccountEvent`
@@ -152,7 +154,9 @@ The given example uses Callback States, such as the  <<ref-validade-user-email-s
 ----
 
 [IMPORTANT]
+===
 The produced events contain the same correlation attributes set once the workflow was created.
+===
 
 [[ref-validade-user-email-event]]
 .Produced Callback State event `validateAccountEmailEvent`
@@ -203,3 +207,10 @@ The workflow engine stores the correlation information in the same persistence m
 ====
 Currently, the only persistency addon which supports correlation is the `kogito-addons-quarkus-persistence-jdbc` configured for PostgreSQL. In the next releases, other persistency addons will be supported.
 ====
+
+== Additional resources
+
+* xref:eventing/handling-events-on-workflows.adoc[Handling events on workflows]
+* xref:eventing/working-with-callbacks.adoc[Callback state in Serverless Workflow]
+
+include::../../pages/_common-content/report-issue.adoc[]
