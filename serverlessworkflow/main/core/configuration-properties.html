@@ -3,9 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Configuration Properties :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Configuration Properties">
-    <meta name="keywords" content="kogito, workflow, serverless, configuration, properties">
+    <title>Configuration properties in Serverless Workflow :: Kogito Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -88,7 +86,7 @@
     <a class="nav-link" href="working-with-parallelism.html">Parallelism in Serverless Workflow</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="configuration-properties.html">Configuration Properties</a>
+    <a class="nav-link" href="configuration-properties.html">Configuration properties in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
@@ -253,7 +251,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Core</li>
-    <li><a href="configuration-properties.html">Configuration Properties</a></li>
+    <li><a href="configuration-properties.html">Configuration properties in Serverless Workflow</a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/core/configuration-properties.adoc">Edit this Page</a></div>
@@ -263,160 +261,210 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Configuration Properties</h1>
+<h1 class="page">Configuration properties in Serverless Workflow</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Kogito configuration properties reference.</p>
+<p>The following table serves as a quick reference for commonly used configuration properties supported in Serverless Workflow. You can define the following properties in the <code>src/main/resources/application.properties</code> file of your project.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="configuration-reference"><a class="anchor" href="#configuration-reference"></a>Configuration reference</h2>
-<div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Common configuration properties in Serverless Workflow</caption>
 <colgroup>
 <col style="width: 20%;">
+<col style="width: 30%;">
 <col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
+<col style="width: 15%;">
+<col style="width: 15%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Property</th>
 <th class="tableblock halign-left valign-top">Description</th>
 <th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Default value</th>
 <th class="tableblock halign-left valign-top">Override at runtime</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.persistence.type</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Persistence DB type. Possible values are: <code>jdbc</code>, <code>mongodb</code>, <code>filesystem</code>, <code>kafka</code>, <code>infinispan</code> or <code>postgresql</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.persistence.type</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Defines the type of persistence database. The possible values of this property include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>jdbc</code></p>
+</li>
+<li>
+<p><code>mongodb</code></p>
+</li>
+<li>
+<p><code>filesystem</code></p>
+</li>
+<li>
+<p><code>kafka</code></p>
+</li>
+<li>
+<p><code>infinispan</code></p>
+</li>
+<li>
+<p><code>postgresql</code></p>
+</li>
+</ul>
+</div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.persistence.query.timeout.millis</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Query execution timeout</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.persistence.query.timeout.millis</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defines timeout for a query execution.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">10000</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>10000</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.persistence.optimistic.lock</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Use optimistic locking</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.persistence.optimistic.lock</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables or disables the optimistic locking.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.persistence.auto.ddl</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Automatically apply database schema changes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.persistence.auto.ddl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Applies the database schema changes automatically.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.workflow.version-strategy</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Strategy to resolve a Process version to use. Possible values are: <code>workflow</code> and <code>project</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.workflow.version-strategy</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Defines strategy to resolve a process version to use. The possible values of this property include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>workflow</code></p>
+</li>
+<li>
+<p><code>project</code></p>
+</li>
+</ul>
+</div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">workflow</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>workflow</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.service.url</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The service URL needed to connect to the runtime endpoint from outside the service.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.service.url</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defines the service URL needed to connect to the runtime endpoint from outside the service.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.messaging.as-cloudevents</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">If this is enabled the service will use Cloud Events</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.messaging.as-cloudevents</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables a service to use CloudEvents.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.jackson.fail-on-empty-bean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">If this property is <code>true</code>, Jackson will fail on an empty bean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.jackson.fail-on-empty-bean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If this property is set as <code>true</code>, Jackson fails on an empty bean.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.sw.operationIdStrategy</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Strategy for generating the configuration key of open API specifications. Possible values are: <code>file_name</code>, <code>full_uri</code>, <code>spec_title</code> or <code>function_name</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.sw.operationIdStrategy</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Defines strategy to generate the configuration key of open API specifications. The possible values of this property include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>file_name</code></p>
+</li>
+<li>
+<p><code>full_uri</code></p>
+</li>
+<li>
+<p><code>spec_title</code></p>
+</li>
+<li>
+<p><code>function_name</code></p>
+</li>
+</ul>
+</div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">file_name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>file_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.sw.states.foreach.outputVarName</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Variable name for foreach loop</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.sw.states.foreach.outputVarName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defines the variable name for <code>foreach</code> loop.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">_swf_eval_temp</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>_swf_eval_temp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.quarkus.events.threads.poolSize</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ThreadPoolExecutor maximum number of threads to allow in the pool.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.quarkus.events.threads.poolSize</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defines the <code>ThreadPoolExecutor</code> maximum number of threads to allow in the pool.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>10</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.quarkus.events.threads.queueSize</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ThreadPoolExecutor queue size to use for holding tasks before they are executed.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.quarkus.events.threads.queueSize</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defines the <code>ThreadPoolExecutor</code> queue size to use for holding tasks before the tasks are executed.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.kogito.logger.always-include</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Always include the Workflow debug logger. By default, this will only be included in dev and test.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.kogito.logger.always-include</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables you to include the workflow debug logger everytime. By default, this property is included in development and test mode.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.kogito.devservices.enabled</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">If Dev Services for Kogito has been explicitly enabled or disabled. Dev Services are generally enabled by default, unless there is an existing configuration present.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.kogito.devservices.enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables or disables the Dev Services for Kogito. By default, the Dev Services are enabled, unless an existing configuration is present.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.kogito.devservices.port</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Optional fixed port the dev service will listen to.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.kogito.devservices.port</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defines the optional fixed port that the Dev Services listen to.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">8180</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>8180</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.kogito.devservices.image-name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The Data Index image to use.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.kogito.devservices.image-name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defines the Data Index image to use.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">quay.io/kiegroup/kogito-data-index-ephemeral:{version}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quay.io/kiegroup/kogito-data-index-ephemeral:{version}</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.kogito.devservices.shared</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Indicates if the Data Index instance managed by Quarkus Dev Services is shared.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.kogito.devservices.shared</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Indicates if the Data Index instance, which is managed by Quarkus Dev Services, is shared.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.kogito.devservices.service-name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The value of the label attached to the started container. This property is used when <code>shared</code> is set to <code>true</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.kogito.devservices.service-name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defines the value of the label that is attached to the started container. This property is used when <code>shared</code> is set to <code>true</code>.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">kogito-data-index</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito-data-index</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 </tbody>
 </table>
