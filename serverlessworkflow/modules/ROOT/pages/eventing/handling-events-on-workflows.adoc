@@ -5,19 +5,19 @@
 :description: Handling events on workflows
 :keywords: kogito, workflow, serverless, event
 
-This document describes Serverless Workflow link:{spec_doc_url}#Event-State[Event state]. Event state can be used to start a new workflow instance upon the reception of a designated link:{cloud_events_url}[Cloud Event] or to pause the execution of an existing workflow instance till a designated Cloud Event is received. 
+This document describes Serverless Workflow link:{spec_doc_url}#Event-State[Event state]. Event state can be used to start a new workflow instance upon the reception of a designated link:{cloud_events_url}[CloudEvent] or to pause the execution of an existing workflow instance till a designated CloudEvent is received. 
 
 == Event State match 
 
-An Event state consist of one or more link:{spec_doc_url}#event-definition[event definitions]. Event definitions are combined to designate which Cloud Event Types the Event State should listen to. 
+An Event state consist of one or more link:{spec_doc_url}#event-definition[event definitions]. Event definitions are combined to designate which CloudEvent Types the Event State should listen to. 
 
-`onEvents` field contains an array of `eventRefs`, which is an array of event definition names, and a set of actions to be executed when there is a match. `exclusive` field is used to determine which Cloud Event types should be considered to determine if there is an event match. If `exclusive` value is false, all Cloud Event types should be received for a match to occur. Otherwise, the reception of any of the Cloud Event Types is consider a match. 
+`onEvents` field contains an array of `eventRefs`, which is an array of event definition names, and a set of actions to be executed when there is a match. `exclusive` field is used to determine which CloudEvent types should be considered to determine if there is an event match. If `exclusive` value is false, all CloudEvent types should be received for a match to occur. Otherwise, the reception of any of the CloudEvent Types is consider a match. 
 
 === Event match example
 
 Lets illustrate the usage of previously mentioned fields with an example
 
-You can add two Cloud Event Types: `noisy` and `silent`
+You can add two CloudEvent Types: `noisy` and `silent`
 
 [source, json]
 ----
@@ -36,7 +36,7 @@ You can add two Cloud Event Types: `noisy` and `silent`
   ]
 ----
 
-You want to indicate there is a match only when both a `noisy` and a `silent` cloud event types are received. You also want to execute a specific action for `noisy` and a different one for `silent`. You will indicate that by defining an Event state containing both event definitions in separate `onEvent` items and  setting `exclusive` to `false`.
+You want to indicate there is a match only when both a `noisy` and a `silent` CloudEvent types are received. You also want to execute a specific action for `noisy` and a different one for `silent`. You will indicate that by defining an Event state containing both event definitions in separate `onEvent` items and  setting `exclusive` to `false`.
 
 [source, json]
 ----
@@ -134,7 +134,7 @@ Given the previously defined `waitForEvent` state, you set as starting event by 
 
 An Event state can be used to pause an existing workflow instance. When the Workflow execution reaches a non starting Event state, it pauses till there is a event match for that particular workflow instance. 
 
-Similar to xref:working-with-callbacks.adoc[Callback state], the instance to be resumed is identified by `kogitoprocrefid` Cloud Event Attribute or calculated according to xref:event-correlation-with-workflows.adoc[Event Correlation] functionality. The sole difference between Event and Callback state is that while callback state is used for _fire&wait_, event state covers _wait&fire scenarios_.
+Similar to xref:working-with-callbacks.adoc[Callback state], the instance to be resumed is identified by `kogitoprocrefid` CloudEvent Attribute or calculated according to xref:event-correlation-with-workflows.adoc[Event Correlation] functionality. While callback state is used for _fire&wait_, event state covers _wait&fire_ scenarios.
 
 == Additional resources
 
