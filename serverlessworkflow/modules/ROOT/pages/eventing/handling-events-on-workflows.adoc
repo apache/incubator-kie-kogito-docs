@@ -1,1 +1,147 @@
-//= Handling events on workflows
+= Handling events on workflows
+
+:compat-mode!:
+// Metadata:
+:description: Handling events on workflows
+:keywords: kogito, workflow, serverless, event
+
+This document describes Serverless Workflow link:{spec_doc_url}#Event-State[Event state]. Event state can be used to start a new workflow instance upon the reception of a designated link:{cloud_events_url}[Cloud Event] or to pause the execution of an existing workflow instance till a designated Cloud Event is received. 
+
+== Event State match 
+
+An Event state consist of one or more link:{spec_doc_url}#event-definition[event definitions]. Event definitions are combined to designate which Cloud Event Types the Event State should listen to. 
+
+`onEvents` field contains an array of `eventRefs`, which is an array of event definition names, and a set of actions to be executed when there is a match. `exclusive` field is used to determine which Cloud Event types should be considered to determine if there is an event match. If `exclusive` value is false, all Cloud Event types should be received for a match to occur. Otherwise, the reception of any of the Cloud Event Types is consider a match. 
+
+=== Event match example
+
+Lets illustrate the usage of previously mentioned fields with an example
+
+You can add two Cloud Event Types: `noisy` and `silent`
+
+[source, json]
+----
+"events": [
+    {
+      "name": "noisyEvent",
+      "source": "",
+      "type": "noisy",
+      "dataOnly" : "false"
+    },
+    {
+      "name": "silentEvent",
+      "source": "",
+      "type": "silent"
+    }
+  ]
+----
+
+You want to indicate there is a match only when both a `noisy` and a `silent` cloud event types are received. You also want to execute a specific action for `noisy` and a different one for `silent`. You will indicate that by defining an Event state containing both event definitions in separate `onEvent` items and  setting `exclusive` to `false`.
+
+[source, json]
+----
+  {
+    "name": "waitForEvent",
+    "type": "event",
+    "onEvents": [
+      {
+        "eventRefs": [
+          "noisyEvent"
+         ],
+         "actions": [ 
+           {
+             "functionRef": "letsGetLoud"
+           }
+         ]
+      },
+      {
+        "eventRefs": [
+           "silentEvent"
+        ],
+        "actions": [ 
+          {
+            "functionRef": "beQuiet"
+          }
+        ]
+      }
+    ]
+    ,
+    "exclusive": false
+  }
+----
+
+If you want to execute the same action when both event types are received, you use just one `onEvent` item
+
+[source, json]
+----
+  {
+    "name": "waitForEvent",
+    "type": "event",
+    "onEvents": [
+      {
+        "eventRefs": [
+          "noisyEvent",
+          "silentEvent"
+         ],
+         "actions": [ 
+           {
+             "functionRef": "notCareAboutNoise"
+           }
+         ]
+       }
+    ]
+    ,"exclusive": false
+  }
+----
+
+If you want the same action to be executed when any of the event types are received, you set `exclusive` to true. You can also remove `exclusive`, since `true is the default value. 
+
+[source, json]
+----
+  {
+    "name": "waitForEvent",
+    "type": "event",
+    "onEvents": [
+      {
+        "eventRefs": [
+          "noisyEvent",
+          "silentEvent"
+         ],
+         "actions": [ 
+           {
+             "functionRef": "notCareAboutNoise"
+           }
+         ]
+       }
+    ]
+    ,"exclusive": true
+  }
+----
+
+
+== Starting a workflow instance
+
+An event state can be used to start a new workflow instance. To enable this functionality, the start property in the workflow header should be set to the event state name. The workflow instance will be started when there is a an event match. 
+
+Given the previously defined `waitForEvent` state, you set as starting event by adding following code at workflow header. 
+
+[source,json]
+----
+"start":"waitForEvent"
+----
+
+== Resuming workflow execution
+
+An Event state can be used to pause an existing workflow instance. When the Workflow execution reaches a non starting Event state, it pauses till there is a event match for that particular workflow instance. 
+
+Similar to xref:working-with-callbacks.adoc[Callback state], the instance to be resumed is identified by `kogitoprocrefid` Cloud Event Attribute or calculated according to xref:event-correlation-with-workflows.adoc[Event Correlation] functionality. The sole difference between Event and Callback state is that while callback state is used for _fire&wait_, event state covers _wait&fire scenarios_.
+
+== Additional resources
+
+* xref:getting-started/create-your-first-workflow-service.adoc[Create your first Workflow Service].
+* xref:consume-producing-events-with-kafka.adoc[Consuming and producing events with Kafka]
+* xref:consume-producing-events-with-knative-eventing.adoc[Consuming and producing events with Knative]
+
+include::../../pages/_common-content/report-issue.adoc[]
+
+ 
