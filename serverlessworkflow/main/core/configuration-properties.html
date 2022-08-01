@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Custom functions for your Serverless Workflow service :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Custom Functions Support">
-    <meta name="keywords" content="kogito, workflow, serverless, cncf, specification, functions, java">
+    <title>Configuration Properties :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Configuration Properties">
+    <meta name="keywords" content="kogito, workflow, serverless, configuration, properties">
     <meta name="generator" content="Antora 3.0.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -87,10 +87,10 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="working-with-parallelism.html">Parallelism in Serverless Workflow</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="configuration-properties.html">Configuration Properties</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="2">
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
   </li>
 </ul>
@@ -253,251 +253,173 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Core</li>
-    <li><a href="custom-functions-support.html">Custom functions for your Serverless Workflow service</a></li>
+    <li><a href="configuration-properties.html">Configuration Properties</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/core/custom-functions-support.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/core/configuration-properties.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Custom functions for your Serverless Workflow service</h1>
+<h1 class="page">Configuration Properties</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Cloud Native Computing Foundation (CNCF) specification <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#defining-custom-function-types">supports the <code>custom</code> function type</a>, which enables the implementations to extend the function definition capability.</p>
-</div>
-<div class="paragraph">
-<p>Kogito supports the <code>java</code> and <code>sysout</code> custom types.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The CNCF specification does not support <code>java</code> and <code>sysout</code> functions. Therefore, these functions might not be portable across other implementations.</p>
-</div>
-</td>
-</tr>
-</table>
+<p>Kogito configuration properties reference.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="con-func-sysout"><a class="anchor" href="#con-func-sysout"></a><code>sysout</code> custom function</h2>
+<h2 id="configuration-reference"><a class="anchor" href="#configuration-reference"></a>Configuration reference</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>You can use the <code>sysout</code> function for debugging or for quick demonstrations as shown in the following example:</p>
-</div>
-<div class="listingblock">
-<div class="title">Example of <code>sysout</code> function definition</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "functions": [
-    {
-      "name": "printMessage",
-      "type": "custom",
-      "operation": "sysout"
-    }
-  ]
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In the <code>state</code> definition, you can call the same <code>sysout</code> function as shown in the following example:</p>
-</div>
-<div class="listingblock">
-<div class="title">Example of a <code>sysout</code> function reference within a <code>state</code></div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "states": [
-    {
-      "name": "myState",
-      "type": "operation",
-      "actions": [
-        {
-          "name": "printAction",
-          "functionRef": {
-            "refName": "printMessage",
-            "arguments": {
-              "message": "."
-            }
-          }
-        }
-      ]
-    }
-  ]
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock warning">
-<table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
 <tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>You must avoid using the <code>sysout</code> function in a production environment since it can spam the unnecessary data in the application log.</p>
-</div>
-</td>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Override at runtime</th>
 </tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.persistence.type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Persistence DB type. Possible values are: <code>jdbc</code>, <code>mongodb</code>, <code>filesystem</code>, <code>kafka</code>, <code>infinispan</code> or <code>postgresql</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.persistence.query.timeout.millis</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Query execution timeout</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.persistence.optimistic.lock</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use optimistic locking</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.persistence.auto.ddl</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Automatically apply database schema changes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.workflow.version-strategy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategy to resolve a Process version to use. Possible values are: <code>workflow</code> and <code>project</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">workflow</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.service.url</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The service URL needed to connect to the runtime endpoint from outside the service.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.messaging.as-cloudevents</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If this is enabled the service will use Cloud Events</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.jackson.fail-on-empty-bean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If this property is <code>true</code>, Jackson will fail on an empty bean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.sw.operationIdStrategy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategy for generating the configuration key of open API specifications. Possible values are: <code>file_name</code>, <code>full_uri</code>, <code>spec_title</code> or <code>function_name</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">file_name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.sw.states.foreach.outputVarName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Variable name for foreach loop</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">_swf_eval_temp</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.quarkus.events.threads.poolSize</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ThreadPoolExecutor maximum number of threads to allow in the pool.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito.quarkus.events.threads.queueSize</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ThreadPoolExecutor queue size to use for holding tasks before they are executed.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.kogito.logger.always-include</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Always include the Workflow debug logger. By default, this will only be included in dev and test.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.kogito.devservices.enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If Dev Services for Kogito has been explicitly enabled or disabled. Dev Services are generally enabled by default, unless there is an existing configuration present.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.kogito.devservices.port</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional fixed port the dev service will listen to.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8180</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.kogito.devservices.image-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Data Index image to use.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">quay.io/kiegroup/kogito-data-index-ephemeral:{version}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.kogito.devservices.shared</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Indicates if the Data Index instance managed by Quarkus Dev Services is shared.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.kogito.devservices.service-name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The value of the label attached to the started container. This property is used when <code>shared</code> is set to <code>true</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kogito-data-index</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+</tr>
+</tbody>
 </table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="con-func-java"><a class="anchor" href="#con-func-java"></a><code>java</code> custom function</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Kogito supports the <code>java</code> functions within an Apache Maven project, in which you define your Serverless Workflow service.</p>
-</div>
-<div class="paragraph">
-<p>The following example shows the declaration of a <code>java</code> function:</p>
-</div>
-<div class="listingblock">
-<div class="title">Example of a <code>java</code> function declaration</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "functions": [
-    {
-      "name": "myFunction", <i class="conum" data-value="1"></i><b>(1)</b>
-      "type": "custom", <i class="conum" data-value="2"></i><b>(2)</b>
-      "operation": "service:java:com.acme.MyInterfaceOrClass::myMethod" <i class="conum" data-value="3"></i><b>(3)</b>
-    }
-  ]
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>myFunction</code> is the function name</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>custom</code> is the function type</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>service:java:com.acme.MyInterfaceOrClass::myMethod</code> is the Kogito custom operation definition. In the custom operation definition, <code>service</code> is the reserved operation keyword followed by the <code>java</code> keyword. <code>com.acme.MyInterfaceOrClass</code> is the FQCN (Fully Qualified Class Name) of the interface or implementation class followed by the method name (<code>myMethod</code>).</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Your method interface must receive a <a href="https://github.com/FasterXML/jackson">Jackson&#8217;s</a> <code>JsonNode</code> object and return either <code>void</code> or another <code>JsonNode</code> as shown in the following example:</p>
-</div>
-<div class="listingblock">
-<div class="title">Example of a <code>java</code> function implementation</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class MyInterfaceOrClass {
-
-    public void myMethod(JsonNode workflowData) {
-        // do whatever I want with the JsonNode:
-        // { "workflowdata": {} }
-    }
-
-    public JsonNode myMethod(JsonNode workflowData) {
-        // do whatever I want with the JsonNode:
-        // { "workflowdata": {} }
-        // return the modified content:
-        return workflowData;
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>To call the function shown in the previous example within your Serverless Workflow service, you can extract the required JSON value using <a href="understanding-jq-expressions.html" class="xref page"><code>jq</code> expression</a> or pass the JSON value without using arguments.</p>
-</div>
-<div class="paragraph">
-<p>In the following example, the caller sends the entire payload:</p>
-</div>
-<div class="listingblock">
-<div class="title">Example of a <code>java</code> function reference within a <code>state</code></div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "states": [
-    {
-      "name": "myState",
-      "type": "operation",
-      "actions": [
-        {
-          "name": "callJavaFunctionAction",
-          "functionRef": {
-            "refName": "myFunction"
-          }
-        }
-      ]
-    }
-  ]
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Alternatively, you can pass the necessary data as shown in the following example:</p>
-</div>
-<div class="listingblock">
-<div class="title">Example of a <code>java</code> function reference within a <code>state</code> passing the necessary data</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "states": [
-    {
-      "name": "myState",
-      "type": "operation",
-      "actions": [
-        {
-          "name": "callJavaFunctionAction",
-          "functionRef": {
-            "refName": "myFunction",
-            "arguments": {
-              "data": "${ .my.expression.to.data }"
-            }
-          }
-        }
-      ]
-    }
-  ]
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In the previous example, the <code>JsonNode</code> that the <code>java</code> function returns is the new payload in the Serverless Workflow execution.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Avoid using <code>java</code> functions to call the external services, instead you can use the <a href="../service-orchestration/orchestration-of-openapi-based-services.html" class="xref page">services orchestration features</a>.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../getting-started/cncf-serverless-workflow-specification-support.html" class="xref page">CNCF Serverless Workflow Specification</a></p>
-</li>
-<li>
-<p><a href="understanding-jq-expressions.html" class="xref page">Understanding JQ Expressions</a>.</p>
-</li>
-</ul>
-</div>
 </div>
 </div>
 <div class="sect1">
