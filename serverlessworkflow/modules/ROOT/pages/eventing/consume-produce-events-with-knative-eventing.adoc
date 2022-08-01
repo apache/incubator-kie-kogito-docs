@@ -16,13 +16,29 @@ Knative Eventing abstracts the events consumption through the link:{knative_even
 You need to add the Kogito Knative Eventing add-on dependency to indicate that you are using Knative Eventing. To enable Serverless Workflow to use Knative Eventing, add the following dependency to the `pom.xml` file of your project if using Maven:
 
 .Add dependency for Kogito Knative Eventing add-on in `pom.xml`
-[source,json]
-----
+[tabs]
+====
+Maven::
++
+[source,shell]
+--
+mvn quarkus:add-extension -Dextensions="kogito-addons-quarkus-knative-eventing"
+--
+quarkus CLI::
++
+[source,shell]
+--
+quarkus extension add kogito-addons-quarkus-knative-eventing
+--
+manually::
+[source,xml]
+--
 <dependency>
     <groupId>org.kie.kogito</groupId>
     <artifactId>kogito-addons-quarkus-knative-eventing</artifactId>
 </dependency>
-----
+--
+====
 
 This add-on will take care of the required dependencies and any additional configuration that the workflow application needs to interact with the Knative Eventing platform.
 
@@ -31,7 +47,7 @@ Although the default configuration that the Quarkus Knative Eventing add-on prov
 [[con-knative-eventing-add-on-source-configuration]]
 == Knative Eventing add-on Source configuration
 
-The following properties are only valid if the workflow has at least one link:{spec_doc_url}#Event-Definition[event definition] of the type `produced`. That's when the workflow application produces events, acting as a Knative Source.
+The description in this section is only valid if the workflow has at least one link:{spec_doc_url}#Event-Definition[event definition] of the type `produced`. That's when the workflow application produces events, acting as a Knative Source.
 
 === HTTP Transport Configuration
 
@@ -88,7 +104,7 @@ The Kogito Knative Eventing add-on generates a few Knative objects during build 
 
 |org.kie.kogito.addons.knative.sink.api_version
 |eventing.knative.dev/v1
-|Namespace where the generated Knative Sink is deployed.
+|API group and version of the generated Knative Sink.
 
 |org.kie.kogito.addons.knative.sink.name
 |`default`
@@ -136,8 +152,23 @@ Have a workflow application with the Knative Eventing Add-on.
 1. Add the following link:{quarkus_k8s_url}[Quarkus Kubernetes extension] to your project:
 +
 .Add dependency for Quarkus Kubernetes extension in `pom.xml`
-[source,json]
-----
+[tabs]
+====
+Maven::
++
+[source,shell]
+--
+mvn quarkus:add-extension -Dextensions="quarkus-kubernetes,quarkus-container-image-jib"
+--
+quarkus CLI::
++
+[source,shell]
+--
+quarkus extension add quarkus-kubernetes quarkus-container-image-jib
+--
+manually::
+[source,xml]
+--
 <dependency>
     <groupId>io.quarkus</groupId>
     <artifactId>quarkus-kubernetes</artifactId>
@@ -146,7 +177,8 @@ Have a workflow application with the Knative Eventing Add-on.
     <groupId>io.quarkus</groupId>
     <artifactId>quarkus-container-image-jib</artifactId>
 </dependency>
-----
+--
+====
 +
 [TIP]
 ====
@@ -288,3 +320,4 @@ For each consumed event definition, the add-on generates one Knative `Trigger`.
 * xref:eventing/working-with-callbacks.adoc[Callback state in Serverless Workflow]
 
 include::../../pages/_common-content/report-issue.adoc[]
+ 
