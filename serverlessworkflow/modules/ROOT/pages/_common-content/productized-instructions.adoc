@@ -1,0 +1,35 @@
+:page-partial:
+
+:rhbq_config_registry_url: https://access.redhat.com/documentation/en-us/red_hat_build_of_quarkus/quarkus-2-7/guide/f93c45bd-4feb-4f74-a70a-022e9fb41957#_9064727c-4b8a-4068-a9ba-8de6b258a14a
+:rhbq_config_maven_url: https://access.redhat.com/documentation/en-us/red_hat_build_of_quarkus/quarkus-2-7/guide/f93c45bd-4feb-4f74-a70a-022e9fb41957#proc_download-maven_quarkus-getting-started
+
+[[proc-configuring-maven-rhbq]]
+== Configuring your Maven project to Red Hat build of Quarkus and OpenShift Serverless Logic
+
+To use the Red Hat Build of Quarkus (RHBQ) libraries, you need to configure your local Maven installation.
+
+.Procedure
+. To configure the Maven `settings.xml` file and Quarkus extension registry client, follow the instructions in the link:{rhbq_config_maven_url}[Configuring the Quarkus Maven repository] and link:{rhbq_config_registry_url}[Configuring Quarkus extension registry client].
++
+. After the project is created, add the following dependencies to the `pom.xml` file of your project:
++
+.Dependencies in `pom.xml` file
+[source,xml,subs="attributes+"]
+----
+<project>
+    ...
+    <dependencyManagement>
+        <dependencies>
+            ...
+            <dependency>
+                <groupId>org.kie.kogito</groupId>
+                <artifactId>kogito-bom</artifactId>
+                <version>{kogito_version_redhat}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    ...
+</project>
+----
