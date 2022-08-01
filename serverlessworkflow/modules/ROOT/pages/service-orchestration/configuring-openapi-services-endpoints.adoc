@@ -28,7 +28,7 @@ Given an OpenAPI document located at `src/main/resources/openapi/stock-portfolio
 
 [source,properties]
 ----
-quarkus.rest-client."stock_portfolio_svc_yaml".url=http://localhost:8282/
+quarkus.rest-client.stock_portfolio_svc_yaml.url=http://localhost:8282/
 ----
 --
 
@@ -53,11 +53,11 @@ Given the following workflow:
 ----
 <1> URI path of the OpenAPI document.
 
-Kogito will use `"apicatalog_apis_123_document"` as configuration key.
+Kogito will use `apicatalog_apis_123_document` as configuration key.
 
 [source, properties]
 ----
-quarkus.rest-client."apicatalog_apis_123_document".url=http://localhost:8282/
+quarkus.rest-client.apicatalog_apis_123_document.url=http://localhost:8282/
 ----
 
 --
@@ -88,7 +88,7 @@ Kogito will use `"myworkflow_myfunction"` as configuration key.
 
 [source, properties]
 ----
-quarkus.rest-client."myworkflow_myfunction".url=http://localhost:8282/
+quarkus.rest-client.myworkflow_myfunction.url=http://localhost:8282/
 ----
 
 --
@@ -117,7 +117,7 @@ Kogito will use `"stock-service API"` as configuration key.
 
 [source, properties]
 ----
-quarkus.rest-client."stock-service API".url=http://localhost:8282/
+quarkus.rest-client.stock-service_API.url=http://localhost:8282/
 ----
 
 --
@@ -249,8 +249,8 @@ You can define the URLs of the services in different environments by using profi
 --
 [source,properties]
 ----
-quarkus.rest-client."stock_svc_yaml".url=http://localhost:8383/ <1>
-quarkus.rest-client."stock_portfolio_svc_yaml".url=http://localhost:8282/
+quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/ <1>
+quarkus.rest-client.stock_portfolio_svc_yaml.url=http://localhost:8282/
 ----
 
 <1> The URL of the `real-stock-service` service.
@@ -262,7 +262,7 @@ quarkus.rest-client."stock_portfolio_svc_yaml".url=http://localhost:8282/
 --
 [source,properties]
 ----
-%dev.quarkus.rest-client."stock_svc_yaml".url=http://localhost:8181/ <1>
+%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/ <1>
 ----
 
 <1> The URL of the `fake-stock-service` service.
@@ -324,7 +324,7 @@ The service will be available at http://localhost:8181/.
 [[proc-running-the-application-in-development-mode]]
 === Running the Serverless Workflow application in development mode
 
-As you defined `%dev.quarkus.rest-client."stock_svc_yaml".url=http://localhost:8181/`, the `fake-stock-service` service will be used in the development mode.
+As you defined `%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/`, the `fake-stock-service` service will be used in the development mode.
 This means that you'll get the same result every time you run the workflow.
 
 .Prerequisites
@@ -369,7 +369,7 @@ Note that, since you're using the `fake-stock-service`, the computed `profit` pr
 [[proc-running-the-application-in-production-mode]]
 === Running the Serverless Workflow application in normal/production mode
 
-As you defined `quarkus.rest-client."stock_svc_yaml".url=http://localhost:8383/`, the `real-stock-service` service will be used in the normal/production mode.
+As you defined `quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/`, the `real-stock-service` service will be used in the normal/production mode.
 This means that you'll get a different result every time you run the workflow.
 
 .Prerequisites
@@ -442,7 +442,7 @@ export _DEV_QUARKUS_REST_CLIENT_STOCK_SVC_YAML_URL=http://localhost:8383/ <1>
 mvn quarkus:dev -Ddebug=false
 ----
 
-<1> Overwrite the `%dev.quarkus.rest-client."stock_svc_yaml".url=http://localhost:8181/` defined in the `application.properties` file with an environment variable pointing to `real-stock-service`.
+<1> Overwrite the `%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/` defined in the `application.properties` file with an environment variable pointing to `real-stock-service`.
 --
 
 . In a separate terminal window, send a request to the Serverless Workflow application:
