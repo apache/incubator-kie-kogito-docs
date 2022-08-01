@@ -15,6 +15,11 @@ Knative Eventing abstracts the events consumption through the link:{knative_even
 
 You need to add the Kogito Knative Eventing add-on dependency to indicate that you are using Knative Eventing. To enable Serverless Workflow to use Knative Eventing, add the following dependency to the `pom.xml` file of your project if using Maven:
 
+[TIP]
+====
+If you have used the xref:tooling/kn-plugin-workflow-overview[kn workflow CLI] to create your project, this extension is already present.
+====
+
 .Add dependency for Kogito Knative Eventing add-on in `pom.xml`
 [tabs]
 ====
@@ -152,6 +157,11 @@ Have a workflow application with the Knative Eventing Add-on.
 
 1. Add the following link:{quarkus_k8s_url}[Quarkus Kubernetes extension] to your project:
 +
+[TIP]
+====
+If you have used the xref:tooling/kn-plugin-workflow-overview[kn workflow CLI] to create your project, this extension is already present.
+====
++
 .Add dependency for Quarkus Kubernetes extension in `pom.xml`
 [tabs]
 ====
@@ -180,11 +190,6 @@ manually::
     <artifactId>quarkus-container-image-jib</artifactId>
 </dependency>
 --
-====
-+
-[TIP]
-====
-If you have used the xref:tooling/kn-plugin-workflow-overview[kn workflow CLI] to create your project, this extension is already present.
 ====
 +
 2. Add the property `quarkus.kubernetes.deployment-target=knative` to your `application.properties` file.
