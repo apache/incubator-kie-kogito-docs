@@ -11,13 +11,15 @@ This document describes Serverless Workflow link:{spec_doc_url}#Event-State[Even
 
 An Event state consist of one or more link:{spec_doc_url}#event-definition[event definitions]. Event definitions are combined to designate which CloudEvent Types the Event State should listen to. 
 
-`onEvents` field contains an array of `eventRefs`, which is an array of event definition names, and a set of actions to be executed when there is a match. `exclusive` field is used to determine which CloudEvent types should be considered to determine if there is an event match. If `exclusive` value is false, all CloudEvent types should be received for a match to occur. Otherwise, the reception of any of the CloudEvent Types is consider a match. 
+`onEvents` property is used to group CloudEvent types that might trigger the same set of `actions`. 
+
+`exclusive` property is used to determine if there is an event match. If `exclusive` value is false, all CloudEvent types in `eventRefs` array should be received for a match to occur. Otherwise, the reception of any of the referenced CloudEvent types is consider a match. 
 
 === Event match example
 
 Lets illustrate the usage of previously mentioned fields with an example
 
-You can add two CloudEvent Types: `noisy` and `silent`
+You are going to use two CloudEvent Types: `noisy` and `silent`
 
 [source, json]
 ----
@@ -65,7 +67,7 @@ You want to indicate there is a match only when both a `noisy` and a `silent` Cl
         ]
       }
     ]
-    ,
+    , 
     "exclusive": false
   }
 ----
@@ -90,7 +92,8 @@ If you want to execute the same action when both event types are received, you u
          ]
        }
     ]
-    ,"exclusive": false
+    ,
+    "exclusive": false
   }
 ----
 
