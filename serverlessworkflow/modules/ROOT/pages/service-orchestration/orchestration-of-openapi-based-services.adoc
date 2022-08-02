@@ -28,8 +28,6 @@ This document describes how to call REST services using an link:{open_api_spec_u
 
 .Prerequisites
 
-The examples in this document assumes that you have the following prerequisites:
-
 include::../../pages/_common-content/getting-started-requirement.adoc[]
 * You have installed the Kogito tooling.
 +
@@ -68,8 +66,6 @@ Kogito supports the following URI schemes:
 * `classpath`: This URI scheme is supported for the files that are located in the `src/main/resources` folder of the application project. The `classpath` is the default URI scheme. If you do not define a URI scheme as shown in the following examples, the file location is defined as `src/main/resources/myopenapifile.yaml`:
 +
 --
-`classpath:/myopenapifile.yaml`
-
 `/myopenapifile.yaml`
 -- 
 
@@ -123,7 +119,7 @@ To send requests with the REST calls, first you need to define the OpenAPI funct
 +
 Once you have access to the OpenAPI specification files, you can define the functions in the Serverless Workflow. 
 
-You can also use the link:{kogito_sw_examples_url}/serverless-workflow-temperature-conversion[`serverless-workflow-temperature-conversion`] example application as a reference.
+You can also use the link:{kogito_sw_examples_url}/serverless-workflow-temperature-conversion[serverless-workflow-temperature-conversion] example application as a reference.
 
 .Procedure
 . Copy the OpenAPI specification files of the service(s) you want to invoke into your Serverless Workflow service directory, which can be `src/main/resources/specs`.
@@ -207,6 +203,11 @@ components:
 
 <1> Function definition for OpenAPI multiplication function
 <2> Function definition for OpenAPI subtraction function
+
+[NOTE]
+====
+Note that in the above example, we are storing the `multiplication` and `substraction` OpenAPI files into the `src/main/resources/specs` folder of our application.
+====
 --
 
 [[proc-access-function-sw-states]]

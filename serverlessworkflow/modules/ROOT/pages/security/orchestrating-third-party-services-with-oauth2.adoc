@@ -42,7 +42,7 @@ When you use the Acme Financial Services, you can query the exchange rates using
 * Potential vendor lock-in problems, in case you want to change the provider in future.
 * Domain-specific validations and optimizations.
 
-The further sections describes how an end-to-end solution is created in the `serverless-workflow-oauth2-orchestration-quarkus` example application. To see the source code of `serverless-workflow-oauth2-orchestration-quarkus` example application, you can clone the link:{kogito_examples_repository_url}[`kogito-examples`] repository in GitHub and select the `serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus` directory.
+The further sections describes how an end-to-end solution is created in the `serverless-workflow-oauth2-orchestration-quarkus` example application. To see the source code of `serverless-workflow-oauth2-orchestration-quarkus` example application, you can clone the link:{kogito_examples_repository_url}[kogito-examples] repository in GitHub and select the `serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus` directory.
 
 The `serverless-workflow-oauth2-orchestration-quarkus` example application contains the following services to compose the solution:
 
@@ -249,6 +249,8 @@ To implement a custom function, you must create a Java class such as `ExchangeWo
 [source, java]
 ----
 package org.kie.kogito.examples;
+
+import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class ExchangeWorkflowHelper {
@@ -514,7 +516,7 @@ java -jar target/quarkus-app/quarkus-run.jar
 ----
 --
 
-. In a separate command terminal window, navigate to the `currency-exchange-workflow` directory and start the Quarkus application of currecy exchange workflow:
+. In a separate command terminal window, navigate to the `currency-exchange-workflow` directory and start the Quarkus application of currency exchange workflow:
 +
 --
 .Start currency exchange workflow
