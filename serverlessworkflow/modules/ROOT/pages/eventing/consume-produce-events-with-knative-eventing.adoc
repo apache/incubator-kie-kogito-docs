@@ -1,1 +1,330 @@
-//= Consuming and producing events on Knative Eventing
+= Consuming and producing events on Knative Eventing
+:compat-mode!:
+// Metadata:
+:description: Consuming and producing events on Knative Eventing
+:keywords: kogito, workflow, serverless, events, knative, cloudevents
+// links
+:knative_eventing_doc_url: https://knative.dev/docs/eventing/
+:knative_serving_services_url: https://knative.dev/docs/serving/services/
+:kubernetes_probes_url: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+:quarkus_k8s_url: https://quarkus.io/guides/deploying-to-kubernetes
+
+This document describes how you can configure Serverless Workflow to interact with link:{knative_eventing_doc_url}[Knative Eventing]. 
+
+Knative Eventing abstracts the events consumption through the link:{knative_eventing_doc_url}/sources[Source] and link:{knative_eventing_doc_url}/sinks[Sink] components. An event source is the Kubernetes object that produces the event. The sink is the Kubernetes object that receives the event. The workflow application can act as a source, a sink or both in the Knative Eventing platform.
+
+You need to add the Kogito Knative Eventing add-on dependency to indicate that you are using Knative Eventing. To enable Serverless Workflow to use Knative Eventing, add the following dependency to the `pom.xml` file of your project if using Maven:
+
+[TIP]
+====
+If you have used the xref:tooling/kn-plugin-workflow-overview[kn workflow CLI] to create your project, this extension is already present.
+====
+
+.Add dependency for Kogito Knative Eventing add-on in `pom.xml`
+[tabs]
+====
+Maven::
++
+[source,shell]
+--
+mvn quarkus:add-extension -Dextensions="kogito-addons-quarkus-knative-eventing"
+--
+quarkus CLI::
++
+[source,shell]
+--
+quarkus extension add kogito-addons-quarkus-knative-eventing
+--
+manually::
++
+[source,xml]
+--
+<dependency>
+    <groupId>org.kie.kogito</groupId>
+    <artifactId>kogito-addons-quarkus-knative-eventing</artifactId>
+</dependency>
+--
+====
+
+This add-on will take care of the required dependencies and any additional configuration that the workflow application needs to interact with the Knative Eventing platform.
+
+Although the default configuration that the Quarkus Knative Eventing add-on provides ought to be enough for the majority of uses cases, sometimes you may need to do additional configuration to serve a specific scenario.
+
+[[con-knative-eventing-add-on-source-configuration]]
+== Knative Eventing add-on Source configuration
+
+The description in this section is only valid if the workflow has at least one link:{spec_doc_url}#Event-Definition[event definition] of the type `produced`. That's when the workflow application produces events, acting as a Knative Source.
+
+=== HTTP Transport Configuration
+
+link:{knative_eventing_doc_url}/custom-event-source/sinkbinding/[Knative injects the `K_SINK` environment variable] in the workflow application when you deploy it in the cluster. Kogito uses this variable to address the produced events to the right Knative Sink. 
+
+.HTTP Transport configuration
+|===
+|Property|Default|Description
+
+|mp.messaging.outgoing.kogito_outgoing_stream.url
+|${K_SINK:http://localhost:9090}
+|Where to POST the HTTP CloudEvent message.
+
+|mp.messaging.outgoing.kogito_outgoing_stream.connector
+|`quarkus-http`
+|Quarkus Smallrye channel implementation used by Kogito. It's unlikely that you need to change this property.
+
+|===
+
+[NOTE]
+====
+If the `K_SINK` variable is not present, the default value is `http://localhost:9000`. Feel free to override this default value in development environments.
+====
+
+=== Health Check Configuration
+
+By default, the application will generate a link:{kubernetes_probes_url}[health check probe] to verify if the Knative platform injected the `K_SINK` variable and it's valid. If the variable is not present, the pod won't be in ready state to receive requests.
+
+.Health Check Probe configuration
+|===
+|Property|Default|Description
+
+|org.kie.kogito.addons.knative.health_enabled
+|true
+|Whether to enable the health check to verify if the `K_SINK` variable has been injected in the environment.
+
+|===
+
+=== Knative Target Sink Generation Configuration
+
+The Kogito Knative Eventing add-on generates a few Knative objects during build time. By default, it generates a link:{knative_eventing_doc_url}/broker[Knative Broker] named `default` if the workflow application is an Event Source.
+
+.Knative Sink generation configuration
+|===
+|Property|Default|Description
+
+|org.kie.kogito.addons.knative.auto_generate_broker
+|true
+|Whether the add-on should generate a default Knative Broker in memory to sink and dispatch the messages. Turn this property to `false` in case you already have a broker installed in your namespace rather than the default one. Note that you can use `org.kie.kogito.addons.knative.eventing.sink.*` to configure your custom Sink. If not defined, this auto generated Broker will work as the Sink.
+
+|org.kie.kogito.addons.knative.sink.namespace
+|
+|Namespace where the generated Knative Sink is deployed.
+
+|org.kie.kogito.addons.knative.sink.api_version
+|eventing.knative.dev/v1
+|API group and version of the generated Knative Sink.
+
+|org.kie.kogito.addons.knative.sink.name
+|`default`
+|Name of the generated Knative Sink.
+
+|org.kie.kogito.addons.knative.sink.kind
+|Broker
+|Kubernetes Kind of the generated Knative Sink.
+
+|===
+
+[[con-knative-eventing-add-on-sink-configuration]]
+== Knative Eventing add-on Sink configuration
+
+The description in this section is only valid if the workflow has at least one event definition of the type `consumed`. That's when the workflow application consume events, acting as a Knative Sink.
+
+When the workflow application needs to consume events, the Knative Eventing add-on generates link:{knative_eventing_doc_url}/broker/triggers[Knative Triggers] configured specifically to listen from a Broker with the required event type as defined in your workflow definition.
+
+.Knative Sink generation configuration
+|===
+|Property|Default|Description
+
+|org.kie.kogito.addons.knative.broker
+|`default`
+|Name of the default Knative Broker deployed in the Kubernetes namespace. This broker is used as the reference to create the Knative Triggers responsible to delegate the events that this Kogito service will consume.
+
+|===
+
+[[con-generating-kn-objects-build-time]]
+== Generating Knative Objects in Build Time
+
+Kogito can generate Knative objects during the workflow application build time to facilitate the deployment in a Kubernetes cluster.
+
+[NOTE]
+====
+You can ignore this section if you plan to configure and deploy the Knative objects yourself.
+====
+
+.Prerequisites
+
+Have a workflow application with the Knative Eventing Add-on.
+
+.Procedure
+
+1. Add the following link:{quarkus_k8s_url}[Quarkus Kubernetes extension] to your project:
++
+[TIP]
+====
+If you have used the xref:tooling/kn-plugin-workflow-overview[kn workflow CLI] to create your project, this extension is already present.
+====
++
+.Add dependency for Quarkus Kubernetes extension in `pom.xml`
+[tabs]
+====
+Maven::
++
+[source,shell]
+--
+mvn quarkus:add-extension -Dextensions="quarkus-kubernetes,quarkus-container-image-jib"
+--
+quarkus CLI::
++
+[source,shell]
+--
+quarkus extension add quarkus-kubernetes quarkus-container-image-jib
+--
+manually::
++
+[source,xml]
+--
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-kubernetes</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-container-image-jib</artifactId>
+</dependency>
+--
+====
++
+2. Add the property `quarkus.kubernetes.deployment-target=knative` to your `application.properties` file.
++
+3. Build the application as you normally would.
++
+[tabs]
+====
+Maven::
++
+[source,shell]
+--
+mvn clean install
+--
+quarkus CLI::
++
+[source,shell]
+--
+quarkus build
+--
+kn CLI::
++
+[source,shell]
+--
+kn workflow build --image=<name>
+--
+====
++
+The `target/kubernetes` directory will contain two files: `knative.yml` and `kogito.yml`.
++
+The `knative.yml` file has the link:{knative_serving_services_url}[Knative Service] representing the workflow application. The `kogito.yml` file has the required objects to plug the application to the Knative Eventing platform.
++
+4. You can use the generated files to deploy the workflow application in the cluster:
++
+[tabs]
+====
+kubectl::
++
+[source,shell]
+--
+kubectl apply -f target/kogito.yml
+kubectl apply -f target/knative.yml
+--
+kn CLI::
++
+[source,shell]
+--
+kn workflow deploy
+--
+====
++
+For more details about building and deploying the workflow application see the guide xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building Serverless Workflow Images using Quarkus CLI].
+
+== Representation of the Workflow Event Definition in Knative
+
+A workflow must have at least one event definition for the Knative Eventing Add-on to generate the event binding objects. For example:
+
+.Example of a workflow with produced and consumed events
+[source,json]
+--
+{
+    "events": [
+    {
+      "name": "requestQuote",
+      "type": "kogito.sw.request.quote",
+      "kind": "produced"
+    },
+    {
+      "name": "aggregatedQuotesResponse",
+      "type": "kogito.loanbroker.aggregated.quotes.response",
+      "kind": "consumed",
+      "source": "/kogito/serverless/loanbroker/aggregator"
+    }]
+}
+--
+
+A workflow application with events definition like in this example needs a Knative `SinkBinding` to configure the target sink where to dispatch the event `kogito.sw.request.quote`. In this case, the add-on generates an object similarly to the following example.
+
+.Example of a Knative SinkBinding generated by the add-on
+[source,yaml]
+--
+apiVersion: sources.knative.dev/v1
+kind: SinkBinding
+metadata:
+  name: sb-loanbroker-flow
+spec:
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: default
+      namespace: ""
+  subject:
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    name: loanbroker-flow
+--
+
+[IMPORTANT]
+====
+No matter how many produced events the workflow definition has, only one `SinkBinding` is generated. When you define more than one event, ensure that your sink is a Broker. The listener services can then configure subscriptions or triggers to consume these events from the broker.
+====
+
+For the event `kogito.loanbroker.aggregated.quotes.response`, the Knative Eventing platform must be configured with a Knative `Trigger` with the appropriate CloudEvent filter. The following example describes the `Trigger` generated by the add-on.
+
+.Example of a Knative SinkBinding generated by the add-on
+[source,yaml]
+--
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: kogito-serverless-loanbroker-aggregated-quotes-response-trigger
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: kogito.loanbroker.aggregated.quotes.response
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: loanbroker-flow
+--
+
+[IMPORTANT]
+====
+For each consumed event definition, the add-on generates one Knative `Trigger`.
+====
+
+== Additional resources
+
+* xref:testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc[Mocking HTTP CloudEvents sink using WireMock]
+* xref:eventing/consume-producing-events-with-kafka.adoc[Consuming and producing events using Apache Kafka]
+* xref:eventing/event-correlation-with-workflows.adoc[Event correlation in Serverless Workflow]
+* xref:eventing/working-with-callbacks.adoc[Callback state in Serverless Workflow]
+
+include::../../pages/_common-content/report-issue.adoc[]
+ 
