@@ -1,4 +1,4 @@
-= Configuring OpenAPI services endpoints
+= Configuring the OpenAPI services endpoints
 
 :compat-mode!:
 // Metadata:
@@ -9,35 +9,29 @@
 
 This document describes how you can configure OpenAPI service endpoints in Serverless Workflow.
 
-== Configuring OpenAPI services endpoints
+[[con-config-openapi-services-endpoints]]
+== Overview 
 
-Kogito leverages MicroProfile Rest Client to invoke OpenAPI services.
-This means that you can configure the OpenAPI services by following the MicroProfile Config specification.
+Kogito leverages MicroProfile REST Client to invoke OpenAPI services. Therefore, you can configure the OpenAPI services by following the MicroProfile Config specification. For the list of properties to configure in the MicroProfile REST Client specification, see link:https://download.eclipse.org/microprofile/microprofile-rest-client-2.0/microprofile-rest-client-spec-2.0.html#mpconfig[Support for MicroProfile Config] in MicroProfile REST Client documentation.
 
-You can find the list of properties you can configure in the https://download.eclipse.org/microprofile/microprofile-rest-client-2.0/microprofile-rest-client-spec-2.0.html#mpconfig[MicroProfile Rest Client specification].
+Kogito follows the strategy defined in the `kogito.sw.operationIdStrategy` property to generate the REST Client. The possible values of the `kogito.sw.operationIdStrategy` property include:
 
-Kogito generates the Rest Client by following the strategy defined in the `kogito.sw.operationIdStrategy` property.
-This property can have one of the following values:
-
-* `FILE_NAME` - default value.
-Kogito will use a configuration key based on the OpenAPI document file name.
+* `FILE_NAME`(Default value): Kogito uses the configuration key based on the OpenAPI document file name as shown in the following example:
 +
 --
-.Example
-Given an OpenAPI document located at `src/main/resources/openapi/stock-portfolio-svc.yaml`, Kogito will use `stock_portfolio_svc_yaml` as configuration key.
-
+.Example property
 [source,properties]
 ----
 quarkus.rest-client.stock_portfolio_svc_yaml.url=http://localhost:8282/
 ----
+
+In the previous example, Kogito uses `stock_portfolio_svc_yaml` as configuration key as the OpenAPI document is available at `src/main/resources/openapi/stock-portfolio-svc.yaml`.
 --
 
-* `FULL_URI` - Kogito will use the full URI path as configuration key.
+* `FULL_URI`: Kogito uses the full URI path as configuration key as shown in the following example:
 +
 --
-.Example
-Given the following workflow:
-
+.Example Serverless Workflow
 [source,json]
 ----
 {
@@ -51,25 +45,21 @@ Given the following workflow:
     ...
 }
 ----
-<1> URI path of the OpenAPI document.
+<1> URI path of the OpenAPI document
 
-Kogito will use `apicatalog_apis_123_document` as configuration key.
-
+.Example property
 [source, properties]
 ----
 quarkus.rest-client.apicatalog_apis_123_document.url=http://localhost:8282/
 ----
 
+In the previous example, Kogito uses `apicatalog_apis_123_document` as configuration key.
 --
 
-* `FUNCTION_NAME` - Kogito will use the workflow ID and the function name that references the OpenAPI document.
-
+* `FUNCTION_NAME`: Kogito uses the workflow ID and the function name that references the OpenAPI document as shown in the following examples:
 +
 --
-
-.Example
-Given the following workflow:
-
+.Example Serverless Workflow
 [source,json]
 ----
 {
@@ -84,23 +74,19 @@ Given the following workflow:
 }
 ----
 
-Kogito will use `"myworkflow_myfunction"` as configuration key.
-
+.Example property
 [source, properties]
 ----
 quarkus.rest-client.myworkflow_myfunction.url=http://localhost:8282/
 ----
 
+In the previous example, Kogito uses `"myworkflow_myfunction"` as configuration key.
 --
 
-* `SPEC_TITLE` - Kogito uses the value of `info.title` in the OpenAPI document.
-
+* `SPEC_TITLE`: Kogito uses the value of `info.title` in the OpenAPI document as shown in the following examples:
 +
 --
-
-.Example
-Given the following OpenAPI document:
-
+.Example OpenAPI document
 [source,yaml]
 ----
 ---
@@ -113,53 +99,45 @@ paths:
 ...
 ----
 
-Kogito will use `"stock-service API"` as configuration key.
-
+.Example property
 [source, properties]
 ----
 quarkus.rest-client.stock-service_API.url=http://localhost:8282/
 ----
 
+In the previous example, Kogito uses `stock-service_API` as configuration key.
 --
 
 [NOTE]
-Kubernetes service endpoint can be used as a service URL if the target service is within the same cluster. Example: http://myservice.mynamespace.cluster.svc.local
+====
+A Kubernetes service endpoint can be used as a service URL if the target service is within the same cluster, such as `http://myservice.mynamespace.cluster.svc.local`.
+====
 
-== Configuring OpenAPI services endpoints in different environments
+[[proc-configure-openapi-services-endpoints-different-environments]]
+== Configuring the OpenAPI services endpoints in different environments
 
-You can use different MicroProfile ConfigSources, like environment variables and Kubernetes ConfigMaps, and MicroProfile Config profiles to configure the OpenAPI services in different environments.
-
-For more information about MicroProfile Config Sources, see the link:https://download.eclipse.org/microprofile/microprofile-config-2.0/microprofile-config-spec-2.0.html#configsource[MicroProfile Config specification].
+You can use different MicroProfile ConfigSources, such as environment variables and Kubernetes ConfigMaps, and MicroProfile Config profiles to configure the OpenAPI services in different environments. For more information about MicoProfile ConfigSources, see link:https://download.eclipse.org/microprofile/microprofile-config-2.0/microprofile-config-spec-2.0.html#configsource[ConfigSources].
 
 [IMPORTANT]
 ====
-Some operating systems allow only alphabetic characters or an underscore, `_`, in environment variables. Other characters such as `.`, `/`, etc. may be disallowed. In order to set a value for a config property that has a name containing such disallowed characters from an environment variable, you must use link:https://download.eclipse.org/microprofile/microprofile-config-2.0/microprofile-config-spec-2.0.html#default_configsources.env.mapping[this rules].
+Some operating systems allow only alphabetic characters or an underscore (_), in environment variables. Other characters such as `.` and `/` are not allowed. You must use the link:https://download.eclipse.org/microprofile/microprofile-config-2.0/microprofile-config-spec-2.0.html#default_configsources.env.mapping[Environment Variables Mapping Rules], to set the value of a configuration property that contains a name with such characters.
 ====
 
-For more information about MicroProfile Config Sources, see the link:https://download.eclipse.org/microprofile/microprofile-config-2.0/microprofile-config-spec-2.0.html#default_configsources.env.mapping[MicroProfile Config specification].
+The testing procedure described in this document is based on the link:{kogito_sw_examples_url}/serverless-workflow-stock-profit[`serverless-workflow-stock-profit`] example application in GitHub repository. The `serverless-workflow-stock-profit` example application is a workflow that computes the profit for a given stock based on an existing stock portfolio.
 
-[[using-profiles]]
-=== Using profiles to define different configuration values in different environments
+The `serverless-workflow-stock-profit` example application sends request to the following services:
 
-The testing procedure described in this document is based on the link:{kogito_sw_examples_url}/serverless-workflow-stock-profit[`serverless-workflow-stock-profit`] example application in GitHub repository.
+* `stock-portfolio`: Calculates the stock portfolio profit for a given stock based on the current stock price.
+* `stock-service`: Retrieves the current stock price.
 
-The `serverless-workflow-stock-profit` example application is a workflow that computes the profit for a given stock based on an existing stock portfolio.
-It calls two services:
+Developing an application using a service that returns different results every time can be difficult, therefore the `stock-service` uses the following implementations depending on the environment.
 
-* `stock-portfolio` - to calculate the stock portfolio profit for a given stock based on the current stock price
+* `real-stock-service` (default implementation): Returns the real stock price. This service returns a random price every time to simulate a real stock service. This implementation is used in normal or production environment.
+* `fake-stock-service`: Returns the same price every time. This implementation is used in the development environment.
 
-* `stock-service` - to get the current stock price.
-As developing an application using a service that returns different results every time can be difficult, the `stock-service` will use two different implementations depending on the environment.
+The `stock-profit` service contains the following workflow definition:
 
-** `real-stock-service` - returns the "real" stock price.
-This service returns a random price every time to emulate a real stock service.
-This is the default implementation.
-It is used in the normal/production environment.
-** `fake-stock-service` - returns always the same price.
-It is used in the development environment.
-
-The `stock-profit` service contains the workflow definition defined as follows:
-
+.Workflow definition in `stock-profit` service
 [source,json]
 ----
 {
@@ -218,125 +196,122 @@ The `stock-profit` service contains the workflow definition defined as follows:
 }
 ----
 
-<1> Defines the `stock-service` service operation.
-<2> Defines the `stock-portfolio` service operation.
+<1> Defines the `stock-service` service operation
+<2> Defines the `stock-portfolio` service operation
 
-Kogito leverage Quarkus profiles to configure the application depending on the target environment.
+Kogito leverages Quarkus profiles to configure the Serverless Workflow application depending on the target environment.
 
-To set properties for different profiles, each property needs to be prefixed with a percentage sign `%` followed by the profile name and a dot `.` in the syntax `%<profile-name>.config.name`.
+To set properties for different profiles, each property needs to be prefixed with a percentage (%) followed by the profile name and a period (.) in the syntax as `%<profile-name>.config.name`. By default, Quarkus provides the following profiles that activate automatically in certain conditions:
 
-By default, Quarkus provides three profiles, that activate automatically in certain conditions:
+* `dev`: Activates in development mode, such as `quarkus:dev`
+* `test`: Activates when tests are running
+* `prod` (default profile): Activates when not running in development or test mode
 
-* `dev` - Activated when in development mode (i.e. quarkus:dev)
-* `test` - Activated when running tests
-* `prod` - The default profile when not running in development or test mode
+You can also create additional profiles and activate them using the `quarkus.profile` configuration property. For more information about Quarkus profiles, see link:{quarkus-profiles-url}[Profiles] in the Quarkus Configuration reference guide.
 
-It is also possible to create additional profiles and activate them with the `quarkus.profile` configuration property.
-
-For more information about Quarkus profiles, see {quarkus-profiles-url}[Profiles section] in the Quarkus Configuration reference guide.
-
-[[proc-defining-urls-in-different-environments]]
-=== Defining the URLs of the services in different environments
+[[proc-config-openapi-services-defining-urls]]
+=== Defining URLs of the services in different environments
 
 You can define the URLs of the services in different environments by using profiles.
 
 .Procedure
-. Create a file named `application.properties` in the `src/main/resources` directory of the Serverless Workflow project, if it still does not exist.
+. Create a file named `application.properties` in the `src/main/resources` directory of the Serverless Workflow project, if the file does not exist.
 
 . In the `application.properties` file, add the OpenAPI configuration for the default environment:
-
 +
 --
+.Example properties in `application.properties` file
 [source,properties]
 ----
 quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/ <1>
 quarkus.rest-client.stock_portfolio_svc_yaml.url=http://localhost:8282/
 ----
 
-<1> The URL of the `real-stock-service` service.
+<1> URL of the `real-stock-service` service
 --
 
 . In the `application.properties` file, add the OpenAPI configuration for the `dev` environment:
-
 +
 --
+.Example properties for development environment
 [source,properties]
 ----
 %dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/ <1>
 ----
 
-<1> The URL of the `fake-stock-service` service.
+<1> URL of the `fake-stock-service` service
 
 [NOTE]
 ====
-The `%dev.` prefix is used to indicate that the configuration is for the `dev` profile, which is the profile used when you run `mvn quarkus:dev` or `quarkus dev`
+The `%dev.` prefix indicates the `dev` profile configuration, which is used when you run `mvn quarkus:dev` or `quarkus dev`.
 ====
 --
 
-[[proc-running-the-services]]
-=== Running the services that the workflow will call
+[[proc-config-openapi-services-running-the-services]]
+=== Running the services
+
+After defining the URLs of the services, you can run the services that the Serverless Workflow sends request to.
 
 .Prerequisites
-* You have defined the URLs of the services in the different environments
+* URLs of the services in the different environments are defined.
 +
-For more information, see <<proc-defining-urls-in-different-environments, Defining the URLs of the services in different environments>>.
+For more information, see <<proc-config-openapi-services-defining-urls, Defining the URLs of the services in different environments>>.
 
 .Procedure
-. In a separate terminal window, run the `stock-portfolio` service:
-
+. In a separate command terminal window, run the `stock-portfolio` service:
 +
 --
+Run the `stock-portfolio` service
 [source,shell]
 ----
 cd stock-portfolio
 mvn quarkus:dev -Ddebug=false
 ----
 
-The service will be available at http://localhost:8282/.
+You can access the `stock-portfolio` service at `http://localhost:8282/`.
 --
 
-. In a separate terminal window, run the `real-stock-service` service:
-
+. In a separate command terminal window, run the `real-stock-service` service:
 +
 --
+Run `real-stock-service` service
 [source,shell]
 ----
 cd real-stock-service
 mvn quarkus:dev -Ddebug=false
 ----
 
-The service will be available at http://localhost:8383/.
+You can access the `real-stock-service` service at `http://localhost:8383/`.
 --
 
-. In a separate terminal window, run the `fake-stock-service` service:
-
+. In a separate command terminal window, run the `fake-stock-service` service:
 +
 --
+.Run `fake-stock-service` service 
 [source,shell]
 ----
 cd fake-stock-service
 mvn quarkus:dev -Ddebug=false
 ----
 
-The service will be available at http://localhost:8181/.
+You can access the`fake-stock-service` service at `http://localhost:8181/`.
 --
 
-[[proc-running-the-application-in-development-mode]]
-=== Running the Serverless Workflow application in development mode
+[[proc-config-openapi-services-running-sw-application-in-development-mode]]
+=== Running Serverless Workflow application in development mode
 
-As you defined `%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/`, the `fake-stock-service` service will be used in the development mode.
-This means that you'll get the same result every time you run the workflow.
+When you define `%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/`, the `fake-stock-service` service is used in the development mode and you get the same result every time you run the workflow. Using this example, you can run the Serverless Workflow application in development mode. 
 
 .Prerequisites
-* You have started the services that the Serverless Workflow application will call
+* Services that the Serverless Workflow application sends requests to are started.
 +
-For more information, see <<proc-running-the-services, Running the services that the Serverless Workflow application will call>>.
+For more information, see <<proc-config-openapi-services-running-the-services, Running the services>>.
 
 .Procedure
-. In a separate terminal window, run the Serverless Workflow application in development mode:
-
+. In a separate command terminal window, run the Serverless Workflow application in development mode:
 +
 --
+.Run Serverless Workflow application in development mode
 [source,shell]
 ----
 cd stock-profit
@@ -344,10 +319,10 @@ mvn quarkus:dev -Ddebug=false
 ----
 --
 
-. In a separate terminal window, send a request to the Serverless Workflow application:
-
+. In a separate command terminal window, send a request to the Serverless Workflow application:
 +
 --
+.Example request
 [source,shell]
 ----
 curl -X 'POST' \
@@ -363,25 +338,24 @@ curl -X 'POST' \
 {"id":"5ab5dcb8-5952-4730-b526-cace363774bb","workflowdata":{"symbol":"KGTO","currentPrice":75,"profit":"50%"}}
 ----
 
-Note that, since you're using the `fake-stock-service`, the computed `profit` property is the same no matter how many times you run the workflow.
+Note that, in the previous example `fake-stock-service` is used, therefore, the computed `profit` property is same no matter how many times you run the workflow.
 --
 
-[[proc-running-the-application-in-production-mode]]
-=== Running the Serverless Workflow application in normal/production mode
+[[proc-config-openapi-services-running-sw-application-in-production-mode]]
+=== Running Serverless Workflow application in production mode
 
-As you defined `quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/`, the `real-stock-service` service will be used in the normal/production mode.
-This means that you'll get a different result every time you run the workflow.
+When you define `quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/`, the `real-stock-service` service is used in the normal or production mode and you get different results every time you run the workflow. Using this example, you can run the Serverless Workflow application in normal or production mode.
 
 .Prerequisites
-* You have started the services that the Serverless Workflow application will call
+* Services that the Serverless Workflow application sends requests to are started.
 +
-For more information, see <<proc-running-the-services, Running the services that the Serverless Workflow application will call>>.
+For more information, see <<proc-config-openapi-services-running-the-services, Running the services>>.
 
 .Procedure
-. In a separate terminal window, package the Serverless Workflow application to be run as fat jar:
-
+. In a separate command terminal window, package the Serverless Workflow application to be run as fat JAR:
 +
 --
+.Package Serverless Workflow application
 [source,shell]
 ----
 cd stock-profit
@@ -389,20 +363,20 @@ mvn package
 ----
 --
 
-. In a separate terminal window, run the Serverless Workflow application in normal/production mode:
-
+. In a separate command terminal window, run the Serverless Workflow application in normal or production mode:
 +
 --
+.Run Serverless Workflow application in normal or production mode
 [source,shell]
 ----
 java -jar target/quarkus-app/quarkus-run.jar
 ----
 --
 
-. In a separate terminal window, send a request to the Serverless Workflow application:
-
+. In a separate command terminal window, send a request to the Serverless Workflow application:
 +
 --
+.Example request
 [source,shell]
 ----
 curl -X 'POST' \
@@ -418,23 +392,24 @@ curl -X 'POST' \
 {"id":"a80c95d6-51fd-4ca9-b689-f779929c9937","workflowdata":{"symbol":"KGTO","currentPrice":59.36,"profit":"19%"}}
 ----
 
-Note that, since you're using the `real-stock-service`, the computed `profit` property will be different every time you run the workflow.
+Note that, in the previous example, the `real-stock-service` is used, therefore, the computed `profit` property is different every time you run the workflow.
 --
 
-=== Defining the URLs of the services in different environments using environment variables
+[[proc-define-urls-using-environment-variables]]
+=== Defining URLs of services in different environments using environment variables
 
-You can define the URLs of the services in different environments by using profiles and environment variables.
+You can define the URLs of the services in different environments using profiles and environment variables.
 
 .Prerequisites
-* You have started the services that the Serverless Workflow application will call
+* Services that the Serverless Workflow application sends requests to are started.
 +
-For more information, see <<proc-running-the-services, Running the services that the Serverless Workflow application will call>>.
+For more information, see <<proc-config-openapi-services-running-the-services, Running the services>>.
 
 .Procedure
-. In a separate terminal window, run the Serverless Workflow application in development mode overwriting the property defined in the `application.properties` file with an environment variable:
-
+. In a separate command terminal window, run the Serverless Workflow application in development mode, overwriting the property defined in the `application.properties` file using an environment variable:
 +
 --
+.Run the Serverless Workflow application in development mode
 [source,shell]
 ----
 cd stock-profit
@@ -442,13 +417,13 @@ export _DEV_QUARKUS_REST_CLIENT_STOCK_SVC_YAML_URL=http://localhost:8383/ <1>
 mvn quarkus:dev -Ddebug=false
 ----
 
-<1> Overwrite the `%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/` defined in the `application.properties` file with an environment variable pointing to `real-stock-service`.
+<1> Overwrite the `%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/` defined in the `application.properties` file using an environment variable, which is pointing to `real-stock-service`.
 --
 
-. In a separate terminal window, send a request to the Serverless Workflow application:
-
+. In a separate command terminal window, send a request to the Serverless Workflow application:
 +
 --
+.Example request
 [source,shell]
 ----
 curl -X 'POST' \
@@ -464,7 +439,7 @@ curl -X 'POST' \
 {"id":"5ab5dcb8-5952-4730-b526-cace363774bb","workflowdata":{"symbol":"KGTO","currentPrice":56.35,"profit":"13%"}}
 ----
 
-Note that, since you overwrote the property defined in `application.properties` file to point to `real-stock-service`, the computed `profit` property will be different every time you run the workflow.
+Note that, in the previous example, you overwrote the property defined in the `application.properties` file to point to `real-stock-service`, therefore, the computed `profit` property is different every time you run the workflow.
 --
 
 == Additional resources
