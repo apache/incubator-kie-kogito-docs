@@ -34,17 +34,17 @@ The following shows the example of security scheme definitions:
 .Example `security-example.json` file
 [source, json]
 ----
-    "securitySchemes": {
-      "http-basic-example": {
-        "type": "http",
-        "scheme": "basic"
-      }
-      "api-key-example": {
-        "type": "apiKey",
-        "name": "my-example-key",
-        "in": "header"
-      }
-    }
+"securitySchemes": {
+  "http-basic-example": {
+    "type": "http",
+    "scheme": "basic"
+  }
+  "api-key-example": {
+    "type": "apiKey",
+    "name": "my-example-key",
+    "in": "header"
+  }
+}
 ----
 
 If the OpenAPI specification file contains `securitySchemes` definitions, but not link:{open_api_spec_url}[Security Requirement Object] definitions, the generator can be configured to create the security requirement objects by default. In this case, for all operations without a security requirement, the default one is created. Note that the property value needs to match the name of a security scheme object definition, such as `http-basic-example` or `api-key-example` in the previous `securitySchemes` list.
