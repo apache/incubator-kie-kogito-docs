@@ -273,44 +273,30 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can configure Serverless Workflow to interact with <a href="https://knative.dev/docs/eventing/">Knative Eventing</a>.</p>
+<p>This document describes how you can configure a Serverless Workflow to interact with <a href="https://knative.dev/docs/eventing/">Knative Eventing</a>.</p>
 </div>
 <div class="paragraph">
-<p>Knative Eventing abstracts the events consumption through the <a href="https://knative.dev/docs/eventing//sources">Source</a> and <a href="https://knative.dev/docs/eventing//sinks">Sink</a> components. An event source is the Kubernetes object that produces the event. The sink is the Kubernetes object that receives the event. The workflow application can act as a source, a sink or both in the Knative Eventing platform.</p>
+<p>Knative Eventing abstracts the events consumption through <a href="https://knative.dev/docs/eventing//sources">Event source</a> and <a href="https://knative.dev/docs/eventing//sinks">sink</a> components. An event source is a Kubernetes object that produces the event, and a sink is another Kubernetes object that receives the event. The workflow application can act as a source, a sink, or both in Knative Eventing platform.</p>
 </div>
 <div class="paragraph">
-<p>You need to add the Kogito Knative Eventing add-on dependency to indicate that you are using Knative Eventing. To enable Serverless Workflow to use Knative Eventing, add the following dependency to the <code>pom.xml</code> file of your project if using Maven:</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If you have used the <a href="#tooling/kn-plugin-workflow-overview">kn workflow CLI</a> to create your project, this extension is already present.</p>
-</div>
-</td>
-</tr>
-</table>
+<p>You need to add the Kogito Knative Eventing add-on dependency to indicate that you are using Knative Eventing. To enable Serverless Workflow to use Knative Eventing, add the following dependency to the <code>pom.xml</code> file of your project:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset1_maven"></a>Maven</p>
+<p><a id="tabset1_apache-maven"></a>Apache Maven</p>
 </li>
 <li>
-<p><a id="tabset1_quarkus-cli"></a>quarkus CLI</p>
+<p><a id="tabset1_quarkus-cli"></a>Quarkus CLI</p>
 </li>
 <li>
-<p><a id="tabset1_manually"></a>manually</p>
+<p><a id="tabset1_manually"></a>Manually</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_maven">
+<div class="tab-pane" aria-labelledby="tabset1_apache-maven">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn quarkus:add-extension -Dextensions="kogito-addons-quarkus-knative-eventing"</code></pre>
@@ -336,207 +322,6 @@
 </div>
 </div>
 </div>
-<div class="paragraph">
-<p>This add-on will take care of the required dependencies and any additional configuration that the workflow application needs to interact with the Knative Eventing platform.</p>
-</div>
-<div class="paragraph">
-<p>Although the default configuration that the Quarkus Knative Eventing add-on provides ought to be enough for the majority of uses cases, sometimes you may need to do additional configuration to serve a specific scenario.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="con-knative-eventing-add-on-source-configuration"><a class="anchor" href="#con-knative-eventing-add-on-source-configuration"></a>Knative Eventing add-on Source configuration</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The description in this section is only valid if the workflow has at least one <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-Definition">event definition</a> of the type <code>produced</code>. That&#8217;s when the workflow application produces events, acting as a Knative Source.</p>
-</div>
-<div class="sect2">
-<h3 id="_http_transport_configuration"><a class="anchor" href="#_http_transport_configuration"></a>HTTP Transport Configuration</h3>
-<div class="paragraph">
-<p><a href="https://knative.dev/docs/eventing//custom-event-source/sinkbinding/">Knative injects the <code>K_SINK</code> environment variable</a> in the workflow application when you deploy it in the cluster. Kogito uses this variable to address the produced events to the right Knative Sink.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. HTTP Transport configuration</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Default</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">mp.messaging.outgoing.kogito_outgoing_stream.url</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">${K_SINK:http://localhost:9090}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Where to POST the HTTP CloudEvent message.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">mp.messaging.outgoing.kogito_outgoing_stream.connector</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus-http</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quarkus Smallrye channel implementation used by Kogito. It&#8217;s unlikely that you need to change this property.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If the <code>K_SINK</code> variable is not present, the default value is <code><a href="http://localhost:9000" class="bare">http://localhost:9000</a></code>. Feel free to override this default value in development environments.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_health_check_configuration"><a class="anchor" href="#_health_check_configuration"></a>Health Check Configuration</h3>
-<div class="paragraph">
-<p>By default, the application will generate a <a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">health check probe</a> to verify if the Knative platform injected the <code>K_SINK</code> variable and it&#8217;s valid. If the variable is not present, the pod won&#8217;t be in ready state to receive requests.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. Health Check Probe configuration</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Default</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">org.kie.kogito.addons.knative.health_enabled</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to enable the health check to verify if the <code>K_SINK</code> variable has been injected in the environment.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_knative_target_sink_generation_configuration"><a class="anchor" href="#_knative_target_sink_generation_configuration"></a>Knative Target Sink Generation Configuration</h3>
-<div class="paragraph">
-<p>The Kogito Knative Eventing add-on generates a few Knative objects during build time. By default, it generates a <a href="https://knative.dev/docs/eventing//broker">Knative Broker</a> named <code>default</code> if the workflow application is an Event Source.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. Knative Sink generation configuration</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Default</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">org.kie.kogito.addons.knative.auto_generate_broker</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Whether the add-on should generate a default Knative Broker in memory to sink and dispatch the messages. Turn this property to <code>false</code> in case you already have a broker installed in your namespace rather than the default one. Note that you can use <code>org.kie.kogito.addons.knative.eventing.sink.*</code> to configure your custom Sink. If not defined, this auto generated Broker will work as the Sink.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">org.kie.kogito.addons.knative.sink.namespace</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Namespace where the generated Knative Sink is deployed.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">org.kie.kogito.addons.knative.sink.api_version</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">eventing.knative.dev/v1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">API group and version of the generated Knative Sink.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">org.kie.kogito.addons.knative.sink.name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>default</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the generated Knative Sink.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">org.kie.kogito.addons.knative.sink.kind</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Broker</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Kind of the generated Knative Sink.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="con-knative-eventing-add-on-sink-configuration"><a class="anchor" href="#con-knative-eventing-add-on-sink-configuration"></a>Knative Eventing add-on Sink configuration</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The description in this section is only valid if the workflow has at least one event definition of the type <code>consumed</code>. That&#8217;s when the workflow application consume events, acting as a Knative Sink.</p>
-</div>
-<div class="paragraph">
-<p>When the workflow application needs to consume events, the Knative Eventing add-on generates <a href="https://knative.dev/docs/eventing//broker/triggers">Knative Triggers</a> configured specifically to listen from a Broker with the required event type as defined in your workflow definition.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. Knative Sink generation configuration</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Default</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">org.kie.kogito.addons.knative.broker</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>default</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the default Knative Broker deployed in the Kubernetes namespace. This broker is used as the reference to create the Knative Triggers responsible to delegate the events that this Kogito service will consume.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect1">
-<h2 id="con-generating-kn-objects-build-time"><a class="anchor" href="#con-generating-kn-objects-build-time"></a>Generating Knative Objects in Build Time</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Kogito can generate Knative objects during the workflow application build time to facilitate the deployment in a Kubernetes cluster.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>You can ignore this section if you plan to configure and deploy the Knative objects yourself.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<div class="title">Prerequisites</div>
-<p>Have a workflow application with the Knative Eventing Add-on.</p>
-</div>
-<div class="olist arabic">
-<div class="title">Procedure</div>
-<ol class="arabic">
-<li>
-<p>Add the following <a href="https://quarkus.io/guides/deploying-to-kubernetes">Quarkus Kubernetes extension</a> to your project:</p>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -545,28 +330,249 @@
 </td>
 <td class="content">
 <div class="paragraph">
-<p>If you have used the <a href="#tooling/kn-plugin-workflow-overview">kn workflow CLI</a> to create your project, this extension is already present.</p>
+<p>If you have used the Knative workflow CLI to create your project, then the Kogito Knative Eventing extension is already present. For more information about creating a project using Knative workflow CLI, see <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Serverless Workflow plug-in for Knative CLI</a>.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>The Kogito Knative Eventing add-on takes care of the required dependencies and additional configuration that the Serverless Workflow application needs, to interact with the Knative Eventing platform.</p>
+</div>
+<div class="paragraph">
+<p>Although the default configuration that the Quarkus Knative Eventing add-on provides ought to be enough for most of the use cases, sometimes you might need to do additional configuration to serve a specific scenario.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ref-knative-eventing-add-on-source-configuration"><a class="anchor" href="#ref-knative-eventing-add-on-source-configuration"></a>Knative Eventing add-on source configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The configuration described in this section is useful if your Serverless Workflow consists of at least one <code>produced</code> type <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-Definition">event definition</a>. In this scenario, the workflow application produces events that act as a Knative source.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">HTTP transport configuration</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Knative injects the <code>K_SINK</code> environment variable in the workflow application when you deploy the application in the cluster. Kogito uses the <code>K_SINK</code> environment variable to address the produced events to the correct Knative sink. For more information, see <a href="https://knative.dev/docs/eventing//custom-event-source/sinkbinding/">SinkBinding</a> in Knative Eventing documentation.</p>
+</div>
+<div class="paragraph">
+<p>The following table lists the HTTP transport configuration properties:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. HTTP transport configuration properties</caption>
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 30%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>mp.messaging.outgoing.kogito_outgoing_stream.url</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${K_SINK:http://localhost:9090}</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates where to POST the HTTP CloudEvent message.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>mp.messaging.outgoing.kogito_outgoing_stream.connector</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus-http</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates the Quarkus Smallrye channel implementation used by Kogito. You might not need to change this property.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If the <code>K_SINK</code> variable is not present, then the default value is <code><a href="http://localhost:9000" class="bare">http://localhost:9000</a></code>. You can override the default value in development environments.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Health check configuration</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>By default, the workflow application generates a <a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">health check probe</a> to verify if the Knative platform injected a valid <code>K_SINK</code> variable. If the <code>K_SINK</code> variable is not present, then the pod is not in the state of receiving requests.</p>
+</div>
+<div class="paragraph">
+<p>The following table lists the health check probe configuration property:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Health check probe configuration property</caption>
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 30%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.kie.kogito.addons.knative.health_enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates if the health check is enabled to verify that the <code>K_SINK</code> variable is injected into the environment.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Knative target sink generation configuration</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The Kogito Knative Eventing add-on generates a few Knative objects during build time. By default, the add-on generates a <a href="https://knative.dev/docs/eventing//broker">Knative Broker</a> named <code>default</code> if the workflow application is acting as an event source.</p>
+</div>
+<div class="paragraph">
+<p>The following table lists the configuration properties related to Knative sink generation:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. Knative sink generation configuration properties</caption>
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 30%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.kie.kogito.addons.knative.auto_generate_broker</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates if the Kogito Knative Eventing add-on generates a default Knative Broker in memory to sink and dispatch the messages. Set this property to <code>false</code> in case a broker is already installed in your namespace. Note that you can use <code>org.kie.kogito.addons.knative.eventing.sink.*</code> property to configure your custom sink. If this property is not set, then the auto-generated broker works as a sink.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.kie.kogito.addons.knative.sink.namespace</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates the namespace where the generated Knative sink is deployed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.kie.kogito.addons.knative.sink.api_version</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>eventing.knative.dev/v1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates the API group and version of the generated Knative sink.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.kie.kogito.addons.knative.sink.name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>default</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates the name of the generated Knative sink.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.kie.kogito.addons.knative.sink.kind</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Broker</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates the Kubernetes kind of the generated Knative sink.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ref-knative-eventing-add-on-sink-configuration"><a class="anchor" href="#ref-knative-eventing-add-on-sink-configuration"></a>Knative Eventing add-on sink configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The configuration described in this section is useful if your Serverless Workflow consists of at least one <code>consumed</code> type <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-Definition">event definition</a>. In this scenario, the workflow application consumes events, acting as a Knative sink.</p>
+</div>
+<div class="paragraph">
+<p>When the workflow application needs to consume events, the Knative Eventing add-on generates <a href="https://knative.dev/docs/eventing//broker/triggers">Knative triggers</a>. The Knative triggers are configured to listen to a broker with the required event type, which is defined in your Serverless Workflow definition.</p>
+</div>
+<div class="paragraph">
+<p>The following table lists the configuration property related to Knative sink generation:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. Knative sink generation configuration property</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.kie.kogito.addons.knative.broker</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>default</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates the name of the default Knative broker that is deployed in the Kubernetes namespace. This broker is used as the reference to create the Knative triggers, which are responsible to delegate the events that the Kogito service consumes.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-generating-kn-objects-build-time"><a class="anchor" href="#proc-generating-kn-objects-build-time"></a>Generating Knative objects during build time</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito can generate Knative objects during the workflow application build time to facilitate the deployment in a Kubernetes cluster. However, you do not need to use the generated objects if you plan to create and deploy the Knative objects by yourself.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Serverless Workflow application with the Knative Eventing add-on is created.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Add the following <a href="https://quarkus.io/guides/deploying-to-kubernetes">Quarkus Kubernetes extension</a> dependency to the <code>pom.xml</code> file of your project:</p>
+<div class="openblock">
+<div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset2_maven"></a>Maven</p>
+<p><a id="tabset2_apache-maven"></a>Apache Maven</p>
 </li>
 <li>
-<p><a id="tabset2_quarkus-cli"></a>quarkus CLI</p>
+<p><a id="tabset2_quarkus-cli"></a>Quarkus CLI</p>
 </li>
 <li>
-<p><a id="tabset2_manually"></a>manually</p>
+<p><a id="tabset2_manually"></a>Manually</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset2_maven">
+<div class="tab-pane" aria-labelledby="tabset2_apache-maven">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn quarkus:add-extension -Dextensions="quarkus-kubernetes,quarkus-container-image-jib"</code></pre>
@@ -596,28 +602,32 @@
 </div>
 </div>
 </div>
+</div>
+</div>
 </li>
 <li>
-<p>Add the property <code>quarkus.kubernetes.deployment-target=knative</code> to your <code>application.properties</code> file.</p>
+<p>Add the <code>quarkus.kubernetes.deployment-target=knative</code> property to your <code>application.properties</code> file.</p>
 </li>
 <li>
-<p>Build the application as you normally would.</p>
+<p>Build your workflow application using the following command:</p>
+<div class="openblock">
+<div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset3_maven"></a>Maven</p>
+<p><a id="tabset3_apache-maven"></a>Apache Maven</p>
 </li>
 <li>
-<p><a id="tabset3_quarkus-cli"></a>quarkus CLI</p>
+<p><a id="tabset3_quarkus-cli"></a>Quarkus CLI</p>
 </li>
 <li>
-<p><a id="tabset3_kn-cli"></a>kn CLI</p>
+<p><a id="tabset3_knative-cli"></a>Knative CLI</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset3_maven">
+<div class="tab-pane" aria-labelledby="tabset3_apache-maven">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean install</code></pre>
@@ -631,7 +641,7 @@
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset3_kn-cli">
+<div class="tab-pane" aria-labelledby="tabset3_knative-cli">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image=&lt;name&gt;</code></pre>
@@ -641,27 +651,28 @@
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>target/kubernetes</code> directory will contain two files: <code>knative.yml</code> and <code>kogito.yml</code>.</p>
+<p>The <code>target/kubernetes</code> directory contains two files including <code>knative.yml</code> and <code>kogito.yml</code>. The <code>knative.yml</code> file contains the <a href="https://knative.dev/docs/serving/services/">Knative service</a> representing the workflow application. The <code>kogito.yml</code> file contains the required objects to connect the workflow application to the Knative Eventing platform.</p>
 </div>
-<div class="paragraph">
-<p>The <code>knative.yml</code> file has the <a href="https://knative.dev/docs/serving/services/">Knative Service</a> representing the workflow application. The <code>kogito.yml</code> file has the required objects to plug the application to the Knative Eventing platform.</p>
+</div>
 </div>
 </li>
 <li>
-<p>You can use the generated files to deploy the workflow application in the cluster:</p>
+<p>You can use the generated files to deploy the workflow application in the Kubernetes cluster using the following command:</p>
+<div class="openblock">
+<div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset4_kubectl"></a>kubectl</p>
+<p><a id="tabset4_kubernetes-command-line-tool"></a>Kubernetes command line tool</p>
 </li>
 <li>
-<p><a id="tabset4_kn-cli"></a>kn CLI</p>
+<p><a id="tabset4_knative-cli"></a>Knative CLI</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset4_kubectl">
+<div class="tab-pane" aria-labelledby="tabset4_kubernetes-command-line-tool">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl apply -f target/kogito.yml
@@ -669,7 +680,7 @@ kubectl apply -f target/knative.yml</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset4_kn-cli">
+<div class="tab-pane" aria-labelledby="tabset4_knative-cli">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow deploy</code></pre>
@@ -679,7 +690,9 @@ kubectl apply -f target/knative.yml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>For more details about building and deploying the workflow application see the guide <a href="../cloud/build-workflow-image-with-quarkus-cli.html" class="xref page">Building Serverless Workflow Images using Quarkus CLI</a>.</p>
+<p>For more information about building and deploying the workflow application, see <a href="../cloud/build-workflow-image-with-quarkus-cli.html" class="xref page">Building Serverless Workflow images using Quarkus CLI</a>.</p>
+</div>
+</div>
 </div>
 </li>
 </ol>
@@ -687,13 +700,13 @@ kubectl apply -f target/knative.yml</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_representation_of_the_workflow_event_definition_in_knative"><a class="anchor" href="#_representation_of_the_workflow_event_definition_in_knative"></a>Representation of the Workflow Event Definition in Knative</h2>
+<h2 id="ref-example-sw-event-definition-knative"><a class="anchor" href="#ref-example-sw-event-definition-knative"></a>Example of Serverless Workflow event definition in Knative</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A workflow must have at least one event definition for the Knative Eventing Add-on to generate the event binding objects. For example:</p>
+<p>A Serverless Workflow must contain at least one event definition for the Knative Eventing add-on to generate the event binding objects. The following is an example of a Serverless Workflow containing produced and consumed events:</p>
 </div>
 <div class="listingblock">
-<div class="title">Example of a workflow with produced and consumed events</div>
+<div class="title">Example of a Serverless Workflow with produced and consumed events</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
     "events": [
@@ -712,10 +725,10 @@ kubectl apply -f target/knative.yml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>A workflow application with events definition like in this example needs a Knative <code>SinkBinding</code> to configure the target sink where to dispatch the event <code>kogito.sw.request.quote</code>. In this case, the add-on generates an object similarly to the following example.</p>
+<p>A Serverless Workflow application with events definition needs a Knative <code>SinkBinding</code> to configure the target sink. The target sink is where the produced events (<code>kogito.sw.request.quote</code> event in the previous example) are dispatched. In this case, the Knative Eventing add-on generates an object as shown in the following example:</p>
 </div>
 <div class="listingblock">
-<div class="title">Example of a Knative SinkBinding generated by the add-on</div>
+<div class="title">Example of a Knative <code>SinkBinding</code> generated by the add-on</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: sources.knative.dev/v1
 kind: SinkBinding
@@ -742,17 +755,17 @@ spec:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>No matter how many produced events the workflow definition has, only one <code>SinkBinding</code> is generated. When you define more than one event, ensure that your sink is a Broker. The listener services can then configure subscriptions or triggers to consume these events from the broker.</p>
+<p>Regardless of the number of produced events in the workflow definition, only one <code>SinkBinding</code> is generated. When you define multiple events, ensure that your sink is a Knative Broker. The listener services can configure the subscriptions or triggers to consume the events from the broker.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>For the event <code>kogito.loanbroker.aggregated.quotes.response</code>, the Knative Eventing platform must be configured with a Knative <code>Trigger</code> with the appropriate CloudEvent filter. The following example describes the <code>Trigger</code> generated by the add-on.</p>
+<p>For the <code>kogito.loanbroker.aggregated.quotes.response</code> event in a previous example, the Knative Eventing platform must be configured with a Knative trigger using an appropriate CloudEvent filter. The following example shows the <code>Trigger</code> generated by the Knative Eventing add-on:</p>
 </div>
 <div class="listingblock">
-<div class="title">Example of a Knative SinkBinding generated by the add-on</div>
+<div class="title">Example of a Knative <code>Trigger</code> generated by the add-on</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: eventing.knative.dev/v1
 kind: Trigger
@@ -770,19 +783,8 @@ spec:
       name: loanbroker-flow</code></pre>
 </div>
 </div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
 <div class="paragraph">
-<p>For each consumed event definition, the add-on generates one Knative <code>Trigger</code>.</p>
-</div>
-</td>
-</tr>
-</table>
+<p>For each consumed event definition, the Knative Eventing add-on generates one Knative <code>Trigger</code>.</p>
 </div>
 </div>
 </div>
@@ -801,7 +803,7 @@ spec:
 <p><a href="event-correlation-with-workflows.html" class="xref page">Event correlation in Serverless Workflow</a></p>
 </li>
 <li>
-<p><a href="working-with-callbacks.html" class="xref page">Callback state in Serverless Workflow</a></p>
+<p><a href="working-with-callbacks.html" class="xref page">Callbacks in Serverless Workflow</a></p>
 </li>
 </ul>
 </div>
