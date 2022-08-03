@@ -1,27 +1,22 @@
-= Handling events on workflows
+= Event state in Serverless Workflow
 
 :compat-mode!:
 // Metadata:
 :description: Handling events on workflows
 :keywords: kogito, workflow, serverless, event
 
-This document describes Serverless Workflow link:{spec_doc_url}#Event-State[Event state]. Event state can be used to start a new workflow instance upon the reception of a designated link:{cloud_events_url}[CloudEvent] or to pause the execution of an existing workflow instance till a designated CloudEvent is received. 
+This document describes link:{spec_doc_url}#Event-State[event state] and related examples in Serverless Workflow. You can use the event state to start a new workflow instance upon the reception of a designated link:{cloud_events_url}[CloudEvent] or to pause the execution of an existing workflow instance until a designated CloudEvent is received.
 
-[[eventMatch]]
-== Event State match 
+[[ref-example-event-match]]
+== Example of event match
 
-An Event state consist of one or more link:{spec_doc_url}#event-definition[event definitions]. Event definitions are combined to designate which CloudEvent Types the Event State should listen to. 
+An event state consists of one or more link:{spec_doc_url}#event-definition[event definitions]. Event definitions are combined to assign the CloudEvent types that the event state listens to.
 
-`onEvents` property is used to group CloudEvent types that might trigger the same set of `actions`. 
+In an event definition, the `onEvents` property is used to group the CloudEvent types that might trigger the same set of `actions`. The `exclusive` property in an event definition determines if there is an event match. In case, the value of `exclusive` property is `false`, then all CloudEvent types in the `eventRefs` array must be received for a match to occur. Otherwise, the reception of the referenced CloudEvent types is considered a match.
 
-`exclusive` property is used to determine if there is an event match. If `exclusive` value is false, all CloudEvent types in `eventRefs` array should be received for a match to occur. Otherwise, the reception of any of the referenced CloudEvent types is consider a match. 
+The following is an example of event definitions, consisting of two CloudEvent types including `noisy` and `silent`:
 
-=== Event match example
-
-Lets illustrate the usage of previously mentioned fields with an example
-
-You are going to use two CloudEvent Types: `noisy` and `silent`
-
+.Example event definitions
 [source, json]
 ----
 "events": [
@@ -39,8 +34,9 @@ You are going to use two CloudEvent Types: `noisy` and `silent`
   ]
 ----
 
-You want to indicate there is a match only when both a `noisy` and a `silent` CloudEvent types are received. You also want to execute a specific action for `noisy` and a different one for `silent`. You will indicate that by defining an Event state containing both event definitions in separate `onEvent` items and  setting `exclusive` to `false`.
+To indicate that an event match occurs when both `noisy` and `silent` CloudEvent types are received and to execute different actions for both CloudEvent types, define an event state containing both event definitions in separate `onEvent` items and set `exclusive` property to `false`.
 
+.Example event state defintion with multiple `onEvent` items
 [source, json]
 ----
   {
@@ -73,8 +69,9 @@ You want to indicate there is a match only when both a `noisy` and a `silent` Cl
   }
 ----
 
-If you want to execute the same action when both event types are received, you use just one `onEvent` item
+To execute the same action when both event types are received, use only one `onEvent` item as shown in the following example:
 
+.Example event state definition with single `onEvent` item
 [source, json]
 ----
   {
@@ -98,8 +95,9 @@ If you want to execute the same action when both event types are received, you u
   }
 ----
 
-If you want the same action to be executed when any of the event types are received, you set `exclusive` to true. You can also remove `exclusive`, since `true is the default value. 
+If you want the same action to be executed when any of the event types is received, set the `exclusive` property to `true` as shown in the following example:
 
+.Example event state definition executing same action
 [source, json]
 ----
   {
@@ -122,29 +120,25 @@ If you want the same action to be executed when any of the event types are recei
   }
 ----
 
+You can also remove the `exclusive` property, as `true` is the default value.
 
-== Starting a workflow instance
+To start a new workflow instance, set the `start` property to the event state name in the workflow header. The workflow instance starts when there is an event match. Using the previous example of event state definition, add the following code in the workflow header:
 
-An event state can be used to start a new workflow instance. To enable this functionality, the `start` property in the workflow header should be set to the event state name. The workflow instance will be started when there is an xref:eventMatch[event match]. 
-
-Given the previously defined `waitForEvent` state, you set as starting event by adding following code at workflow header. 
-
+.Start a workflow instance
 [source,json]
 ----
 "start":"waitForEvent"
 ----
 
-== Resuming workflow execution
+An event state can also be used to pause an existing workflow instance. When the workflow execution reaches an event state, which is not starting, then the execution is paused until there is an event match for that workflow instance.
 
-An Event state can be used to pause an existing workflow instance. When the Workflow execution reaches a non starting Event state, it pauses till there is an xref:eventMatch[event match] for that particular workflow instance. 
-
-Similar to xref:working-with-callbacks.adoc[Callback state], the instance to be resumed is identified by `kogitoprocrefid` CloudEvent Attribute or calculated according to xref:event-correlation-with-workflows.adoc[Event Correlation] functionality. While callback state is used for _fire&wait_, event state covers _wait&fire_ scenarios.
+Similar to the callback state in Serverless Workflow, the workflow instance to be resumed is identified by `kogitoprocrefid` CloudEvent attribute or calculated according to the event correlation functionality. While callback state is used for _fire&wait_ scenaiors, event state covers _wait&fire_ scenarios. For more information about callback state, see xref:eventing/working-with-callbacks.adoc[Callback state in Serverless Workflow].
 
 == Additional resources
 
-* xref:getting-started/create-your-first-workflow-service.adoc[Create your first Workflow Service].
-* xref:consume-producing-events-with-kafka.adoc[Consuming and producing events with Kafka]
-* xref:consume-producing-events-with-knative-eventing.adoc[Consuming and producing events with Knative]
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
+* xref:eventing/consume-producing-events-with-kafka.adoc[Consuming and producing events using Apache Kafka]
+* xref:eventing/consume-produce-events-with-knative-eventing.adoc[Consuming and producing events on Knative Eventing]
 
 include::../../pages/_common-content/report-issue.adoc[]
 
