@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>Handling events on workflows :: Kogito Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -145,6 +145,9 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Eventing</span>
 <ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="handling-events-on-workflows.html">Handling events on workflows</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
   </li>
@@ -254,6 +257,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Eventing</li>
+    <li><a href="handling-events-on-workflows.html">Handling events on workflows</a></li>
+  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/eventing/handling-events-on-workflows.adoc">Edit this Page</a></div>
   </div>
@@ -262,7 +270,194 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page">Handling events on workflows</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes Serverless Workflow <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-State">Event state</a>. Event state can be used to start a new workflow instance upon the reception of a designated <a href="https://cloudevents.io/">CloudEvent</a> or to pause the execution of an existing workflow instance till a designated CloudEvent is received.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="eventMatch"><a class="anchor" href="#eventMatch"></a>Event State match</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An Event state consist of one or more <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#event-definition">event definitions</a>. Event definitions are combined to designate which CloudEvent Types the Event State should listen to.</p>
+</div>
+<div class="paragraph">
+<p><code>onEvents</code> property is used to group CloudEvent types that might trigger the same set of <code>actions</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>exclusive</code> property is used to determine if there is an event match. If <code>exclusive</code> value is false, all CloudEvent types in <code>eventRefs</code> array should be received for a match to occur. Otherwise, the reception of any of the referenced CloudEvent types is consider a match.</p>
+</div>
+<div class="sect2">
+<h3 id="_event_match_example"><a class="anchor" href="#_event_match_example"></a>Event match example</h3>
+<div class="paragraph">
+<p>Lets illustrate the usage of previously mentioned fields with an example</p>
+</div>
+<div class="paragraph">
+<p>You are going to use two CloudEvent Types: <code>noisy</code> and <code>silent</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"events": [
+    {
+      "name": "noisyEvent",
+      "source": "",
+      "type": "noisy",
+      "dataOnly" : "false"
+    },
+    {
+      "name": "silentEvent",
+      "source": "",
+      "type": "silent"
+    }
+  ]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You want to indicate there is a match only when both a <code>noisy</code> and a <code>silent</code> CloudEvent types are received. You also want to execute a specific action for <code>noisy</code> and a different one for <code>silent</code>. You will indicate that by defining an Event state containing both event definitions in separate <code>onEvent</code> items and  setting <code>exclusive</code> to <code>false</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  {
+    "name": "waitForEvent",
+    "type": "event",
+    "onEvents": [
+      {
+        "eventRefs": [
+          "noisyEvent"
+         ],
+         "actions": [
+           {
+             "functionRef": "letsGetLoud"
+           }
+         ]
+      },
+      {
+        "eventRefs": [
+           "silentEvent"
+        ],
+        "actions": [
+          {
+            "functionRef": "beQuiet"
+          }
+        ]
+      }
+    ]
+    ,
+    "exclusive": false
+  }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you want to execute the same action when both event types are received, you use just one <code>onEvent</code> item</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  {
+    "name": "waitForEvent",
+    "type": "event",
+    "onEvents": [
+      {
+        "eventRefs": [
+          "noisyEvent",
+          "silentEvent"
+         ],
+         "actions": [
+           {
+             "functionRef": "notCareAboutNoise"
+           }
+         ]
+       }
+    ]
+    ,
+    "exclusive": false
+  }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you want the same action to be executed when any of the event types are received, you set <code>exclusive</code> to true. You can also remove <code>exclusive</code>, since `true is the default value.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  {
+    "name": "waitForEvent",
+    "type": "event",
+    "onEvents": [
+      {
+        "eventRefs": [
+          "noisyEvent",
+          "silentEvent"
+         ],
+         "actions": [
+           {
+             "functionRef": "notCareAboutNoise"
+           }
+         ]
+       }
+    ]
+    ,"exclusive": true
+  }</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_starting_a_workflow_instance"><a class="anchor" href="#_starting_a_workflow_instance"></a>Starting a workflow instance</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An event state can be used to start a new workflow instance. To enable this functionality, the <code>start</code> property in the workflow header should be set to the event state name. The workflow instance will be started when there is an <a href="#eventMatch">event match</a>.</p>
+</div>
+<div class="paragraph">
+<p>Given the previously defined <code>waitForEvent</code> state, you set as starting event by adding following code at workflow header.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"start":"waitForEvent"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_resuming_workflow_execution"><a class="anchor" href="#_resuming_workflow_execution"></a>Resuming workflow execution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An Event state can be used to pause an existing workflow instance. When the Workflow execution reaches a non starting Event state, it pauses till there is an <a href="#eventMatch">event match</a> for that particular workflow instance.</p>
+</div>
+<div class="paragraph">
+<p>Similar to <a href="#working-with-callbacks.adoc" class="xref unresolved">Callback state</a>, the instance to be resumed is identified by <code>kogitoprocrefid</code> CloudEvent Attribute or calculated according to <a href="#event-correlation-with-workflows.adoc" class="xref unresolved">Event Correlation</a> functionality. While callback state is used for <em>fire&amp;wait</em>, event state covers <em>wait&amp;fire</em> scenarios.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Create your first Workflow Service</a>.</p>
+</li>
+<li>
+<p><a href="#consume-producing-events-with-kafka.adoc" class="xref unresolved">Consuming and producing events with Kafka</a></p>
+</li>
+<li>
+<p><a href="#consume-producing-events-with-knative-eventing.adoc" class="xref unresolved">Consuming and producing events with Knative</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
