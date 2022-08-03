@@ -7,6 +7,7 @@
 
 This document describes Serverless Workflow link:{spec_doc_url}#Event-State[Event state]. Event state can be used to start a new workflow instance upon the reception of a designated link:{cloud_events_url}[CloudEvent] or to pause the execution of an existing workflow instance till a designated CloudEvent is received. 
 
+[[eventMatch]]
 == Event State match 
 
 An Event state consist of one or more link:{spec_doc_url}#event-definition[event definitions]. Event definitions are combined to designate which CloudEvent Types the Event State should listen to. 
@@ -124,7 +125,7 @@ If you want the same action to be executed when any of the event types are recei
 
 == Starting a workflow instance
 
-An event state can be used to start a new workflow instance. To enable this functionality, the `start` property in the workflow header should be set to the event state name. The workflow instance will be started when there is a an event match. 
+An event state can be used to start a new workflow instance. To enable this functionality, the `start` property in the workflow header should be set to the event state name. The workflow instance will be started when there is an xref:eventMatch[event match]. 
 
 Given the previously defined `waitForEvent` state, you set as starting event by adding following code at workflow header. 
 
@@ -135,7 +136,7 @@ Given the previously defined `waitForEvent` state, you set as starting event by 
 
 == Resuming workflow execution
 
-An Event state can be used to pause an existing workflow instance. When the Workflow execution reaches a non starting Event state, it pauses till there is an event match for that particular workflow instance. 
+An Event state can be used to pause an existing workflow instance. When the Workflow execution reaches a non starting Event state, it pauses till there is an xref:eventMatch[event match] for that particular workflow instance. 
 
 Similar to xref:working-with-callbacks.adoc[Callback state], the instance to be resumed is identified by `kogitoprocrefid` CloudEvent Attribute or calculated according to xref:event-correlation-with-workflows.adoc[Event Correlation] functionality. While callback state is used for _fire&wait_, event state covers _wait&fire_ scenarios.
 
