@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Displaying Serverless Workflow data in dashboards :: Kogito Serverless Workflow Guides</title>
+    <meta name="generator" content="Antora 3.0.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.25.0.Final">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/getting-familiar-with-our-tooling.html">Getting familiar with Serverless Workflow tooling</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-jq-expressions.html">jq expressions in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/working-with-parallelism.html">Parallelism in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/configuration-properties.html">Configuration properties in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-overview.html">Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome GitHub extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Kogito Serverless Workflow Tools extension in Quarkus Dev UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances in Kogito Serverless Workflow Tools extension</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions in Kogito Serverless Workflow Tools extension</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/kn-plugin-workflow-overview.html">Serverless Workflow plug-in for Knative CLI</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">Orchestrating the OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Configuring the OpenAPI services endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Eventing</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/handling-events-on-workflows.html">Event state in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/working-with-callbacks.html">Callback state in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">Authentication for OpenAPI services in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">Orchestration of third-party services using OAuth 2.0 authentication in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cloud</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga orchestration example in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.25.0.Final</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../main/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../main/index.html">main</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">1.25.0.Final</a>
+        </li>
+        <li class="version">
+          <a href="../../1.24.1.Final/index.html">1.24.1.Final</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../main/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Integrations</li>
+    <li><a href="serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.25.0.Final</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/integrations/serverless-dashboard-with-runtime-data.html">main</a>
+    <a class="version is-current" href="serverless-dashboard-with-runtime-data.html">1.25.0.Final</a>
+    <a class="version" href="../../1.24.1.Final/integrations/serverless-dashboard-with-runtime-data.html">1.24.1.Final</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.25.x/serverlessworkflow/modules/ROOT/pages/integrations/serverless-dashboard-with-runtime-data.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Displaying Serverless Workflow data in dashboards</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes how you can build dashboards to monitor your Serverless Workflows data.</p>
+</div>
+<div class="paragraph">
+<p>To build the dashboards, you need data, which you can acquire from your Serverless Workflows using one of the following methods:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enable metrics</p>
+</li>
+<li>
+<p>Integrate with Data Index to consume data using the REST API</p>
+</li>
+<li>
+<p>Use custom mechanisms, such as <code>ProcessInstanceListener</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following sections describes the process of creating dashboards using metrics and Data Index GraphQL REST API.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="con-sw-dashboard"><a class="anchor" href="#con-sw-dashboard"></a>Dashboards for Serverless Workflows</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The dashboards for Serverless Workflows are visualization of data that run on the client side. The dashboards are created using <a href="https://www.dashbuilder.org">Dashbuilder</a>, which consumes data from any JSON source. You can define a dashboard in YAML format.</p>
+</div>
+<div class="paragraph">
+<p>To use the Dashbuilder, download and uncompress the <code>dashbuilder-client</code> NPM package. Also, edit the <code>setup.js</code> file to link your YAML files. For more information about using Dashbuilder, see <a href="https://www.dashbuilder.org/docs/#_client_only">Dashbuilder documentation</a>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/integrations/dashbuilder-sample-report.png" alt="dashbuilder sample report">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-sw-dashboard-metrics"><a class="anchor" href="#proc-sw-dashboard-metrics"></a>Building dashboards using metrics</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can build dashboards to monitor the data of your Serverless Workflows using metrics.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Serverless Workflow application is created.</p>
+<div class="paragraph">
+<p>For more information about creating Serverless Workflow, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>To enable metrics for your Serverless Workflow application add <code>org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus</code> dependency in <code>pom.xml</code> file of your application:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Add metrics dependency to <code>pom.xml</code> file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">    &lt;dependency&gt;
+      &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+      &lt;artifactId&gt;kogito-addons-quarkus-monitoring-prometheus&lt;/artifactId&gt;
+    &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can find the metrics in <code>/q/metrics</code> path.</p>
+</div>
+<div class="paragraph">
+<p>The dashbuilder can consume the data of your Serverless Workflow directly from the metrics endpoints. Therefore, you can use a <a href="https://docs.jsonata.org/overview.html">JSONAta expression</a> to format the metrics and display the metrics in a table using the following example of YAML code:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example YAML to show metrics in a table</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">datasets:
+  - uuid: swf_metrics
+    url: http://localhost:8080/q/metrics
+    expression: &gt;-
+        $map($, function($l) {
+                [
+                    $l[0],
+                    $contains($l[1], "process_id") ?
+                                            $replace($match($l[1], /process_id=".*?"/).match,
+                                            "process_id",
+                                            "workflow") :
+                                            $l[1],
+                    $l[2] = "NaN" ? -1 : $l[2]
+                ]
+            }
+        )
+pages:
+    - components:
+        - settings:
+            lookup:
+               uuid: swf_metrics</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/integrations/dashbuilder-metrics-table.png" alt="dashbuilder metrics table">
+</div>
+<div class="title">Figure 1. Example metrics in a table</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>To extract a specific information from your Serverless Workflow, use specific metrics. Metrics related to Serverless Workflows include:</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>kogito_process_instance_completed_total</code>: Completed Serverless Workflows</p>
+</li>
+<li>
+<p><code>kogito_process_instance_started_total</code>: Started Serverless Workflows</p>
+</li>
+<li>
+<p><code>kogito_process_instance_running_total</code>: Running Serverless Workflows</p>
+</li>
+<li>
+<p><code>kogito_process_instance_duration_seconds_sum</code>: Serverless Workflows total duration</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When you display the metrics, you can filter the data to include the specific metrics. You can use the <strong>metrics</strong> and <strong>bar chart</strong> components in dashbuilder to display the specific metrics and after filtering the metrics, you can put the information in bar charts as shown in the following example YAML code:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example YAML to display bar charts</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">datasets:
+  - uuid: metrics
+    url: http://localhost:8080/q/metrics
+    expression: &gt;-
+        $map($, function($l) {
+                [
+                    $l[0],
+                    $contains($l[1], "process_id") ?
+                                            $replace($match($l[1], /process_id=".*?"/).match,
+                                            "process_id",
+                                            "workflow") :
+                                            $l[1],
+                    $l[2] = "NaN" ? -1 : $l[2]
+                ]
+            }
+        )
+    columns:
+      - id: metric
+        type: label
+      - id: labels
+        type: label
+      - id: value
+        type: number
+pages:
+  - rows:
+      - columns:
+          - span: "6"
+            components:
+              - html: &gt;-
+                  &lt;p style="font-size: large"&gt;Started &lt;/p&gt;
+              - settings:
+                  type: BARCHART
+                  chart:
+                    resizable: 'true'
+                    width: '2000'
+                  lookup:
+                    uuid: metrics
+                    sort:
+                      - column: value
+                        sortOrder: DESCENDING
+                    filter:
+                      - column: metric
+                        function: EQUALS_TO
+                        args:
+                          - "kogito_process_instance_started_total"
+                    group:
+                      - columnGroup:
+                          source: labels
+                        groupFunctions:
+                          - source: labels
+                          - source: value
+          - span: "6"
+            components:
+              - html: &gt;-
+                  &lt;p style="font-size: large"&gt;Running &lt;/p&gt;
+              - settings:
+                  type: BARCHART
+                  chart:
+                    resizable: 'true'
+                    width: '2000'
+                  lookup:
+                    uuid: metrics
+                    sort:
+                      - column: value
+                        sortOrder: DESCENDING
+                    filter:
+                      - column: metric
+                        function: EQUALS_TO
+                        args:
+                          - "kogito_process_instance_running_total"
+                    group:
+                      - columnGroup:
+                          source: labels
+                        groupFunctions:
+                          - source: labels
+                          - source: value
+      - columns:
+          - span: "6"
+            components:
+              - html: &gt;-
+                  &lt;p style="font-size: large"&gt;Completed &lt;/p&gt;
+              - settings:
+                  type: BARCHART
+                  chart:
+                    resizable: 'true'
+                    width: '2000'
+                  dataSetLookup:
+                    uuid: metrics
+                    sort:
+                      - column: value
+                        sortOrder: DESCENDING
+                    filter:
+                      - column: metric
+                        function: EQUALS_TO
+                        args:
+                          - "kogito_process_instance_completed_total"
+                    group:
+                      - columnGroup:
+                          source: labels
+                        groupFunctions:
+                          - source: labels
+                          - source: value
+          - span: "6"
+            components:
+              - html: &gt;-
+                  &lt;p style="font-size: large"&gt;Total Duration &lt;/p&gt;
+              - settings:
+                  type: BARCHART
+                  chart:
+                    resizable: 'true'
+                    width: '2000'
+                  lookup:
+                    uuid: metrics
+                    sort:
+                      - column: value
+                        sortOrder: DESCENDING
+                    filter:
+                      - column: metric
+                        function: EQUALS_TO
+                        args:
+                          - "kogito_process_instance_duration_seconds_sum"
+                    group:
+                      - columnGroup:
+                          source: labels
+                        groupFunctions:
+                          - source: labels
+                          - source: value</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/integrations/dashbuilder-workflows-metrics-dashboard.png" alt="dashbuilder workflows metrics dashboard">
+</div>
+<div class="title">Figure 2. Example Serverless Workflow metrics dashboard</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>If you are using Prometheus, you can use PROMQL with Prometheus REST API and transform the result to JSON format that is supported by dashbuilder to build the dashoards.</p>
+</div>
+<div class="paragraph">
+<p>For more information about dashbuilder and Prometheus, see <a href="https://blog.kie.org/2022/07/creating-prometheus-dashboards-using-dashbuilder.html">Creating Prometheus Dashboards using Dashbuilder</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-sw-dashboard-data-index"><a class="anchor" href="#proc-sw-dashboard-data-index"></a>Building dashboards using Data Index</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Data Index is a service that contains all the data related to the execution of your Serverless Workflow. The Data Index service is available during the development mode. By default, you can access the Data Index at <code><a href="http://localhost:8180" class="bare">http://localhost:8180</a></code>.</p>
+</div>
+<div class="paragraph">
+<p>The Data Index service uses GraphQL, so that dashbuilder can connect with the service using its REST API and transform the result to the supported format.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Serverless Workflow application is created.</p>
+<div class="paragraph">
+<p>For more information about creating Serverless Workflow, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Go to the Data Index GraphQL interface (default to <code><a href="http://localhost:8180/graphiql" class="bare">http://localhost:8180/graphiql</a></code>) and test your query.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The following is an example of GraphQL query that lists all the Serverless Workflows:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example GraphQL query to retrieve all workflows</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  ProcessInstances {
+    processId
+    processName
+    state
+    start
+    end
+    businessKey
+    error {message}
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Run the GraphQL query.</p>
+<div class="paragraph">
+<p>When you run the query, note that the URL is modified to includes the query.</p>
+</div>
+</li>
+<li>
+<p>Copy the URL and modify <code>graphiql</code> to <code>graphql</code>.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>When you access the URL with <code>graphql</code>, it returns the result in a JSON format as shown in the following example:</p>
+</div>
+<div class="listingblock">
+<div class="title">GraphQL JSON result when using the query</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "data": {
+    "ProcessInstances": [
+      {
+        "processId": "yamlgreet",
+        "processName": "Greeting workflow",
+        "state": "COMPLETED",
+        "start": "2022-07-01T16:08:12.038Z",
+        "end": "2022-07-01T16:08:12.061Z",
+        "businessKey": null,
+        "error": null
+      },
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Internally, Serverless Workflows are referenced as processes, therefore the <code>processId</code> is the workflow ID and <code>processName</code> is the workflow name.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Transform the response to the transform expression.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>When you transform the response, note that the response includes the columns metdata for the data set.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example transform expression to retrieve fields from JSON response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "columns" :[
+        {"id": "Workflow Id", "type": "label"},
+        {"id": "Workflow Name", "type": "label"},
+        {"id": "State", "type": "label"},
+        {"id": "Start", "type": "label"},
+        {"id": "End", "type": "label"},
+        {"id": "Business Key", "type": "label"},
+        {"id": "Error", "type": "label"}
+    ],
+    "values" : $.data.ProcessInstances.[ processId, processName, state, start, end, businessKey ? businessKey : "", error ? error.message : ""]
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Create your dashboard using the transform expression and the URL mentioned in the previous step.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example dashboard created using Data Index</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">datasets:
+    - uuid: workflows
+      url: http://localhost:8180/graphql/?query=%7BProcessInstances%7BprocessId%20processName%20state%20start%20end%20businessKey%20error%7Bmessage%7D%7D%7D%0A
+      expression: &gt;-
+            {
+                "columns" :[
+                    {"id": "Workflow Id", "type": "label"},
+                    {"id": "Workflow Name", "type": "label"},
+                    {"id": "State", "type": "label"},
+                    {"id": "Start", "type": "label"},
+                    {"id": "End", "type": "label"},
+                    {"id": "Business Key", "type": "label"},
+                    {"id": "Error", "type": "label"}
+                ],
+                "values" : $.data.ProcessInstances.[ processId, processName, state, start, end, businessKey ? businessKey : "", error ? error.message : ""]
+            }
+pages:
+    - components:
+        - settings:
+            type: BARCHART
+            lookup:
+                uuid: workflows
+                group:
+                    - columnGroup:
+                        source: State
+                      functions:
+                          - source: State
+                          - source: State
+                            function: COUNT
+        - settings:
+            lookup:
+                uuid: workflows</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The previous example of dashboard contains bar chart that counts the workflow instances by <code>State</code> and lists all the dashboards in a table.</p>
+</div>
+<div class="paragraph">
+<p>Following is the graphical dashboard resulted from the previous example:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/integrations/data-index-workflow-list-report.png" alt="data index workflow list report">
+</div>
+<div class="title">Figure 3. Example dashboard created using Data Index</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>For more examples of dashboards, see <a href="https://www.dashbuilder.org">Dashbuilder</a> website.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

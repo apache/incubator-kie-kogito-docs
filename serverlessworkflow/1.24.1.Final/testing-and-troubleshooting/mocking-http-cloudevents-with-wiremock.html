@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Mocking HTTP CloudEvents sink using WireMock :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Mocking HTTP CloudEvents sink with WireMock">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, test, integration, wiremock, cloudevents">
+    <meta name="generator" content="Antora 3.0.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.24.1.Final">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/getting-familiar-with-our-tooling.html">Getting familiar with Serverless Workflow tooling</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-jq-expressions.html">jq expressions in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/working-with-parallelism.html">Parallelism in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/configuration-properties.html">Configuration properties in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-overview.html">Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome GitHub extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Kogito Serverless Workflow Tools extension in Quarkus Dev UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances in Kogito Serverless Workflow Tools extension</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions in Kogito Serverless Workflow Tools extension</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/kn-plugin-workflow-overview.html">Serverless Workflow plug-in for Knative CLI</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">Orchestrating the OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Configuring the OpenAPI services endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Eventing</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/handling-events-on-workflows.html">Event state in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/working-with-callbacks.html">Callback state in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">Authentication for OpenAPI services in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">Orchestration of third-party services using OAuth 2.0 authentication in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cloud</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga orchestration example in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.24.1.Final</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../main/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../main/index.html">main</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25.0.Final</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">1.24.1.Final</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../main/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Testing and Troubleshooting</li>
+    <li><a href="mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink using WireMock</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.24.1.Final</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">main</a>
+    <a class="version" href="../../1.25.0.Final/testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">1.25.0.Final</a>
+    <a class="version is-current" href="mocking-http-cloudevents-with-wiremock.html">1.24.1.Final</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.24.x/serverlessworkflow/modules/ROOT/pages/testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Mocking HTTP CloudEvents sink using WireMock</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes how you can test your Serverless Workflow application that uses HTTP <a href="https://cloudevents.io/">CloudEvents</a> and <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/">Knative SinkBinding</a>.</p>
+</div>
+<div class="paragraph">
+<p>The example described in this document is based on the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing"><code>serverless-workflow-order-processing</code></a> example application.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="con-sinkbinding-test-overview"><a class="anchor" href="#con-sinkbinding-test-overview"></a>Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Serverless Workflow application that you want to test must be configured to use <a href="https://knative.dev/docs/eventing/">Knative Eventing</a>. You must configure Knative Eventing using standard HTTP POST requests to send and receive events between event producers and <a href="https://knative.dev/docs/eventing/sinks/">sinks</a>. The events between the event producers and sinks follow the <a href="https://cloudevents.io/">CloudEvents</a> specification, which enables creating, parsing, sending, and receiving events in any programming language.</p>
+</div>
+<div class="paragraph">
+<p>When you create an event source, you can specify a sink where events are sent to, from the source. A sink is a transferable or a callable resource that can receive incoming events from other resources. The examples of sink include Kubernetes deployments, Knative services, channels, and brokers.</p>
+</div>
+<div class="paragraph">
+<p>This document describes the testing of Knative service that is configured as a sink, and the same Knative service is mocked to verify if the CloudEvents are received correctly by the sink. In this process, the <a href="https://wiremock.org/">WireMock</a> framework adds the mocked server, verifying the CloudEvents received by the sink during the Serverless Workflow service execution.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-test-sw-application-sinkbinding"><a class="anchor" href="#proc-test-sw-application-sinkbinding"></a>Testing a Serverless Workflow application using SinkBinding</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can test a Serverless Workflow application using <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/">SinkBinding</a>.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Your Serverless Workflow application is working.</p>
+<div class="paragraph">
+<p>For more information about creating a Serverless Workflow application, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+<li>
+<p>Your Serverless Workflow application is configured to use HTTP CloudEvents using <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/">SinkBinding</a>.</p>
+<div class="paragraph">
+<p>For more information about enabling <a href="https://en.wikipedia.org/wiki/Event-driven_architecture">event-driven architecture</a> in your workflow application using Knative Eventing, see <a href="../eventing/consume-produce-events-with-knative-eventing.html" class="xref page">Consuming and producing events on Knative Eventing</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Add the required test dependencies to the <code>pom.xml</code> file of your Serverless Workflow application:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Add test dependencies to <code>pom.xml</code> file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
+    &lt;artifactId&gt;quarkus-junit5&lt;/artifactId&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+    &lt;artifactId&gt;rest-assured&lt;/artifactId&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;com.github.tomakehurst&lt;/groupId&gt;
+  &lt;artifactId&gt;wiremock-jre8&lt;/artifactId&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+  &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.awaitility&lt;/groupId&gt;
+  &lt;artifactId&gt;awaitility&lt;/artifactId&gt; <i class="conum" data-value="3"></i><b>(3)</b>
+  &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>quarkus-junit5</code> and <code>rest-assured</code> dependencies are required for HTTP-based testing in JVM mode.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>wiremock-jre8</code> dependency allows you to mock the server that acts as a sink.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>awaitility</code> dependency is used to express the expectations of an asynchronous system. For more information, see <a href="http://www.awaitility.org/">Awaitility</a> website.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can also see the dependencies added in <code>pom.xml</code> file of <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing"><code>serverless-workflow-order-processing</code></a> example application.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Add failsafe maven plugin to run integration tests</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">maven-failsafe-plugin in the Application&#8217;s <code>pom.xml</code> pluggins section</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+  &lt;artifactId&gt;maven-failsafe-plugin&lt;/artifactId&gt;
+  &lt;version&gt;${version.failsafe.plugin}&lt;/version&gt;
+  &lt;configuration&gt;
+    &lt;systemPropertyVariables&gt;
+      &lt;java.util.logging.manager&gt;org.jboss.logmanager.LogManager&lt;/java.util.logging.manager&gt;
+      &lt;maven.home&gt;${maven.home}&lt;/maven.home&gt;
+    &lt;/systemPropertyVariables&gt;
+  &lt;/configuration&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;goals&gt;
+        &lt;goal&gt;integration-test&lt;/goal&gt;
+        &lt;goal&gt;verify&lt;/goal&gt;
+      &lt;/goals&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>More information in <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/index.html"><strong>maven-failsafe-plugin</strong></a> documentation.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Create a test class that mocks the sink using WireMock as shown in the following example:</p>
+<div class="openblock">
+<div class="content">
+<div id="testclass" class="listingblock">
+<div class="title">Example of a test class</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@QuarkusTest<i class="conum" data-value="1"></i><b>(1)</b>
+public class VerifyWorkflowExecutionIT { <i class="conum" data-value="2"></i><b>(2)</b>
+
+    private static WireMockServer sink; <i class="conum" data-value="3"></i><b>(3)</b>
+
+    static { <i class="conum" data-value="4"></i><b>(4)</b>
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+    }
+
+    /**
+     * Starts the "sink" server, which is the endpoint that will receive our produced events
+     */
+    @BeforeAll <i class="conum" data-value="5"></i><b>(5)</b>
+    public static void startSink() {
+        sink = new WireMockServer(options().port(8181)); <i class="conum" data-value="6"></i><b>(6)</b>
+        sink.start(); <i class="conum" data-value="7"></i><b>(7)</b>
+        sink.stubFor(post("/").willReturn(aResponse().withBody("ok").withStatus(200))); <i class="conum" data-value="8"></i><b>(8)</b>
+    }
+
+    @AfterAll <i class="conum" data-value="9"></i><b>(9)</b>
+    public static void stopSink() {
+        if (sink != null) {
+            sink.stop(); <i class="conum" data-value="10"></i><b>(10)</b>
+        }
+    }
+
+    @Test
+    void processDomesticOrderUnderFraudEval() throws JsonProcessingException, InterruptedException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final Order order = new Order();
+        order.setId(UUID.randomUUID().toString());
+        order.setDescription("iPhone 12");
+        order.setTotal(1001);
+        order.setCountry("US");
+
+        given() <i class="conum" data-value="4"></i><b>(4)</b>
+                .header("ce-specversion", "1.0")
+                .header("ce-id", order.getId())
+                .header("ce-source", "/from/test")
+                .header("ce-type", "orderEvent")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(objectMapper.writeValueAsString(order))
+                .post("/")
+                .then()
+                .statusCode(200);
+
+        await() <i class="conum" data-value="11"></i><b>(11)</b>
+                .atMost(60, SECONDS)
+                .with().pollInterval(1, SECONDS)
+                .untilAsserted(() -&gt; {
+                    sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(order.getId())));
+                    sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"fraudEvaluation\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+                    sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"domesticShipping\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+                }); <i class="conum" data-value="12"></i><b>(12)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>@QuarkusTest</code> starts the Quarkus server for the lifetime of the test execution run. For more information, see <a href="https://quarkus.io/guides/getting-started-testing#recap-of-http-based-testing-in-jvm-mode">Quarkus - Testing your application</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The test name ends with <code>IT</code> to identify which test needs to be executed as an integration test. More details in <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/examples/inclusion-exclusion.html">maven-failsafe-plugin</a> documentation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="https://javadoc.io/doc/com.github.tomakehurst/wiremock/latest/com/github/tomakehurst/wiremock/WireMockServer.html"><code>WireMockServer</code></a> is a mocked server instance that is used for SinkBinding for testing.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>given()</code> is used to test interactions with the application. For more information about testing interactions, see <a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your Serverless Workflow application using REST Assured</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code>@BeforeAll</code> annotation is used to signal that the annotated method must be executed before running all the tests.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Creates a <code>WireMockServer</code> instance, listening at the port that is passed as a parameter and must match with the sink configuration.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Starts the server before the tests are executed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Stubs the mocked API response. It accepts a <code>MappingBuilder</code> instance that is used to build API mapping information, such as URL, request parameters, body, headers, and authorization.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><code>@AfterAll</code> annotation is used to signal that the annotated method must be executed after executing all the tests.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Stops the server after executing all the tests.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><a href="https://javadoc.io/static/org.awaitility/awaitility/4.2.0/org/awaitility/Awaitility.html"><code>await()</code></a> is added to wait for asynchronous operations.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td><a href="https://wiremock.org//docs/verifying/"><code>verify</code></a> verifies if the request hits the mock API using the expected event content.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can check the <code>VerifyWorkflowExecutionIT</code> class of <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing/src/test/java/org/kie/kogito/examples/sw/orders/processing/VerifyWorkflowExecutionIT.java"><code>serverless-workflow-order-processing</code></a> example application.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Start the server before executing the tests, and stop the server once the tests are completed. You can also reset the mock stubs between the tests.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Configure your test application to use the <code>WireMockServer</code> as a sink.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Also, add the reference of <code>WireMockServer</code> in the <code>application.properties</code> file as shown in the following example:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example adding sink connection property in <code>application.properties</code> file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">mp.messaging.outgoing.kogito_outgoing_stream.url=http://0.0.0.0:8181 <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The port that needs to match with the passed parameter. The parameter is passed when the WireMockServer is created in the test class.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For more information, see <code>application.properties</code> file of <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing/src/test/resources/application.properties"><code>serverless-workflow-order-processing</code></a> example application.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>To run the tests, execute the following command:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Run the tests</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean verify</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="ref-example-test-execution-cycle"><a class="anchor" href="#ref-example-test-execution-cycle"></a>Example of test execution cycle</h3>
+<div class="paragraph">
+<p>The testing example in this document is based on the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing"><code>serverless-workflow-order-processing</code></a> example application. The <code>serverless-workflow-order-processing</code> example application contains three workflows as shown in the following figure:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/testing-and-troubleshooting/order-example-worflows.png" alt="order example worflows">
+</div>
+<div class="title">Figure 1. Workflows in <code>serverless-workflow-order-processing</code> example</div>
+</div>
+<div class="paragraph">
+<p>The <strong>Order Workflow</strong> in the <code>serverless-workflow-order-processing</code> example application processes the incoming order event and starts a parallel state, which sends requests to two workflows including <strong>Fraud Handling</strong> and <strong>Shipping Handling</strong>. The Order Workflow ends when both Fraud Handling and Shipping Handling workflows are completed.</p>
+</div>
+<div class="paragraph">
+<p>The Fraud Handling workflow produces a <code>FraudEvaluation</code> event if the received order is more than 1000 USD. In the workflow architecture, any other system or service can read the <code>FraudEvaluation</code> event and react upon it, such as canceling the order.</p>
+</div>
+<div class="paragraph">
+<p>Simultaneously, regardless of evaluating the fraud, the Shipping Handling workflow produces events that classify the required shipping service, such as international or domestic. In this example, domestic shipping is classified for any order, containing the address within the United States.</p>
+</div>
+<div class="paragraph">
+<p>The following figure shows the event flow among the components in the <code>serverless-workflow-order-processing</code> example application:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/testing-and-troubleshooting/example-components-interaction.png" alt="example components interaction">
+</div>
+<div class="title">Figure 2. Example of event flow among components</div>
+</div>
+<div class="paragraph">
+<p>Also, the testing components replicate the interactions to verify the events that are received by the sink as shown in the following figure:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/testing-and-troubleshooting/testing-eventing-sink.png" alt="testing eventing sink">
+</div>
+<div class="title">Figure 3. Example of testing events flow</div>
+</div>
+<div class="paragraph">
+<p>Before executing a test, the <code>WireMockServer</code> starts listening to the configured port as the sink. The sink listens to the events that are produced by the workflows. When a workflow produces an event to the sink, the produced event is received by the <code>WireMockServer</code>, and then the test verifies the event content.</p>
+</div>
+<div class="paragraph">
+<p>The <code>processDomesticOrderUnderFraudEval</code> in the <a href="#testclass"><code>VerifyWorkflowExecutionIT</code></a> class, produces events, such as <code>fraudEvaluation</code> (<code>Total &gt; 1000</code>) and <code>domesticShipping</code> (<code>country = "US"</code>). Also, the order event consumed by the Order Workflow needs to match the requirements as shown in the following example:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example requirements for Order Workflow</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">final ObjectMapper objectMapper = new ObjectMapper();
+final Order order = new Order();
+order.setId(UUID.randomUUID().toString());
+order.setDescription("iPhone 12");
+order.setTotal(1001);
+order.setCountry("US");
+
+given()
+        .header("ce-specversion", "1.0")
+        .header("ce-id", order.getId())
+        .header("ce-source", "/from/test")
+        .header("ce-type", "orderEvent")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(objectMapper.writeValueAsString(order))
+        .post("/")
+        .then()
+        .statusCode(200);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After matching the requirements, the test verifies if the sink is receiving the expected events as shown in the following example:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a sink verification</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">await()
+        .atMost(60, SECONDS)
+        .with().pollInterval(1, SECONDS)
+        .untilAsserted(() -&gt; {
+            sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(order.getId())));
+            sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"fraudEvaluation\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+            sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"domesticShipping\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+        });</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>await()</code> method in the previous example allows the test to retry the validations until the verifications are declared or until the specified time is expired. In this example, the specified time is 60 seconds.</p>
+</div>
+<div class="paragraph">
+<p>The following example shows how to check if the sink (<code>WireMockServer</code>) receives two events for the same order ID:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example if sink receives the events</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">sink.verify(2, postRequestedFor(urlEqualTo("/")).withRequestBody(containing(order.getId())));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To check the content of the received events, the following verifications can be declared or performed on the <code>types</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of verifications</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"fraudEvaluation\"").and(containing("\"id\":\"" + order.getId() + "\""))));
+sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"type\":\"domesticShipping\"").and(containing("\"id\":\"" + order.getId() + "\""))));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After declaring the verifications on received events, the test successfully ends and the WireMockServer stops.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+</li>
+<li>
+<p><a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your Serverless Workflow application using REST Assured</a></p>
+</li>
+<li>
+<p><a href="mocking-openapi-services-with-wiremock.html" class="xref page">Mocking OpenAPI services using WireMock</a></p>
+</li>
+<li>
+<p><a href="https://quarkus.io/guides/getting-started-testing">Testing a Quarkus application</a></p>
+</li>
+<li>
+<p><a href="https://knative.dev/docs/getting-started/first-broker/">Knative Eventing components interaction: Source, Trigger, Broker, and Sink</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>
