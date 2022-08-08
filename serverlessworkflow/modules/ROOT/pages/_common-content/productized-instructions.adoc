@@ -12,7 +12,7 @@ To use the Red Hat Build of Quarkus (RHBQ) libraries, you need to configure your
 .Procedure
 . To configure the Maven `settings.xml` file and Quarkus extension registry client, follow the instructions in the link:{rhbq_config_maven_url}[Configuring the Maven settings.xml file for the online repository] and link:{rhbq_config_registry_url}[Configuring Quarkus extension registry client].
 +
-. After the project is created, add the following dependencies to the `pom.xml` file of your project:
+. After the project is created, add the following dependency to the `pom.xml` file of your project:
 +
 .Dependencies in `pom.xml` file
 [source,xml,subs="attributes+"]
@@ -26,6 +26,29 @@ To use the Red Hat Build of Quarkus (RHBQ) libraries, you need to configure your
                 <groupId>org.kie.kogito</groupId>
                 <artifactId>kogito-bom</artifactId>
                 <version>{kogito_version_redhat}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    ...
+</project>
+----
++
+. Remove the `quarkus-kogito-bom` dependency from the `pom.xml` file of your project:
++
+.Dependencies in `pom.xml` file
+[source,xml,subs="attributes+"]
+----
+<project>
+    ...
+    <dependencyManagement>
+        <dependencies>
+            ...
+            <dependency>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-kogito-bom</artifactId>
+                <version>2.7.6.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
