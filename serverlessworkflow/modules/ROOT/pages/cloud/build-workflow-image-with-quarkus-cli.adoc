@@ -1,5 +1,4 @@
-Building Serverless Workflow Images using Quarkus CLI
-=====================================================
+= Building Serverless Workflow images using Quarkus CLI
 :compat-mode!:
 // Metadata:
 :description: Build Serverless Application with Quarkus CLI
@@ -11,7 +10,7 @@ Building Serverless Workflow Images using Quarkus CLI
 :google_jib_url: https://github.com/GoogleContainerTools/jib
 :kogito_sw_examples_git_repo_url: https://github.com/kiegroup/kogito-examples.git
 
-This document describes how to build Serverless Application Container Image using the link:{quarkus_cli_url}[Quarkus CLI].
+This document describes how to build a Serverless Application Container Image using the link:{quarkus_cli_url}[Quarkus CLI].
 
 .Prerequisites
 include::../../pages/_common-content/getting-started-requirement.adoc[]
@@ -20,20 +19,20 @@ include::../../pages/_common-content/getting-started-requirement.adoc[]
 
 Quarkus provides a few extensions to build container images, such as `Jib`, `docker`, `s2i`, and `buildpacks`. For more information about the Quarkus extensions, see the link:{quarkus_container_images_url}[Quarkus documentation].
 
-The examples in this document assume that you have the Quarkus tooling installed. For more information about the tooling, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Using Serverless Workflow tooling].
+The examples in this document assume that you have the Quarkus tooling installed. For more information about the tooling, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with Serverless Workflow tooling].
 
 [[proc-using-example-application]]
 == Using an example application
 
-To get started with building Serverless Workflow images, you can use the link:{kogito_sw_examples_url}/serverless-workflow-greeting-quarkus[serverless-workflow-greeting-quarkus] example application.
+To get started with building workflow images, you can use the link:{kogito_sw_examples_url}/serverless-workflow-greeting-quarkus[serverless-workflow-greeting-quarkus] example application.
 
 .Prerequisites
 * Quarkus {quarkus_version} is installed.
 
-NOTE: You can skip the following procedure, if you already have a Serverless Workflow application.
+NOTE: You can skip the following procedure, if you already have a workflow application.
 
 .Procedure
-. Clone the link:{kogito_sw_examples_git_repo_url}[kogito-examples] repository and navigate to the link:{kogito_sw_examples_url}/serverless-workflow-greeting-quarkus[serverless-workflow-greeting-quarkus] example application.
+. Clone the link:{kogito_sw_examples_git_repo_url}[kogito-examples] repository and navigate to the link:{kogito_sw_examples_url}/serverless-workflow-greeting-quarkus[`serverless-workflow-greeting-quarkus`] example application.
 +
 .Clone an example application
 [source,shell,subs="attributes+"]
@@ -65,9 +64,9 @@ After adding the Jib extension, if you see the `pom.xml` file, you can verify th
 --
 
 [[proc-building-serverless-workflow-application]]
-== Building the Serverless Workflow application
+== Building the workflow application
 
-After installing the required tooling, you can start building your Serverless Workflow application.
+After installing the required tooling, you can start building your workflow application.
 
 .Prerequisites
 * You have created a Quarkus project.
@@ -75,10 +74,10 @@ After installing the required tooling, you can start building your Serverless Wo
 
 .Procedure
 . In a command terminal, navigate to your Quarkus project.
-. To build your Serverless Workflow application on Quarkus, run the following command:
+. To build your workflow application on Quarkus, run the following command:
 +
 --
-.Build your Serverless Workflow application
+.Build your workflow application
 [source,shell]
 ----
 quarkus build -Dquarkus.container-image.build=true \
@@ -89,14 +88,14 @@ quarkus build -Dquarkus.container-image.build=true \
 ----
 [NOTE]
 ====
-The added Jib extension caches the `target/lib` directory. Based on the size of your project, Jib speeds up the rebuilds. If you want to push your Serverless Workflow application to a registry, ensure that you define the following properties as required:
+The added Jib extension caches the `target/lib` directory. Based on the size of your project, Jib speeds up the rebuilds. If you want to push your workflow application to a registry, ensure that you define the following properties as required:
 
 * `quarkus.container-image.registry`: To define the registry address, such as `quay.io`.
 * `quarkus.container-image.group`: To define the registry. For example, `context/namespace` or in case of Kubernetes or OpenShift `namespace/project`.
 * `quarkus.container-image.push`: To define whether or not to push an image. Set the value of this property to `true`. By default, this property is set as `false`.
 ====
 
-.Example of pushing the built Serverless Workflow application to a registry
+.Example of pushing the built workflow application to a registry
 [source,shell]
 ----
 quarkus build -Dquarkus.container-image.build=true \
@@ -141,9 +140,9 @@ You can activate the created Apache Maven profile using Quarkus CLI:
 --
 
 [[proc-building-serverless-workflow-application-using-native-image]]
-=== Building the Serverless Workflow application using a native image
+=== Building the workflow application using a native image
 
-When it comes to Serverless Workflow, a small startup footprint is expected, which can be better when using the native builds to build a Serverless Workflow application.
+When it comes to workflows, a small startup footprint is expected, which can be better when using the native builds to build a workflow application.
 
 .Prerequisites
 * You have created a Quarkus project.
@@ -198,9 +197,9 @@ For more information about native builds, see link:{quarkus_native_builds_url}[B
 --
 
 [[proc-testing-serverless-workflow-image]]
-== Testing your Serverless Workflow image
+== Testing your workflow image
 
-After building your Serverless Workflow image using Quarkus CLI, you can test the built image.
+After building your workflow image using Quarkus CLI, you can test the built image.
 
 .Prerequisites
 * Latest version of Docker is installed.
@@ -232,7 +231,7 @@ INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final nati
 Note that the startup of native image is faster than the JVM image.
 --
 
-. To invoke the Serverless Workflow application, execute the following command once the container is started:
+. To invoke the workflow application, execute the following command once the container is started:
 +
 --
 [tabs]
@@ -262,6 +261,6 @@ Example response::
 == Additional resources
 
 * xref:cloud/deploying-on-minikube.adoc[Deploying your Serverless Workflow application on Minikube]
-* xref:cloud/deploying-on-kubernetes-cluster.adoc[Deploying your Serverless Workflow application on Kubernetes]
+//* xref:cloud/deploying-on-kubernetes-cluster.adoc[Deploying your Serverless Workflow application on Kubernetes] Guide not available in DP1
 
 include::../../pages/_common-content/report-issue.adoc[]

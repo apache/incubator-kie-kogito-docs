@@ -1,6 +1,5 @@
-Custom functions for your Serverless Workflow service
-=====================================================
-06-10-2022
+= Custom functions for your Serverless Workflow service
+
 :compat-mode!:
 // Metadata:
 :description: Custom Functions Support
@@ -69,7 +68,7 @@ You must avoid using the `sysout` function in a production environment since it 
 [[con-func-java]]
 == `java` custom function
 
-Kogito supports the `java` functions within an Apache Maven project, in which you define your Serverless Workflow service.
+Kogito supports the `java` functions within an Apache Maven project, in which you define your workflow service.
 
 The following example shows the declaration of a `java` function:
 
@@ -112,7 +111,7 @@ public class MyInterfaceOrClass {
 }
 ----
 
-To call the function shown in the previous example within your Serverless Workflow service, you can extract the required JSON value using xref:core/understanding-jq-expressions.adoc[`jq` expression] or pass the JSON value without using arguments.
+To call the function shown in the previous example within your workflow service, you can extract the required JSON value using xref:core/understanding-jq-expressions.adoc[`jq` expression] or pass the JSON value without using arguments.
 
 In the following example, the caller sends the entire payload:
 
@@ -163,7 +162,7 @@ Alternatively, you can pass the necessary data as shown in the following example
 }
 ----
 
-In the previous example, the `JsonNode` that the `java` function returns is the new payload in the Serverless Workflow execution.
+In the previous example, the `JsonNode` that the `java` function returns is the new payload in the workflow execution.
 
 [WARNING]
 ====
@@ -172,7 +171,7 @@ Avoid using `java` functions to call the external services, instead you can use 
 
 == Additional resources
 
-- xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow Specification]
-- xref:core/understanding-jq-expressions.adoc[Understanding JQ Expressions].
+* xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow specification]
+* xref:core/understanding-jq-expressions.adoc[jq expressions in Serverless Workflow]
 
 include::../../pages/_common-content/report-issue.adoc[]

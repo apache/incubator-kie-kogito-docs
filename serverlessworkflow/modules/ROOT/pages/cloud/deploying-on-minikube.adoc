@@ -1,5 +1,5 @@
-Deploying your Serverless Workflow application on Minikube
-==========================================================
+= Deploying your Serverless Workflow application on Minikube
+
 :compat-mode!:
 // Metadata:
 :description: Deploying Serverless Application on Minikube
@@ -13,23 +13,23 @@ Deploying your Serverless Workflow application on Minikube
 :knative_issue_url: https://github.com/knative/serving/issues/6101
 :quarkus_k8s_deploy_url: https://github.com/quarkusio/quarkus/issues/26385
 
-This document describes how to deploy your Serverless Workflow application using a local Kubernetes cluster, such as link:{minikube_url}}[Minikube], along with a procedure to run the Knative platform.
+This document describes how to deploy your workflow application using a local Kubernetes cluster, such as link:{minikube_url}[Minikube], along with a procedure to run the Knative platform.
 
 For more information about Minikube and related system requirements, see link:{minikube_url}/docs/start/[Getting started with Minikube] documentation.
 
 .Prerequisites
-* Your Serverless Workflow application is ready to use.
+* Your workflow application is ready to use.
 +
-For more information about building the application container, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building Serverless Workflow Images using Quarkus CLI].
+For more information about building the application container, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building Serverless Workflow images using Quarkus CLI].
 
 * Minikube is installed.
-* kubectl command-line tool is installed. Otherwise, Minikube handles it.
+* `kubectl` command-line tool is installed. Otherwise, Minikube handles it.
 * Knative CLI is installed.
 +
 For more information, see link:{kn_cli_url}[Install the Knative CLI].
 * (Optional) Quarkus CLI is installed. For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
 
-To deploy your Serverless Workflow application on Minikube, you need to install Knative on Minikube. However, first you need to ensure that Minikube is installed correctly.
+To deploy your workflow application on Minikube, you need to install Knative on Minikube. However, first you need to ensure that Minikube is installed correctly.
 
 You can check the Minikube installation by entering the following commands in a command terminal:
 
@@ -121,9 +121,9 @@ To follow the manual process of installing Knative on Minikube, see link:{knativ
 ====
 
 [[proc-deploy-sw-application-minikube]]
-== Deploying your Serverless Workflow application on Minikube
+== Deploying your workflow application on Minikube
 
-Once you install Knative on Minikube, you can initiate the process of deploying your Serverless Workflow application on Minikube.
+Once you install Knative on Minikube, you can initiate the process of deploying your workflow application on Minikube.
 
 .Prerequisites
 * Minikube is installed.
@@ -132,7 +132,7 @@ Once you install Knative on Minikube, you can initiate the process of deploying 
 For more information, see <<proc-install-knative-minikube, Installing Knative on Minikube>>.
 
 * (Optional) Quarkus CLI is installed. For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
-* Serverless Workflow application container is ready.
+* Workflow application container is ready.
 
 .Procedure
 . In a command terminal, enter the following command to configure Docker to use the in-cluster Docker daemon:
@@ -146,7 +146,7 @@ eval $(minikube -p minikube docker-env --profile knative)
 
 When using Minikube, you can share your local registry with the Docker Daemon.
 
-NOTE: If your Serverless Workflow application container image was built before configuring Docker, then you might need to build the image again so that the image is available on the Minikube Docker.
+NOTE: If your workflow application container image was built before configuring Docker, then you might need to build the image again so that the image is available on the Minikube Docker.
 
 Ensure that you use the following system property when building native container images that use Minikube Docker Daemon:
 
@@ -225,33 +225,33 @@ kubectl config view --minify -o jsonpath='{..namespace}'
 ----
 --
 
-. Install your Serverless Workflow application using the container image.
+. Install your workflow application using the container image.
 +
 --
-You can use the native image due to the faster startup. For more information about installing the Serverless Workflow application, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building Serverless Workflow Images using Quarkus CLI] document.
+You can use the native image due to the faster startup. For more information about installing the workflow application, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building Serverless Workflow images using Quarkus CLI] document.
 --
 
-In the following procedures, you can find two examples of deploying your Serverless Workflow application, including:
+In the following procedures, you can find two examples of deploying your workflow application, including:
 
 * Using Knative CLI (`kn`)
 * Using `kubectl` command-line tool
 
 [[proc-deploy-sw-application-knative-cli]]
-=== Deploying your Serverless Workflow application using Knative CLI
+=== Deploying your workflow application using Knative CLI
 
-Once you install your Serverless Workflow application using the container image, you can use the command-line tools, such as Knative CLI or `kubectl` to initiate the deployment process.
+Once you install your workflow application using the container image, you can use the command-line tools, such as Knative CLI or `kubectl` to initiate the deployment process.
 
 .Prerequisites
-* Serverless Workflow application is installed.
+* Workflow application is installed.
 * Knative CLI is installed.
 +
 For more information, see link:{kn_cli_url}[Install the Knative CLI].
 
 .Procedure
-. In a command terminal, execute to following command to deploy your Serverless Workflow application using Knative CLI:
+. In a command terminal, execute to following command to deploy your workflow application using Knative CLI:
 +
 --
-.Example of deploying Serverless Workflow application using Knative CLI
+.Example of deploying workflow application using Knative CLI
 [source,shell]
 ----
 kn service create hello \
@@ -278,7 +278,7 @@ http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io
 ----
 --
 
-. Use the URL in the output to send request to your Serverless Workflow application.
+. Use the URL in the output to send request to your workflow application.
 +
 --
 .Example request
@@ -295,16 +295,16 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 --
 
 [[proc-deploy-sw-application-kubectl]]
-=== Deploying your Serverless Workflow application using kubectl
+=== Deploying your workflow application using `kubectl`
 
-You can also use kubectl command-line interface to deploy your Serverless Workflow application.
+You can also use `kubectl` command-line interface to deploy your workflow application.
 
 .Prerequisites
-* Serverless Workflow application is installed.
+* Workflow application is installed.
 * `kubectl` command-line tool is installed.
 
 .Procedure
-. To deploy your Serverless Workflow application, you can use plain Kubernetes objects. Therefore, instead of creating `knative`, `yaml|json` descriptors, you can leverage the Quarkus Kubernetes extension and Kogito Knative add-on to generate the descriptors.
+. To deploy your workflow application, you can use plain Kubernetes objects. Therefore, instead of creating `knative`, `yaml|json` descriptors, you can leverage the Quarkus Kubernetes extension and Kogito Knative add-on to generate the descriptors.
 +
 --
 To use the Quarkus Kubernetes extension and Kogito Knative add-on, ensure that the following dependencies are available in `pom.xml` file and Gradle:
@@ -334,7 +334,7 @@ quarkus-kubernetes 'org.kie.kogito:kogito-addons-quarkus-knative-eventing:{page-
 ====
 --
 
-. To generate the `knative`, `yaml|json` descriptors, set the following system properties with `-D` prefix (if using Quarkus CLI) in the `application.properties` file of your Serverless Workflow application:
+. To generate the `knative`, `yaml|json` descriptors, set the following system properties with `-D` prefix (if using Quarkus CLI) in the `application.properties` file of your workflow application:
 +
 --
 .System properties to generate descriptors
@@ -345,10 +345,10 @@ quarkus.knative.name=greeting-quarkus-kubectl
 ----
 --
 
-. Build your Serverless Workflow application.
+. Build your workflow application.
 +
 --
-.Build your Serverless Workflow application
+.Build your workflow application
 [source,yaml]
 ----
 ---
@@ -397,33 +397,32 @@ spec:
             timeoutSeconds: 10
 ----
 
-You can find the previous content in the generated files in the `target/kubernetes` directory:
+You can find the previous content in the following generated files in the `target/kubernetes` directory:
 
-* knative.json
-* knative.yml
+* `knative.json`
+* `knative.yml`
 
-Once the files are generated, you might be required to add the `imagePullPolicy` manually before deploying the Serverless Workflow application.
+Once the files are generated, you might be required to add the `imagePullPolicy` manually before deploying the workflow application.
 
 [WARNING]
 ====
 Some of the system properties are not working properly due to a bug in decorate API. For more information about the bug, see link:https://github.com/quarkusio/quarkus/issues/23832[Quarkus issue].
 
-There is a small bug on the 'Decorate API' where some system properties are not taking effect, for more information please take a look at this link:https://github.com/quarkusio/quarkus/issues/23832[Quarkus issue].
-After the file generation, you might be required to add the `imagePullPolicy` manually before deploying it.
+There is a small bug on the 'Decorate API' where some system properties are not taking effect, for more information take a look at this link:https://github.com/quarkusio/quarkus/issues/23832[Quarkus issue]. After the file generation, you might be required to add the `imagePullPolicy` manually before deploying it.
 ====
 --
 
-. Enter the following command to deploy the Serverless Workflow application using kubectl:
+. Enter the following command to deploy the workflow application using `kubectl`:
 +
 --
-.Deploy Serverless Workflow using kubectl
+.Deploy workflow using `kubectl`
 [source,shell]
 ----
 kubectl apply -f target/kubernetes/knative.yml
 ----
 --
 
-. Verify if the Serverless Workflow application is deployed correctly using the following command:
+. Verify if the workflow application is deployed correctly using the following command:
 +
 --
 [tabs]
@@ -450,10 +449,10 @@ greeting-quarkus-kubectl   http://greeting-quarkus-kubectl.serverless-workflow-g
 ----
 --
 
-. Access the Serverless Workflow application using the listed URL in the output.
+. Access the workflow application using the listed URL in the output.
 +
 --
-.Access Serverless Workflow application
+.Access workflow application
 [source,shell]
 ----
 curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://greeting-quarkus-kubectl.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet
@@ -461,17 +460,17 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 --
 
 [[proc-deploy-sw-application-quarkus-cli]]
-=== Deploying your Serverless Workflow application using Quarkus CLI
+=== Deploying your workflow application using Quarkus CLI
 
-You can use the link:{quarkus_cli_url}[Quarkus CLI] to abstract all of the complexities mentioned in the previous sections and deploy your Serverless Workflow application once the build completes. 
+You can use the link:{quarkus_cli_url}[Quarkus CLI] to abstract all of the complexities mentioned in the previous sections and deploy your workflow application once the build completes. 
 
 
 .Prerequisites
-* Serverless Workflow application is installed.
+* Workflow application is installed.
 * Quarkus CLI is installed. For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
 
 .Procedure
-. To deploy your Serverless Workflow application using Quarkus CLI, set the following system properties in `application.properties` file:
+. To deploy your workflow application using Quarkus CLI, set the following system properties in `application.properties` file:
 +
 --
 .Required system properties
@@ -493,12 +492,12 @@ link:{quarkus_k8s_deploy_url}[link].
 ====
 --
 
-. Verify if your Serverless Workflow application is deployed correctly:
+. Verify if your workflow application is deployed correctly:
 +
 --
 [tabs]
 ====
-kubectl::
+`kubectl`::
 +
 [source,shell]
 ----
@@ -520,10 +519,10 @@ greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-
 ----
 --
 
-. You can access your Serverless Workflow application using the listed URL in the output.
+. You can access your workflow application using the listed URL in the output.
 +
 --
-.Access your Serverless Workflow application
+.Access your workflow application
 [source,shell]
 ----
 curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet.37.sslip.io/jsongreet

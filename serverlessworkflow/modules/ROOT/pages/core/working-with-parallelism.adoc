@@ -4,7 +4,13 @@
 :description: Working with parallelism in Serverless Workflow
 :keywords: kogito, workflow, quarkus, serverless, parallelism
 
-This document describes how you can run parallel tasks in Serverless Workflow. 
+This document describes how you can run parallel tasks in 
+ifeval::["{context}" == ""]
+Serverless Workflow.
+endif::[]
+ifeval::["{context}" != ""]
+OpenShift Serverless Logic.
+endif::[]
 
 The testing procedure described in this document is based on the `serverless-workflow-service-calls-quarkus` example application in link:{kogito_sw_examples_url}/serverless-workflow-service-calls-quarkus[GitHub repository].
 
@@ -16,16 +22,16 @@ Kogito serializes the execution of parallel tasks. Therefore, the word "parallel
 The `serverless-workflow-service-calls-quarkus` example application is a workflow that concatenates three strings and returns a result. The concatenation in the example application is done in parallel, which includes one branch per three strings.
 
 [[proc-parallel-creating-the-workflow]]
-== Creating a parallel Serverless Workflow
+== Creating a parallel workflow
 
-You can create a Serverless Workflow, which performs a series of parallel tasks. 
+You can create a workflow, which performs a series of parallel tasks. 
 
 .Prerequisites
 
 include::../../pages/_common-content/getting-started-requirement.adoc[]
 
 .Procedure
-. Create a Serverless Workflow file named as `parallel.sw.json` under the `src/main/resources/` directory.
+. Create a workflow file named as `parallel.sw.json` under the `src/main/resources/` directory.
 
 . Add the following content to the `parallel.sw.json` file:
 +
@@ -108,15 +114,15 @@ include::../../pages/_common-content/getting-started-requirement.adoc[]
 --
 
 [[proc-parallel-run-workflow]]
-== Running a parallel Serverless Workflow
+== Running a parallel workflow
 
-After you create a Serverless Workflow that perform a series of parallel tasks, you can run the workflow.
+After you create a workflow that perform a series of parallel tasks, you can run the workflow.
 
 .Prerequisites
 
 * A parallel workflow is created. 
 +
-For more information, see <<proc-parallel-creating-the-workflow, Creating a parallel Serverless Workflow>>.
+For more information, see <<proc-parallel-creating-the-workflow, Creating a parallel workflow>>.
 
 * The Serverless Workflow application is up and running.
 +
@@ -159,7 +165,7 @@ Note that the parallel workflow data shows the concatenated string as result.
 --
 
 [[proc-parallel-run-branches]]
-=== Running some branches in parallel Serverless Workflow
+=== Running some branches in parallel workflow
 
 You can define the `"completionType": "atLeast"` to run only some branches in parallel workflow, instead of defining `"completionType": "allOf"`. When you define `"completionType": "atLeast"`, you also need to define the minimum number of branches that you want to run by defining the `"numCompleted":` property.
 
@@ -173,7 +179,7 @@ For more information, see <<proc-parallel-creating-the-workflow, Creating a para
 . Change the `completionType` property to `"atLeast"` and add the `"numCompleted": 2` property to the parallel state.
 +
 --
-.Example parallel Serverless Workflow
+.Example parallel workflow
 [source,json]
 ----
 {
