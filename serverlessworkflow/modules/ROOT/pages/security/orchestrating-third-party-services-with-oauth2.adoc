@@ -531,7 +531,8 @@ java -jar target/quarkus-app/quarkus-run.jar
 . When all the services are running, use the following `curl` commands to run the `currency-exchange-workflow`:
 +
 --
-.Example of successful execution when calculating the currency exchange from `EUR` to `USD`:
+
+The following is an example of successful execution when calculating the currency exchange from `EUR` to `USD`:
 [tabs]
 ====
 Example request::
@@ -571,7 +572,8 @@ Example response::
 ----
 ====
 
-.Example of unsuccessful execution when calculating the currency exchange from `EUR` to `MXN`
+The following is an example of an unsupported currency error when calculating the currency exchange from `EUR` to `MXN`:
+
 [tabs]
 ====
 Example request::
@@ -615,7 +617,10 @@ Example response::
 In the previous examples, the currencies supported by the `currency-exchange-workflow` include `EUR`, `USD`, `JPY`, `GBP`, `CAD`, `BRL`, and `AUD`. However, the `acme-financial-service` REST service can resolve any type of currency exchange. This is an example of a Serverless Workflow implementing the intermediate data filtering, transforming, and validations.
 ====
 
-.Example of unexpected errors when accessing `acme-financial-service`
+The following is an example of the occurrence of unexpected errors when accessing `acme-financial-service`:
+
+Before you launch the command, you must go to the terminal window where you started the `acme-financial-service` and stop the service using `CTRL+C`.
+
 [tabs]
 ====
 Example request::
@@ -652,6 +657,11 @@ Example response::
   }
 }
 ----
+====
+
+[NOTE]
+====
+In this example the error indicates that it was not possible to contact the `acme-financial-service`.
 ====
 --
 
