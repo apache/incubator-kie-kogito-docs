@@ -22,7 +22,7 @@ For more information about Minikube and related system requirements, see link:{m
 For more information about building the application container, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building workflow images using Quarkus CLI].
 
 * Minikube is installed.
-* kubectl command-line tool is installed. Otherwise, Minikube handles it.
+* `kubectl` command-line tool is installed. Otherwise, Minikube handles it.
 * Knative CLI is installed. +
 For more information, see link:{kn_cli_url}[Install the Knative CLI].
 * (Optional) Quarkus CLI is installed. For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
@@ -141,7 +141,7 @@ eval $(minikube -p minikube docker-env --profile knative)
 ----
 --
 
-. Build your application to store it in the Minikube registry
+. Build your application to store it in the Minikube registry.
 +
 --
 If your workflow application container image is built before configuring Docker to use the in-cluster Docker daemon, then you might need to build the image again so that the image is available in the Minikube registry.
@@ -228,7 +228,7 @@ kubectl config view --minify -o jsonpath='{..namespace}'
 ----
 --
 
-. Deploy your {context} application using the Minikube registry.
+. Deploy your workflow application using the Minikube registry.
 +
 --
 The next step is to deploy your workflow application to execute it.
@@ -249,15 +249,15 @@ In the following procedures, you can find two examples of deploying your workflo
 [[proc-deploy-sw-application-knative-cli]]
 === Deploying your workflow application using Knative CLI
 
-Once you have installed your {context} application into the Minikube registry, you can use the command-line tools, such as Knative CLI or `kubectl` to initiate the deployment process.
+Once you have installed your workflow application into the Minikube registry, you can use the command-line tools, such as Knative CLI or `kubectl` to initiate the deployment process.
 
 .Prerequisites
-* {context} application is installed.
+* Workflow application is installed.
 * Knative CLI is installed. +
 For more information, see link:{kn_cli_url}[Install the Knative CLI].
 
 .Procedure
-. In a command terminal, execute the following command to deploy your {context} application using Knative CLI:
+. In a command terminal, execute the following command to deploy your workflow application using Knative CLI:
 +
 --
 .Example of deploying workflow application using Knative CLI
@@ -306,7 +306,7 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 [[proc-deploy-sw-application-kubectl]]
 === Deploying your workflow application using `kubectl`
 
-You can also use kubectl command-line interface and plain Kubernetes objects to deploy your {context} application. +
+You can also use `kubectl` command-line interface and plain Kubernetes objects to deploy your workflow application. +
 And, instead of creating `knative` `yaml|json` descriptors, you can leverage the Quarkus Kubernetes extension and Kogito Knative add-on to generate the descriptors.
 
 .Prerequisites
@@ -346,7 +346,7 @@ quarkus-kubernetes 'org.kie.kogito:kogito-addons-quarkus-knative-eventing:{page-
 ====
 --
 
-. To generate the `knative` `yaml|json` descriptors, set the following properties in the `application.properties` file of your {context} application:
+. To generate the `knative` `yaml|json` descriptors, set the following properties in the `application.properties` file of your workflow application:
 +
 --
 .System properties to generate knative descriptors
@@ -362,8 +362,8 @@ quarkus.knative.name=greeting-quarkus-kubectl
 --
 Once you have built your application, you can find the generated descriptors files in the `target/kubernetes` directory:
 
-* knative.json
-* knative.yml
+* `knative.json`
+* `knative.yml`
 
 Following is an example of the generated files:
 
@@ -432,7 +432,7 @@ There is a small bug on the 'Decorate API' where some system properties are not 
 . Enter the following command to deploy the workflow application using `kubectl`:
 +
 --
-.Deploy the workflow application using kubectl
+.Deploy the workflow application using `kubectl`
 [source,shell]
 ----
 kubectl apply -f target/kubernetes/knative.yml
@@ -480,7 +480,7 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 === Deploying your workflow application using Quarkus CLI
 
 .Prerequisites
-* {context} application is installed.
+* Workflow application is installed.
 * Quarkus CLI is installed. +
 For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
 * You have completed the steps in link:#proc-deploy-sw-application-kubectl[Deploying your workflow application using `kubectl`]
