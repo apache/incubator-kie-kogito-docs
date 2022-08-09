@@ -50,7 +50,7 @@ You can test a workflow application using link:{knative_sink_binding_impl_url}[S
 .Prerequisites
 * Your workflow application is working.
 +
-For more information about creating a workflow application, see {getting_started_create_first_workflow_guide}[Creating your first Serverless Workflow service].
+For more information about creating a workflow application, see {getting_started_create_first_workflow_guide}[Creating your first workflow service].
 
 * Your workflow application is configured to use HTTP CloudEvents using link:{knative_sink_binding_impl_url}[SinkBinding].
 +
@@ -92,7 +92,7 @@ For more information about enabling link:{event_driven_architecture_url}[event-d
 You can also see the dependencies added in `pom.xml` file of link:{kogito_sw_order_processing_example_url}[`serverless-workflow-order-processing`] example application.
 --
 
-. Add failsafe maven plug-in to run integration tests
+. Add failsafe maven plug-in to run integration tests:
 +
 --
 .`maven-failsafe-plugin` in the `pom.xml` plug-in section
@@ -189,7 +189,7 @@ public class VerifyWorkflowExecutionIT { <2>
 <1> `@QuarkusTest` starts the Quarkus server for the lifetime of the test execution run. For more information, see link:{recap_of_http_based_testing_in_jvm_mode_url}[Quarkus - Testing your application].
 <2> The test name ends with `IT` to identify which test needs to be executed as an integration test. More details in link:{failsafe_pluggin_inclusions}[maven-failsafe-plugin] documentation.
 <3> link:{wiremockserver_class_url}[`WireMockServer`] is a mocked server instance that is used for SinkBinding for testing.
-<4> `given()` is used to test interactions with the application. For more information about testing interactions, see {basic_integration_test_with_restassured_guide}[Testing your Serverless Workflow application using REST Assured].
+<4> `given()` is used to test interactions with the application. For more information about testing interactions, see {basic_integration_test_with_restassured_guide}[Testing your workflow application using REST Assured].
 <5> `@BeforeAll` annotation is used to signal that the annotated method must be executed before running all the tests.
 <6> Creates a `WireMockServer` instance, listening at the port that is passed as a parameter and must match with the sink configuration.
 <7> Starts the server before the tests are executed.
@@ -320,8 +320,8 @@ After declaring the verifications on received events, the test successfully ends
 
 == Additional resources
 
-* {getting_started_create_first_workflow_guide}[Creating your first Serverless Workflow service]
-* {basic_integration_test_with_restassured_guide}[Testing your Serverless Workflow application using REST Assured]
+* {getting_started_create_first_workflow_guide}[Creating your first workflow service]
+* {basic_integration_test_with_restassured_guide}[Testing your workflow application using REST Assured]
 * {mocking_openapi_services_with_wiremock_guide}[Mocking OpenAPI services using WireMock]
 * link:{quarkus_testing_guide_url}[Testing a Quarkus application]
 * link:{knative_eventing_components_url}[Knative Eventing components interaction: Source, Trigger, Broker, and Sink]

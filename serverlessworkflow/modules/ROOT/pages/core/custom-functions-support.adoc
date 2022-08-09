@@ -1,4 +1,4 @@
-= Custom functions for your Serverless Workflow service
+= Custom functions for your {context} service
 
 :compat-mode!:
 // Metadata:
@@ -7,13 +7,12 @@
 
 The Cloud Native Computing Foundation (CNCF) specification link:{spec_doc_url}#defining-custom-function-types[supports the `custom` function type], which enables the implementations to extend the function definition capability.
 
-Kogito supports the `java` and `sysout` custom types.
+{product_name} supports the `java` and `sysout` custom types.
 
 [WARNING]
 ====
 The CNCF specification does not support `java` and `sysout` functions. Therefore, these functions might not be portable across other implementations.
 ====
-
 
 [[con-func-sysout]]
 == `sysout` custom function
@@ -68,7 +67,7 @@ You must avoid using the `sysout` function in a production environment since it 
 [[con-func-java]]
 == `java` custom function
 
-Kogito supports the `java` functions within an Apache Maven project, in which you define your workflow service.
+{product_name} supports the `java` functions within an Apache Maven project, in which you define your workflow service.
 
 The following example shows the declaration of a `java` function:
 
@@ -88,7 +87,7 @@ The following example shows the declaration of a `java` function:
 
 <1> `myFunction` is the function name
 <2> `custom` is the function type
-<3> `service:java:com.acme.MyInterfaceOrClass::myMethod` is the Kogito custom operation definition. In the custom operation definition, `service` is the reserved operation keyword followed by the `java` keyword. `com.acme.MyInterfaceOrClass` is the FQCN (Fully Qualified Class Name) of the interface or implementation class followed by the method name (`myMethod`).
+<3> `service:java:com.acme.MyInterfaceOrClass::myMethod` is the custom operation definition. In the custom operation definition, `service` is the reserved operation keyword followed by the `java` keyword. `com.acme.MyInterfaceOrClass` is the FQCN (Fully Qualified Class Name) of the interface or implementation class followed by the method name (`myMethod`).
 
 Your method interface must receive a link:https://github.com/FasterXML/jackson[Jackson's] `JsonNode` object and return either `void` or another `JsonNode` as shown in the following example:
 
@@ -172,6 +171,6 @@ Avoid using `java` functions to call the external services, instead you can use 
 == Additional resources
 
 * xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow specification]
-* xref:core/understanding-jq-expressions.adoc[jq expressions in Serverless Workflow]
+* xref:core/understanding-jq-expressions.adoc[jq expressions in {context}]
 
 include::../../pages/_common-content/report-issue.adoc[]

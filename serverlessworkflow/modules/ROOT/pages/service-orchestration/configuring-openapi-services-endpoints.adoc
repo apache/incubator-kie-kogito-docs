@@ -7,22 +7,16 @@
 // links:
 :quarkus-profiles-url: https://quarkus.io/guides/config-reference#profiles
 
-This document describes how you can configure OpenAPI service endpoints in 
-ifeval::["{context}" == ""]
-Serverless Workflow.
-endif::[]
-ifeval::["{context}" != ""]
-OpenShift Serverless Logic.
-endif::[]
+This document describes how you can configure OpenAPI service endpoints in {context}.
 
 [[con-config-openapi-services-endpoints]]
 == Overview 
 
-Kogito leverages MicroProfile REST Client to invoke OpenAPI services. Therefore, you can configure the OpenAPI services by following the MicroProfile Config specification. For the list of properties to configure in the MicroProfile REST Client specification, see link:https://download.eclipse.org/microprofile/microprofile-rest-client-2.0/microprofile-rest-client-spec-2.0.html#mpconfig[Support for MicroProfile Config] in MicroProfile REST Client documentation.
+{product_name} leverages MicroProfile REST Client to invoke OpenAPI services. Therefore, you can configure the OpenAPI services by following the MicroProfile Config specification. For the list of properties to configure in the MicroProfile REST Client specification, see link:https://download.eclipse.org/microprofile/microprofile-rest-client-2.0/microprofile-rest-client-spec-2.0.html#mpconfig[Support for MicroProfile Config] in MicroProfile REST Client documentation.
 
-Kogito follows the strategy defined in the `kogito.sw.operationIdStrategy` property to generate the REST Client. The possible values of the `kogito.sw.operationIdStrategy` property include:
+{product_name} follows the strategy defined in the `kogito.sw.operationIdStrategy` property to generate the REST Client. The possible values of the `kogito.sw.operationIdStrategy` property include:
 
-* `FILE_NAME`(Default value): Kogito uses the configuration key based on the OpenAPI document file name as shown in the following example:
+* `FILE_NAME`(Default value): {product_name} uses the configuration key based on the OpenAPI document file name as shown in the following example:
 +
 --
 .Example property
@@ -31,10 +25,10 @@ Kogito follows the strategy defined in the `kogito.sw.operationIdStrategy` prope
 quarkus.rest-client.stock_portfolio_svc_yaml.url=http://localhost:8282/
 ----
 
-In the previous example, Kogito uses `stock_portfolio_svc_yaml` as configuration key as the OpenAPI document is available at `src/main/resources/openapi/stock-portfolio-svc.yaml`.
+In the previous example, {product_name} uses `stock_portfolio_svc_yaml` as configuration key as the OpenAPI document is available at `src/main/resources/openapi/stock-portfolio-svc.yaml`.
 --
 
-* `FULL_URI`: Kogito uses the full URI path as configuration key as shown in the following example:
+* `FULL_URI`: {product_name} uses the full URI path as configuration key as shown in the following example:
 +
 --
 .Example Serverless Workflow
@@ -59,10 +53,10 @@ In the previous example, Kogito uses `stock_portfolio_svc_yaml` as configuration
 quarkus.rest-client.apicatalog_apis_123_document.url=http://localhost:8282/
 ----
 
-In the previous example, Kogito uses `apicatalog_apis_123_document` as configuration key.
+In the previous example, {product_name} uses `apicatalog_apis_123_document` as configuration key.
 --
 
-* `FUNCTION_NAME`: Kogito uses the workflow ID and the function name that references the OpenAPI document as shown in the following examples:
+* `FUNCTION_NAME`: {product_name} uses the workflow ID and the function name that references the OpenAPI document as shown in the following examples:
 +
 --
 .Example Serverless Workflow
@@ -86,10 +80,10 @@ In the previous example, Kogito uses `apicatalog_apis_123_document` as configura
 quarkus.rest-client.myworkflow_myfunction.url=http://localhost:8282/
 ----
 
-In the previous example, Kogito uses `"myworkflow_myfunction"` as configuration key.
+In the previous example, {product_name} uses `"myworkflow_myfunction"` as configuration key.
 --
 
-* `SPEC_TITLE`: Kogito uses the value of `info.title` in the OpenAPI document as shown in the following examples:
+* `SPEC_TITLE`: {product_name} uses the value of `info.title` in the OpenAPI document as shown in the following examples:
 +
 --
 .Example OpenAPI document
@@ -111,7 +105,7 @@ paths:
 quarkus.rest-client.stock-service_API.url=http://localhost:8282/
 ----
 
-In the previous example, Kogito uses `stock-service_API` as configuration key.
+In the previous example, {product_name} uses `stock-service_API` as configuration key.
 --
 
 [NOTE]
@@ -205,7 +199,7 @@ The `stock-profit` service contains the following workflow definition:
 <1> Defines the `stock-service` service operation
 <2> Defines the `stock-portfolio` service operation
 
-Kogito leverages Quarkus profiles to configure the workflow application depending on the target environment.
+{product_name} leverages Quarkus profiles to configure the workflow application depending on the target environment.
 
 To set properties for different profiles, each property needs to be prefixed with a percentage (%) followed by the profile name and a period (.) in the syntax as `%<profile-name>.config.name`. By default, Quarkus provides the following profiles that activate automatically in certain conditions:
 

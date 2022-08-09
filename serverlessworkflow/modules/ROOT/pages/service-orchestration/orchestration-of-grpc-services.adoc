@@ -68,7 +68,7 @@ In this `rpc` function, the `operation` property is composed of three tokens sep
 * Name of the service (`Greeter`)
 * Name of the method (`SayHello`)
 
-Kogito supports three URI schemes, including `http`, `file`, and `classpath` (default). Therefore, in the previous example, the `greeting.proto` is expected to be found in the project classpath.
+{product_name} supports three URI schemes, including `http`, `file`, and `classpath` (default). Therefore, in the previous example, the `greeting.proto` is expected to be found in the project classpath.
 
 The execution of the workflow consists of a single link:{spec_doc_url}#operation-state[operation] state, which is composed of one link:{spec_doc_url}#action-definition[action].
 
@@ -113,13 +113,7 @@ The function expects an array of requests which is mapped under the `helloReques
 
 In case of server streaming, the response is returned as an array as well and merged with the workflow model. In these examples, because no `stateDataFilter` is defined, the response is merged under the default `response` key in the workflow model.
 
-* link:{grpc_example_url}/serverless-workflow-greeting-client-rpc-quarkus/pom.xml[Maven POM]: The `gRPC` functionality is included within workflow dependencies, which means you do not need to add specific dependencies for `gRPC` to work with 
-ifeval::["{context}" == ""]
-Serverless Workflow.
-endif::[]
-ifeval::["{context}" != ""]
-OpenShift Serverless Logic.
-endif::[]
+* link:{grpc_example_url}/serverless-workflow-greeting-client-rpc-quarkus/pom.xml[Maven POM]: The `gRPC` functionality is included within workflow dependencies, which means you do not need to add specific dependencies for `gRPC` to work with {context}.
 
 This `pom.xml` file contains the following `resource` node:
 
@@ -139,7 +133,7 @@ The previous, Maven based, approach can be used when the source code of the work
 
 * link:{grpc_example_url}/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/application.properties[Application properties]: In the `application.properties` file, you can add the information for the workflow application to locate the `gRPC` server.
 
-Internally, the workflow implementation uses the same set of properties as link:{grpc_configuration_url}[Quarkus gRPC client]. The `client-name` used by Kogito is the service name declared in the proto file.
+Internally, the workflow implementation uses the same set of properties as link:{grpc_configuration_url}[Quarkus gRPC client]. The `client-name` used by {product_name} is the service name declared in the proto file.
 
 Therefore, since in this example a service called `Greeter` is invoked, the following code is added to the properties.
 
@@ -154,7 +148,7 @@ In the same GitHub repository as the example application, there is a link:{grpc_
 [[running-serverless-workflow-application]]
 == Running the workflow application
 
-. Before running the Serverless Workflow application, you need to start the gRPC server the workflow invokes. To run the gRPC server, navigate to the `serverless-workflow-greeting-server-rpc-quarkus` directory in a command terminal and enter the command:
+. Before running the workflow application, you need to start the gRPC server the workflow invokes. To run the gRPC server, navigate to the `serverless-workflow-greeting-server-rpc-quarkus` directory in a command terminal and enter the command:
 +
 [source, shell]
 ----

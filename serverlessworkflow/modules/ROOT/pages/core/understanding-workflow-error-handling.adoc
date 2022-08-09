@@ -1,4 +1,4 @@
-= Error handling in Serverless Workflow
+= Error handling in {context}
 :compat-mode!:
 // Metadata:
 :description: Understanding workflow error handling
@@ -8,20 +8,13 @@
 :java_regex_url: https://docs.oracle.com/javase/tutorial/essential/regex/index.html
 :java_regex_pattern_url: https://docs.oracle.com/javase/tutorial/essential/regex/pattern.html
 
-This document describes how you can handle the errors that might occur in a Serverless Workflow . 
+This document describes how you can handle the errors that might occur in {context}. 
 
 The Serverless Workflow specification provides an link:{spec_doc_url}#workflow-error-handling[error handling] mechanism, enabling you to handle the errors that might happen during the interactions between the workflow and external systems. 
 
-When an error occurs, it changes the regular Serverless Workflow sequence. In such cases, a workflow state transitions to an alternative state that can potentially handle the error, instead of transitioning to the predefined state.
+When an error occurs, it changes the regular workflow sequence. In such cases, a workflow state transitions to an alternative state that can potentially handle the error, instead of transitioning to the predefined state.
 
-Note that error definition for a Serverless Workflow is optional. If error handling is not defined, then the workflow execution is aborted when an error occurs. As a developer, you can consider the error handling in 
-ifeval::["{context}" == ""]
-Serverless Workflow
-endif::[]
-ifeval::["{context}" != ""]
-OpenShift Serverless Logic
-endif::[]
-as a `try-catch` or a `goto` construct.
+Note that error definition for a workflow is optional. If error handling is not defined, then the workflow execution is aborted when an error occurs. As a developer, you can consider the error handling in {context} as a `try-catch` or a `goto` construct.
 
 [[con-error-definition]]
 == Error definition
@@ -65,7 +58,8 @@ A workflow verifies whether the message of the Java exception matches the value 
 --
 
 Status code::
-
++
+--
 You can define the mapping as a status code returned by the invoked service.
 
 The external services return status codes in the event of a failure. For example, HTTP status codes are returned by REST or OpenAPI service invocations. In this case, the workflow verifies the defined error code against the HTTP code from the underlying response object.
@@ -79,11 +73,12 @@ You can define the error code either as an HTTP code or as a colon-separated str
 |`400`|`400`
 |`400`|`HTTP:400`
 |===
+--
 
 [[ref-example-error-handling]]
 == Example of error handling
 
-The workflow in the link:{kogito_sw_examples_url}/serverless-workflow-error-quarkus[`serverless-workflow-error-quarkus` example application] illustrate the usage of the error handling mechanism. 
+The workflow in the link:{kogito_sw_examples_url}/serverless-workflow-error-quarkus[`serverless-workflow-error-quarkus`] example application illustrate the usage of the error handling mechanism. 
 
 .Example of error handling
 image::core/error_handling.png[]
@@ -117,7 +112,7 @@ The workflow accepts an integer number as the input model. When the workflow sta
     }
 ----
 
-The workflow defines a function that invokes the `isEven` method of `org.kie.kogito.examples.EvenService` class. This function uses a link:{spec_doc_url}#defining-custom-function-types[custom function type], enabling Kogito to invoke Java methods. 
+The workflow defines a function that invokes the `isEven` method of `org.kie.kogito.examples.EvenService` class. This function uses a link:{spec_doc_url}#defining-custom-function-types[custom function type], enabling {product_name} to invoke Java methods. 
 
 .Example `isEven` function definition
 [source, json]
@@ -141,7 +136,6 @@ To handle the error, the workflow defines an `odd number` error which handles an
      }
   ]
 ----
-
 
 The link:{spec_doc_url}#inject-state[Inject] state is used to populate the model with specific JSON payload. Therefore, the even and odd state defines the `message` property as `even` and `odd` respectively. 
 
@@ -191,7 +185,7 @@ The `finish` state in the `serverless-workflow-error-quarkus` example applicatio
 
 == Additional resources
 
-* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
 
 include::../../pages/_common-content/report-issue.adoc[]
 

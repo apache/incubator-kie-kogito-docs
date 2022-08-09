@@ -1,4 +1,4 @@
-= jq expressions in Serverless Workflow
+= jq expressions in {context}
 :compat-mode!:
 // Metadata:
 :description: JQ expressions in Serverless Workflow
@@ -10,7 +10,7 @@
 
 Each workflow instance is associated with a data model. A data model consists of a JSON object regardless of whether the workflow file contains YAML or JSON. The initial content of the JSON object depends on how the workflow is started. If the workflow is created using link:{cloud_events_url}[Cloud Event], then the workflow content is taken from the `data` property. However, if the workflow is started through an HTTP POST invocation, then the workflow content is taken from the `workflowdata` property.
 
-The workflow expressions in the link:{spec_doc_url}#workflow-expressions[Serverless Workflow Specification] are used to interact with the data model. The supported expression languages include link:{jsonpath_url}[JsonPath] and link:{jq_url}[jq]. jq expression language is the default language. However, you can change the expression language to JsonPath using the `expressionLang` property. 
+The workflow expressions in the link:{spec_doc_url}#workflow-expressions[Serverless Workflow specification] are used to interact with the data model. The supported expression languages include link:{jsonpath_url}[JsonPath] and link:{jq_url}[jq]. jq expression language is the default language. However, you can change the expression language to JsonPath using the `expressionLang` property. 
 
 This document describes the usage of jq expressions in switch state conditions, action function arguments, and data filtering.
 
@@ -46,14 +46,7 @@ The switch state in the `serverless-workflow-greeting-quarkus` example applicati
 
 [NOTE]
 ====
-The Serverless Workflow specification requires all the expressions to be embedded within `${… }`. However, 
-ifeval::["{context}" == ""]
-Serverless Workflow
-endif::[]
-ifeval::["{context}" != ""]
-OpenShift Serverless Logic
-endif::[]
-figures out whether or not a string is an expression. Therefore, you can save characters and skip `${` in the beginning and `}` in the end. In case of portability, you must embed the expressions within `${… }`.
+The Serverless Workflow specification requires all the expressions to be embedded within `${… }`. However, {context} figures out whether or not a string is an expression. Therefore, you can save characters and skip `${` in the beginning and `}` in the end. In case of portability, you must embed the expressions within `${… }`.
 ====
 
 [[ref-example-jq-expression-function-arguments]]
@@ -110,12 +103,11 @@ In the previous example, the result of the expression evaluation is the same JSO
 [[ref-example-jq-expression-data-filtering]]
 == Example of jq expressions in data filtering
 
-The Serverless workflow specification defines the following filtering mechanisms to select which information must be part of the workflow data model:
+The Serverless Workflow specification defines the following filtering mechanisms to select which information must be part of the workflow data model:
 
 * link:{spec_doc_url}#action-data-filters[Action data filters]: Select the part of the action result that is merged into the data model, which overrides the properties that share the name with the selected action result.  
 * link:{spec_doc_url}#event-data-filters[Event data filters]: Similar to the action data filters, but apply to the events instead of actions.
 * link:{spec_doc_url}#state-data-filters[State data filters]: Define the workflow model to the JSON object, which is returned by the expression and discards an existing property.
-
 
 State and Action data filter example::
 +
@@ -201,7 +193,7 @@ You can find an example of event data filtering in the link:{kogito_sw_examples_
    }
 ----
 
-The previous example of the event filter copies the content of Cloud Event data `result` field into the workflow model `move` field.
+The previous example of the event filter copies the content of CloudEvent data `result` field into the workflow model `move` field.
 --
 
 == Additional resources

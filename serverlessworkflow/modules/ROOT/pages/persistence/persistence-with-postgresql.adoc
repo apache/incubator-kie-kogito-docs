@@ -1,4 +1,4 @@
-= Running a Serverless Workflow service using PostgreSQL
+= Running a workflow service using PostgreSQL
 :compat-mode!:
 // Metadata:
 :description: Running Serverless Workflow service using PostgresSQL
@@ -21,7 +21,7 @@ For example, when a process reaches a `callback` or needs to wait for an event, 
 
 Runtime persistence is used for storing data, which is required to resume the workflow execution of a process instance. Once a process is completed, the related data is removed from the database. This means that only required data to resume the execution is persisted.
 
-In Kogito, you can enable persistence using add-ons. This document describes the use of the `kogito-addons-quarkus-persistence-jdbc` add-on, which is based on Java Database Connectivity (JDBC) along with PostgreSQL. 
+In {product_name}, you can enable persistence using add-ons. This document describes the use of the `kogito-addons-quarkus-persistence-jdbc` add-on, which is based on Java Database Connectivity (JDBC) along with PostgreSQL. 
 
 The `kogito-addons-quarkus-persistence-jdbc` add-on also extends on the Quarkus capabilities and you can use the available features directly from Quarkus JDBC support. For more information about Quarkus and JDBC, see link:{quarkus_datasource_guide}[Quarkus Datasources]. 
 
@@ -130,14 +130,7 @@ As an alternative, you can set the `kogito.workflow.version-strategy=project` pr
 [[ref-postgresql-persistence-configuration]]
 == Persistence configuration quick reference
 
-The following table serves as a quick reference of commonly used persistence configuration properties supported in 
-ifeval::["{context}" == ""]
-Serverless Workflow.
-endif::[]
-ifeval::["{context}" != ""]
-OpenShift Serverless Logic.
-endif::[] 
-You can define these properties in the `application.properties` file of your project.
+The following table serves as a quick reference of commonly used persistence configuration properties supported in {context}. You can define these properties in the `application.properties` file of your project.
 
 .Persistence properties
 [cols="40%,30%,30%", options="header"]
@@ -170,6 +163,6 @@ You can define these properties in the `application.properties` file of your pro
 [[postgresql-persistence-additional-resources]]
 == Additional resources
 
-* xref:testing-and-troubleshooting/integration-tests-with-postgresql.adoc[Serverless Workflow integration test using PostgreSQL]
+* xref:testing-and-troubleshooting/integration-tests-with-postgresql.adoc[{context} integration test using PostgreSQL]
 
 include::../../pages/_common-content/report-issue.adoc[]

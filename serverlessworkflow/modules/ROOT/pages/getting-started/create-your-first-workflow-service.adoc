@@ -1,13 +1,6 @@
-= Creating your first Serverless Workflow service
+= Creating your first workflow service
 
-As a developer, you can use 
-ifeval::["{context}" == ""]
-Serverless Workflow
-endif::[]
-ifeval::["{context}" != ""]
-OpenShift Serverless Logic
-endif::[]
-and create a `Hello World` application, which includes the following procedures:
+As a developer, you can use {context} and create a `Hello World` application, which includes the following procedures:
 
 * <<proc-boostrapping-the-project,Bootstrapping a project>>
 * <<proc-creating-workflow,Creating a workflow>>
@@ -31,7 +24,7 @@ image::getting-started/hello-world-workflow.png[]
 * Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.java[Red Hat Java Extension]
 and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
 
-For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with Serverless Workflow tooling].
+For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {context} tooling].
 
 ifeval::["{quarkus_cli_platform_redhat}" != ""]
 include::../../pages/_common-content/productized-instructions.adoc[]
@@ -62,9 +55,9 @@ quarkus create app \
     org.kie.kogito.examples:serverless-workflow-hello-world:1.0
 ----
 
-The previous command creates a Maven Quarkus project in the `serverless-workflow-hello-world` directory containing the required Kogito dependencies, including:
+The previous command creates a Maven Quarkus project in the `serverless-workflow-hello-world` directory containing the required dependencies, including:
 
-* `{kogito_sw_gav}`: Adds support for serverless workflows.
+* `{kogito_sw_gav}`: Adds support for workflows.
 * `quarkus-container-image-jib`: Adds support for Container Image Builds.
 * `quarkus-resteasy-jackson`: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request.
 * `quarkus-smallrye-openapi`: Adds support for Swagger documentation when you run the application in development mode.
@@ -86,7 +79,7 @@ mvn {quarkus_platform}:quarkus-maven-plugin:{quarkus_version}:create \
 cd serverless-workflow-hello-world
 ----
 
-In the previous command, `org.kie.kogito.examples`, `serverless-workflow-hello-world`, and `1.0` is group ID, artifact ID, and version of your project respectively.  `-DnoCode` prevents the generation of workflow example code.
+In the previous command, `org.kie.kogito.examples`, `serverless-workflow-hello-world`, and `1.0` is group ID, artifact ID, and version of your project respectively. `-DnoCode` prevents the generation of workflow example code.
 --
 Knative CLI::
 +
@@ -97,7 +90,7 @@ Knative CLI::
 kn workflow create --name my-project --extension quarkus-jsonp,quarkus-smallrye-openapi
 ----
 
-For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[Serverless Workflow plug-in for Knative CLI].
+For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
 --
 ====
 
@@ -131,7 +124,7 @@ Knative CLI::
 ----
 kn workflow build --image my-user/my-project:1.0.0 --image-repository other-user --image-tag 1.0.1
 ----
-For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[Serverless Workflow plug-in for Knative CLI].
+For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
 --
 ====
 
@@ -176,7 +169,7 @@ After bootstrapping a project, you need to create a workflow. In the following p
 ----
 In the previous example:
 
-<1> `id` field is the unique identifier of the workflow. Kogito generates the REST endpoints based on this unique identifier.
+<1> `id` field is the unique identifier of the workflow. {product_name} generates the REST endpoints based on this unique identifier.
 
 <2> `states` defines the states of the workflow. In the Hello World example, the workflow contains two states, such as `Inject Hello World` and `Inject Mantra`.
 
@@ -245,7 +238,7 @@ Knative CLI::
 ----
 kn workflow deploy
 ----
-For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[Serverless Workflow plug-in for Knative CLI].
+For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
 --
 ====
 +
@@ -333,7 +326,7 @@ curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_worl
 {"id":"efb59bfa-ad9c-4062-a6d2-2d9184dd4b3d","workflowdata":{"greeting":"Hello World","mantra":"Serverless Workflow is amazing!"}}
 ----
 
-Note that the `mantra` value is updated without restarting the application, because Kogito leverages the Quarkus live coding feature.
+Note that the `mantra` value is updated without restarting the application, because {product_name} leverages the Quarkus live coding feature.
 --
 
 . To stop the application, press `CTRL+C`.
@@ -342,11 +335,11 @@ Note that the `mantra` value is updated without restarting the application, beca
 == Testing your workflow application
 
 To test your workflow application, you can follow the instructions in the
-xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Testing your Serverless Workflow application using REST Assured].
+xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Testing your workflow application using REST Assured].
 
 == Additional resources
 
-* xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with Serverless Workflow tooling]
+* xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {context} tooling]
 * xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services]
 
 include::../../pages/_common-content/report-issue.adoc[]

@@ -13,7 +13,7 @@
 
 This document describes how you can configure a workflow to interact with link:{kafka_doc_url}[Apache Kafka]. Apache Kafka uses an abstraction called topic to classify events. Events are published to a topic, and events are consumed from a topic. 
 
-Kogito uses link:{smallrye_connector_doc_url}[Smallrye connectors] to encapsulate access to several brokers, enabling Kogito to support different brokers by changing the configuration and classpath dependencies. However, Smallrye connectors also introduce an entity called channel. The Smallrye channels are unidirectional and need to be declared as input (`incoming`) or output (`outgoing`). When using Apache Kafka, the Smallrye channels must be mapped to Apache Kafka topics through configuration.
+{product_name} uses link:{smallrye_connector_doc_url}[Smallrye connectors] to encapsulate access to several brokers, enabling {product_name} to support different brokers by changing the configuration and classpath dependencies. However, Smallrye connectors also introduce an entity called channel. The Smallrye channels are unidirectional and need to be declared as input (`incoming`) or output (`outgoing`). When using Apache Kafka, the Smallrye channels must be mapped to Apache Kafka topics through configuration.
 
 You need to add the Kafka Quarkus Smallrye connector dependency to indicate that you are using Apache Kafka. To enable a workflow to use Apache Kafka Smallrye connector, add the following dependency to the `pom.xml` file of your project if using Apache Maven:
 
@@ -26,32 +26,20 @@ You need to add the Kafka Quarkus Smallrye connector dependency to indicate that
 </dependency>
 ----
 
-The messaging capabilities are included in the Quarkus Serverless Workflow extension, even though the messaging capabilities are optional. This means you do not need to explicitly add the messaging add-on dependency when using 
-ifeval::["{context}" == ""]
-Serverless Workflow.
-endif::[]
-ifeval::["{context}" != ""]
-OpenShift Serverless Logic.
-endif::[]
+The messaging capabilities are included in the Quarkus Serverless Workflow extension, even though the messaging capabilities are optional. This means you do not need to explicitly add the messaging add-on dependency when using {context}.
 
 [[con-sw-smallrye-channel-configuration]]
 == Smallrye channels configuration for a workflow
 
 You can configure Smallrye channels for a workflow using event definitions. The Smallrye channels are defined using link:{quarkus_config_url}[Quarkus configuration]. The format for Smallrye channel properties is `mp.messaging.[incoming|outgoing].<channel name>.<property_name>`. 
 
-ifeval::["{context}" == ""]
-Serverless Workflow
-endif::[]
-ifeval::["{context}" != ""]
-OpenShift Serverless Logic
-endif::[]
-allows the following channel mapping strategies:
+{context} allows the following channel mapping strategies:
 
 * Define one default incoming channel to receive all the incoming messages and one default outgoing channel to store all the published messages.
 * Define a channel for each link:{cloud_events_url}[CloudEvent] type so that every message type has a dedicated channel.
 * Define a channel for certain CloudEvent types. The non-mapped CloudEvent types uses the default incoming or outgoing channel.
 
-Kogito first searches for a channel name in the properties that is same as CloudEvent type. If the channel name is found, Kogito uses the channel for that CloudEvent type. However, if the channel name is not found, Kogito searches for the default channel definition. In case the default channel definition is not existing, then an error is reported. 
+{product_name} first searches for a channel name in the properties that is same as CloudEvent type. If the channel name is found, {product_name} uses the channel for that CloudEvent type. However, if the channel name is not found, {product_name} searches for the default channel definition. In case the default channel definition is not existing, then an error is reported. 
 
 The default incoming channel is `kogito_incoming_stream` and the default outgoing channel is `kogito_outgoing_stream`.
 
@@ -124,8 +112,8 @@ mp.messaging.outgoing.kogito_outgoing_stream.value.serializer=org.apache.kafka.c
 == Additional resources
 
 * xref:eventing/consume-produce-events-with-knative-eventing.adoc[Consuming and producing events on Knative Eventing]
-* xref:eventing/event-correlation-with-workflows.adoc[Event correlation in Serverless Workflow]
-* xref:eventing/working-with-callbacks.adoc[Callback state in Serverless Workflow]
+* xref:eventing/event-correlation-with-workflows.adoc[Event correlation in {context}]
+* xref:eventing/working-with-callbacks.adoc[Callback state in {context}]
 
 include::../../pages/_common-content/report-issue.adoc[]
 

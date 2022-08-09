@@ -1,4 +1,4 @@
-= Deploying your Serverless Workflow application on Minikube
+= Deploying your {context} application on Minikube
 
 :compat-mode!:
 // Metadata:
@@ -20,7 +20,7 @@ For more information about Minikube and related system requirements, see link:{m
 .Prerequisites
 * Your workflow application is ready to use.
 +
-For more information about building the application container, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building Serverless Workflow images using Quarkus CLI].
+For more information about building the application container, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building workflow images using Quarkus CLI].
 
 * Minikube is installed.
 * `kubectl` command-line tool is installed. Otherwise, Minikube handles it.
@@ -228,7 +228,7 @@ kubectl config view --minify -o jsonpath='{..namespace}'
 . Install your workflow application using the container image.
 +
 --
-You can use the native image due to the faster startup. For more information about installing the workflow application, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building Serverless Workflow images using Quarkus CLI] document.
+You can use the native image due to the faster startup. For more information about installing the workflow application, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building workflow images using Quarkus CLI] document.
 --
 
 In the following procedures, you can find two examples of deploying your workflow application, including:
@@ -464,7 +464,6 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 
 You can use the link:{quarkus_cli_url}[Quarkus CLI] to abstract all of the complexities mentioned in the previous sections and deploy your workflow application once the build completes. 
 
-
 .Prerequisites
 * Workflow application is installed.
 * Quarkus CLI is installed. For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
@@ -481,9 +480,9 @@ quarkus.kubernetes.deploy=true <2>
 quarkus.container-image.push=false <3>
 ----
 
-<1> - Property for the Knative resource name
-<2> - Property to set whether or not deploy on an active Kubernetes cluster
-<3> - Property to whether or not push images when using Minikube's remove Docker daemon to avoid image validation
+<1> Property for the Knative resource name
+<2> Property to set whether or not deploy on an active Kubernetes cluster
+<3> Property to whether or not push images when using Minikube's remove Docker daemon to avoid image validation
 
 [IMPORTANT]
 ====
