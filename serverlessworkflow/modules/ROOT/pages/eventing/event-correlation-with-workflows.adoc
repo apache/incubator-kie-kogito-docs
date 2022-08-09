@@ -18,9 +18,11 @@ You can optionally set a `contextAttributeValue` property that should match the 
 The incoming events consumed by the workflow engine should contain the correlation attributes, set in the definition, as extension context attributes, in compliance with the link:{cloud_events_url}[Cloud Event] format, thus they are not part of the event payload.
 ====
 
-When starting a new workflow instance, the correlation attributes set in the event definition are extracted from the event and associated with the workflow instance which is being created. Thus, the start event does not trigger a correlation evaluation, instead, it is where correlation attributes and values are set, which are used to evaluate against other incoming events that might trigger this instance.
+A new workflow instance should be created through an event, which should be declared in the workflow definition file, containing correlation attributes in the event definition section, more details about events on xref:eventing/handling-events-on-workflows.adoc[Event state in Serverless Workflow]. Once the event is consumed, the engine extracts the correlation attributes and associates them with the workflow instance that is being created.
 
-Once an event is consumed and the correlation rules are evaluated, if any workflow instance matches them, the engine continues the execution of that matched instance.
+A start event does not trigger a correlation evaluation, instead, it is the moment when correlation attributes and values are set, which are used to be evaluated against other incoming events that might trigger this given instance.
+
+Therefore, when a non start event is consumed and the correlation rules are evaluated, if any workflow instance matches them, the engine continues the execution of that matched instance.
 
 The following flowchart diagram shows how the correlation is processed by the workflow engine.
 
