@@ -1,15 +1,15 @@
-= Creating your first Serverless Workflow service
+= Creating your first workflow service
 
-As a developer, you can use Serverless Workflow and create a `Hello World` application, which includes the following procedures:
+As a developer, you can use {context} and create a `Hello World` application, which includes the following procedures:
 
 * <<proc-boostrapping-the-project,Bootstrapping a project>>
-* <<creating-workflow,Creating a workflow>>
-* <<running-application,Running your Serverless Workflow application>>
-* <<testing-application,Testing your Serverless Workflow application>>
+* <<proc-creating-workflow,Creating a workflow>>
+* <<proc-running-application,Running your workflow application>>
+* <<proc-testing-application,Testing your workflow application>>
 
 Also, you can directly access an example application by cloning `serverless-workflow-examples/serverless-workflow-hello-world` from the https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-hello-world[GitHub repository].
 
-This guide describes how to create a Serverless Workflow application that serves a `hello_world` endpoint. The workflow contains the following two states:
+This document describes how to create a workflow application that serves a `hello_world` endpoint. The workflow contains the following two states:
 
 * `Inject Hello World`: Injects a `Hello World` message into the response
 * `Inject Mantra`: Injects a `Mantra` message into the response
@@ -19,12 +19,12 @@ image::getting-started/hello-world-workflow.png[]
 
 .Prerequisites
 * Java {java_min_version} is installed with `JAVA_HOME` configured appropriately.
-* Maven {maven_min_version}
-* {quarkus_cli_url}[Quarkus CLI] {quarkus_version} or xref:tooling/kn-plugin-workflow-overview.adoc[Knative CLI] {kn-cli-version}
+* Apache Maven {maven_min_version} is installed.
+* {quarkus_cli_url}[Quarkus CLI] {quarkus_version} or xref:tooling/kn-plugin-workflow-overview.adoc[Knative CLI] {kn-cli-version} is installed.
 * Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.java[Red Hat Java Extension]
 and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
 
-For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Tooling in Serverless Workflow].
+For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {context} tooling].
 
 ifeval::["{quarkus_cli_platform_redhat}" != ""]
 include::../../pages/_common-content/productized-instructions.adoc[]
@@ -33,7 +33,7 @@ endif::[]
 [[proc-boostrapping-the-project]]
 == Bootstrapping a project
 
-To create your Serverless Workflow service, first you need to bootstrap a project.
+To create your workflow service, first you need to bootstrap a project.
 
 .Procedure
 . In a command terminal, use one of the following commands to create a project:
@@ -55,20 +55,20 @@ quarkus create app \
     org.kie.kogito.examples:serverless-workflow-hello-world:1.0
 ----
 
-The previous command creates a Maven Quarkus project in the `serverless-workflow-hello-world` directory containing the required Kogito dependencies, including:
+The previous command creates a Maven Quarkus project in the `serverless-workflow-hello-world` directory containing the required dependencies, including:
 
-* `{kogito_sw_gav}`: Adds support for Serverless Workflow
-* `quarkus-container-image-jib`: Adds support for Container Image Builds
-* `quarkus-resteasy-jackson`: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request
-* `quarkus-smallrye-openapi`: Adds support for Swagger documentation when you run the application in development mode
-* `--no-code`: Prevents workflow example code from being generated
+* `{kogito_sw_gav}`: Adds support for workflows.
+* `quarkus-container-image-jib`: Adds support for Container Image Builds.
+* `quarkus-resteasy-jackson`: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request.
+* `quarkus-smallrye-openapi`: Adds support for Swagger documentation when you run the application in development mode.
+* `--no-code`: Prevents workflow example code from being generated.
 
 The SwaggerUI is available at `http://localhost:8080/q/swagger-ui/` when you run the application.
 --
-Maven::
+Apache Maven::
 +
 --
-.Create a project using Maven
+.Create a project using Apache Maven
 [source,shell,subs="attributes"]
 ----
 mvn {quarkus_platform}:quarkus-maven-plugin:{quarkus_version}:create \
@@ -79,7 +79,7 @@ mvn {quarkus_platform}:quarkus-maven-plugin:{quarkus_version}:create \
 cd serverless-workflow-hello-world
 ----
 
-In the previous command, `org.kie.kogito.examples`, `serverless-workflow-hello-world`, and `1.0` is group id, artifact id, and version of your project respectively.  `-DnoCode` prevents the generation of workflow example code.
+In the previous command, `org.kie.kogito.examples`, `serverless-workflow-hello-world`, and `1.0` is group ID, artifact ID, and version of your project respectively. `-DnoCode` prevents the generation of workflow example code.
 --
 Knative CLI::
 +
@@ -90,7 +90,7 @@ Knative CLI::
 kn workflow create --name my-project --extension quarkus-jsonp,quarkus-smallrye-openapi
 ----
 
-For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[Serverless Workflow plugin for Knative CLI].
+For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
 --
 ====
 
@@ -107,10 +107,10 @@ Quarkus CLI::
 quarkus build
 ----
 --
-Maven::
+Apache Maven::
 +
 --
-.Compile your project using Maven
+.Compile your project using Apache Maven
 [source,shell]
 ----
 mvn clean package
@@ -124,14 +124,14 @@ Knative CLI::
 ----
 kn workflow build --image my-user/my-project:1.0.0 --image-repository other-user --image-tag 1.0.1
 ----
-For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[Serverless Workflow plugin for Knative CLI].
+For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
 --
 ====
 
-[[creating-workflow]]
+[[proc-creating-workflow]]
 == Creating a workflow
 
-After bootstrapping a project, you need to create a workflow. In the following procedure, a workflow named Hello World Workflow is created.
+After bootstrapping a project, you need to create a workflow. In the following procedure, a workflow named *Hello World Workflow* is created.
 
 .Procedure
 . Create a file named `hello.sw.json` in the `src/main/resources` directory with the following content:
@@ -169,8 +169,7 @@ After bootstrapping a project, you need to create a workflow. In the following p
 ----
 In the previous example:
 
-<1> `id` field is the unique identifier of the workflow. Kogito generates the REST endpoints based on this
-unique identifier.
+<1> `id` field is the unique identifier of the workflow. {product_name} generates the REST endpoints based on this unique identifier.
 
 <2> `states` defines the states of the workflow. In the Hello World example, the workflow contains two states, such as `Inject Hello World` and `Inject Mantra`.
 
@@ -180,7 +179,7 @@ unique identifier.
 
 <5> `data` defines the data that is injected into the state. In the previous example, `greeting` is injected with the `Hello World` value.
 
-<6> `transition` field defines the next state that will be reached after the current state is completed.
+<6> `transition` field defines the next state that is reached after the current state is completed.
 
 <7> Injects a `mantra` with the value `Serverless Workflow is awesome!` into the workflow data.
 
@@ -198,17 +197,17 @@ unique identifier.
 [NOTE]
 ====
 The workflow definition follows the CNCF Serverless Workflow specification. For more information, see
-xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow Specification Support].
+xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow specification].
 ====
 --
 
-[[running-application]]
-== Running your Serverless Workflow application
+[[proc-running-application]]
+== Running your workflow application
 
-After creating a workflow, you can run your Serverless Workflow application.
+After creating a workflow, you can run your workflow application.
 
 .Procedure
-. Enter the following command to run your Serverless Workflow application:
+. Enter the following command to run your workflow application:
 +
 
 [tabs]
@@ -216,16 +215,16 @@ After creating a workflow, you can run your Serverless Workflow application.
 Quarkus CLI::
 +
 --
-.Run your Serverless Workflow application using Quarkus CLI
+.Run your workflow application using Quarkus CLI
 [source,shell]
 ----
 quarkus dev
 ----
 --
-Maven::
+Apache Maven::
 +
 --
-.Run your Serverless Workflow application using Maven
+.Run your workflow application using Apache Maven
 [source,shell]
 ----
 mvn clean quarkus:dev
@@ -239,7 +238,7 @@ Knative CLI::
 ----
 kn workflow deploy
 ----
-For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[Serverless Workflow plugin for Knative CLI].
+For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
 --
 ====
 +
@@ -282,7 +281,7 @@ __  ____  __  _____   ___  __ ____  ______
 2022-05-25 14:38:13,380 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,182 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, inmemory-postgres, jdbc-postgresql, narayana-jta, oidc, reactive-routes, rest-client-reactive, rest-client-reactive-jackson, security, smallrye-context-propagation, smallrye-graphql-client, smallrye-health, smallrye-metrics, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx, vertx-graphql]
 ----
 
-. Once your Serverless Workflow application is started, you can send a request for the provided endpoint:
+. Once your workflow application is started, you can send a request for the provided endpoint:
 +
 --
 .Example request
@@ -327,20 +326,20 @@ curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_worl
 {"id":"efb59bfa-ad9c-4062-a6d2-2d9184dd4b3d","workflowdata":{"greeting":"Hello World","mantra":"Serverless Workflow is amazing!"}}
 ----
 
-Note that the `mantra` value is updated without restarting the application, because Kogito leverages the Quarkus live coding feature.
+Note that the `mantra` value is updated without restarting the application, because {product_name} leverages the Quarkus live coding feature.
 --
 
 . To stop the application, press `CTRL+C`.
 
-[[testing-application]]
-== Testing your Serverless Workflow application
+[[proc-testing-application]]
+== Testing your workflow application
 
-To test your Serverless Workflow application, you can follow the instructions in the
-xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Basic Integration Test with RestAssured] guide.
+To test your workflow application, you can follow the instructions in the
+xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Testing your workflow application using REST Assured].
 
 == Additional resources
 
-* xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting Familiar With Our Tooling].
-* xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestration of OpenAPI Based Services].
+* xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {context} tooling]
+* xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services]
 
 include::../../pages/_common-content/report-issue.adoc[]
