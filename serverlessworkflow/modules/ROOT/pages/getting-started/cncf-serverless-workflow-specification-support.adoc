@@ -1,6 +1,4 @@
-CNCF Serverless Workflow specification
-======================================
-06-08-2022
+= CNCF Serverless Workflow specification
 :compat-mode!:
 // Metadata:
 :description: CNCF Serverless Workflow Specification Support
@@ -8,15 +6,13 @@ CNCF Serverless Workflow specification
 // links
 :quarkus_config_guide_url: https://quarkus.io/guides/config-reference
 
-This document describes the information about Kogito implementation of the link:{spec_website_url}[Cloud Native Computing Foundation (CNCF) Serverless Workflow] specification.
-
-Kogito implements version link:{spec_doc_url}[{spec_version}] of the Serverless Workflow specification.
+This document describes the information about the implementation of the link:{spec_website_url}[Cloud Native Computing Foundation (CNCF) Serverless Workflow] specification. {product_name} implements version link:{spec_doc_url}[{spec_version}] of the Serverless Workflow specification.
 
 The following table shows the implementation status for each Serverless Workflow specification feature.
 
 [NOTE]
 ====
-Kogito does not support link:{spec_doc_url}#Retry-Definition[Retries], link:{spec_doc_url}#sleep-state[Sleep State], and link:{spec_doc_url}#workflow-timeouts[Timeouts] features of Serverless Workflow specification.
+{product_name} does not support link:{spec_doc_url}#Retry-Definition[Retries], link:{spec_doc_url}#sleep-state[Sleep State], and link:{spec_doc_url}#workflow-timeouts[Timeouts] features of Serverless Workflow specification.
 ====
 
 .Implementation status icons
@@ -92,10 +88,10 @@ The link:{spec_doc_url}#parallel-state[Parallel State] of the workflow states fe
 
 [NOTE]
 ====
-Kogito does not support the link:{spec_doc_url}#sleep-state[Sleep State] feature. However, this feature will be supported in a future release.
+{product_name} does not support the link:{spec_doc_url}#sleep-state[Sleep State] feature. However, this feature will be supported in a future release.
 ====
 
-The following table shows all the workflow states that Kogito supports in the Serverless Workflow specification {spec_version} version:
+The following table shows all the workflow states that {product_name} supports in the Serverless Workflow specification {spec_version} version:
 
 .Workflow States implementation status
 [cols="35%,30%,35%", options="header"]
@@ -138,7 +134,7 @@ The following table shows all the workflow states that Kogito supports in the Se
 [[functions]]
 == Functions
 
-The following table shows the status of the workflow functions that Kogito supports:
+The following table shows the status of the workflow functions that {product_name} supports:
 
 .Workflow Functions implementation status
 [cols="35%,30%,35%", options="header"]
@@ -174,29 +170,29 @@ The following table shows the status of the workflow functions that Kogito suppo
 | link:{spec_doc_url}#defining-custom-function-types[Defining custom function types]
 |===
 
-For additional functions, the Serverless Workflow specification support the `custom` function type, such as `sysout` and `java`. For more information about these custom function types, see xref:core/custom-functions-support.adoc[Custom functions for your Serverless Workflow service].
+For additional functions, the Serverless Workflow specification support the `custom` function type, such as `sysout` and `java`. For more information about these custom function types, see xref:core/custom-functions-support.adoc[Custom functions for your {context} service].
 
 [[events]]
 == Events
 
-Kogito supports events of the workflow model as defined in the link:{spec_doc_url}#Event-Definition[Serverless Workflow specification definition], except the following:
+{product_name} supports events of the workflow model as defined in the link:{spec_doc_url}#Event-Definition[Serverless Workflow specification definition], except the following:
 
 * `resultEventRef` property in link:{spec_doc_url}#eventref-definition[`EventRefDefinition`] is not implemented and, if specified, this property is ignored. Same functionality can be achieved by using xref:eventing/working-with-callbacks.adoc[Callback] state.
-* link:{spec_doc_url}#correlation-definition[Correlation] has limited support. see xref:eventing/event-correlation-with-workflows.adoc[Event correlation with Serverless Workflows].
+* link:{spec_doc_url}#correlation-definition[Correlation] has limited support, that evaluates correlation rules matching a single event consumed per time with a workflow instance. The correlation among `N` different events to be consumed and matched with a workflow instance is not supported in {product_name}. For more information about event correlation, see xref:eventing/event-correlation-with-workflows.adoc[Event correlation in {context}].
 
 [[workflow_data]]
 == Serverless Workflow data
 
-Kogito supports the implementation of the data manipulation feature using `jq` (default) or `jsonpath` expressions.
+{product_name} supports the implementation of the data manipulation feature using `jq` (default) or `jsonpath` expressions.
 
 `jsonpath` expressions can have limitations in specific scenarios of complex data manipulation. For more information, see link:{spec_doc_url}#workflow-data[Workflow Data] section in the Serverless Workflow specification documentation.
 
-Kogito also supports data filtering. For more information about the data filtering, see link:{spec_doc_url}#state-data-filters[State data filters] section in the Serverless Workflow specification documentation.
+{product_name} also supports data filtering. For more information about the data filtering, see link:{spec_doc_url}#state-data-filters[State data filters] section in the Serverless Workflow specification documentation.
 
 [[expressions]]
 == Expressions
 
-Kogito supports `jq` or `jsonpath` to define the Serverless Workflow expressions. `jq` is the default expression language, however, if you want to use `jsonpath`, set the `expressionLang` attribute in the workflow definition as shown in the following example:
+{product_name} supports `jq` or `jsonpath` to define the workflow expressions. `jq` is the default expression language, however, if you want to use `jsonpath`, set the `expressionLang` attribute in the workflow definition as shown in the following example:
 
 .Example of changing the default expression language
 [source,json]
@@ -219,49 +215,50 @@ Kogito supports `jq` or `jsonpath` to define the Serverless Workflow expressions
 [[error_handling]]
 == Error handling
 
-Kogito supports the error handling feature as described in the link:{spec_doc_url}#workflow-error-handling[Serverless Workflow specification definition].
+{product_name} supports the error handling feature as described in the link:{spec_doc_url}#workflow-error-handling[Serverless Workflow specification definition].
 
-For more information about error handling, see xref:core/understanding-workflow-error-handling.adoc[Serverless Workflow Error Handling].
+For more information about error handling, see xref:core/understanding-workflow-error-handling.adoc[Error handling in {context}].
 
 [[retries]]
 == Retries
 
-Kogito does not support Retries feature, however, it will be implemented in a future release.
+{product_name} does not support Retries feature, however, it will be implemented in a future release.
 
-Alternatively, you can use xref:core/understanding-workflow-error-handling.adoc[Serverless Workflow Error Handling].
+Alternatively, you can use xref:core/understanding-workflow-error-handling.adoc[Error handling in {context}].
 
 [[timeouts]]
 == Timeouts
 
-Kogito does not support Timeouts feature, however, it will be implemented in a future release.
+{product_name} does not support Timeouts feature, however, it will be implemented in a future release.
 
 [[compensation]]
 == Compensation
 
-Kogito supports workflow compensation as described in the link:{spec_doc_url}#Workflow-Compensation[Serverless Workflow specification definition].
+{product_name} supports workflow compensation as described in the link:{spec_doc_url}#Workflow-Compensation[Serverless Workflow specification definition].
 
-For more information about compensations, see xref:use-cases/orchestration-based-saga-pattern.adoc[Orchestration-based SAGA pattern].
+For more information about compensations, see xref:use-cases/orchestration-based-saga-pattern.adoc[Saga orchestration example in {context}].
 
 [[constants]]
 == Constants
 
-Kogito supports workflow constants as described in the link:{spec_doc_url}#workflow-constants[Serverless Workflow specification definition].
+{product_name} supports workflow constants as described in the link:{spec_doc_url}#workflow-constants[Serverless Workflow specification definition].
 
 [[secrets]]
 == Secrets
 
-Kogito supports workflow secrets as described in the link:{spec_doc_url}#workflow-secrets[Serverless Workflow specification definition].
+{product_name} supports workflow secrets as described in the link:{spec_doc_url}#workflow-secrets[Serverless Workflow specification definition].
 
 [IMPORTANT]
 ====
-Secrets are associated with the link:{quarkus_config_guide_url}[Quarkus Configuration] module. This means that any form of configuration that Quarkus supports is also supported in Kogito.
+Secrets are associated with the link:{quarkus_config_guide_url}[Quarkus Configuration] module. This means that any form of configuration that Quarkus supports is also supported in {product_name}.
 ====
 
-For more information, see xref:core/accessing-workflow-metainformation-in-runtime.adoc[Accessing Serverless Workflow Metainformation].
+//Guide not available currently (DP1)
+//For more information, see xref:core/accessing-workflow-metainformation-in-runtime.adoc[Accessing Serverless Workflow Metainformation].
 
 == Additional resources
 
-* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
-* xref:getting-started/getting-familiar-with-our-tooling.adoc[Using Serverless Workflow tooling].
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
+* xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {context} tooling]
 
 include::../../pages/_common-content/report-issue.adoc[]

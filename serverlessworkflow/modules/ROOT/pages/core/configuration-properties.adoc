@@ -1,0 +1,153 @@
+= Configuration properties in {context}
+
+:compat-mode!:
+// Metadata:
+:description: Configuration Properties
+:keywords: kogito, workflow, serverless, configuration, properties
+
+The following table serves as a quick reference for commonly used configuration properties supported in {context}. You can define the following properties in the `src/main/resources/application.properties` file of your project. 
+
+.Common configuration properties
+[cols="20%,30%,20%,15%,15%", options="header"]
+|===
+|Property|Description|Type|Default value|Override at runtime
+
+|`kogito.persistence.type`
+a|Defines the type of persistence database. The possible values of this property include:
+
+* `jdbc`
+* `mongodb`
+* `filesystem`
+* `kafka`
+* `infinispan`
+* `postgresql`
+|string
+|
+|Yes
+
+|`kogito.persistence.query.timeout.millis`
+|Defines timeout for a query execution.
+|long
+|`10000`
+|Yes
+
+|`kogito.persistence.optimistic.lock`
+|Enables or disables the optimistic locking.
+|boolean
+|`false`
+|Yes
+
+|`kogito.persistence.auto.ddl`
+|Applies the database schema changes automatically.
+|boolean
+|`true`
+|Yes
+
+|`kogito.workflow.version-strategy`
+a| Defines strategy to resolve a process version to use. The possible values of this property include:
+
+* `workflow`
+* `project`
+|string
+|`workflow`
+|No
+
+|`kogito.service.url`
+|Defines the service URL needed to connect to the runtime endpoint from outside the service.
+|string
+|
+|Yes
+
+|`kogito.messaging.as-cloudevents`
+|Enables a service to use CloudEvents.
+|boolean
+|`true`
+|No
+
+|`kogito.addon.messaging.incoming.defaultName`
+|Defines the default name of the incoming channel.
+|string
+|`kogito_incoming_stream`
+|No
+
+|`kogito.addon.messaging.outgoing.defaultName`
+|Defines the default name of the outgoing channel. 
+|string
+|`kogito_outgoing_stream`
+|No
+
+|`kogito.jackson.fail-on-empty-bean`
+|If this property is set as `true`, Jackson fails on an empty bean.
+|boolean
+|`false`
+|No
+
+|`kogito.sw.operationIdStrategy`
+a|Defines strategy to generate the configuration key of open API specifications. The possible values of this property include:
+
+* `file_name`
+* `full_uri`
+* `spec_title`
+* `function_name`
+|string
+|`file_name`
+|No
+
+|`kogito.sw.states.foreach.outputVarName`
+|Defines the variable name for `foreach` loop.
+|string
+|`_swf_eval_temp`
+|No
+
+|`kogito.quarkus.events.threads.poolSize`
+|Defines the `ThreadPoolExecutor` maximum number of threads to allow in the pool.
+|int
+|`10`
+|Yes
+
+|`kogito.quarkus.events.threads.queueSize`
+|Defines the `ThreadPoolExecutor` queue size to use for holding tasks before the tasks are executed.
+|int
+|`1`
+|Yes
+
+|`quarkus.kogito.logger.always-include`
+|Enables you to include the workflow debug logger everytime. By default, this property is included in development and test mode.
+|boolean
+|`false`
+|No
+
+|`quarkus.kogito.devservices.enabled`
+|Enables or disables the Dev Services for Kogito. By default, the Dev Services are enabled, unless an existing configuration is present.
+|boolean
+|`true`
+|No
+
+|`quarkus.kogito.devservices.port`
+|Defines the optional fixed port that the Dev Services listen to.
+|int
+|`8180`
+|No
+
+|`quarkus.kogito.devservices.image-name`
+|Defines the Data Index image to use.
+|string
+|`quay.io/kiegroup/kogito-data-index-ephemeral:{page-component-version}`
+|No
+
+|`quarkus.kogito.devservices.shared`
+|Indicates if the Data Index instance, which is managed by Quarkus Dev Services, is shared.
+|boolean
+|`true`
+|No
+
+|`quarkus.kogito.devservices.service-name`
+|Defines the value of the label that is attached to the started container. This property is used when `shared` is set to `true`.
+|string
+|`kogito-data-index`
+|No
+
+
+|===
+
+include::../../pages/_common-content/report-issue.adoc[]
