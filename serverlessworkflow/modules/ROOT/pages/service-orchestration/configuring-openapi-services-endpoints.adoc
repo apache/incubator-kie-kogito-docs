@@ -7,16 +7,16 @@
 // links:
 :quarkus-profiles-url: https://quarkus.io/guides/config-reference#profiles
 
-This document describes how you can configure OpenAPI service endpoints in Serverless Workflow.
+This document describes how you can configure OpenAPI service endpoints in {context}.
 
 [[con-config-openapi-services-endpoints]]
 == Overview 
 
-Kogito leverages MicroProfile REST Client to invoke OpenAPI services. Therefore, you can configure the OpenAPI services by following the MicroProfile Config specification. For the list of properties to configure in the MicroProfile REST Client specification, see link:https://download.eclipse.org/microprofile/microprofile-rest-client-2.0/microprofile-rest-client-spec-2.0.html#mpconfig[Support for MicroProfile Config] in MicroProfile REST Client documentation.
+{product_name} leverages MicroProfile REST Client to invoke OpenAPI services. Therefore, you can configure the OpenAPI services by following the MicroProfile Config specification. For the list of properties to configure in the MicroProfile REST Client specification, see link:https://download.eclipse.org/microprofile/microprofile-rest-client-2.0/microprofile-rest-client-spec-2.0.html#mpconfig[Support for MicroProfile Config] in MicroProfile REST Client documentation.
 
-Kogito follows the strategy defined in the `kogito.sw.operationIdStrategy` property to generate the REST Client. The possible values of the `kogito.sw.operationIdStrategy` property include:
+{product_name} follows the strategy defined in the `kogito.sw.operationIdStrategy` property to generate the REST Client. The possible values of the `kogito.sw.operationIdStrategy` property include:
 
-* `FILE_NAME`(Default value): Kogito uses the configuration key based on the OpenAPI document file name as shown in the following example:
+* `FILE_NAME`(Default value): {product_name} uses the configuration key based on the OpenAPI document file name as shown in the following example:
 +
 --
 .Example property
@@ -25,10 +25,10 @@ Kogito follows the strategy defined in the `kogito.sw.operationIdStrategy` prope
 quarkus.rest-client.stock_portfolio_svc_yaml.url=http://localhost:8282/
 ----
 
-In the previous example, Kogito uses `stock_portfolio_svc_yaml` as configuration key as the OpenAPI document is available at `src/main/resources/openapi/stock-portfolio-svc.yaml`.
+In the previous example, {product_name} uses `stock_portfolio_svc_yaml` as configuration key as the OpenAPI document is available at `src/main/resources/openapi/stock-portfolio-svc.yaml`.
 --
 
-* `FULL_URI`: Kogito uses the full URI path as configuration key as shown in the following example:
+* `FULL_URI`: {product_name} uses the full URI path as configuration key as shown in the following example:
 +
 --
 .Example Serverless Workflow
@@ -53,10 +53,10 @@ In the previous example, Kogito uses `stock_portfolio_svc_yaml` as configuration
 quarkus.rest-client.apicatalog_apis_123_document.url=http://localhost:8282/
 ----
 
-In the previous example, Kogito uses `apicatalog_apis_123_document` as configuration key.
+In the previous example, {product_name} uses `apicatalog_apis_123_document` as configuration key.
 --
 
-* `FUNCTION_NAME`: Kogito uses the workflow ID and the function name that references the OpenAPI document as shown in the following examples:
+* `FUNCTION_NAME`: {product_name} uses the workflow ID and the function name that references the OpenAPI document as shown in the following examples:
 +
 --
 .Example Serverless Workflow
@@ -80,10 +80,10 @@ In the previous example, Kogito uses `apicatalog_apis_123_document` as configura
 quarkus.rest-client.myworkflow_myfunction.url=http://localhost:8282/
 ----
 
-In the previous example, Kogito uses `"myworkflow_myfunction"` as configuration key.
+In the previous example, {product_name} uses `"myworkflow_myfunction"` as configuration key.
 --
 
-* `SPEC_TITLE`: Kogito uses the value of `info.title` in the OpenAPI document as shown in the following examples:
+* `SPEC_TITLE`: {product_name} uses the value of `info.title` in the OpenAPI document as shown in the following examples:
 +
 --
 .Example OpenAPI document
@@ -105,7 +105,7 @@ paths:
 quarkus.rest-client.stock-service_API.url=http://localhost:8282/
 ----
 
-In the previous example, Kogito uses `stock-service_API` as configuration key.
+In the previous example, {product_name} uses `stock-service_API` as configuration key.
 --
 
 [NOTE]
@@ -199,7 +199,7 @@ The `stock-profit` service contains the following workflow definition:
 <1> Defines the `stock-service` service operation
 <2> Defines the `stock-portfolio` service operation
 
-Kogito leverages Quarkus profiles to configure the Serverless Workflow application depending on the target environment.
+{product_name} leverages Quarkus profiles to configure the workflow application depending on the target environment.
 
 To set properties for different profiles, each property needs to be prefixed with a percentage (%) followed by the profile name and a period (.) in the syntax as `%<profile-name>.config.name`. By default, Quarkus provides the following profiles that activate automatically in certain conditions:
 
@@ -215,7 +215,7 @@ You can also create additional profiles and activate them using the `quarkus.pro
 You can define the URLs of the services in different environments by using profiles.
 
 .Procedure
-. Create a file named `application.properties` in the `src/main/resources` directory of the Serverless Workflow project, if the file does not exist.
+. Create a file named `application.properties` in the `src/main/resources` directory of the workflow project, if the file does not exist.
 
 . In the `application.properties` file, add the OpenAPI configuration for the default environment:
 +
@@ -250,7 +250,7 @@ The `%dev.` prefix indicates the `dev` profile configuration, which is used when
 [[proc-config-openapi-services-running-the-services]]
 === Running the services
 
-After defining the URLs of the services, you can run the services that the Serverless Workflow sends request to.
+After defining the URLs of the services, you can run the services that the workflow sends request to.
 
 .Prerequisites
 * URLs of the services in the different environments are defined.
@@ -298,20 +298,20 @@ You can access the`fake-stock-service` service at `http://localhost:8181/`.
 --
 
 [[proc-config-openapi-services-running-sw-application-in-development-mode]]
-=== Running Serverless Workflow application in development mode
+=== Running workflow application in development mode
 
-When you define `%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/`, the `fake-stock-service` service is used in the development mode and you get the same result every time you run the workflow. Using this example, you can run the Serverless Workflow application in development mode. 
+When you define `%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/`, the `fake-stock-service` service is used in the development mode and you get the same result every time you run the workflow. Using this example, you can run the workflow application in development mode. 
 
 .Prerequisites
-* Services that the Serverless Workflow application sends requests to are started.
+* Services that the workflow application sends requests to are started.
 +
 For more information, see <<proc-config-openapi-services-running-the-services, Running the services>>.
 
 .Procedure
-. In a separate command terminal window, run the Serverless Workflow application in development mode:
+. In a separate command terminal window, run the workflow application in development mode:
 +
 --
-.Run Serverless Workflow application in development mode
+.Run workflow application in development mode
 [source,shell]
 ----
 cd stock-profit
@@ -319,7 +319,7 @@ mvn quarkus:dev -Ddebug=false
 ----
 --
 
-. In a separate command terminal window, send a request to the Serverless Workflow application:
+. In a separate command terminal window, send a request to the workflow application:
 +
 --
 .Example request
@@ -342,20 +342,20 @@ Note that, in the previous example `fake-stock-service` is used, therefore, the 
 --
 
 [[proc-config-openapi-services-running-sw-application-in-production-mode]]
-=== Running Serverless Workflow application in production mode
+=== Running workflow application in production mode
 
-When you define `quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/`, the `real-stock-service` service is used in the normal or production mode and you get different results every time you run the workflow. Using this example, you can run the Serverless Workflow application in normal or production mode.
+When you define `quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/`, the `real-stock-service` service is used in the normal or production mode and you get different results every time you run the workflow. Using this example, you can run the workflow application in normal or production mode.
 
 .Prerequisites
-* Services that the Serverless Workflow application sends requests to are started.
+* Services that the workflow application sends requests to are started.
 +
 For more information, see <<proc-config-openapi-services-running-the-services, Running the services>>.
 
 .Procedure
-. In a separate command terminal window, package the Serverless Workflow application to be run as fat JAR:
+. In a separate command terminal window, package the workflow application to be run as fat JAR:
 +
 --
-.Package Serverless Workflow application
+.Package workflow application
 [source,shell]
 ----
 cd stock-profit
@@ -363,17 +363,17 @@ mvn package
 ----
 --
 
-. In a separate command terminal window, run the Serverless Workflow application in normal or production mode:
+. In a separate command terminal window, run the workflow application in normal or production mode:
 +
 --
-.Run Serverless Workflow application in normal or production mode
+.Run workflow application in normal or production mode
 [source,shell]
 ----
 java -jar target/quarkus-app/quarkus-run.jar
 ----
 --
 
-. In a separate command terminal window, send a request to the Serverless Workflow application:
+. In a separate command terminal window, send a request to the workflow application:
 +
 --
 .Example request
@@ -401,15 +401,15 @@ Note that, in the previous example, the `real-stock-service` is used, therefore,
 You can define the URLs of the services in different environments using profiles and environment variables.
 
 .Prerequisites
-* Services that the Serverless Workflow application sends requests to are started.
+* Services that the workflow application sends requests to are started.
 +
 For more information, see <<proc-config-openapi-services-running-the-services, Running the services>>.
 
 .Procedure
-. In a separate command terminal window, run the Serverless Workflow application in development mode, overwriting the property defined in the `application.properties` file using an environment variable:
+. In a separate command terminal window, run the workflow application in development mode, overwriting the property defined in the `application.properties` file using an environment variable:
 +
 --
-.Run the Serverless Workflow application in development mode
+.Run the workflow application in development mode
 [source,shell]
 ----
 cd stock-profit
@@ -420,7 +420,7 @@ mvn quarkus:dev -Ddebug=false
 <1> Overwrite the `%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/` defined in the `application.properties` file using an environment variable, which is pointing to `real-stock-service`.
 --
 
-. In a separate command terminal window, send a request to the Serverless Workflow application:
+. In a separate command terminal window, send a request to the workflow application:
 +
 --
 .Example request
