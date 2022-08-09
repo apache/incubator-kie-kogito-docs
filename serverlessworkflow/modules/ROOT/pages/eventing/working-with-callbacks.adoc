@@ -1,4 +1,4 @@
-= Callback state in Serverless Workflow
+= Callback state in {context}
 
 :compat-mode!:
 // Metadata:
@@ -7,11 +7,11 @@
 
 This document describes the link:{spec_doc_url}#Callback-State[Callback state] and related examples. The Callback state performs an action and waits for an event, to be produced as a result of the action, to resume the workflow. The action peformed by a Callback state is an asynchronous external service invocation. Therefore, the Callback state is suitable to perform  _fire&wait-for-result_ operations.
 
-From a Serverless Workflow perspective, asynchronous service indicates that the control is returned to the caller immediately without waiting for the action to be completed. Once the action is completed, a link:{cloud_events_url}[CloudEvent] is published to resume the Serverless Workflow.
+From a workflow perspective, asynchronous service indicates that the control is returned to the caller immediately without waiting for the action to be completed. Once the action is completed, a link:{cloud_events_url}[CloudEvent] is published to resume the workflow.
 
-For the Serverless Workflow to identify the published CloudEvent it is waiting for, the external service developer includes the process instance ID in the CloudEvent header or uses the xref:eventing/event-correlation-with-workflows.adoc[Serverless Workflow correlation mechanism]. 
+For the workflow to identify the published CloudEvent it is waiting for, the external service developer includes the workflow instance ID in the CloudEvent header or uses the xref:eventing/event-correlation-with-workflows.adoc[Event correlation]. 
 
-The Serverless Workflow correlation described in this document focuses on the former mechanism that is based on the fact that each Serverless Workflow instance contains a unique identifier, which is generated automatically.
+The workflow correlation described in this document focuses on the former mechanism that is based on the fact that each workflow instance contains a unique identifier, which is generated automatically.
 
 [[ref-example-callback]]
 == Example of Callback state
@@ -22,7 +22,7 @@ The initial model of the `serverless-workflow-callback-quarkus` example applicat
 
 A listener consumes the CloudEvent with the `resume` type and simulates the behavior of an external service. Consequently, on the external service side, when the actions associated with the `resume` type CloudEvent are completed, the listener publishes a `wait` type CloudEvent. Once the `wait` type CloudEvent is received, the workflow moves to the next state and ends successfully.
 
-To use the Callback state in a Serverless Workflow, first CloudEvent types such as `resume` and `wait` are declared that the Serverless Workflow uses. Following is an example of CloudEvents declaration in a workflow definition:
+To use the Callback state in a workflow, first CloudEvent types such as `resume` and `wait` are declared that the workflow uses. Following is an example of CloudEvents declaration in a workflow definition:
 
 .Example of CloudEvents declaration in a workflow definition
 [code,json]
@@ -93,13 +93,13 @@ An link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/j
     }
 ----
 
-After that, the Serverless Workflow application consumes the event published by the listener and sets the result field. The consumed CloudEvent contains an attribute named `kogitoprocrefid`, which holds the process instance ID of the workflow.
+After that, the workflow application consumes the event published by the listener and sets the result field. The consumed CloudEvent contains an attribute named `kogitoprocrefid`, which holds the workflow instance ID of the workflow.
 
 The `kogitoprocrefid` attribute is crucial because when the correlation is not used, then this attribute is the only way for the Callback state to identify that the related CloudEvent needs to be used to resume the workflow.
 
-Note that each Serverless Workflow is identified by a unique instance ID, which is automatically included in any published CloudEvent, as `kogitoprocinstance` CloudEvent attribute.
+Note that each workflow is identified by a unique instance ID, which is automatically included in any published CloudEvent, as `kogitoprocinstance` CloudEvent attribute.
 
-The following example shows that the event listener takes the process instance ID of a Serverless Workflow from a CloudEvent attribute named `kogitoprocinstanceid`, which is associated with the CloudEvent that is consumed. 
+The following example shows that the event listener takes the workflow instance ID of a workflow from a CloudEvent attribute named `kogitoprocinstanceid`, which is associated with the CloudEvent that is consumed. 
 
 .Example of a Java method that consumes the `resume` CloudEvent 
 [source,java]
@@ -126,8 +126,8 @@ For more information about using Apache Kafka with events, see link:xref:consume
 
 == Additional resources
 
-* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
-* xref:eventing/event-correlation-with-workflows.adoc[Event correlation in Serverless Workflow]
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
+* xref:eventing/event-correlation-with-workflows.adoc[Event correlation in {context}]
 
 include::../../pages/_common-content/report-issue.adoc[]
 
