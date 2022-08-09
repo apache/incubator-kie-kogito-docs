@@ -1,11 +1,11 @@
-= Event state in Serverless Workflow
+= Event state in {context}
 
 :compat-mode!:
 // Metadata:
 :description: Handling events on workflows
 :keywords: kogito, workflow, serverless, event
 
-This document describes link:{spec_doc_url}#Event-State[event state] in Serverless Workflow. You can use the event state to start a new workflow instance upon the reception of a designated link:{cloud_events_url}[CloudEvent] or to pause the execution of an existing workflow instance until a designated CloudEvent is received.
+This document describes link:{spec_doc_url}#Event-State[event state] in a workflow. You can use the event state to start a new workflow instance upon the reception of a designated link:{cloud_events_url}[CloudEvent] or to pause the execution of an existing workflow instance until a designated CloudEvent is received.
 
 [[ref-example-event-match]]
 == Example of event match
@@ -132,11 +132,11 @@ To start a new workflow instance, set the `start` property to the event state na
 
 An event state can also be used to pause an existing workflow instance. When the workflow execution reaches an event state, which is not starting, then the execution is paused until there is an event match for that workflow instance.
 
-Similar to the callback state in Serverless Workflow, the workflow instance to be resumed is identified by `kogitoprocrefid` CloudEvent attribute or calculated according to the xref:eventing/event-correlation-with-workflows.adoc[event correlation] functionality. While callback state is used for _fire&wait_ scenaiors, event state covers _wait&fire_ scenarios. For more information about callback state, see xref:eventing/working-with-callbacks.adoc[Callback state in Serverless Workflow].
+Similar to the callback state in a workflow, the workflow instance to be resumed is identified by `kogitoprocrefid` CloudEvent attribute or calculated according to the xref:eventing/event-correlation-with-workflows.adoc[event correlation] functionality. While callback state is used for _fire&wait_ scenaiors, event state covers _wait&fire_ scenarios. For more information about callback state, see xref:eventing/working-with-callbacks.adoc[Callback state in {context}].
 
 == Additional resources
 
-* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
 * xref:eventing/consume-producing-events-with-kafka.adoc[Consuming and producing events using Apache Kafka]
 * xref:eventing/consume-produce-events-with-knative-eventing.adoc[Consuming and producing events on Knative Eventing]
 

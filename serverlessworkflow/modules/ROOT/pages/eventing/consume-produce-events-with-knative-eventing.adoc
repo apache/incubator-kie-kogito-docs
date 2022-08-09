@@ -9,11 +9,11 @@
 :kubernetes_probes_url: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 :quarkus_k8s_url: https://quarkus.io/guides/deploying-to-kubernetes
 
-This document describes how you can configure a Serverless Workflow to interact with link:{knative_eventing_doc_url}[Knative Eventing].
+This document describes how you can configure a workflow to interact with link:{knative_eventing_doc_url}[Knative Eventing].
 
-Knative Eventing abstracts the events consumption through link:{knative_eventing_doc_url}/sources[Event source] and link:{knative_eventing_doc_url}/sinks[sink] components. An event source is a Kubernetes object that produces the event, and a sink is another Kubernetes object that receives the event. The workflow application can act as a source, a sink, or both in Knative Eventing platform.
+Knative Eventing abstracts the events consumption through link:{knative_eventing_doc_url}/sources[event source] and link:{knative_eventing_doc_url}/sinks[sink] components. An event source is a Kubernetes object that produces the event, and a sink is another Kubernetes object that receives the event. The workflow application can act as a source, a sink, or both in Knative Eventing platform.
 
-You need to add the Kogito Knative Eventing add-on dependency to indicate that you are using Knative Eventing. To enable Serverless Workflow to use Knative Eventing, add the following dependency to the `pom.xml` file of your project:
+You need to add the Kogito Knative Eventing add-on dependency to indicate that you are using Knative Eventing. To enable a workflow to use Knative Eventing, add the following dependency to the `pom.xml` file of your project:
 
 .Add dependency for Kogito Knative Eventing add-on in `pom.xml` file
 [tabs]
@@ -43,22 +43,22 @@ Manually::
 
 [TIP]
 ====
-If you have used the Knative workflow CLI to create your project, then the Kogito Knative Eventing extension is already present. For more information about creating a project using Knative workflow CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[Serverless Workflow plug-in for Knative CLI].
+If you have used the Knative workflow CLI to create your project, then the Kogito Knative Eventing extension is already present. For more information about creating a project using Knative workflow CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
 ====
 
-The Kogito Knative Eventing add-on takes care of the required dependencies and additional configuration that the Serverless Workflow application needs, to interact with the Knative Eventing platform.
+The Kogito Knative Eventing add-on takes care of the required dependencies and additional configuration that the workflow application needs, to interact with the Knative Eventing platform.
 
 Although the default configuration that the Quarkus Knative Eventing add-on provides ought to be enough for most of the use cases, sometimes you might need to do additional configuration to serve a specific scenario.
 
 [[ref-knative-eventing-add-on-source-configuration]]
 == Knative Eventing add-on source configuration
 
-The configuration described in this section is useful if your Serverless Workflow consists of at least one `produced` type link:{spec_doc_url}#Event-Definition[event definition]. In this scenario, the workflow application produces events that act as a Knative source.
+The configuration described in this section is useful if your workflow consists of at least one `produced` type link:{spec_doc_url}#Event-Definition[event definition]. In this scenario, the workflow application produces events that act as a Knative source.
 
 HTTP transport configuration::
 +
 --
-Knative injects the `K_SINK` environment variable in the workflow application when you deploy the application in the cluster. Kogito uses the `K_SINK` environment variable to address the produced events to the correct Knative sink. For more information, see link:{knative_eventing_doc_url}/custom-event-source/sinkbinding/[SinkBinding] in Knative Eventing documentation.
+Knative injects the `K_SINK` environment variable in the workflow application when you deploy the application in the cluster. {product_name} uses the `K_SINK` environment variable to address the produced events to the correct Knative sink. For more information, see link:{knative_eventing_doc_url}/custom-event-source/sinkbinding/[SinkBinding] in Knative Eventing documentation.
 
 The following table lists the HTTP transport configuration properties:
 
@@ -73,7 +73,7 @@ The following table lists the HTTP transport configuration properties:
 
 |`mp.messaging.outgoing.kogito_outgoing_stream.connector`
 |`quarkus-http`
-|This property indicates the Quarkus Smallrye channel implementation used by Kogito. You might not need to change this property.
+|This property indicates the Quarkus Smallrye channel implementation. You might not need to change this property.
 
 |===
 
@@ -140,9 +140,9 @@ The following table lists the configuration properties related to Knative sink g
 [[ref-knative-eventing-add-on-sink-configuration]]
 == Knative Eventing add-on sink configuration
 
-The configuration described in this section is useful if your Serverless Workflow consists of at least one `consumed` type link:{spec_doc_url}#Event-Definition[event definition]. In this scenario, the workflow application consumes events, acting as a Knative sink.
+The configuration described in this section is useful if your workflow consists of at least one `consumed` type link:{spec_doc_url}#Event-Definition[event definition]. In this scenario, the workflow application consumes events, acting as a Knative sink.
 
-When the workflow application needs to consume events, the Knative Eventing add-on generates link:{knative_eventing_doc_url}/broker/triggers[Knative triggers]. The Knative triggers are configured to listen to a broker with the required event type, which is defined in your Serverless Workflow definition.
+When the workflow application needs to consume events, the Knative Eventing add-on generates link:{knative_eventing_doc_url}/broker/triggers[Knative triggers]. The Knative triggers are configured to listen to a broker with the required event type, which is defined in your workflow definition.
 
 The following table lists the configuration property related to Knative sink generation:
 
@@ -152,17 +152,17 @@ The following table lists the configuration property related to Knative sink gen
 
 |`org.kie.kogito.addons.knative.broker`
 |`default`
-|This property indicates the name of the default Knative broker that is deployed in the Kubernetes namespace. This broker is used as the reference to create the Knative triggers, which are responsible to delegate the events that the Kogito service consumes.
+|This property indicates the name of the default Knative broker that is deployed in the Kubernetes namespace. This broker is used as the reference to create the Knative triggers, which are responsible to delegate the events that the workflow service consumes.
 
 |===
 
 [[proc-generating-kn-objects-build-time]]
 == Generating Knative objects during build time
 
-Kogito can generate Knative objects during the workflow application build time to facilitate the deployment in a Kubernetes cluster. However, you do not need to use the generated objects if you plan to create and deploy the Knative objects by yourself.
+{product_name} can generate Knative objects during the workflow application build time to facilitate the deployment in a Kubernetes cluster. However, you do not need to use the generated objects if you plan to create and deploy the Knative objects by yourself.
 
 .Prerequisites
-* Serverless Workflow application with the Knative Eventing add-on is created.
+* A workflow application with the Knative Eventing add-on is created.
 
 .Procedure
 . Add the following link:{quarkus_k8s_url}[Quarkus Kubernetes extension] dependency to the `pom.xml` file of your project:
@@ -250,15 +250,15 @@ kn workflow deploy
 ----
 ====
 
-For more information about building and deploying the workflow application, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building Serverless Workflow images using Quarkus CLI].
+For more information about building and deploying the workflow application, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building workflow images using Quarkus CLI].
 --
 
 [[ref-example-sw-event-definition-knative]]
-== Example of Serverless Workflow event definition in Knative
+== Example of workflow event definition in Knative
 
-A Serverless Workflow must contain at least one event definition for the Knative Eventing add-on to generate the event binding objects. The following is an example of a Serverless Workflow containing produced and consumed events:
+A workflow must contain at least one event definition for the Knative Eventing add-on to generate the event binding objects. The following is an example of a workflow containing produced and consumed events:
 
-.Example of a Serverless Workflow with produced and consumed events
+.Example of a workflow with produced and consumed events
 [source,json]
 --
 {
@@ -277,7 +277,7 @@ A Serverless Workflow must contain at least one event definition for the Knative
 }
 --
 
-A Serverless Workflow application with events definition needs a Knative `SinkBinding` to configure the target sink. The target sink is where the produced events (`kogito.sw.request.quote` event in the previous example) are dispatched. In this case, the Knative Eventing add-on generates an object as shown in the following example:
+A workflow application with events definition needs a Knative `SinkBinding` to configure the target sink. The target sink is where the produced events (`kogito.sw.request.quote` event in the previous example) are dispatched. In this case, the Knative Eventing add-on generates an object as shown in the following example:
 
 .Example of a Knative `SinkBinding` generated by the add-on
 [source,yaml]
@@ -331,7 +331,7 @@ For each consumed event definition, the Knative Eventing add-on generates one Kn
 
 * xref:testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc[Mocking HTTP CloudEvents sink using WireMock]
 * xref:eventing/consume-producing-events-with-kafka.adoc[Consuming and producing events using Apache Kafka]
-* xref:eventing/event-correlation-with-workflows.adoc[Event correlation in Serverless Workflow]
-* xref:eventing/working-with-callbacks.adoc[Callbacks in Serverless Workflow]
+* xref:eventing/event-correlation-with-workflows.adoc[Event correlation in {context}]
+* xref:eventing/working-with-callbacks.adoc[Callback state in {context}]
 
 include::../../pages/_common-content/report-issue.adoc[]

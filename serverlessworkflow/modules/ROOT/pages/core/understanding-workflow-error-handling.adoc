@@ -1,5 +1,4 @@
-Error handling in Serverless Workflow
-=====================================
+= Error handling in {context}
 :compat-mode!:
 // Metadata:
 :description: Understanding workflow error handling
@@ -9,26 +8,27 @@ Error handling in Serverless Workflow
 :java_regex_url: https://docs.oracle.com/javase/tutorial/essential/regex/index.html
 :java_regex_pattern_url: https://docs.oracle.com/javase/tutorial/essential/regex/pattern.html
 
-This document describes how you can handle the errors that might occur during Serverless Workflow . 
+This document describes how you can handle the errors that might occur in {context}. 
 
 The Serverless Workflow specification provides an link:{spec_doc_url}#workflow-error-handling[error handling] mechanism, enabling you to handle the errors that might happen during the interactions between the workflow and external systems. 
 
-When an error occurs, it changes the regular Serverless Workflow sequence. In such cases, a workflow state transitions to an alternative state that can potentially handle the error, instead of transitioning to the predefined state.
+When an error occurs, it changes the regular workflow sequence. In such cases, a workflow state transitions to an alternative state that can potentially handle the error, instead of transitioning to the predefined state.
 
-Note that error definition for a Serverless Workflow is optional. If error handling is not defined, then the workflow execution is aborted when an error occurs. As a developer, you can consider the error handling in Serverless Workflow as a `try-catch` or a `goto` construct.
+Note that error definition for a workflow is optional. If error handling is not defined, then the workflow execution is aborted when an error occurs. As a developer, you can consider the error handling in {context} as a `try-catch` or a `goto` construct.
 
 [[con-error-definition]]
 == Error definition
 
-An link:{spec_doc_url}#error-definition[error definition] in Serverless Workflow is composed of a `name` and `code` parameters. The `name` is a short and natural language description of an error, such as `wrong parameter`. The `code` parameter helps the implementation to identify the error.
+An link:{spec_doc_url}#error-definition[error definition] in a workflow is composed of a `name` and `code` parameters. The `name` is a short and natural language description of an error, such as `wrong parameter`. The `code` parameter helps the implementation to identify the error.
 
-In Kogito, the `code` parameter is mandatory and the engine uses different strategies to map the provided value to an exception encountered at runtime. The available strategies include fully qualified class name, error message, and status code.
+The `code` parameter is mandatory and the engine uses different strategies to map the provided value to an exception encountered at runtime. The available strategies include fully qualified class name, error message, and status code.
 
 Fully Qualified Class Name (FQCN)::
-
++
+--
 You can define the mapping as the fully qualified Java class name of an link:{java_exception_url}[exception type].
 
-To determine if an exception is handled by an error definition, Serverless workflow first checks whether or not the type of the Java exception is an instance of the exception that is specified in the error definition. Otherwise, Serverless workflow recursively applies the same check to any embedded exception within the original Java one, till the exception chain is exhausted.
+To determine if an exception is handled by an error definition, a workflow first checks whether or not the type of the Java exception is an instance of the exception that is specified in the error definition. Otherwise, the workflow recursively applies the same check to any embedded exception within the original Java one, till the exception chain is exhausted.
 
 .Runtime exception examples:
 [cols="50%,50%", options="header"]
@@ -37,12 +37,15 @@ To determine if an exception is handled by an error definition, Serverless workf
 |`java.lang.RuntimeException`|`java.lang.RuntimeException`
 |`java.lang.IllegalStateException`|`java.lang.RuntimeException`
 |===
+--
 
 Error message::
++
+--
 
 You can define the mapping as a partial match of the error message using link:{java_regex_url}[regex] patterns.
 
-Serverless Workflow verifies whether the message of the Java exception matches the value provided in the error `code`. The validation is performed using a regex matcher. The validation is successful if a partial match is found. Note that the validation is performed in a case-sensitive manner. If case-insensitive pattern matching is desired, use the link:{java_regex_pattern_url}[embedded flag expression] `(?i)` within the regular expression.
+A workflow verifies whether the message of the Java exception matches the value provided in the error `code`. The validation is performed using a regex matcher. The validation is successful if a partial match is found. Note that the validation is performed in a case-sensitive manner. If case-insensitive pattern matching is desired, use the link:{java_regex_pattern_url}[embedded flag expression] `(?i)` within the regular expression.
 
 .Error message examples:
 [cols="50%,50%", options="header"]
@@ -52,12 +55,14 @@ Serverless Workflow verifies whether the message of the Java exception matches t
 |`Unknown error, status code 400`|`(?i)Error` or `error`
 |`Unknown error, status code 400`|`(.*)status code 4[0-9]\{2\}` or `status code 4[0-9]\{2\}`
 |===
+--
 
 Status code::
-
++
+--
 You can define the mapping as a status code returned by the invoked service.
 
-The external services return status codes in the event of a failure. For example, HTTP status codes are returned by REST or OpenAPI service invocations. In this case, Serverless Workflow verifies the defined error code against the HTTP code from the underlying response object.
+The external services return status codes in the event of a failure. For example, HTTP status codes are returned by REST or OpenAPI service invocations. In this case, the workflow verifies the defined error code against the HTTP code from the underlying response object.
 
 You can define the error code either as an HTTP code or as a colon-separated string, in which the error definition contains the error code in the last part.
 
@@ -68,16 +73,17 @@ You can define the error code either as an HTTP code or as a colon-separated str
 |`400`|`400`
 |`400`|`HTTP:400`
 |===
+--
 
 [[ref-example-error-handling]]
 == Example of error handling
 
-The workflow in the link:{kogito_sw_examples_url}/serverless-workflow-error-quarkus[`serverless-workflow-error-quarkus` example application] illustrate the usage of the error handling mechanism. 
+The workflow in the link:{kogito_sw_examples_url}/serverless-workflow-error-quarkus[`serverless-workflow-error-quarkus`] example application illustrate the usage of the error handling mechanism. 
 
 .Example of error handling
 image::core/error_handling.png[]
 
-The workflow accepts an integer number as the input model. When the workflow starts, it invokes the link:{kogito_sw_examples_url}/serverless-workflow-error-quarkus/src/main/java/org/kie/kogito/examples/EvenService.java[`isEven` Java service], which accepts that integer number as a parameter. This service throws an `IllegalArgumentException` exception if the integer number is odd. This means that if the integer number is even, the Serverless Workflow transitions to the `even` state, however, if the integer number is odd, the Serverless Workflow transitions to the `odd` state, resulting in a different model output.
+The workflow accepts an integer number as the input model. When the workflow starts, it invokes the link:{kogito_sw_examples_url}/serverless-workflow-error-quarkus/src/main/java/org/kie/kogito/examples/EvenService.java[`isEven` Java service], which accepts that integer number as a parameter. This service throws an `IllegalArgumentException` exception if the integer number is odd. This means that if the integer number is even, the workflow transitions to the `even` state, however, if the integer number is odd, the workflow transitions to the `odd` state, resulting in a different model output.
 
 .Example `checkEven` state 
 [source,json]
@@ -106,7 +112,7 @@ The workflow accepts an integer number as the input model. When the workflow sta
     }
 ----
 
-The workflow defines a function that invokes the `isEven` method of `org.kie.kogito.examples.EvenService` class. This function uses a link:{spec_doc_url}#defining-custom-function-types[custom function type], enabling Kogito to invoke Java methods. 
+The workflow defines a function that invokes the `isEven` method of `org.kie.kogito.examples.EvenService` class. This function uses a link:{spec_doc_url}#defining-custom-function-types[custom function type], enabling {product_name} to invoke Java methods. 
 
 .Example `isEven` function definition
 [source, json]
@@ -130,7 +136,6 @@ To handle the error, the workflow defines an `odd number` error which handles an
      }
   ]
 ----
-
 
 The link:{spec_doc_url}#inject-state[Inject] state is used to populate the model with specific JSON payload. Therefore, the even and odd state defines the `message` property as `even` and `odd` respectively. 
 
@@ -177,9 +182,10 @@ The `finish` state in the `serverless-workflow-error-quarkus` example applicatio
       }
     }
 ----
+
 == Additional resources
 
-* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
 
 include::../../pages/_common-content/report-issue.adoc[]
 

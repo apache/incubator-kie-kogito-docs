@@ -1,4 +1,4 @@
-= Displaying Serverless Workflow data in dashboards
+= Displaying workflow data in dashboards
 
 :compat-mode!:
 // Metadata:
@@ -8,9 +8,9 @@
 :dashbuilder_url: https://www.dashbuilder.org
 :jsonata_url: https://docs.jsonata.org/overview.html
 
-This document describes how you can build dashboards to monitor your Serverless Workflows data. 
+This document describes how you can build dashboards to monitor your workflows data. 
 
-To build the dashboards, you need data, which you can acquire from your Serverless Workflows using one of the following methods:
+To build the dashboards, you need data, which you can acquire from your workflows using one of the following methods:
 
 * Enable metrics
 * Integrate with Data Index to consume data using the REST API
@@ -19,26 +19,27 @@ To build the dashboards, you need data, which you can acquire from your Serverle
 The following sections describes the process of creating dashboards using metrics and Data Index GraphQL REST API. 
 
 [[con-sw-dashboard]]
-== Dashboards for Serverless Workflows
+== Dashboards for workflows
 
-The dashboards for Serverless Workflows are visualization of data that run on the client side. The dashboards are created using link:{dashbuilder_url}[Dashbuilder], which consumes data from any JSON source. You can define a dashboard in YAML format.
+The dashboards for workflows are visualization of data that run on the client side. The dashboards are created using link:{dashbuilder_url}[Dashbuilder], which consumes data from any JSON source. You can define a dashboard in YAML format.
 
 To use the Dashbuilder, download and uncompress the `dashbuilder-client` NPM package. Also, edit the `setup.js` file to link your YAML files. For more information about using Dashbuilder, see link:https://www.dashbuilder.org/docs/#_client_only[Dashbuilder documentation].
 
+.Dashbuilder
 image::integrations/dashbuilder-sample-report.png[]
 
 [[proc-sw-dashboard-metrics]]
 == Building dashboards using metrics
 
-You can build dashboards to monitor the data of your Serverless Workflows using metrics.
+You can build dashboards to monitor the data of your workflows using metrics.
 
 .Prerequisites
-* Serverless Workflow application is created. 
+* A workflow application is created. 
 +
-For more information about creating Serverless Workflow, see xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service].
+For more information about creating a workflow, see xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service].
 
 .Procedure
-. To enable metrics for your Serverless Workflow application add `org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus` dependency in `pom.xml` file of your application:
+. To enable metrics for your workflows application add `org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus` dependency in `pom.xml` file of your application:
 +
 --
 .Add metrics dependency to `pom.xml` file
@@ -52,7 +53,7 @@ For more information about creating Serverless Workflow, see xref:getting-starte
 
 You can find the metrics in `/q/metrics` path.
 
-The dashbuilder can consume the data of your Serverless Workflow directly from the metrics endpoints. Therefore, you can use a link:{jsonata_url}[JSONAta expression] to format the metrics and display the metrics in a table using the following example of YAML code:
+The dashbuilder can consume the data of your workflow directly from the metrics endpoints. Therefore, you can use a link:{jsonata_url}[JSONAta expression] to format the metrics and display the metrics in a table using the following example of YAML code:
 
 .Example YAML to show metrics in a table
 [source,yaml]
@@ -84,13 +85,13 @@ pages:
 image::integrations/dashbuilder-metrics-table.png[]
 --
 
-. To extract a specific information from your Serverless Workflow, use specific metrics. Metrics related to Serverless Workflows include:
+. To extract a specific information from your workflow, use specific metrics. Metrics related to workflows include:
 +
 --
-* `kogito_process_instance_completed_total`: Completed Serverless Workflows
-* `kogito_process_instance_started_total`: Started Serverless Workflows
-* `kogito_process_instance_running_total`: Running Serverless Workflows
-* `kogito_process_instance_duration_seconds_sum`: Serverless Workflows total duration
+* `kogito_process_instance_completed_total`: Completed workflows
+* `kogito_process_instance_started_total`: Started workflows
+* `kogito_process_instance_running_total`: Running workflows
+* `kogito_process_instance_duration_seconds_sum`: Workflows total duration
 
 When you display the metrics, you can filter the data to include the specific metrics. You can use the *metrics* and *bar chart* components in dashbuilder to display the specific metrics and after filtering the metrics, you can put the information in bar charts as shown in the following example YAML code:
 
@@ -226,7 +227,7 @@ pages:
                           - source: value
 ----
 
-.Example Serverless Workflow metrics dashboard
+.Example workflow metrics dashboard
 image::integrations/dashbuilder-workflows-metrics-dashboard.png[]
 --
 
@@ -237,20 +238,20 @@ For more information about dashbuilder and Prometheus, see link:https://blog.kie
 [[proc-sw-dashboard-data-index]]
 == Building dashboards using Data Index
 
-Data Index is a service that contains all the data related to the execution of your Serverless Workflow. The Data Index service is available during the development mode. By default, you can access the Data Index at `http://localhost:8180`. 
+Data Index is a service that contains all the data related to the execution of your workflow. The Data Index service is available during the development mode. By default, you can access the Data Index at `http://localhost:8180`. 
 
 The Data Index service uses GraphQL, so that dashbuilder can connect with the service using its REST API and transform the result to the supported format.
 
 .Prerequisites
-* Serverless Workflow application is created. 
+* A workflow application is created. 
 +
-For more information about creating Serverless Workflow, see xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service].
+For more information about creating a workflow, see xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service].
 
 .Procedure
 . Go to the Data Index GraphQL interface (default to `http://localhost:8180/graphiql`) and test your query.
 +
 --
-The following is an example of GraphQL query that lists all the Serverless Workflows:
+The following is an example of GraphQL query that lists all the workflows:
 
 .Example GraphQL query to retrieve all workflows
 [source,json]
@@ -300,7 +301,7 @@ When you access the URL with `graphql`, it returns the result in a JSON format a
 
 [NOTE]
 ====
-Internally, Serverless Workflows are referenced as processes, therefore the `processId` is the workflow ID and `processName` is the workflow name.
+Internally, workflows are referenced as processes, therefore the `processId` is the workflow ID and `processName` is the workflow name.
 ====
 --
 
@@ -379,7 +380,7 @@ For more examples of dashboards, see link:{dashbuilder_url}[Dashbuilder] website
 
 == Additional resources
 
-xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Serverless Workflow service]
+xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
 
 
 include::../../pages/_common-content/report-issue.adoc[]

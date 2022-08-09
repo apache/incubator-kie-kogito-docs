@@ -1,4 +1,4 @@
-= Saga orchestration example in Serverless Workflow
+= Saga orchestration example in {context}
 
 :compat-mode!:
 // Metadata:
@@ -15,11 +15,11 @@ In a microservice architecture, you can define a participant as microservice, wh
 The Saga pattern manages the transactions using a sequence of steps. If a failure occurs while executing a step, then a sequence of compensating actions is executed to undo the changes that are made during the execution. As an alternative, you can leave the system in a known termination state to be consistent.
 
 [[ref-sw-example-saga-pattern]]
-== Example of Saga pattern in Serverless Workflow
+== Example of Saga pattern a workflow
 
-To understand the implementation of Saga pattern in Serverless Workflow, you can use the link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus[`serverless-workflow-saga-quarkus`] example application in GitHub repository. 
+To understand the implementation of Saga pattern in a workflow, you can use the link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus[`serverless-workflow-saga-quarkus`] example application in GitHub repository. 
 
-The `serverless-workflow-saga-quarkus` example application is based on the order fulfillment process and describes how to define Saga pattern using Serverless Workflow. In the order fulfillment example, a user buys an item from an e-commerce application. The user adds the delivery information and payment details, and waits for the item to be delivered. The following figure shows the sequence of steps that are executed to complete an order:
+The `serverless-workflow-saga-quarkus` example application is based on the order fulfillment process and describes how to define Saga pattern using {context}. In the order fulfillment example, a user buys an item from an e-commerce application. The user adds the delivery information and payment details, and waits for the item to be delivered. The following figure shows the sequence of steps that are executed to complete an order:
 
 .Example of order fulfillment process
 image::use-cases/orchestration-based-saga-pattern/order-fulfillment-example.png[Example of order fulfillment process]
@@ -44,7 +44,7 @@ The success workflow in the previous figure consists of the following steps:
 
 However, in the failure workflow an error occurred during the shipping process. In this situation, a sequence of compensation actions is executed, including canceling the payment and releasing the stock for the items in the order.
 
-In the `serverless-workflow-saga-quarkus` example application, a link:{spec_doc_url}[Serverless Workflow] is used that implements the Saga pattern, in which all the steps and compensation actions are defined. Also, the Serverless Workflow plays the role of Saga Executor Coordinator (SEC), which orchestrates the calls to the participants in the Saga pattern.
+In the `serverless-workflow-saga-quarkus` example application, a link:{spec_doc_url}[workflow] is used that implements the Saga pattern, in which all the steps and compensation actions are defined. Also, the workflow plays the role of Saga Executor Coordinator (SEC), which orchestrates the calls to the participants in the Saga pattern.
 
 The workflow definition used to define the Saga pattern is available in the link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus/src/main/resources/order-saga-error-handling.sw.json[`order-saga-error-handling.sw.json`] file. 
 
@@ -98,7 +98,7 @@ Compensation actions::
 --
 When designing a Saga pattern, compensation actions for each step is considered as a core functionality, which is executed by a participant.
 
-In Serverless Workflow, each workflow state must define a compensation action using `compensatedBy` attribute, indicating another workflow state that performs the compensation action. For example, in `serverless-workflow-saga-quarkus`, `processPayment` state defines `CancelPayment` as a compensation action in the <<payment-state, payment process>>.
+In {context} each workflow state must define a compensation action using `compensatedBy` attribute, indicating another workflow state that performs the compensation action. For example, in `serverless-workflow-saga-quarkus`, `processPayment` state defines `CancelPayment` as a compensation action in the <<payment-state, payment process>>.
 
 .Example of defining a compensation action
 [source,json]
@@ -108,7 +108,7 @@ In Serverless Workflow, each workflow state must define a compensation action us
 Errors::
 +
 --
-In Serverless Workflow, errors are identified by a name and can be associated with a workflow state. For example, a `process payment failed` error is associated with the `processPayment` state. 
+In {context} errors are identified by a name and can be associated with a workflow state. For example, a `process payment failed` error is associated with the `processPayment` state. 
 
 Following is an example of error declaration in the workflow definition:
 
@@ -136,7 +136,7 @@ Following is an example of error declaration in the workflow definition:
 
 Once an error occurs during the workflow execution, the associated compensation action is triggered. 
 
-An error definition uses the fully qualified class name (FQCN) for Java exceptions that are thrown by functions. In the previous example of error definition, `org.kie.kogito.ServiceException` is thrown by the service calls that are defined as <<#custom-function, Java methods>> in the link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus/src/main/java/org/kie/kogito/PaymentService.java[PaymentService.java] file. 
+An error definition uses the fully qualified class name (FQCN) for Java exceptions that are thrown by functions. In the previous example of error definition, `org.kie.kogito.ServiceException` is thrown by the service calls that are defined as <<#custom-function, Java methods>> in the link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus/src/main/java/org/kie/kogito/PaymentService.java[`PaymentService.java`] file. 
 
 [#custom-function]
 .Example custom function using a Java class and method
@@ -149,19 +149,19 @@ An error definition uses the fully qualified class name (FQCN) for Java exceptio
 }
 ----
 
-The function that are throwing errors can be any type of functions, such as REST, OpenAPI, or gRPC. For information about error handling, see xref:core/understanding-workflow-error-handling.adoc[Error handling in Serverless Workflow].
+The function that are throwing errors can be any type of functions, such as REST, OpenAPI, or gRPC. For information about error handling, see xref:core/understanding-workflow-error-handling.adoc[Error handling in {context}].
 --
 
-The Serverless Workflow engine controls the execution of the flow and keeps the track of the steps that need to be compensated. Also, the engine ensures that compensated states are executed in reverse order of each completed step. 
+The workflow engine controls the execution of the flow and keeps the track of the steps that need to be compensated. Also, the engine ensures that compensated states are executed in reverse order of each completed step. 
 
 The engine is a stateful, allowing Saga to contain wait states, such as callbacks. After each wait state, the workflow is persisted and can continue once it receives a request or event.
 
 The `serverless-workflow-saga-quarkus` example application shows a Saga workflow that is executed as request-response. This is called a straight through process, in which an entire workflow is executed in a single request.
 
 [[ref-sw-run-test-saga-example]]
-== Examples of running and testing the Saga pattern in Serverless Workflow
+== Examples of running and testing the Saga pattern in a workflow
 
-You can use the following examples as a reference to run and test the Saga pattern in Serverless Workflow:
+You can use the following examples as a reference to run and test the Saga pattern in a workflow:
 
 Create new success order::
 +
@@ -286,6 +286,6 @@ When executing the application, you can also verify the log with information rel
 
 == Additional resources
 
-* xref:core/understanding-workflow-error-handling.adoc[Error handling in Serverless Workflow]
+* xref:core/understanding-workflow-error-handling.adoc[Error handling in {context}]
 
 include::../../pages/_common-content/report-issue.adoc[]
