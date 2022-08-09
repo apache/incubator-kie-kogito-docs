@@ -1,6 +1,4 @@
-Authentication for OpenAPI services in Serverless Workflow
-==========================================================
-06-08-2022
+= Authentication for OpenAPI services in {context}
 :compat-mode!:
 // Metadata:
 :description: Authentication support for OpenAPI services
@@ -10,7 +8,7 @@ Authentication for OpenAPI services in Serverless Workflow
 :configuring-openapi-services-endpoints: xref:service-orchestration/configuring-openapi-services-endpoints.adoc
 :orchestrating-third-party-services-with-oauth2: xref:security/orchestrating-third-party-services-with-oauth2.adoc
 
-This document describes the supported authentication types and how to configure them to access the OpenAPI service operations that are used in Serverless Workflows.
+This document describes the supported authentication types and how to configure them to access the OpenAPI service operations that are used in workflows.
 
 For information about orchestrating and configuring the OpenAPI based services, you must see the following documents:
 
@@ -19,7 +17,7 @@ For information about orchestrating and configuring the OpenAPI based services, 
 
 [NOTE]
 ====
-The OpenAPI support for Serverless Workflow is based on the Quarkus OpenAPI generator extension. For more information about Quarkus OpenAPI generator, see link:{quarkus_openapi_gen_url}[Quarkus - OpenAPI Generator].
+The OpenAPI support for a workflow is based on the Quarkus OpenAPI generator extension. For more information about Quarkus OpenAPI generator, see link:{quarkus_openapi_gen_url}[Quarkus - OpenAPI Generator].
 ====
 
 [[con-openapi-services-authentication]]
@@ -27,7 +25,7 @@ The OpenAPI support for Serverless Workflow is based on the Quarkus OpenAPI gene
 
 According to the OpenAPI specification, you can secure an OpenAPI service operation by using a security scheme. These security schemes are defined in the link:{open_api_spec_url}#security-scheme-object[Security Scheme Object] definitions of the OpenAPI specification file.
 
-The security scheme type defined for an OpenAPI service operation is used to identify the required configuration, when a Serverless Workflow invokes the same operation.
+The security scheme type defined for an OpenAPI service operation is used to identify the required configuration, when a workflow invokes the same operation.
 
 The following shows the example of security scheme definitions:
 
@@ -51,7 +49,7 @@ If the OpenAPI specification file contains `securitySchemes` definitions, but no
 
 [cols="20%,40%,40%", options="header"]
 |===
-|Description |Property Key |Example
+|Description |Property key |Example
 
 |Create security for the referenced security scheme
 |`quarkus.openapi-generator.codegen.default.security.scheme`
@@ -330,7 +328,7 @@ The following example shows `security-example.json` file, defining a `sayHelloOa
 }
 ----
 
-Unlike the `http basic`, `http bearer`, and `apiKey` security schemes, the Oauth2 authentication relies on the link:https://quarkus.io/guides/security-openid-connect-client[Quarkus OpenId Connect (OIDC) and Oauth2 Clients and Filters]. Therefore, you must add link:https://quarkus.io/guides/security-openid-connect-client#oidc-client-filter[Quarkus OIDC Client Filter Extension] to your project as shown in the following example:
+Unlike the `http basic`, `http bearer`, and `apiKey` security schemes, the OAuth 2.0 authentication relies on the link:https://quarkus.io/guides/security-openid-connect-client[Quarkus OpenId Connect (OIDC) and OAuth 2.0 Clients and Filters]. Therefore, you must add link:https://quarkus.io/guides/security-openid-connect-client#oidc-client-filter[Quarkus OIDC Client Filter Extension] to your project as shown in the following example:
 
 .Example of adding Quarkus OIDC client filter extension
 [source, xml]
@@ -373,7 +371,7 @@ The suffix (`quarkus.oidc-client.oauth_example`) used in the previous configurat
 [[ref-authorization-token-propagation]]
 == Example of authorization token propagation
 
-You can use the authorization token propagation with OpenAPI operations that are secured using the `oauth2` or `http bearer` security scheme type. When the configuration is set, you can propagate the authorization tokens that are passed to your Serverless Workflow during the workflow creation.
+You can use the authorization token propagation with OpenAPI operations that are secured using the `oauth2` or `http bearer` security scheme type. When the configuration is set, you can propagate the authorization tokens that are passed to your workflow during the workflow creation.
 
 The propagations must be configured individually for each security scheme, which enables you to configure the invocations that must propagate the token.
 
@@ -448,11 +446,11 @@ States that the authorization token is read from the `MyHeaderName` header inste
 
 [IMPORTANT]
 ====
-The authorization tokens are propagated till the Serverless Workflow does not reach its waiting state. When the same Serverless Workflow is resumed, the tokens will not be propagated.
+The authorization tokens are propagated till the workflow does not reach its waiting state. When the same workflow is resumed, the tokens will not be propagated.
 ====
 
 == Additional resources
 
-* {orchestrating-third-party-services-with-oauth2}[Orchestration of third-party services using OAuth 2.0 authentication in Serverless Workflow]
+* {orchestrating-third-party-services-with-oauth2}[Orchestration of third-party services using OAuth 2.0 authentication in {context}]
 
 include::../../pages/_common-content/report-issue.adoc[]
