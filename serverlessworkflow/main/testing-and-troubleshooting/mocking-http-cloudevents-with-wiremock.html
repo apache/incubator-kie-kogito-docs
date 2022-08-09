@@ -67,7 +67,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -184,7 +184,7 @@
     <a class="nav-link" href="mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -196,7 +196,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -205,7 +205,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -217,7 +217,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -290,7 +290,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can test your Serverless Workflow application that uses HTTP <a href="https://cloudevents.io/">CloudEvents</a> and <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/">Knative SinkBinding</a>.</p>
+<p>This document describes how you can test your workflow application that uses HTTP <a href="https://cloudevents.io/">CloudEvents</a> and <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/">Knative SinkBinding</a>.</p>
 </div>
 <div class="paragraph">
 <p>The example described in this document is based on the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-order-processing"><code>serverless-workflow-order-processing</code></a> example application.</p>
@@ -301,33 +301,33 @@
 <h2 id="con-sinkbinding-test-overview"><a class="anchor" href="#con-sinkbinding-test-overview"></a>Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Serverless Workflow application that you want to test must be configured to use <a href="https://knative.dev/docs/eventing/">Knative Eventing</a>. You must configure Knative Eventing using standard HTTP POST requests to send and receive events between event producers and <a href="https://knative.dev/docs/eventing/sinks/">sinks</a>. The events between the event producers and sinks follow the <a href="https://cloudevents.io/">CloudEvents</a> specification, which enables creating, parsing, sending, and receiving events in any programming language.</p>
+<p>The workflow application that you want to test must be configured to use <a href="https://knative.dev/docs/eventing/">Knative Eventing</a>. You must configure Knative Eventing using standard HTTP POST requests to send and receive events between event producers and <a href="https://knative.dev/docs/eventing/sinks/">sinks</a>. The events between the event producers and sinks follow the <a href="https://cloudevents.io/">CloudEvents</a> specification, which enables creating, parsing, sending, and receiving events in any programming language.</p>
 </div>
 <div class="paragraph">
 <p>When you create an event source, you can specify a sink where events are sent to, from the source. A sink is a transferable or a callable resource that can receive incoming events from other resources. The examples of sink include Kubernetes deployments, Knative services, channels, and brokers.</p>
 </div>
 <div class="paragraph">
-<p>This document describes the testing of Knative service that is configured as a sink, and the same Knative service is mocked to verify if the CloudEvents are received correctly by the sink. In this process, the <a href="https://wiremock.org/">WireMock</a> framework adds the mocked server, verifying the CloudEvents received by the sink during the Serverless Workflow service execution.</p>
+<p>This document describes the testing of Knative service that is configured as a sink, and the same Knative service is mocked to verify if the CloudEvents are received correctly by the sink. In this process, the <a href="https://wiremock.org/">WireMock</a> framework adds the mocked server, verifying the CloudEvents received by the sink during the workflow service execution.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="proc-test-sw-application-sinkbinding"><a class="anchor" href="#proc-test-sw-application-sinkbinding"></a>Testing a Serverless Workflow application using SinkBinding</h2>
+<h2 id="proc-test-sw-application-sinkbinding"><a class="anchor" href="#proc-test-sw-application-sinkbinding"></a>Testing a workflow application using SinkBinding</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can test a Serverless Workflow application using <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/">SinkBinding</a>.</p>
+<p>You can test a workflow application using <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/">SinkBinding</a>.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Your Serverless Workflow application is working.</p>
+<p>Your workflow application is working.</p>
 <div class="paragraph">
-<p>For more information about creating a Serverless Workflow application, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+<p>For more information about creating a workflow application, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a>.</p>
 </div>
 </li>
 <li>
-<p>Your Serverless Workflow application is configured to use HTTP CloudEvents using <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/">SinkBinding</a>.</p>
+<p>Your workflow application is configured to use HTTP CloudEvents using <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/">SinkBinding</a>.</p>
 <div class="paragraph">
 <p>For more information about enabling <a href="https://en.wikipedia.org/wiki/Event-driven_architecture">event-driven architecture</a> in your workflow application using Knative Eventing, see <a href="../eventing/consume-produce-events-with-knative-eventing.html" class="xref page">Consuming and producing events on Knative Eventing</a>.</p>
 </div>
@@ -338,7 +338,7 @@
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Add the required test dependencies to the <code>pom.xml</code> file of your Serverless Workflow application:</p>
+<p>Add the required test dependencies to the <code>pom.xml</code> file of your workflow application:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -389,11 +389,11 @@
 </div>
 </li>
 <li>
-<p>Add failsafe maven plugin to run integration tests</p>
+<p>Add failsafe maven plug-in to run integration tests:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">maven-failsafe-plugin in the Application&#8217;s <code>pom.xml</code> pluggins section</div>
+<div class="title"><code>maven-failsafe-plugin</code> in the <code>pom.xml</code> plug-in section</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
   &lt;artifactId&gt;maven-failsafe-plugin&lt;/artifactId&gt;
@@ -502,7 +502,7 @@ public class VerifyWorkflowExecutionIT { <i class="conum" data-value="2"></i><b>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code>given()</code> is used to test interactions with the application. For more information about testing interactions, see <a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your Serverless Workflow application using REST Assured</a>.</td>
+<td><code>given()</code> is used to test interactions with the application. For more information about testing interactions, see <a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your workflow application using REST Assured</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
@@ -575,7 +575,7 @@ public class VerifyWorkflowExecutionIT { <i class="conum" data-value="2"></i><b>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The port that needs to match with the passed parameter. The parameter is passed when the WireMockServer is created in the test class.</td>
+<td>The port that needs to match with the passed parameter. The parameter is passed when the <code>WireMockServer</code> is created in the test class.</td>
 </tr>
 </table>
 </div>
@@ -705,7 +705,7 @@ sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"t
 </div>
 </div>
 <div class="paragraph">
-<p>After declaring the verifications on received events, the test successfully ends and the WireMockServer stops.</p>
+<p>After declaring the verifications on received events, the test successfully ends and the <code>WireMockServer</code> stops.</p>
 </div>
 </div>
 </div>
@@ -716,10 +716,10 @@ sink.verify(1, postRequestedFor(urlEqualTo("/")).withRequestBody(containing("\"t
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a></p>
 </li>
 <li>
-<p><a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your Serverless Workflow application using REST Assured</a></p>
+<p><a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your workflow application using REST Assured</a></p>
 </li>
 <li>
 <p><a href="mocking-openapi-services-with-wiremock.html" class="xref page">Mocking OpenAPI services using WireMock</a></p>

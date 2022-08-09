@@ -67,7 +67,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -184,7 +184,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -196,7 +196,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -205,7 +205,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -217,7 +217,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -290,10 +290,10 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Each Serverless Workflow instance is associated with a data model. A data model consists of a JSON object regardless of whether the workflow file contains YAML or JSON. The initial content of the JSON object depends on how the workflow is started. If the workflow is created using <a href="https://cloudevents.io/">Cloud Event</a>, then the workflow content is taken from the <code>data</code> property. However, if the workflow is started through an HTTP POST invocation, then the workflow content is taken from the <code>workflowdata</code> property.</p>
+<p>Each workflow instance is associated with a data model. A data model consists of a JSON object regardless of whether the workflow file contains YAML or JSON. The initial content of the JSON object depends on how the workflow is started. If the workflow is created using <a href="https://cloudevents.io/">Cloud Event</a>, then the workflow content is taken from the <code>data</code> property. However, if the workflow is started through an HTTP POST invocation, then the workflow content is taken from the <code>workflowdata</code> property.</p>
 </div>
 <div class="paragraph">
-<p>The workflow expressions in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-expressions">Serverless Workflow Specification</a> are used to interact with the data model. The supported expression languages include <a href="https://github.com/json-path/JsonPath/">JsonPath</a> and <a href="https://stedolan.github.io/jq/manual/">jq</a>. jq expression language is the default language. However, you can change the expression language to JsonPath using the <code>expressionLang</code> property.</p>
+<p>The workflow expressions in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-expressions">Serverless Workflow specification</a> are used to interact with the data model. The supported expression languages include <a href="https://github.com/json-path/JsonPath/">JsonPath</a> and <a href="https://stedolan.github.io/jq/manual/">jq</a>. jq expression language is the default language. However, you can change the expression language to JsonPath using the <code>expressionLang</code> property.</p>
 </div>
 <div class="paragraph">
 <p>This document describes the usage of jq expressions in switch state conditions, action function arguments, and data filtering.</p>
@@ -346,7 +346,7 @@
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The Serverless Workflow Specification requires all the expressions to be embedded within <code>${… }</code>. However, Kogito Serverless Workflow figures out whether or not a string is an expression. Therefore, you can save characters and skip <code>${</code> in the beginning and <code>}</code> in the end. In case of portability, you must embed the expressions within <code>${… }</code>.</p>
+<p>The Serverless Workflow specification requires all the expressions to be embedded within <code>${… }</code>. However, Serverless Workflow figures out whether or not a string is an expression. Therefore, you can save characters and skip <code>${</code> in the beginning and <code>}</code> in the end. In case of portability, you must embed the expressions within <code>${… }</code>.</p>
 </div>
 </td>
 </tr>
@@ -358,7 +358,7 @@
 <h2 id="ref-example-jq-expression-function-arguments"><a class="anchor" href="#ref-example-jq-expression-function-arguments"></a>Example of jq expressions in function arguments</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In the Serverless Workflow Specification, you can define <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-functions">workflow functions</a>, which can be invoked several times by the workflow states. Each workflow function call might contain different arguments, which are specified using the function arguments.</p>
+<p>In the Serverless Workflow specification, you can define <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-functions">workflow functions</a>, which can be invoked several times by the workflow states. Each workflow function call might contain different arguments, which are specified using the function arguments.</p>
 </div>
 <div class="paragraph">
 <p>For example, you can see the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-temperature-conversion/conversion-workflow/src/main/resources/fahrenheit-to-celsius.sw.json">temperature conversion</a> function definition in <code>serverless-workflow-temperature-conversion</code> example application. The temperature conversion function performs OpenAPI invocations to convert Fahrenheit to Celsius. For more information about OpenAPI, see <a href="../service-orchestration/orchestration-of-openapi-based-services.html" class="xref page">Orchestrating the OpenAPI services</a>.</p>
@@ -417,7 +417,7 @@
 <h2 id="ref-example-jq-expression-data-filtering"><a class="anchor" href="#ref-example-jq-expression-data-filtering"></a>Example of jq expressions in data filtering</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Serverless workflow Specification defines the following filtering mechanisms to select which information should be part of the workflow data model:</p>
+<p>The Serverless Workflow specification defines the following filtering mechanisms to select which information must be part of the workflow data model:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -433,12 +433,10 @@
 <dl>
 <dt class="hdlist1">State and Action data filter example</dt>
 <dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
 <p>You can see <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-expression-quarkus"><code>serverless-workflow-expression-quarkus</code></a> example application, in which actions and state data filters are used.</p>
-</dd>
-</dl>
-</div>
-</li>
-</ul>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -521,13 +519,15 @@
 <div class="paragraph">
 <p>In the previous example, the workflow model is changed by the <code>input</code> property of the filter, which means that the output model is updated before the state is executed. As a final result, the output model consists of a <code>result</code> property, containing the maximum value of <code>x</code>.</p>
 </div>
-<div class="dlist">
-<dl>
+</div>
+</div>
+</dd>
 <dt class="hdlist1">Event data filter example</dt>
 <dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
 <p>You can find an example of event data filtering in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-quarkus"><code>serverless-workflow-callback-quarkus</code></a> example application.</p>
-</dd>
-</dl>
 </div>
 <div class="listingblock">
 <div class="title">Example event filter</div>
@@ -540,7 +540,15 @@
 </div>
 </div>
 <div class="paragraph">
-<p>The previous example of the event filter copies the content of Cloud Event data <code>result</code> field into the workflow model <code>move</code> field.</p>
+<p>The previous example of the event filter copies the content of CloudEvent data <code>result</code> field into the workflow model <code>move</code> field.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -550,7 +558,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../service-orchestration/orchestration-of-openapi-based-services.html" class="xref page">Configuring OpenAPI services endpoints</a></p>
+<p><a href="../service-orchestration/configuring-openapi-services-endpoints.html" class="xref page">Configuring the OpenAPI services endpoints</a></p>
 </li>
 </ul>
 </div>

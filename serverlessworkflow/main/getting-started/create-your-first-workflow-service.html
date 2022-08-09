@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Creating your first Serverless Workflow service :: Kogito Serverless Workflow Guides</title>
+    <title>Creating your first workflow service :: Kogito Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -65,7 +65,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -182,7 +182,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -194,7 +194,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -203,7 +203,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -215,7 +215,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -266,7 +266,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Getting Started</li>
-    <li><a href="create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a></li>
+    <li><a href="create-your-first-workflow-service.html">Creating your first workflow service</a></li>
   </ul>
 </nav>
 <div class="page-versions">
@@ -284,7 +284,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Creating your first Serverless Workflow service</h1>
+<h1 class="page">Creating your first workflow service</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -296,13 +296,13 @@
 <p><a href="#proc-boostrapping-the-project">Bootstrapping a project</a></p>
 </li>
 <li>
-<p><a href="#creating-workflow">Creating a workflow</a></p>
+<p><a href="#proc-creating-workflow">Creating a workflow</a></p>
 </li>
 <li>
-<p><a href="#running-application">Running your Serverless Workflow application</a></p>
+<p><a href="#proc-running-application">Running your workflow application</a></p>
 </li>
 <li>
-<p><a href="#testing-application">Testing your Serverless Workflow application</a></p>
+<p><a href="#proc-testing-application">Testing your workflow application</a></p>
 </li>
 </ul>
 </div>
@@ -310,7 +310,7 @@
 <p>Also, you can directly access an example application by cloning <code>serverless-workflow-examples/serverless-workflow-hello-world</code> from the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-hello-world">GitHub repository</a>.</p>
 </div>
 <div class="paragraph">
-<p>This guide describes how to create a Serverless Workflow application that serves a <code>hello_world</code> endpoint. The workflow contains the following two states:</p>
+<p>This document describes how to create a workflow application that serves a <code>hello_world</code> endpoint. The workflow contains the following two states:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -335,10 +335,10 @@
 <p>Java 11+ is installed with <code>JAVA_HOME</code> configured appropriately.</p>
 </li>
 <li>
-<p>Maven 3.8.6</p>
+<p>Apache Maven 3.8.6 is installed.</p>
 </li>
 <li>
-<p><a href="https://quarkus.io/guides/cli-tooling">Quarkus CLI</a> 2.11.2.Final or <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Knative CLI</a> 0.0.0</p>
+<p><a href="https://quarkus.io/guides/cli-tooling">Quarkus CLI</a> 2.11.2.Final or <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Knative CLI</a> 0.0.0 is installed.</p>
 </li>
 <li>
 <p>Visual Studio Code with <a href="https://marketplace.visualstudio.com/items?itemName=redhat.java">Red Hat Java Extension</a>
@@ -347,7 +347,7 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
 </ul>
 </div>
 <div class="paragraph">
-<p>For more information about the tooling and the required dependencies, see <a href="getting-familiar-with-our-tooling.html" class="xref page">Tooling in Serverless Workflow</a>.</p>
+<p>For more information about the tooling and the required dependencies, see <a href="getting-familiar-with-our-tooling.html" class="xref page">Getting familiar with Serverless Workflow tooling</a>.</p>
 </div>
 </div>
 </div>
@@ -355,7 +355,7 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
 <h2 id="proc-boostrapping-the-project"><a class="anchor" href="#proc-boostrapping-the-project"></a>Bootstrapping a project</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To create your Serverless Workflow service, first you need to bootstrap a project.</p>
+<p>To create your workflow service, first you need to bootstrap a project.</p>
 </div>
 <div class="olist arabic">
 <div class="title">Procedure</div>
@@ -369,7 +369,7 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
 <p><a id="tabset1_quarkus-cli"></a>Quarkus CLI</p>
 </li>
 <li>
-<p><a id="tabset1_maven"></a>Maven</p>
+<p><a id="tabset1_apache-maven"></a>Apache Maven</p>
 </li>
 <li>
 <p><a id="tabset1_knative-cli"></a>Knative CLI</p>
@@ -391,24 +391,24 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
 </div>
 </div>
 <div class="paragraph">
-<p>The previous command creates a Maven Quarkus project in the <code>serverless-workflow-hello-world</code> directory containing the required Kogito dependencies, including:</p>
+<p>The previous command creates a Maven Quarkus project in the <code>serverless-workflow-hello-world</code> directory containing the required dependencies, including:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>kogito-quarkus-serverless-workflow</code>: Adds support for Serverless Workflow</p>
+<p><code>kogito-quarkus-serverless-workflow</code>: Adds support for workflows.</p>
 </li>
 <li>
-<p><code>quarkus-container-image-jib</code>: Adds support for Container Image Builds</p>
+<p><code>quarkus-container-image-jib</code>: Adds support for Container Image Builds.</p>
 </li>
 <li>
-<p><code>quarkus-resteasy-jackson</code>: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request</p>
+<p><code>quarkus-resteasy-jackson</code>: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request.</p>
 </li>
 <li>
-<p><code>quarkus-smallrye-openapi</code>: Adds support for Swagger documentation when you run the application in development mode</p>
+<p><code>quarkus-smallrye-openapi</code>: Adds support for Swagger documentation when you run the application in development mode.</p>
 </li>
 <li>
-<p><code>--no-code</code>: Prevents workflow example code from being generated</p>
+<p><code>--no-code</code>: Prevents workflow example code from being generated.</p>
 </li>
 </ul>
 </div>
@@ -416,9 +416,9 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
 <p>The SwaggerUI is available at <code><a href="http://localhost:8080/q/swagger-ui/" class="bare">http://localhost:8080/q/swagger-ui/</a></code> when you run the application.</p>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset1_maven">
+<div class="tab-pane" aria-labelledby="tabset1_apache-maven">
 <div class="listingblock">
-<div class="title">Create a project using Maven</div>
+<div class="title">Create a project using Apache Maven</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn io.quarkus.platform:quarkus-maven-plugin:2.11.2.Final:create \
     -DprojectGroupId=org.kie.kogito.examples \
@@ -429,7 +429,7 @@ cd serverless-workflow-hello-world</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In the previous command, <code>org.kie.kogito.examples</code>, <code>serverless-workflow-hello-world</code>, and <code>1.0</code> is group id, artifact id, and version of your project respectively.  <code>-DnoCode</code> prevents the generation of workflow example code.</p>
+<p>In the previous command, <code>org.kie.kogito.examples</code>, <code>serverless-workflow-hello-world</code>, and <code>1.0</code> is group ID, artifact ID, and version of your project respectively. <code>-DnoCode</code> prevents the generation of workflow example code.</p>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_knative-cli">
@@ -440,7 +440,7 @@ cd serverless-workflow-hello-world</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>For more information about Knative CLI, see <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Serverless Workflow plugin for Knative CLI</a>.</p>
+<p>For more information about Knative CLI, see <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Serverless Workflow plug-in for Knative CLI</a>.</p>
 </div>
 </div>
 </div>
@@ -455,7 +455,7 @@ cd serverless-workflow-hello-world</code></pre>
 <p><a id="tabset2_quarkus-cli"></a>Quarkus CLI</p>
 </li>
 <li>
-<p><a id="tabset2_maven"></a>Maven</p>
+<p><a id="tabset2_apache-maven"></a>Apache Maven</p>
 </li>
 <li>
 <p><a id="tabset2_knative-cli"></a>Knative CLI</p>
@@ -471,9 +471,9 @@ cd serverless-workflow-hello-world</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset2_maven">
+<div class="tab-pane" aria-labelledby="tabset2_apache-maven">
 <div class="listingblock">
-<div class="title">Compile your project using Maven</div>
+<div class="title">Compile your project using Apache Maven</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean package</code></pre>
 </div>
@@ -487,7 +487,7 @@ cd serverless-workflow-hello-world</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>For more information about Knative CLI, see <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Serverless Workflow plugin for Knative CLI</a>.</p>
+<p>For more information about Knative CLI, see <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Serverless Workflow plug-in for Knative CLI</a>.</p>
 </div>
 </div>
 </div>
@@ -498,10 +498,10 @@ cd serverless-workflow-hello-world</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="creating-workflow"><a class="anchor" href="#creating-workflow"></a>Creating a workflow</h2>
+<h2 id="proc-creating-workflow"><a class="anchor" href="#proc-creating-workflow"></a>Creating a workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After bootstrapping a project, you need to create a workflow. In the following procedure, a workflow named Hello World Workflow is created.</p>
+<p>After bootstrapping a project, you need to create a workflow. In the following procedure, a workflow named <strong>Hello World Workflow</strong> is created.</p>
 </div>
 <div class="olist arabic">
 <div class="title">Procedure</div>
@@ -548,8 +548,7 @@ cd serverless-workflow-hello-world</code></pre>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>id</code> field is the unique identifier of the workflow. Kogito generates the REST endpoints based on this
-unique identifier.</td>
+<td><code>id</code> field is the unique identifier of the workflow. Kogito generates the REST endpoints based on this unique identifier.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -569,7 +568,7 @@ unique identifier.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><code>transition</code> field defines the next state that will be reached after the current state is completed.</td>
+<td><code>transition</code> field defines the next state that is reached after the current state is completed.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
@@ -599,7 +598,7 @@ unique identifier.</td>
 <td class="content">
 <div class="paragraph">
 <p>The workflow definition follows the CNCF Serverless Workflow specification. For more information, see
-<a href="cncf-serverless-workflow-specification-support.html" class="xref page">CNCF Serverless Workflow Specification Support</a>.</p>
+<a href="cncf-serverless-workflow-specification-support.html" class="xref page">CNCF Serverless Workflow specification</a>.</p>
 </div>
 </td>
 </tr>
@@ -613,16 +612,16 @@ unique identifier.</td>
 </div>
 </div>
 <div class="sect1">
-<h2 id="running-application"><a class="anchor" href="#running-application"></a>Running your Serverless Workflow application</h2>
+<h2 id="proc-running-application"><a class="anchor" href="#proc-running-application"></a>Running your workflow application</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After creating a workflow, you can run your Serverless Workflow application.</p>
+<p>After creating a workflow, you can run your workflow application.</p>
 </div>
 <div class="olist arabic">
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Enter the following command to run your Serverless Workflow application:</p>
+<p>Enter the following command to run your workflow application:</p>
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
@@ -630,7 +629,7 @@ unique identifier.</td>
 <p><a id="tabset3_quarkus-cli"></a>Quarkus CLI</p>
 </li>
 <li>
-<p><a id="tabset3_maven"></a>Maven</p>
+<p><a id="tabset3_apache-maven"></a>Apache Maven</p>
 </li>
 <li>
 <p><a id="tabset3_knative-cli"></a>Knative CLI</p>
@@ -640,15 +639,15 @@ unique identifier.</td>
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset3_quarkus-cli">
 <div class="listingblock">
-<div class="title">Run your Serverless Workflow application using Quarkus CLI</div>
+<div class="title">Run your workflow application using Quarkus CLI</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus dev</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset3_maven">
+<div class="tab-pane" aria-labelledby="tabset3_apache-maven">
 <div class="listingblock">
-<div class="title">Run your Serverless Workflow application using Maven</div>
+<div class="title">Run your workflow application using Apache Maven</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean quarkus:dev</code></pre>
 </div>
@@ -662,7 +661,7 @@ unique identifier.</td>
 </div>
 </div>
 <div class="paragraph">
-<p>For more information about Knative CLI, see <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Serverless Workflow plugin for Knative CLI</a>.</p>
+<p>For more information about Knative CLI, see <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Serverless Workflow plug-in for Knative CLI</a>.</p>
 </div>
 </div>
 </div>
@@ -708,7 +707,7 @@ __  ____  __  _____   ___  __ ____  ______
 </div>
 </li>
 <li>
-<p>Once your Serverless Workflow application is started, you can send a request for the provided endpoint:</p>
+<p>Once your workflow application is started, you can send a request for the provided endpoint:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -777,11 +776,11 @@ __  ____  __  _____   ___  __ ____  ______
 </div>
 </div>
 <div class="sect1">
-<h2 id="testing-application"><a class="anchor" href="#testing-application"></a>Testing your Serverless Workflow application</h2>
+<h2 id="proc-testing-application"><a class="anchor" href="#proc-testing-application"></a>Testing your workflow application</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To test your Serverless Workflow application, you can follow the instructions in the
-<a href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html" class="xref page">Basic Integration Test with RestAssured</a> guide.</p>
+<p>To test your workflow application, you can follow the instructions in the
+<a href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html" class="xref page">Testing your workflow application using REST Assured</a>.</p>
 </div>
 </div>
 </div>
@@ -791,10 +790,10 @@ __  ____  __  _____   ___  __ ____  ______
 <div class="ulist">
 <ul>
 <li>
-<p><a href="getting-familiar-with-our-tooling.html" class="xref page">Getting Familiar With Our Tooling</a>.</p>
+<p><a href="getting-familiar-with-our-tooling.html" class="xref page">Getting familiar with Serverless Workflow tooling</a></p>
 </li>
 <li>
-<p><a href="../service-orchestration/orchestration-of-openapi-based-services.html" class="xref page">Orchestration of OpenAPI Based Services</a>.</p>
+<p><a href="../service-orchestration/orchestration-of-openapi-based-services.html" class="xref page">Orchestrating the OpenAPI services</a></p>
 </li>
 </ul>
 </div>

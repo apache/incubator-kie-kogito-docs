@@ -65,7 +65,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -182,7 +182,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -194,7 +194,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -203,7 +203,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -215,7 +215,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -291,13 +291,13 @@
 <p>This document describes the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Callback-State">Callback state</a> and related examples. The Callback state performs an action and waits for an event, to be produced as a result of the action, to resume the workflow. The action peformed by a Callback state is an asynchronous external service invocation. Therefore, the Callback state is suitable to perform  <em>fire&amp;wait-for-result</em> operations.</p>
 </div>
 <div class="paragraph">
-<p>From a Serverless Workflow perspective, asynchronous service indicates that the control is returned to the caller immediately without waiting for the action to be completed. Once the action is completed, a <a href="https://cloudevents.io/">CloudEvent</a> is published to resume the Serverless Workflow.</p>
+<p>From a workflow perspective, asynchronous service indicates that the control is returned to the caller immediately without waiting for the action to be completed. Once the action is completed, a <a href="https://cloudevents.io/">CloudEvent</a> is published to resume the workflow.</p>
 </div>
 <div class="paragraph">
-<p>For the Serverless Workflow to identify the published CloudEvent it is waiting for, the external service developer includes the process instance ID in the CloudEvent header or uses the <a href="event-correlation-with-workflows.html" class="xref page">Serverless Workflow correlation mechanism</a>.</p>
+<p>For the workflow to identify the published CloudEvent it is waiting for, the external service developer includes the workflow instance ID in the CloudEvent header or uses the <a href="event-correlation-with-workflows.html" class="xref page">Event correlation</a>.</p>
 </div>
 <div class="paragraph">
-<p>The Serverless Workflow correlation described in this document focuses on the former mechanism that is based on the fact that each Serverless Workflow instance contains a unique identifier, which is generated automatically.</p>
+<p>The workflow correlation described in this document focuses on the former mechanism that is based on the fact that each workflow instance contains a unique identifier, which is generated automatically.</p>
 </div>
 </div>
 </div>
@@ -314,7 +314,7 @@
 <p>A listener consumes the CloudEvent with the <code>resume</code> type and simulates the behavior of an external service. Consequently, on the external service side, when the actions associated with the <code>resume</code> type CloudEvent are completed, the listener publishes a <code>wait</code> type CloudEvent. Once the <code>wait</code> type CloudEvent is received, the workflow moves to the next state and ends successfully.</p>
 </div>
 <div class="paragraph">
-<p>To use the Callback state in a Serverless Workflow, first CloudEvent types such as <code>resume</code> and <code>wait</code> are declared that the Serverless Workflow uses. Following is an example of CloudEvents declaration in a workflow definition:</p>
+<p>To use the Callback state in a workflow, first CloudEvent types such as <code>resume</code> and <code>wait</code> are declared that the workflow uses. Following is an example of CloudEvents declaration in a workflow definition:</p>
 </div>
 <div class="listingblock">
 <div class="title">Example of CloudEvents declaration in a workflow definition</div>
@@ -388,16 +388,16 @@
 </div>
 </div>
 <div class="paragraph">
-<p>After that, the Serverless Workflow application consumes the event published by the listener and sets the result field. The consumed CloudEvent contains an attribute named <code>kogitoprocrefid</code>, which holds the process instance ID of the workflow.</p>
+<p>After that, the workflow application consumes the event published by the listener and sets the result field. The consumed CloudEvent contains an attribute named <code>kogitoprocrefid</code>, which holds the workflow instance ID of the workflow.</p>
 </div>
 <div class="paragraph">
 <p>The <code>kogitoprocrefid</code> attribute is crucial because when the correlation is not used, then this attribute is the only way for the Callback state to identify that the related CloudEvent needs to be used to resume the workflow.</p>
 </div>
 <div class="paragraph">
-<p>Note that each Serverless Workflow is identified by a unique instance ID, which is automatically included in any published CloudEvent, as <code>kogitoprocinstance</code> CloudEvent attribute.</p>
+<p>Note that each workflow is identified by a unique instance ID, which is automatically included in any published CloudEvent, as <code>kogitoprocinstance</code> CloudEvent attribute.</p>
 </div>
 <div class="paragraph">
-<p>The following example shows that the event listener takes the process instance ID of a Serverless Workflow from a CloudEvent attribute named <code>kogitoprocinstanceid</code>, which is associated with the CloudEvent that is consumed.</p>
+<p>The following example shows that the event listener takes the workflow instance ID of a workflow from a CloudEvent attribute named <code>kogitoprocinstanceid</code>, which is associated with the CloudEvent that is consumed.</p>
 </div>
 <div class="listingblock">
 <div class="title">Example of a Java method that consumes the <code>resume</code> CloudEvent</div>
@@ -440,7 +440,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a></p>
 </li>
 <li>
 <p><a href="event-correlation-with-workflows.html" class="xref page">Event correlation in Serverless Workflow</a></p>

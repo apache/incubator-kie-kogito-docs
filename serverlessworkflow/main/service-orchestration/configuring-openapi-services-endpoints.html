@@ -65,7 +65,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -182,7 +182,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -194,7 +194,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -203,7 +203,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -215,7 +215,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -560,7 +560,7 @@ paths:
 </table>
 </div>
 <div class="paragraph">
-<p>Kogito leverages Quarkus profiles to configure the Serverless Workflow application depending on the target environment.</p>
+<p>Kogito leverages Quarkus profiles to configure the workflow application depending on the target environment.</p>
 </div>
 <div class="paragraph">
 <p>To set properties for different profiles, each property needs to be prefixed with a percentage (%) followed by the profile name and a period (.) in the syntax as <code>%&lt;profile-name&gt;.config.name</code>. By default, Quarkus provides the following profiles that activate automatically in certain conditions:</p>
@@ -590,7 +590,7 @@ paths:
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Create a file named <code>application.properties</code> in the <code>src/main/resources</code> directory of the Serverless Workflow project, if the file does not exist.</p>
+<p>Create a file named <code>application.properties</code> in the <code>src/main/resources</code> directory of the workflow project, if the file does not exist.</p>
 </li>
 <li>
 <p>In the <code>application.properties</code> file, add the OpenAPI configuration for the default environment:</p>
@@ -655,7 +655,7 @@ quarkus.rest-client.stock_portfolio_svc_yaml.url=http://localhost:8282/</code></
 <div class="sect2">
 <h3 id="proc-config-openapi-services-running-the-services"><a class="anchor" href="#proc-config-openapi-services-running-the-services"></a>Running the services</h3>
 <div class="paragraph">
-<p>After defining the URLs of the services, you can run the services that the Serverless Workflow sends request to.</p>
+<p>After defining the URLs of the services, you can run the services that the workflow sends request to.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
@@ -730,15 +730,15 @@ mvn quarkus:dev -Ddebug=false</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="proc-config-openapi-services-running-sw-application-in-development-mode"><a class="anchor" href="#proc-config-openapi-services-running-sw-application-in-development-mode"></a>Running Serverless Workflow application in development mode</h3>
+<h3 id="proc-config-openapi-services-running-sw-application-in-development-mode"><a class="anchor" href="#proc-config-openapi-services-running-sw-application-in-development-mode"></a>Running workflow application in development mode</h3>
 <div class="paragraph">
-<p>When you define <code>%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/</code>, the <code>fake-stock-service</code> service is used in the development mode and you get the same result every time you run the workflow. Using this example, you can run the Serverless Workflow application in development mode.</p>
+<p>When you define <code>%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/</code>, the <code>fake-stock-service</code> service is used in the development mode and you get the same result every time you run the workflow. Using this example, you can run the workflow application in development mode.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Services that the Serverless Workflow application sends requests to are started.</p>
+<p>Services that the workflow application sends requests to are started.</p>
 <div class="paragraph">
 <p>For more information, see <a href="#proc-config-openapi-services-running-the-services">Running the services</a>.</p>
 </div>
@@ -749,11 +749,11 @@ mvn quarkus:dev -Ddebug=false</code></pre>
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>In a separate command terminal window, run the Serverless Workflow application in development mode:</p>
+<p>In a separate command terminal window, run the workflow application in development mode:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Run Serverless Workflow application in development mode</div>
+<div class="title">Run workflow application in development mode</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd stock-profit
 mvn quarkus:dev -Ddebug=false</code></pre>
@@ -763,7 +763,7 @@ mvn quarkus:dev -Ddebug=false</code></pre>
 </div>
 </li>
 <li>
-<p>In a separate command terminal window, send a request to the Serverless Workflow application:</p>
+<p>In a separate command terminal window, send a request to the workflow application:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -792,15 +792,15 @@ mvn quarkus:dev -Ddebug=false</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="proc-config-openapi-services-running-sw-application-in-production-mode"><a class="anchor" href="#proc-config-openapi-services-running-sw-application-in-production-mode"></a>Running Serverless Workflow application in production mode</h3>
+<h3 id="proc-config-openapi-services-running-sw-application-in-production-mode"><a class="anchor" href="#proc-config-openapi-services-running-sw-application-in-production-mode"></a>Running workflow application in production mode</h3>
 <div class="paragraph">
-<p>When you define <code>quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/</code>, the <code>real-stock-service</code> service is used in the normal or production mode and you get different results every time you run the workflow. Using this example, you can run the Serverless Workflow application in normal or production mode.</p>
+<p>When you define <code>quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/</code>, the <code>real-stock-service</code> service is used in the normal or production mode and you get different results every time you run the workflow. Using this example, you can run the workflow application in normal or production mode.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Services that the Serverless Workflow application sends requests to are started.</p>
+<p>Services that the workflow application sends requests to are started.</p>
 <div class="paragraph">
 <p>For more information, see <a href="#proc-config-openapi-services-running-the-services">Running the services</a>.</p>
 </div>
@@ -811,11 +811,11 @@ mvn quarkus:dev -Ddebug=false</code></pre>
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>In a separate command terminal window, package the Serverless Workflow application to be run as fat JAR:</p>
+<p>In a separate command terminal window, package the workflow application to be run as fat JAR:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Package Serverless Workflow application</div>
+<div class="title">Package workflow application</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd stock-profit
 mvn package</code></pre>
@@ -825,11 +825,11 @@ mvn package</code></pre>
 </div>
 </li>
 <li>
-<p>In a separate command terminal window, run the Serverless Workflow application in normal or production mode:</p>
+<p>In a separate command terminal window, run the workflow application in normal or production mode:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Run Serverless Workflow application in normal or production mode</div>
+<div class="title">Run workflow application in normal or production mode</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">java -jar target/quarkus-app/quarkus-run.jar</code></pre>
 </div>
@@ -838,7 +838,7 @@ mvn package</code></pre>
 </div>
 </li>
 <li>
-<p>In a separate command terminal window, send a request to the Serverless Workflow application:</p>
+<p>In a separate command terminal window, send a request to the workflow application:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -875,7 +875,7 @@ mvn package</code></pre>
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Services that the Serverless Workflow application sends requests to are started.</p>
+<p>Services that the workflow application sends requests to are started.</p>
 <div class="paragraph">
 <p>For more information, see <a href="#proc-config-openapi-services-running-the-services">Running the services</a>.</p>
 </div>
@@ -886,11 +886,11 @@ mvn package</code></pre>
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>In a separate command terminal window, run the Serverless Workflow application in development mode, overwriting the property defined in the <code>application.properties</code> file using an environment variable:</p>
+<p>In a separate command terminal window, run the workflow application in development mode, overwriting the property defined in the <code>application.properties</code> file using an environment variable:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Run the Serverless Workflow application in development mode</div>
+<div class="title">Run the workflow application in development mode</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd stock-profit
 export _DEV_QUARKUS_REST_CLIENT_STOCK_SVC_YAML_URL=http://localhost:8383/ <i class="conum" data-value="1"></i><b>(1)</b>
@@ -909,7 +909,7 @@ mvn quarkus:dev -Ddebug=false</code></pre>
 </div>
 </li>
 <li>
-<p>In a separate command terminal window, send a request to the Serverless Workflow application:</p>
+<p>In a separate command terminal window, send a request to the workflow application:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">

@@ -67,7 +67,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -184,7 +184,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -196,7 +196,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -205,7 +205,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -217,7 +217,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -290,13 +290,13 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can configure Serverless Workflow to interact with <a href="https://kafka.apache.org/documentation/">Apache Kafka</a>. Apache Kafka uses an abstraction called topic to classify events. Events are published to a topic, and events are consumed from a topic.</p>
+<p>This document describes how you can configure a workflow to interact with <a href="https://kafka.apache.org/documentation/">Apache Kafka</a>. Apache Kafka uses an abstraction called topic to classify events. Events are published to a topic, and events are consumed from a topic.</p>
 </div>
 <div class="paragraph">
 <p>Kogito uses <a href="https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/3.3/connectors/connectors.html">Smallrye connectors</a> to encapsulate access to several brokers, enabling Kogito to support different brokers by changing the configuration and classpath dependencies. However, Smallrye connectors also introduce an entity called channel. The Smallrye channels are unidirectional and need to be declared as input (<code>incoming</code>) or output (<code>outgoing</code>). When using Apache Kafka, the Smallrye channels must be mapped to Apache Kafka topics through configuration.</p>
 </div>
 <div class="paragraph">
-<p>You need to add the Kafka Quarkus Smallrye connector dependency to indicate that you are using Apache Kafka. To enable Serverless Workflow to use Apache Kafka Smallrye connector, add the following dependency to the <code>pom.xml</code> file of your project if using Maven:</p>
+<p>You need to add the Kafka Quarkus Smallrye connector dependency to indicate that you are using Apache Kafka. To enable a workflow to use Apache Kafka Smallrye connector, add the following dependency to the <code>pom.xml</code> file of your project if using Apache Maven:</p>
 </div>
 <div class="listingblock">
 <div class="title">Add dependency for Apache Kafka Smallrye connector in <code>pom.xml</code></div>
@@ -313,10 +313,10 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="con-sw-smallrye-channel-configuration"><a class="anchor" href="#con-sw-smallrye-channel-configuration"></a>Smallrye channels configuration for a Serverless Workflow</h2>
+<h2 id="con-sw-smallrye-channel-configuration"><a class="anchor" href="#con-sw-smallrye-channel-configuration"></a>Smallrye channels configuration for a workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can configure Smallrye channels for a Severless Workflow using event definitions. The Smallrye channels are defined using <a href="https://quarkus.io/guides/config">Quarkus configuration</a>. The format for Smallrye channel properties is <code>mp.messaging.[incoming|outgoing].&lt;channel name&gt;.&lt;property_name&gt;</code>.</p>
+<p>You can configure Smallrye channels for a workflow using event definitions. The Smallrye channels are defined using <a href="https://quarkus.io/guides/config">Quarkus configuration</a>. The format for Smallrye channel properties is <code>mp.messaging.[incoming|outgoing].&lt;channel name&gt;.&lt;property_name&gt;</code>.</p>
 </div>
 <div class="paragraph">
 <p>Serverless Workflow allows the following channel mapping strategies:</p>
@@ -405,7 +405,7 @@ kogito.addon.messaging.outgoing.defaultName=&lt;default channel name&gt;</code><
 <p>The <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-quarkus/src/main/resources/application.properties"><code>serverless-workflow-callback-quarkus</code></a> example application uses two CloudEvent types, including <code>wait</code> (incoming) and <code>resume</code> (outgoing).</p>
 </div>
 <div class="paragraph">
-<p>Kafka topic names matches the CloudEvent types. Therefore, it is suitable to select the mapping strategy of one channel per CloudEvent type. This suggests that two channels must be configured. Note that you do not need to set the optional <code>topic</code> property as the channel name matches the CloudEvent type.</p>
+<p>Kafka topic names match the CloudEvent types. Therefore, it is suitable to select the mapping strategy of one channel per CloudEvent type. This suggests that two channels must be configured. Note that you do not need to set the optional <code>topic</code> property as the channel name matches the CloudEvent type.</p>
 </div>
 <div class="listingblock">
 <div class="title">Example property configuration</div>
@@ -428,7 +428,7 @@ mp.messaging.outgoing.resume.value.serializer=org.apache.kafka.common.serializat
 <p>The <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-events-quarkus/src/main/resources/application.properties"><code>serverless-workflow-events-quarkus</code></a> example application uses two CloudEvent types, including <code>applicants</code> (incoming) and <code>decisions</code> (outgoing).</p>
 </div>
 <div class="paragraph">
-<p>As mentioned before, Kafka topic names matches the CloudEvent types. However, to use the default channel functionality, <code>kogito_incoming_stream</code> and <code>kogito_outgoing_stream</code> are used as channel names. As explained before, since there is no specific channel name for the CloudEvent type, then the default channels are used. Also, the default channels need to be mapped to the desired topic name using the <code>topic</code> property.</p>
+<p>As mentioned before, Kafka topic names match the CloudEvent types. However, to use the default channel functionality, <code>kogito_incoming_stream</code> and <code>kogito_outgoing_stream</code> are used as channel names. As explained before, since there is no specific channel name for the CloudEvent type, then the default channels are used. Also, the default channels need to be mapped to the desired topic name using the <code>topic</code> property.</p>
 </div>
 <div class="listingblock">
 <div class="title">Example property configuration</div>

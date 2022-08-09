@@ -67,7 +67,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -184,7 +184,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -196,7 +196,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -205,7 +205,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -217,7 +217,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -290,7 +290,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>As a developer, you can invoke a gRPC service using a Serverless Workflow application that is run with Quarkus. This guide describes how to create a workflow that invokes a running gRPC service and how to configure properties to locate that running gRPC service.</p>
+<p>As a developer, you can invoke a gRPC service using a workflow application that runs with Quarkus. This document describes how to create a workflow that invokes a running gRPC service and how to configure properties to locate that running gRPC service.</p>
 </div>
 <div class="paragraph">
 <p>For information about gRPC concepts, see <a href="https://grpc.io/docs/what-is-grpc/core-concepts">gRPC</a>.</p>
@@ -299,18 +299,12 @@
 <p>In order to illustrate how gRPC integration works, this <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus">Serverless Workflow application</a> is used. This example greets a user in their preferred language by invoking a gRPC service.</p>
 </div>
 <div class="paragraph">
-<p>Relevant files of this Workflow Application are:</p>
+<p>Relevant files of the workflow application include:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-server-rpc-quarkus/src/main/proto/greeting.proto">gRPC proto file</a>:</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>This file defines a greeter service, which consists of sayHello methods, each covering a different gRPC scenario:</p>
-</div>
+<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-server-rpc-quarkus/src/main/proto/greeting.proto">gRPC proto file</a>: This file defines a greeter service, which consists of <code>sayHello</code> methods, each covering a different gRPC scenario:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -324,6 +318,9 @@
 </li>
 <li>
 <p>The <code>SayHelloMultipleLanguages</code> accepts a stream of name-language pairs and streams back greetings with a respective name and in a respective language.</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -354,12 +351,9 @@ message HelloReply {
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreet.sw.json">Workflow definition file</a>:</p>
+<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreet.sw.json">Workflow definition file</a>: This file defines an RPC <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#using-functions-for-rpc-service-invocations">function</a>.</p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>This file defines an RPC <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#using-functions-for-rpc-service-invocations">function</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -451,12 +445,9 @@ The response of the method execution is <a href="https://developers.google.com/p
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/pom.xml">Maven POM</a>:</p>
+<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/pom.xml">Maven POM</a>: The <code>gRPC</code> functionality is included within workflow dependencies, which means you do not need to add specific dependencies for <code>gRPC</code> to work with Serverless Workflow.</p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>The <code>gRPC</code> functionality is included within Serverless Workflow dependencies, which means you do not need to add specific dependencies for <code>gRPC</code> to work with Serverless Workflow.</p>
 </div>
 <div class="paragraph">
 <p>This <code>pom.xml</code> file contains the following <code>resource</code> node:</p>
@@ -472,23 +463,20 @@ The response of the method execution is <a href="https://developers.google.com/p
 </div>
 </div>
 <div class="paragraph">
-<p>The reason for this snippet to exist is to guarantee that the proto file is included in the classpath. Remember that in the Serverless Workflow file, the  URI for the proto file does not contain any scheme, therefore the proto file is expected to be accessible in the classpath.</p>
+<p>The reason for this snippet to exist is to guarantee that the proto file is included in the classpath. Remember that in the workflow file, the URI for the proto file does not contain any scheme, therefore the proto file is expected to be accessible in the classpath.</p>
 </div>
 <div class="paragraph">
-<p>The previous, Maven based, approach can be used when the source code of the  Serverless Workflow and the gRPC server are stored in the same repository, but normally this will not be the case. If the proto file can be downloaded from a remote server, you might use the <code>http</code> scheme. If the proto file is not remotely accessible, you will need to manually obtain a copy of it and store in a directory that is included in the classpath (for example <code>src/main/resources</code>). Another possibility is to copy the proto file in a well known absolute path (that might be a shared network file system) and use the <code>file</code> scheme.</p>
+<p>The previous, Maven based, approach can be used when the source code of the workflow and the gRPC server are stored in the same repository, but normally this will not be the case. If the proto file can be downloaded from a remote server, you might use the <code>http</code> scheme. If the proto file is not remotely accessible, you will need to manually obtain a copy of it and store in a directory that is included in the classpath (for example <code>src/main/resources</code>). Another possibility is to copy the proto file in a well known absolute path (that might be a shared network file system) and use the <code>file</code> scheme.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/application.properties">Application properties</a>:</p>
+<p><a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-rpc-quarkus/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/application.properties">Application properties</a>: In the <code>application.properties</code> file, you can add the information for the workflow application to locate the <code>gRPC</code> server.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>In the <code>application.properties</code> file, you can add the information for the Serverless Workflow application to locate the <code>gRPC</code> server.</p>
-</div>
-<div class="paragraph">
-<p>Internally, the Serverless Workflow implementation uses the same set of properties as <a href="https://quarkus.io/guides/grpc-service-consumption#client-configuration">Quarkus gRPC client</a>. The <code>client-name</code> used by Kogito is the service name declared in the proto file.</p>
+<p>Internally, the workflow implementation uses the same set of properties as <a href="https://quarkus.io/guides/grpc-service-consumption#client-configuration">Quarkus gRPC client</a>. The <code>client-name</code> used by Kogito is the service name declared in the proto file.</p>
 </div>
 <div class="paragraph">
 <p>Therefore, since in this example a service called <code>Greeter</code> is invoked, the following code is added to the properties.</p>
@@ -505,12 +493,12 @@ quarkus.grpc.clients.Greeter.port=50051</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="running-serverless-workflow-application"><a class="anchor" href="#running-serverless-workflow-application"></a>Running the Serverless Workflow application</h2>
+<h2 id="running-serverless-workflow-application"><a class="anchor" href="#running-serverless-workflow-application"></a>Running the workflow application</h2>
 <div class="sectionbody">
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Before running the Serverless Workflow application, you need to start the gRPC server the workflow invokes. To run the gRPC server, navigate to the <code>serverless-workflow-greeting-server-rpc-quarkus</code> directory in a command terminal and enter the command</p>
+<p>Before running the workflow application, you need to start the gRPC server the workflow invokes. To run the gRPC server, navigate to the <code>serverless-workflow-greeting-server-rpc-quarkus</code> directory in a command terminal and enter the command:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn compile exec:java -Dexec.mainClass="org.kie.kogito.examples.sw.greeting.GreeterService"</code></pre>
@@ -518,7 +506,7 @@ quarkus.grpc.clients.Greeter.port=50051</code></pre>
 </div>
 </li>
 <li>
-<p>Now you need to run the Serverless Workflow application</p>
+<p>Now you need to run the workflow application</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean quarkus:dev</code></pre>
@@ -526,7 +514,7 @@ quarkus.grpc.clients.Greeter.port=50051</code></pre>
 </div>
 </li>
 <li>
-<p>Once the Serverless Workflow application is started, you can invoke the workflow instance using any http client, such as <code>curl</code></p>
+<p>Once the workflow application is started, you can invoke the workflow instance using any http client, such as <code>curl</code></p>
 </li>
 </ol>
 </div>
@@ -545,7 +533,7 @@ quarkus.grpc.clients.Greeter.port=50051</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You can also try greeting in a different language</p>
+<p>You can also try greeting in a different language.</p>
 </div>
 <div class="listingblock">
 <div class="content">
