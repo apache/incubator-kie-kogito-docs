@@ -17,7 +17,7 @@ The incoming events consumed by the engine must contain the correlation attribut
 
 A new workflow instance must be created using an event, which must be declared in the workflow definition file, containing correlation attributes in the event definition section. For more information about events, see xref:eventing/handling-events-on-workflows.adoc[Event state in {context}]. Once the event is consumed, the engine extracts the correlation attributes and associates the attributes with the created workflow instance.
 
-A start event does not trigger a correlation evaluation, but acts as a moment in which correlation attributes and values are set. The correlation attributes and values are evaluated against other incoming events that might trigger the given instance. Therefore, when a non-start event is consumed and correlation attributes are evaluates, then the engine continues the execution of the matched instances (if any).
+A start event does not trigger a correlation evaluation, but acts as a moment in which correlation attributes and values are set. The correlation attributes and values are evaluated against other incoming events that might trigger the given instance. Therefore, when a non-start event is consumed and correlation attributes are evaluated, then the engine continues the execution of the matched instances (if any).
 
 The following figure shows how engine processes the correlation:
 
