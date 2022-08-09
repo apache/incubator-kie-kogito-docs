@@ -65,7 +65,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -182,7 +182,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -194,7 +194,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -203,7 +203,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -215,7 +215,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -288,7 +288,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Serverless Workflow provides a plug-in named <code>kn-plugin-workflow</code> for Knative CLI, which enables you to set up a local Serverless Workflow project quickly using the command line.</p>
+<p>Serverless Workflow provides a plug-in named <code>kn-plugin-workflow</code> for Knative CLI, which enables you to set up a local workflow project quickly using the command line.</p>
 </div>
 <div class="paragraph">
 <p>This document describes how you can install and use the <code>kn-plugin-workflow</code> plug-in in Serverless Workflow.</p>
@@ -299,7 +299,7 @@
 <h2 id="proc-install-sw-plugin-kn-cli"><a class="anchor" href="#proc-install-sw-plugin-kn-cli"></a>Installing the Serverless Workflow plug-in for Knative CLI</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can use the Serverless Workflow plug-in to set up your local Serverless Workflow project quickly using Knative CLI.</p>
+<p>You can use the Serverless Workflow plug-in to set up your local workflow project quickly using Knative CLI.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
@@ -337,7 +337,7 @@
 <p>Add <code>kn workflow</code> command in your system path and ensure that it is executable.</p>
 </li>
 <li>
-<p>Install <code>kn workflow</code> command as a plugin of the Knative CLI using the following steps:</p>
+<p>Install <code>kn workflow</code> command as a plug-in of the Knative CLI using the following steps:</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
@@ -378,7 +378,7 @@
 </ul>
 </div>
 <div class="paragraph">
-<p>After installing the Serverless Workflow plug-in, you can use <code>kn workflow</code> to run the related subcommands.</p>
+<p>After installing the plug-in, you can use <code>kn workflow</code> to run the related subcommands.</p>
 </div>
 </div>
 </div>
@@ -424,13 +424,13 @@ Use "kn workflow [command] --help" for more information about a command.</code><
 </div>
 </div>
 <div class="sect1">
-<h2 id="proc-create-sw-project-kn-cli"><a class="anchor" href="#proc-create-sw-project-kn-cli"></a>Creating a Serverless Workflow project using Knative CLI</h2>
+<h2 id="proc-create-sw-project-kn-cli"><a class="anchor" href="#proc-create-sw-project-kn-cli"></a>Creating a workflow project using Knative CLI</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After installing the Serverless Workflow plug-in, you can use the <code>create</code> command with <code>kn workflow</code> to scaffold a new Serverless Workflow project in your current directory.</p>
+<p>After installing the Serverless Workflow plug-in, you can use the <code>create</code> command with <code>kn workflow</code> to scaffold a new workflow project in your current directory.</p>
 </div>
 <div class="paragraph">
-<p>The <code>create</code> command sets up Quarkus project containing minimal extensions to build a Serverless Workflow project. Also, the generated Serverless Workflow project contains a "hello world" <code>workflow.sw.json</code> file in your <code>./&lt;project-name&gt;/src/main/resources</code> directory.</p>
+<p>The <code>create</code> command sets up Quarkus project containing minimal extensions to build a workflow project. Also, the generated workflow project contains a "hello world" <code>workflow.sw.json</code> file in your <code>./&lt;project-name&gt;/src/main/resources</code> directory.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
@@ -503,13 +503,13 @@ Use "kn workflow [command] --help" for more information about a command.</code><
 </div>
 </div>
 <div class="sect1">
-<h2 id="proc-build-sw-project-kn-cli"><a class="anchor" href="#proc-build-sw-project-kn-cli"></a>Building a Serverless Workflow project using Knative CLI</h2>
+<h2 id="proc-build-sw-project-kn-cli"><a class="anchor" href="#proc-build-sw-project-kn-cli"></a>Building a workflow project using Knative CLI</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After creating your Serverless Workflow project, you can use the <code>build</code> command with <code>kn workflow</code> to build your Serverless Workflow project in your current directory and to generate a container image.</p>
+<p>After creating your workflow project, you can use the <code>build</code> command with <code>kn workflow</code> to build your workflow project in your current directory and to generate a container image.</p>
 </div>
 <div class="paragraph">
-<p>The process of building your Serverless Workflow project produces a <code>knative.yml</code> file in the <code>./target/kubernetes</code> folder. If your workflow contains events, then the building process also generates a <code>kogito.yml</code> file.</p>
+<p>The process of building your workflow project produces a <code>knative.yml</code> file in the <code>./target/kubernetes</code> folder. If your workflow contains events, then the building process also generates a <code>kogito.yml</code> file.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
@@ -521,9 +521,9 @@ Use "kn workflow [command] --help" for more information about a command.</code><
 </div>
 </li>
 <li>
-<p>Serverless Workflow project is created.</p>
+<p>A workflow project is created.</p>
 <div class="paragraph">
-<p>For more information about created a workflow project, see <a href="#proc-create-sw-project-kn-cli">Creating Serverless Workflow project using Knative CLI</a>.</p>
+<p>For more information about creating a workflow project, see <a href="#proc-create-sw-project-kn-cli">Creating workflow project using Knative CLI</a>.</p>
 </div>
 </li>
 </ul>
@@ -532,7 +532,7 @@ Use "kn workflow [command] --help" for more information about a command.</code><
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>In Knative CLI, enter the following command to build your Serverless Workflow project:</p>
+<p>In Knative CLI, enter the following command to build your workflow project:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -587,16 +587,16 @@ kn workflow build --image-name my-project</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>--image-registry</p>
+<p><code>--image-registry</code></p>
 </li>
 <li>
-<p>--image-repository</p>
+<p><code>--image-repository</code></p>
 </li>
 <li>
-<p>--image-name</p>
+<p><code>--image-name</code></p>
 </li>
 <li>
-<p>--image-tag</p>
+<p><code>--image-tag</code></p>
 </li>
 </ul>
 </div>
@@ -615,9 +615,9 @@ kn workflow build --image-name my-project</code></pre>
 </ol>
 </div>
 <div class="sect2">
-<h3 id="con-build-strategy-kn-cli"><a class="anchor" href="#con-build-strategy-kn-cli"></a>Strategy for building a Serverless Workflow project</h3>
+<h3 id="con-build-strategy-kn-cli"><a class="anchor" href="#con-build-strategy-kn-cli"></a>Strategy for building a workflow project</h3>
 <div class="paragraph">
-<p>You can use the following strategies to build a Serverless Workflow project and to generate the container image:</p>
+<p>You can use the following strategies to build a workflow project and to generate the container image:</p>
 </div>
 <div class="dlist">
 <dl>
@@ -629,7 +629,7 @@ kn workflow build --image-name my-project</code></pre>
 <p><a href="https://github.com/GoogleContainerTools/jib">Jib</a> is an extension that builds a container image without the necessity of a container runtime. When using the Jib extension, the rebuilds are fast and the resultant container image is optimized.</p>
 </div>
 <div class="paragraph">
-<p>You can use the following commands to build a Serverless Workflow project and to generate a local image using Jib:</p>
+<p>You can use the following commands to build a workflow project and to generate a local image using Jib:</p>
 </div>
 <div class="listingblock">
 <div class="title">Build a project and generate a local image using Jib</div>
@@ -680,7 +680,7 @@ kn workflow build --image-name my-project</code></pre>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The process of building your Serverless Workflow project using Docker is straightforward and also a default approach.</p>
+<p>The process of building your workflow project using Docker is straightforward and also a default approach.</p>
 </div>
 <div class="paragraph">
 <p>When using Docker, you can automatically push the container image to the respective registry by using the <code>--push</code> option as shown in the following command:</p>
@@ -700,10 +700,10 @@ kn workflow build --image-name my-project</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="proc-deploy-sw-project-kn-cli"><a class="anchor" href="#proc-deploy-sw-project-kn-cli"></a>Deploying a Serverless Workflow project using Knative CLI</h2>
+<h2 id="proc-deploy-sw-project-kn-cli"><a class="anchor" href="#proc-deploy-sw-project-kn-cli"></a>Deploying a workflow project using Knative CLI</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can use the <code>deploy</code> command combined with <code>kn workflow</code> to deploy your Serverless Workflow project in your current directory. However, before deploying the project, you must build your Serverless Workflow project as the build process produces deployment files, such as <code>knative.yml</code> and <code>kogito.yml</code> (In case of events) in the <code>./target/kubernetes</code> folder.</p>
+<p>You can use the <code>deploy</code> command combined with <code>kn workflow</code> to deploy your workflow project in your current directory. However, before deploying the project, you must build your workflow project as the build process produces deployment files, such as <code>knative.yml</code> and <code>kogito.yml</code> (In case of events) in the <code>./target/kubernetes</code> folder.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
@@ -715,15 +715,15 @@ kn workflow build --image-name my-project</code></pre>
 </div>
 </li>
 <li>
-<p>Serverless Workflow project is created.</p>
+<p>A workflow project is created.</p>
 <div class="paragraph">
-<p>For more information about created a workflow project, see <a href="#proc-create-sw-project-kn-cli">Creating Serverless Workflow project using Knative CLI</a>.</p>
+<p>For more information about created a workflow project, see <a href="#proc-create-sw-project-kn-cli">Creating workflow project using Knative CLI</a>.</p>
 </div>
 </li>
 <li>
-<p>Serverless Workflow project is built.</p>
+<p>A workflow project is built.</p>
 <div class="paragraph">
-<p>For more information about building your workflow project, see <a href="#proc-build-sw-project-kn-cli">Building Serverless Workflow project using Knative CLI</a>.</p>
+<p>For more information about building your workflow project, see <a href="#proc-build-sw-project-kn-cli">Building workflow project using Knative CLI</a>.</p>
 </div>
 </li>
 </ul>
@@ -732,7 +732,7 @@ kn workflow build --image-name my-project</code></pre>
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>In Knative CLI, enter the following command to deploy your Serverless Workflow project:</p>
+<p>In Knative CLI, enter the following command to deploy your workflow project:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -761,7 +761,7 @@ kn workflow build --image-name my-project</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>You can use the kubectl command line if you want to use a complex deployment setup for your Serverless Workflow project.</p>
+<p>You can use the <code>kubectl</code> command line if you want to use a complex deployment setup for your workflow project.</p>
 </div>
 </td>
 </tr>
@@ -775,16 +775,16 @@ kn workflow build --image-name my-project</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="proc-build-sw-project-source"><a class="anchor" href="#proc-build-sw-project-source"></a>Building a Serverless Workflow project from source</h2>
+<h2 id="proc-build-sw-project-source"><a class="anchor" href="#proc-build-sw-project-source"></a>Building a workflow project from source</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As an alternative, you can build your Serverless Workflow project from source.</p>
+<p>As an alternative, you can build your workflow project from source.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>A Serverless Workflow project is created.</p>
+<p>A workflow project is created.</p>
 <div class="paragraph">
 <p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
 </div>
@@ -827,7 +827,7 @@ pnpm -F @kie-tools/kn-plugin-workflow... build:dev</code></pre>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Build Serverless Workflow project from source</div>
+<div class="title">Build workflow project from source</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd packages/kn-plugin-workflow
 go mod tidy</code></pre>
@@ -839,7 +839,7 @@ go mod tidy</code></pre>
 </ol>
 </div>
 <div class="paragraph">
-<p>You have successfully built your Serverless Workflow project from source.</p>
+<p>You have successfully built your workflow project from source.</p>
 </div>
 </div>
 </div>
@@ -849,7 +849,7 @@ go mod tidy</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a></p>
 </li>
 </ul>
 </div>

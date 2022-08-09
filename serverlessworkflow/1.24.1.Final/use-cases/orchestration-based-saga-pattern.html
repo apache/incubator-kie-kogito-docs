@@ -65,7 +65,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -182,7 +182,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -194,7 +194,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -203,7 +203,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -215,7 +215,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -300,10 +300,10 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="ref-sw-example-saga-pattern"><a class="anchor" href="#ref-sw-example-saga-pattern"></a>Example of Saga pattern in Serverless Workflow</h2>
+<h2 id="ref-sw-example-saga-pattern"><a class="anchor" href="#ref-sw-example-saga-pattern"></a>Example of Saga pattern a workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To understand the implementation of Saga pattern in Serverless Workflow, you can use the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-saga-quarkus"><code>serverless-workflow-saga-quarkus</code></a> example application in GitHub repository.</p>
+<p>To understand the implementation of Saga pattern in a workflow, you can use the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-saga-quarkus"><code>serverless-workflow-saga-quarkus</code></a> example application in GitHub repository.</p>
 </div>
 <div class="paragraph">
 <p>The <code>serverless-workflow-saga-quarkus</code> example application is based on the order fulfillment process and describes how to define Saga pattern using Serverless Workflow. In the order fulfillment example, a user buys an item from an e-commerce application. The user adds the delivery information and payment details, and waits for the item to be delivered. The following figure shows the sequence of steps that are executed to complete an order:</p>
@@ -362,7 +362,7 @@
 <p>However, in the failure workflow an error occurred during the shipping process. In this situation, a sequence of compensation actions is executed, including canceling the payment and releasing the stock for the items in the order.</p>
 </div>
 <div class="paragraph">
-<p>In the <code>serverless-workflow-saga-quarkus</code> example application, a <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md">Serverless Workflow</a> is used that implements the Saga pattern, in which all the steps and compensation actions are defined. Also, the Serverless Workflow plays the role of Saga Executor Coordinator (SEC), which orchestrates the calls to the participants in the Saga pattern.</p>
+<p>In the <code>serverless-workflow-saga-quarkus</code> example application, a <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md">workflow</a> is used that implements the Saga pattern, in which all the steps and compensation actions are defined. Also, the workflow plays the role of Saga Executor Coordinator (SEC), which orchestrates the calls to the participants in the Saga pattern.</p>
 </div>
 <div class="paragraph">
 <p>The workflow definition used to define the Saga pattern is available in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-saga-quarkus/src/main/resources/order-saga-error-handling.sw.json"><code>order-saga-error-handling.sw.json</code></a> file.</p>
@@ -428,7 +428,7 @@
 <p>When designing a Saga pattern, compensation actions for each step is considered as a core functionality, which is executed by a participant.</p>
 </div>
 <div class="paragraph">
-<p>In Serverless Workflow, each workflow state must define a compensation action using <code>compensatedBy</code> attribute, indicating another workflow state that performs the compensation action. For example, in <code>serverless-workflow-saga-quarkus</code>, <code>processPayment</code> state defines <code>CancelPayment</code> as a compensation action in the <a href="#payment-state">payment process</a>.</p>
+<p>In Serverless Workflow each workflow state must define a compensation action using <code>compensatedBy</code> attribute, indicating another workflow state that performs the compensation action. For example, in <code>serverless-workflow-saga-quarkus</code>, <code>processPayment</code> state defines <code>CancelPayment</code> as a compensation action in the <a href="#payment-state">payment process</a>.</p>
 </div>
 <div class="listingblock">
 <div class="title">Example of defining a compensation action</div>
@@ -444,7 +444,7 @@
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>In Serverless Workflow, errors are identified by a name and can be associated with a workflow state. For example, a <code>process payment failed</code> error is associated with the <code>processPayment</code> state.</p>
+<p>In Serverless Workflow errors are identified by a name and can be associated with a workflow state. For example, a <code>process payment failed</code> error is associated with the <code>processPayment</code> state.</p>
 </div>
 <div class="paragraph">
 <p>Following is an example of error declaration in the workflow definition:</p>
@@ -474,7 +474,7 @@
 <p>Once an error occurs during the workflow execution, the associated compensation action is triggered.</p>
 </div>
 <div class="paragraph">
-<p>An error definition uses the fully qualified class name (FQCN) for Java exceptions that are thrown by functions. In the previous example of error definition, <code>org.kie.kogito.ServiceException</code> is thrown by the service calls that are defined as <a href="#custom-function">Java methods</a> in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-saga-quarkus/src/main/java/org/kie/kogito/PaymentService.java">PaymentService.java</a> file.</p>
+<p>An error definition uses the fully qualified class name (FQCN) for Java exceptions that are thrown by functions. In the previous example of error definition, <code>org.kie.kogito.ServiceException</code> is thrown by the service calls that are defined as <a href="#custom-function">Java methods</a> in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-saga-quarkus/src/main/java/org/kie/kogito/PaymentService.java"><code>PaymentService.java</code></a> file.</p>
 </div>
 <div id="custom-function" class="listingblock">
 <div class="title">Example custom function using a Java class and method</div>
@@ -495,7 +495,7 @@
 </dl>
 </div>
 <div class="paragraph">
-<p>The Serverless Workflow engine controls the execution of the flow and keeps the track of the steps that need to be compensated. Also, the engine ensures that compensated states are executed in reverse order of each completed step.</p>
+<p>The workflow engine controls the execution of the flow and keeps the track of the steps that need to be compensated. Also, the engine ensures that compensated states are executed in reverse order of each completed step.</p>
 </div>
 <div class="paragraph">
 <p>The engine is a stateful, allowing Saga to contain wait states, such as callbacks. After each wait state, the workflow is persisted and can continue once it receives a request or event.</p>
@@ -506,10 +506,10 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="ref-sw-run-test-saga-example"><a class="anchor" href="#ref-sw-run-test-saga-example"></a>Examples of running and testing the Saga pattern in Serverless Workflow</h2>
+<h2 id="ref-sw-run-test-saga-example"><a class="anchor" href="#ref-sw-run-test-saga-example"></a>Examples of running and testing the Saga pattern in a workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can use the following examples as a reference to run and test the Saga pattern in Serverless Workflow:</p>
+<p>You can use the following examples as a reference to run and test the Saga pattern in a workflow:</p>
 </div>
 <div class="dlist">
 <dl>

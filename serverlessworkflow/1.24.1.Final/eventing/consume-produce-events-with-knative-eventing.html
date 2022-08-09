@@ -67,7 +67,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -184,7 +184,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -196,7 +196,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -205,7 +205,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -217,7 +217,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -290,13 +290,13 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can configure a Serverless Workflow to interact with <a href="https://knative.dev/docs/eventing/">Knative Eventing</a>.</p>
+<p>This document describes how you can configure a workflow to interact with <a href="https://knative.dev/docs/eventing/">Knative Eventing</a>.</p>
 </div>
 <div class="paragraph">
-<p>Knative Eventing abstracts the events consumption through <a href="https://knative.dev/docs/eventing//sources">Event source</a> and <a href="https://knative.dev/docs/eventing//sinks">sink</a> components. An event source is a Kubernetes object that produces the event, and a sink is another Kubernetes object that receives the event. The workflow application can act as a source, a sink, or both in Knative Eventing platform.</p>
+<p>Knative Eventing abstracts the events consumption through <a href="https://knative.dev/docs/eventing//sources">event source</a> and <a href="https://knative.dev/docs/eventing//sinks">sink</a> components. An event source is a Kubernetes object that produces the event, and a sink is another Kubernetes object that receives the event. The workflow application can act as a source, a sink, or both in Knative Eventing platform.</p>
 </div>
 <div class="paragraph">
-<p>You need to add the Kogito Knative Eventing add-on dependency to indicate that you are using Knative Eventing. To enable Serverless Workflow to use Knative Eventing, add the following dependency to the <code>pom.xml</code> file of your project:</p>
+<p>You need to add the Kogito Knative Eventing add-on dependency to indicate that you are using Knative Eventing. To enable a workflow to use Knative Eventing, add the following dependency to the <code>pom.xml</code> file of your project:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -354,7 +354,7 @@
 </table>
 </div>
 <div class="paragraph">
-<p>The Kogito Knative Eventing add-on takes care of the required dependencies and additional configuration that the Serverless Workflow application needs, to interact with the Knative Eventing platform.</p>
+<p>The Kogito Knative Eventing add-on takes care of the required dependencies and additional configuration that the workflow application needs, to interact with the Knative Eventing platform.</p>
 </div>
 <div class="paragraph">
 <p>Although the default configuration that the Quarkus Knative Eventing add-on provides ought to be enough for most of the use cases, sometimes you might need to do additional configuration to serve a specific scenario.</p>
@@ -365,7 +365,7 @@
 <h2 id="ref-knative-eventing-add-on-source-configuration"><a class="anchor" href="#ref-knative-eventing-add-on-source-configuration"></a>Knative Eventing add-on source configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The configuration described in this section is useful if your Serverless Workflow consists of at least one <code>produced</code> type <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-Definition">event definition</a>. In this scenario, the workflow application produces events that act as a Knative source.</p>
+<p>The configuration described in this section is useful if your workflow consists of at least one <code>produced</code> type <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-Definition">event definition</a>. In this scenario, the workflow application produces events that act as a Knative source.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -402,7 +402,7 @@
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>mp.messaging.outgoing.kogito_outgoing_stream.connector</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus-http</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates the Quarkus Smallrye channel implementation used by Kogito. You might not need to change this property.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates the Quarkus Smallrye channel implementation. You might not need to change this property.</p></td>
 </tr>
 </tbody>
 </table>
@@ -521,10 +521,10 @@
 <h2 id="ref-knative-eventing-add-on-sink-configuration"><a class="anchor" href="#ref-knative-eventing-add-on-sink-configuration"></a>Knative Eventing add-on sink configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The configuration described in this section is useful if your Serverless Workflow consists of at least one <code>consumed</code> type <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-Definition">event definition</a>. In this scenario, the workflow application consumes events, acting as a Knative sink.</p>
+<p>The configuration described in this section is useful if your workflow consists of at least one <code>consumed</code> type <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-Definition">event definition</a>. In this scenario, the workflow application consumes events, acting as a Knative sink.</p>
 </div>
 <div class="paragraph">
-<p>When the workflow application needs to consume events, the Knative Eventing add-on generates <a href="https://knative.dev/docs/eventing//broker/triggers">Knative triggers</a>. The Knative triggers are configured to listen to a broker with the required event type, which is defined in your Serverless Workflow definition.</p>
+<p>When the workflow application needs to consume events, the Knative Eventing add-on generates <a href="https://knative.dev/docs/eventing//broker/triggers">Knative triggers</a>. The Knative triggers are configured to listen to a broker with the required event type, which is defined in your workflow definition.</p>
 </div>
 <div class="paragraph">
 <p>The following table lists the configuration property related to Knative sink generation:</p>
@@ -547,7 +547,7 @@
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.kie.kogito.addons.knative.broker</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>default</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates the name of the default Knative broker that is deployed in the Kubernetes namespace. This broker is used as the reference to create the Knative triggers, which are responsible to delegate the events that the Kogito service consumes.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This property indicates the name of the default Knative broker that is deployed in the Kubernetes namespace. This broker is used as the reference to create the Knative triggers, which are responsible to delegate the events that the workflow service consumes.</p></td>
 </tr>
 </tbody>
 </table>
@@ -563,7 +563,7 @@
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Serverless Workflow application with the Knative Eventing add-on is created.</p>
+<p>A workflow application with the Knative Eventing add-on is created.</p>
 </li>
 </ul>
 </div>
@@ -707,7 +707,7 @@ kubectl apply -f target/knative.yml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>For more information about building and deploying the workflow application, see <a href="../cloud/build-workflow-image-with-quarkus-cli.html" class="xref page">Building Serverless Workflow images using Quarkus CLI</a>.</p>
+<p>For more information about building and deploying the workflow application, see <a href="../cloud/build-workflow-image-with-quarkus-cli.html" class="xref page">Building workflow images using Quarkus CLI</a>.</p>
 </div>
 </div>
 </div>
@@ -717,13 +717,13 @@ kubectl apply -f target/knative.yml</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="ref-example-sw-event-definition-knative"><a class="anchor" href="#ref-example-sw-event-definition-knative"></a>Example of Serverless Workflow event definition in Knative</h2>
+<h2 id="ref-example-sw-event-definition-knative"><a class="anchor" href="#ref-example-sw-event-definition-knative"></a>Example of workflow event definition in Knative</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A Serverless Workflow must contain at least one event definition for the Knative Eventing add-on to generate the event binding objects. The following is an example of a Serverless Workflow containing produced and consumed events:</p>
+<p>A workflow must contain at least one event definition for the Knative Eventing add-on to generate the event binding objects. The following is an example of a workflow containing produced and consumed events:</p>
 </div>
 <div class="listingblock">
-<div class="title">Example of a Serverless Workflow with produced and consumed events</div>
+<div class="title">Example of a workflow with produced and consumed events</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
     "events": [
@@ -742,7 +742,7 @@ kubectl apply -f target/knative.yml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>A Serverless Workflow application with events definition needs a Knative <code>SinkBinding</code> to configure the target sink. The target sink is where the produced events (<code>kogito.sw.request.quote</code> event in the previous example) are dispatched. In this case, the Knative Eventing add-on generates an object as shown in the following example:</p>
+<p>A workflow application with events definition needs a Knative <code>SinkBinding</code> to configure the target sink. The target sink is where the produced events (<code>kogito.sw.request.quote</code> event in the previous example) are dispatched. In this case, the Knative Eventing add-on generates an object as shown in the following example:</p>
 </div>
 <div class="listingblock">
 <div class="title">Example of a Knative <code>SinkBinding</code> generated by the add-on</div>
@@ -820,7 +820,7 @@ spec:
 <p><a href="event-correlation-with-workflows.html" class="xref page">Event correlation in Serverless Workflow</a></p>
 </li>
 <li>
-<p><a href="working-with-callbacks.html" class="xref page">Callbacks in Serverless Workflow</a></p>
+<p><a href="working-with-callbacks.html" class="xref page">Callback state in Serverless Workflow</a></p>
 </li>
 </ul>
 </div>

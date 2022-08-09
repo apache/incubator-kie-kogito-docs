@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Custom functions for your Serverless Workflow service :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Custom Functions Support">
-    <meta name="keywords" content="kogito, workflow, serverless, cncf, specification, functions, java">
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -67,7 +65,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -184,7 +182,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -196,7 +194,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -205,7 +203,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -217,7 +215,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -378,7 +376,7 @@
 <h2 id="con-func-java"><a class="anchor" href="#con-func-java"></a><code>java</code> custom function</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Kogito supports the <code>java</code> functions within an Apache Maven project, in which you define your Serverless Workflow service.</p>
+<p>Kogito supports the <code>java</code> functions within an Apache Maven project, in which you define your workflow service.</p>
 </div>
 <div class="paragraph">
 <p>The following example shows the declaration of a <code>java</code> function:</p>
@@ -409,7 +407,7 @@
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>service:java:com.acme.MyInterfaceOrClass::myMethod</code> is the Kogito custom operation definition. In the custom operation definition, <code>service</code> is the reserved operation keyword followed by the <code>java</code> keyword. <code>com.acme.MyInterfaceOrClass</code> is the FQCN (Fully Qualified Class Name) of the interface or implementation class followed by the method name (<code>myMethod</code>).</td>
+<td><code>service:java:com.acme.MyInterfaceOrClass::myMethod</code> is the custom operation definition. In the custom operation definition, <code>service</code> is the reserved operation keyword followed by the <code>java</code> keyword. <code>com.acme.MyInterfaceOrClass</code> is the FQCN (Fully Qualified Class Name) of the interface or implementation class followed by the method name (<code>myMethod</code>).</td>
 </tr>
 </table>
 </div>
@@ -436,7 +434,7 @@
 </div>
 </div>
 <div class="paragraph">
-<p>To call the function shown in the previous example within your Serverless Workflow service, you can extract the required JSON value using <a href="understanding-jq-expressions.html" class="xref page"><code>jq</code> expression</a> or pass the JSON value without using arguments.</p>
+<p>To call the function shown in the previous example within your workflow service, you can extract the required JSON value using <a href="understanding-jq-expressions.html" class="xref page"><code>jq</code> expression</a> or pass the JSON value without using arguments.</p>
 </div>
 <div class="paragraph">
 <p>In the following example, the caller sends the entire payload:</p>
@@ -490,7 +488,7 @@
 </div>
 </div>
 <div class="paragraph">
-<p>In the previous example, the <code>JsonNode</code> that the <code>java</code> function returns is the new payload in the Serverless Workflow execution.</p>
+<p>In the previous example, the <code>JsonNode</code> that the <code>java</code> function returns is the new payload in the workflow execution.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -514,10 +512,10 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../getting-started/cncf-serverless-workflow-specification-support.html" class="xref page">CNCF Serverless Workflow Specification</a></p>
+<p><a href="../getting-started/cncf-serverless-workflow-specification-support.html" class="xref page">CNCF Serverless Workflow specification</a></p>
 </li>
 <li>
-<p><a href="understanding-jq-expressions.html" class="xref page">Understanding JQ Expressions</a>.</p>
+<p><a href="understanding-jq-expressions.html" class="xref page">jq expressions in Serverless Workflow</a></p>
 </li>
 </ul>
 </div>

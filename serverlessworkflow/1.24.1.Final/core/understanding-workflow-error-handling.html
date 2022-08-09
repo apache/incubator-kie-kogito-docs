@@ -67,7 +67,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -184,7 +184,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -196,7 +196,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -205,7 +205,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -217,7 +217,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -290,16 +290,16 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can handle the errors that might occur during Serverless Workflow .</p>
+<p>This document describes how you can handle the errors that might occur in Serverless Workflow.</p>
 </div>
 <div class="paragraph">
 <p>The Serverless Workflow specification provides an <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-error-handling">error handling</a> mechanism, enabling you to handle the errors that might happen during the interactions between the workflow and external systems.</p>
 </div>
 <div class="paragraph">
-<p>When an error occurs, it changes the regular Serverless Workflow sequence. In such cases, a workflow state transitions to an alternative state that can potentially handle the error, instead of transitioning to the predefined state.</p>
+<p>When an error occurs, it changes the regular workflow sequence. In such cases, a workflow state transitions to an alternative state that can potentially handle the error, instead of transitioning to the predefined state.</p>
 </div>
 <div class="paragraph">
-<p>Note that error definition for a Serverless Workflow is optional. If error handling is not defined, then the workflow execution is aborted when an error occurs. As a developer, you can consider the error handling in Serverless Workflow as a <code>try-catch</code> or a <code>goto</code> construct.</p>
+<p>Note that error definition for a workflow is optional. If error handling is not defined, then the workflow execution is aborted when an error occurs. As a developer, you can consider the error handling in Serverless Workflow as a <code>try-catch</code> or a <code>goto</code> construct.</p>
 </div>
 </div>
 </div>
@@ -307,21 +307,22 @@
 <h2 id="con-error-definition"><a class="anchor" href="#con-error-definition"></a>Error definition</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>An <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#error-definition">error definition</a> in Serverless Workflow is composed of a <code>name</code> and <code>code</code> parameters. The <code>name</code> is a short and natural language description of an error, such as <code>wrong parameter</code>. The <code>code</code> parameter helps the implementation to identify the error.</p>
+<p>An <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#error-definition">error definition</a> in a workflow is composed of a <code>name</code> and <code>code</code> parameters. The <code>name</code> is a short and natural language description of an error, such as <code>wrong parameter</code>. The <code>code</code> parameter helps the implementation to identify the error.</p>
 </div>
 <div class="paragraph">
-<p>In Kogito, the <code>code</code> parameter is mandatory and the engine uses different strategies to map the provided value to an exception encountered at runtime. The available strategies include fully qualified class name, error message, and status code.</p>
+<p>The <code>code</code> parameter is mandatory and the engine uses different strategies to map the provided value to an exception encountered at runtime. The available strategies include fully qualified class name, error message, and status code.</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Fully Qualified Class Name (FQCN)</dt>
 <dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
 <p>You can define the mapping as the fully qualified Java class name of an <a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/index.html">exception type</a>.</p>
-</dd>
-</dl>
 </div>
 <div class="paragraph">
-<p>To determine if an exception is handled by an error definition, Serverless workflow first checks whether or not the type of the Java exception is an instance of the exception that is specified in the error definition. Otherwise, Serverless workflow recursively applies the same check to any embedded exception within the original Java one, till the exception chain is exhausted.</p>
+<p>To determine if an exception is handled by an error definition, a workflow first checks whether or not the type of the Java exception is an instance of the exception that is specified in the error definition. Otherwise, the workflow recursively applies the same check to any embedded exception within the original Java one, till the exception chain is exhausted.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. Runtime exception examples:</caption>
@@ -346,16 +347,18 @@
 </tr>
 </tbody>
 </table>
-<div class="dlist">
-<dl>
+</div>
+</div>
+</dd>
 <dt class="hdlist1">Error message</dt>
 <dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
 <p>You can define the mapping as a partial match of the error message using <a href="https://docs.oracle.com/javase/tutorial/essential/regex/index.html">regex</a> patterns.</p>
-</dd>
-</dl>
 </div>
 <div class="paragraph">
-<p>Serverless Workflow verifies whether the message of the Java exception matches the value provided in the error <code>code</code>. The validation is performed using a regex matcher. The validation is successful if a partial match is found. Note that the validation is performed in a case-sensitive manner. If case-insensitive pattern matching is desired, use the <a href="https://docs.oracle.com/javase/tutorial/essential/regex/pattern.html">embedded flag expression</a> <code>(?i)</code> within the regular expression.</p>
+<p>A workflow verifies whether the message of the Java exception matches the value provided in the error <code>code</code>. The validation is performed using a regex matcher. The validation is successful if a partial match is found. Note that the validation is performed in a case-sensitive manner. If case-insensitive pattern matching is desired, use the <a href="https://docs.oracle.com/javase/tutorial/essential/regex/pattern.html">embedded flag expression</a> <code>(?i)</code> within the regular expression.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 2. Error message examples:</caption>
@@ -384,16 +387,18 @@
 </tr>
 </tbody>
 </table>
-<div class="dlist">
-<dl>
+</div>
+</div>
+</dd>
 <dt class="hdlist1">Status code</dt>
 <dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
 <p>You can define the mapping as a status code returned by the invoked service.</p>
-</dd>
-</dl>
 </div>
 <div class="paragraph">
-<p>The external services return status codes in the event of a failure. For example, HTTP status codes are returned by REST or OpenAPI service invocations. In this case, Serverless Workflow verifies the defined error code against the HTTP code from the underlying response object.</p>
+<p>The external services return status codes in the event of a failure. For example, HTTP status codes are returned by REST or OpenAPI service invocations. In this case, the workflow verifies the defined error code against the HTTP code from the underlying response object.</p>
 </div>
 <div class="paragraph">
 <p>You can define the error code either as an HTTP code or as a colon-separated string, in which the error definition contains the error code in the last part.</p>
@@ -423,11 +428,16 @@
 </table>
 </div>
 </div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="ref-example-error-handling"><a class="anchor" href="#ref-example-error-handling"></a>Example of error handling</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The workflow in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-error-quarkus"><code>serverless-workflow-error-quarkus</code> example application</a> illustrate the usage of the error handling mechanism.</p>
+<p>The workflow in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-error-quarkus"><code>serverless-workflow-error-quarkus</code></a> example application illustrate the usage of the error handling mechanism.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -436,7 +446,7 @@
 <div class="title">Figure 1. Example of error handling</div>
 </div>
 <div class="paragraph">
-<p>The workflow accepts an integer number as the input model. When the workflow starts, it invokes the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-error-quarkus/src/main/java/org/kie/kogito/examples/EvenService.java"><code>isEven</code> Java service</a>, which accepts that integer number as a parameter. This service throws an <code>IllegalArgumentException</code> exception if the integer number is odd. This means that if the integer number is even, the Serverless Workflow transitions to the <code>even</code> state, however, if the integer number is odd, the Serverless Workflow transitions to the <code>odd</code> state, resulting in a different model output.</p>
+<p>The workflow accepts an integer number as the input model. When the workflow starts, it invokes the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-error-quarkus/src/main/java/org/kie/kogito/examples/EvenService.java"><code>isEven</code> Java service</a>, which accepts that integer number as a parameter. This service throws an <code>IllegalArgumentException</code> exception if the integer number is odd. This means that if the integer number is even, the workflow transitions to the <code>even</code> state, however, if the integer number is odd, the workflow transitions to the <code>odd</code> state, resulting in a different model output.</p>
 </div>
 <div class="listingblock">
 <div class="title">Example <code>checkEven</code> state</div>
@@ -548,7 +558,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a></p>
 </li>
 </ul>
 </div>

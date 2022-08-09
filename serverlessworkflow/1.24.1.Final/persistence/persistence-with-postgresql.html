@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Running a Serverless Workflow service using PostgreSQL :: Kogito Serverless Workflow Guides</title>
+    <title>Running a workflow service using PostgreSQL :: Kogito Serverless Workflow Guides</title>
     <meta name="description" content="Running Serverless Workflow service using PostgresSQL">
     <meta name="keywords" content="kogito, workflow, quarkus, serverless, quarkus-cli, persistence, postgresql">
     <meta name="generator" content="Antora 3.0.3">
@@ -67,7 +67,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -184,7 +184,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -196,7 +196,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -205,7 +205,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -217,7 +217,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -268,7 +268,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Persistence</li>
-    <li><a href="persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a></li>
+    <li><a href="persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a></li>
   </ul>
 </nav>
 <div class="page-versions">
@@ -286,14 +286,14 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Running a Serverless Workflow service using PostgreSQL</h1>
+<h1 class="page">Running a workflow service using PostgreSQL</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can run your Serverless Workflow application using PostgreSQL persistence.</p>
+<p>This document describes how you can run your workflow application using PostgreSQL persistence.</p>
 </div>
 <div class="paragraph">
-<p>When your Serverless Workflow execution requires <code>wait</code> states, then running your workflow application with persistence enabled is a recommended approach.</p>
+<p>When your workflow execution requires <code>wait</code> states, then running your workflow application with persistence enabled is a recommended approach.</p>
 </div>
 <div class="paragraph">
 <p>For example, when a process reaches a <code>callback</code> or needs to wait for an event, then the execution of the process is paused and the engine takes a snapshot of the workflow data. The snapshot is persisted in the database as a binary format along with process metadata information. The process metadata information includes process ID, process instance ID, and process version.</p>
@@ -320,7 +320,7 @@
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>A Serverless Workflow project is created.</p>
+<p>A workflow project is created.</p>
 <div class="paragraph">
 <p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
 </div>
@@ -430,11 +430,11 @@ quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/postgres</code></pr
 </div>
 </li>
 <li>
-<p>Change the version in the Serverless Workflow file.</p>
+<p>Change the version in the workflow file.</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Example Serverless Workflow file</div>
+<div class="title">Example workflow file</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "id": "applicantworkflow",
@@ -447,10 +447,10 @@ quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/postgres</code></pr
 <p>The versioning strategy is used to allow different workflow applications to run different versions of a process at the same time. The different versions of a process share the same database. This is useful when you migrate a process from one version to another. When allowing workflow instances to finish executing, a new version can be deployed using a new workflow application setup.</p>
 </div>
 <div class="paragraph">
-<p>By default, the engine considers the <code>version</code> specified in the Serverless Workflow file as the current version of the asset. Therefore, you need to manually change the <code>version</code> in the Serverless Workflow file, making the engine consider the specified version as a new version.</p>
+<p>By default, the engine considers the <code>version</code> specified in the workflow file as the current version of the asset. Therefore, you need to manually change the <code>version</code> in the workflow file, making the engine consider the specified version as a new version.</p>
 </div>
 <div class="paragraph">
-<p>As an alternative, you can set the <code>kogito.workflow.version-strategy=project</code> property in the <code>application.properties</code> file of your project. This enables the engine to consider the Maven or Gradle project version as the version of all workflows in the project. For instance, when you release a new version of your Maven project, the version in the Serverless Workflow file is automatically updated.</p>
+<p>As an alternative, you can set the <code>kogito.workflow.version-strategy=project</code> property in the <code>application.properties</code> file of your project. This enables the engine to consider the Maven or Gradle project version as the version of all workflows in the project. For instance, when you release a new version of your Maven project, the version in the workflow file is automatically updated.</p>
 </div>
 </div>
 </div>

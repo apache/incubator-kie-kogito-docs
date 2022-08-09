@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Testing your Serverless Workflow application using REST Assured :: Kogito Serverless Workflow Guides</title>
+    <title>Testing your workflow application using REST Assured :: Kogito Serverless Workflow Guides</title>
     <meta name="description" content="Basic Integration Test with REST Assured">
     <meta name="keywords" content="kogito, workflow, quarkus, serverless, quarkus-cli, test, restassured">
     <meta name="generator" content="Antora 3.0.3">
@@ -67,7 +67,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -184,7 +184,7 @@
     <a class="nav-link" href="mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -196,7 +196,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -205,7 +205,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -217,7 +217,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -268,7 +268,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Testing and Troubleshooting</li>
-    <li><a href="basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a></li>
+    <li><a href="basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a></li>
   </ul>
 </nav>
 <div class="page-versions">
@@ -286,20 +286,20 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Testing your Serverless Workflow application using REST Assured</h1>
+<h1 class="page">Testing your workflow application using REST Assured</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how to test your Serverless Workflow application using REST Assured.</p>
+<p>This document describes how to test your workflow application using REST Assured.</p>
 </div>
 <div class="paragraph">
 <p>Rest Assured enables you to test REST APIs using Java libraries and integrates with Apache Maven. For more information about REST Assured, see <a href="https://rest-assured.io/">REST Assured page</a>.</p>
 </div>
 <div class="paragraph">
-<p>The testing procedure in this document is based on the <code>serverless-workflow-examples/serverless-workflow-testing-with-rest-assured</code> example application. You can access this example application in <a href="https://github.com/kiegroup/kogito-examples.git">Kogito Examples</a> GitHub repository</p>
+<p>The testing procedure in this document is based on the <code>serverless-workflow-examples/serverless-workflow-testing-with-rest-assured</code> example application. You can access this example application in <a href="https://github.com/kiegroup/kogito-examples.git">Kogito Examples</a> GitHub repository.</p>
 </div>
 <div class="paragraph">
-<p>The following procedure describes how to test a Serverless Workflow application that exposes the <code>hello</code> endpoint, which expects a <code>name</code> as a request parameter and returns <code>greeting</code> value:</p>
+<p>The following procedure describes how to test a workflow application that exposes the <code>hello</code> endpoint, which expects a <code>name</code> as a request parameter and returns <code>greeting</code> value:</p>
 </div>
 <div class="listingblock">
 <div class="title">Example request body</div>
@@ -326,7 +326,7 @@
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>A Serverless Workflow project is created.</p>
+<p>A workflow project is created.</p>
 <div class="paragraph">
 <p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
 </div>
@@ -351,8 +351,7 @@
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Create a test class named <code>HelloTest</code> in the <code>src/test/java/org/kie/kogito/examples/</code>
-directory, containing the following content:</p>
+<p>Create a test class named <code>HelloTest</code> in the <code>src/test/java/org/kie/kogito/examples/</code> directory, containing the following content:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -493,10 +492,10 @@ class HelloTest {
 <p><a href="mocking-openapi-services-with-wiremock.html" class="xref page">Mocking OpenAPI services using WireMock</a></p>
 </li>
 <li>
-<p><a href="mocking-http-cloudevents-with-wiremock.html" class="xref page">Mocking HTTP CloudEvents using WireMock</a></p>
+<p><a href="mocking-http-cloudevents-with-wiremock.html" class="xref page">Mocking HTTP CloudEvents sink using WireMock</a></p>
 </li>
 <li>
-<p><a href="integration-tests-with-postgresql.html" class="xref page">Testing your Serverless Workflow application using PostgreSQL</a></p>
+<p><a href="integration-tests-with-postgresql.html" class="xref page">Serverless Workflow integration test using PostgreSQL</a></p>
 </li>
 <li>
 <p><a href="https://quarkus.io/guides/getting-started-testing">Testing a Quarkus application</a></p>

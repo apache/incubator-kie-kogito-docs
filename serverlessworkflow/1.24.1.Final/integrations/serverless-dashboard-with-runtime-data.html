@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Displaying Serverless Workflow data in dashboards :: Kogito Serverless Workflow Guides</title>
+    <title>Displaying workflow data in dashboards :: Kogito Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -65,7 +65,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -182,7 +182,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -194,7 +194,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -203,7 +203,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -215,7 +215,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -266,7 +266,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Integrations</li>
-    <li><a href="serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a></li>
+    <li><a href="serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a></li>
   </ul>
 </nav>
 <div class="page-versions">
@@ -284,14 +284,14 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Displaying Serverless Workflow data in dashboards</h1>
+<h1 class="page">Displaying workflow data in dashboards</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can build dashboards to monitor your Serverless Workflows data.</p>
+<p>This document describes how you can build dashboards to monitor your workflows data.</p>
 </div>
 <div class="paragraph">
-<p>To build the dashboards, you need data, which you can acquire from your Serverless Workflows using one of the following methods:</p>
+<p>To build the dashboards, you need data, which you can acquire from your workflows using one of the following methods:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -312,10 +312,10 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="con-sw-dashboard"><a class="anchor" href="#con-sw-dashboard"></a>Dashboards for Serverless Workflows</h2>
+<h2 id="con-sw-dashboard"><a class="anchor" href="#con-sw-dashboard"></a>Dashboards for workflows</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The dashboards for Serverless Workflows are visualization of data that run on the client side. The dashboards are created using <a href="https://www.dashbuilder.org">Dashbuilder</a>, which consumes data from any JSON source. You can define a dashboard in YAML format.</p>
+<p>The dashboards for workflows are visualization of data that run on the client side. The dashboards are created using <a href="https://www.dashbuilder.org">Dashbuilder</a>, which consumes data from any JSON source. You can define a dashboard in YAML format.</p>
 </div>
 <div class="paragraph">
 <p>To use the Dashbuilder, download and uncompress the <code>dashbuilder-client</code> NPM package. Also, edit the <code>setup.js</code> file to link your YAML files. For more information about using Dashbuilder, see <a href="https://www.dashbuilder.org/docs/#_client_only">Dashbuilder documentation</a>.</p>
@@ -324,6 +324,7 @@
 <div class="content">
 <img src="../_images/integrations/dashbuilder-sample-report.png" alt="dashbuilder sample report">
 </div>
+<div class="title">Figure 1. Dashbuilder</div>
 </div>
 </div>
 </div>
@@ -331,15 +332,15 @@
 <h2 id="proc-sw-dashboard-metrics"><a class="anchor" href="#proc-sw-dashboard-metrics"></a>Building dashboards using metrics</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can build dashboards to monitor the data of your Serverless Workflows using metrics.</p>
+<p>You can build dashboards to monitor the data of your workflows using metrics.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Serverless Workflow application is created.</p>
+<p>A workflow application is created.</p>
 <div class="paragraph">
-<p>For more information about creating Serverless Workflow, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+<p>For more information about creating a workflow, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a>.</p>
 </div>
 </li>
 </ul>
@@ -348,7 +349,7 @@
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>To enable metrics for your Serverless Workflow application add <code>org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus</code> dependency in <code>pom.xml</code> file of your application:</p>
+<p>To enable metrics for your workflows application add <code>org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus</code> dependency in <code>pom.xml</code> file of your application:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -364,7 +365,7 @@
 <p>You can find the metrics in <code>/q/metrics</code> path.</p>
 </div>
 <div class="paragraph">
-<p>The dashbuilder can consume the data of your Serverless Workflow directly from the metrics endpoints. Therefore, you can use a <a href="https://docs.jsonata.org/overview.html">JSONAta expression</a> to format the metrics and display the metrics in a table using the following example of YAML code:</p>
+<p>The dashbuilder can consume the data of your workflow directly from the metrics endpoints. Therefore, you can use a <a href="https://docs.jsonata.org/overview.html">JSONAta expression</a> to format the metrics and display the metrics in a table using the following example of YAML code:</p>
 </div>
 <div class="listingblock">
 <div class="title">Example YAML to show metrics in a table</div>
@@ -396,28 +397,28 @@ pages:
 <div class="content">
 <img src="../_images/integrations/dashbuilder-metrics-table.png" alt="dashbuilder metrics table">
 </div>
-<div class="title">Figure 1. Example metrics in a table</div>
+<div class="title">Figure 2. Example metrics in a table</div>
 </div>
 </div>
 </div>
 </li>
 <li>
-<p>To extract a specific information from your Serverless Workflow, use specific metrics. Metrics related to Serverless Workflows include:</p>
+<p>To extract a specific information from your workflow, use specific metrics. Metrics related to workflows include:</p>
 <div class="openblock">
 <div class="content">
 <div class="ulist">
 <ul>
 <li>
-<p><code>kogito_process_instance_completed_total</code>: Completed Serverless Workflows</p>
+<p><code>kogito_process_instance_completed_total</code>: Completed workflows</p>
 </li>
 <li>
-<p><code>kogito_process_instance_started_total</code>: Started Serverless Workflows</p>
+<p><code>kogito_process_instance_started_total</code>: Started workflows</p>
 </li>
 <li>
-<p><code>kogito_process_instance_running_total</code>: Running Serverless Workflows</p>
+<p><code>kogito_process_instance_running_total</code>: Running workflows</p>
 </li>
 <li>
-<p><code>kogito_process_instance_duration_seconds_sum</code>: Serverless Workflows total duration</p>
+<p><code>kogito_process_instance_duration_seconds_sum</code>: Workflows total duration</p>
 </li>
 </ul>
 </div>
@@ -560,7 +561,7 @@ pages:
 <div class="content">
 <img src="../_images/integrations/dashbuilder-workflows-metrics-dashboard.png" alt="dashbuilder workflows metrics dashboard">
 </div>
-<div class="title">Figure 2. Example Serverless Workflow metrics dashboard</div>
+<div class="title">Figure 3. Example workflow metrics dashboard</div>
 </div>
 </div>
 </div>
@@ -579,7 +580,7 @@ pages:
 <h2 id="proc-sw-dashboard-data-index"><a class="anchor" href="#proc-sw-dashboard-data-index"></a>Building dashboards using Data Index</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Data Index is a service that contains all the data related to the execution of your Serverless Workflow. The Data Index service is available during the development mode. By default, you can access the Data Index at <code><a href="http://localhost:8180" class="bare">http://localhost:8180</a></code>.</p>
+<p>Data Index is a service that contains all the data related to the execution of your workflow. The Data Index service is available during the development mode. By default, you can access the Data Index at <code><a href="http://localhost:8180" class="bare">http://localhost:8180</a></code>.</p>
 </div>
 <div class="paragraph">
 <p>The Data Index service uses GraphQL, so that dashbuilder can connect with the service using its REST API and transform the result to the supported format.</p>
@@ -588,9 +589,9 @@ pages:
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Serverless Workflow application is created.</p>
+<p>A workflow application is created.</p>
 <div class="paragraph">
-<p>For more information about creating Serverless Workflow, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+<p>For more information about creating a workflow, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a>.</p>
 </div>
 </li>
 </ul>
@@ -603,7 +604,7 @@ pages:
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The following is an example of GraphQL query that lists all the Serverless Workflows:</p>
+<p>The following is an example of GraphQL query that lists all the workflows:</p>
 </div>
 <div class="listingblock">
 <div class="title">Example GraphQL query to retrieve all workflows</div>
@@ -665,7 +666,7 @@ pages:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Internally, Serverless Workflows are referenced as processes, therefore the <code>processId</code> is the workflow ID and <code>processName</code> is the workflow name.</p>
+<p>Internally, workflows are referenced as processes, therefore the <code>processId</code> is the workflow ID and <code>processName</code> is the workflow name.</p>
 </div>
 </td>
 </tr>
@@ -752,7 +753,7 @@ pages:
 <div class="content">
 <img src="../_images/integrations/data-index-workflow-list-report.png" alt="data index workflow list report">
 </div>
-<div class="title">Figure 3. Example dashboard created using Data Index</div>
+<div class="title">Figure 4. Example dashboard created using Data Index</div>
 </div>
 </div>
 </div>
@@ -768,7 +769,7 @@ pages:
 <h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a></p>
 </div>
 </div>
 </div>

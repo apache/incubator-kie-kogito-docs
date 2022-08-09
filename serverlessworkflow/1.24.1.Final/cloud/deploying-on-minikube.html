@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Deploying your Serverless Workflow application on Minikube :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Deploying Serverless Application on Minikube">
-    <meta name="keywords" content="kogito, workflow, quarkus, serverless, kn, kubectl, minikube">
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -67,7 +65,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -184,7 +182,7 @@
     <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -196,7 +194,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -205,7 +203,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -217,7 +215,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -290,7 +288,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how to deploy your Serverless Workflow application using a local Kubernetes cluster, such as <a href="https://minikube.sigs.k8s.io}">Minikube</a>, along with a procedure to run the Knative platform.</p>
+<p>This document describes how to deploy your workflow application using a local Kubernetes cluster, such as <a href="https://minikube.sigs.k8s.io">Minikube</a>, along with a procedure to run the Knative platform.</p>
 </div>
 <div class="paragraph">
 <p>For more information about Minikube and related system requirements, see <a href="https://minikube.sigs.k8s.io/docs/start/">Getting started with Minikube</a> documentation.</p>
@@ -299,16 +297,16 @@
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Your Serverless Workflow application is ready to use.</p>
+<p>Your workflow application is ready to use.</p>
 <div class="paragraph">
-<p>For more information about building the application container, see <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Building Serverless Workflow Images using Quarkus CLI</a>.</p>
+<p>For more information about building the application container, see <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Building workflow images using Quarkus CLI</a>.</p>
 </div>
 </li>
 <li>
 <p>Minikube is installed.</p>
 </li>
 <li>
-<p>kubectl command-line tool is installed. Otherwise, Minikube handles it.</p>
+<p><code>kubectl</code> command-line tool is installed. Otherwise, Minikube handles it.</p>
 </li>
 <li>
 <p>Knative CLI is installed.</p>
@@ -322,7 +320,7 @@
 </ul>
 </div>
 <div class="paragraph">
-<p>To deploy your Serverless Workflow application on Minikube, you need to install Knative on Minikube. However, first you need to ensure that Minikube is installed correctly.</p>
+<p>To deploy your workflow application on Minikube, you need to install Knative on Minikube. However, first you need to ensure that Minikube is installed correctly.</p>
 </div>
 <div class="paragraph">
 <p>You can check the Minikube installation by entering the following commands in a command terminal:</p>
@@ -467,10 +465,10 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="proc-deploy-sw-application-minikube"><a class="anchor" href="#proc-deploy-sw-application-minikube"></a>Deploying your Serverless Workflow application on Minikube</h2>
+<h2 id="proc-deploy-sw-application-minikube"><a class="anchor" href="#proc-deploy-sw-application-minikube"></a>Deploying your workflow application on Minikube</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Once you install Knative on Minikube, you can initiate the process of deploying your Serverless Workflow application on Minikube.</p>
+<p>Once you install Knative on Minikube, you can initiate the process of deploying your workflow application on Minikube.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
@@ -488,7 +486,7 @@
 <p>(Optional) Quarkus CLI is installed. For more information, see <a href="https://quarkus.io/guides/cli-tooling">Building Quarkus Apps with Quarkus command line interface (CLI)</a>.</p>
 </li>
 <li>
-<p>Serverless Workflow application container is ready.</p>
+<p>Workflow application container is ready.</p>
 </li>
 </ul>
 </div>
@@ -515,7 +513,7 @@
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-If your Serverless Workflow application container image was built before configuring Docker, then you might need to build the image again so that the image is available on the Minikube Docker.
+If your workflow application container image was built before configuring Docker, then you might need to build the image again so that the image is available on the Minikube Docker.
 </td>
 </tr>
 </table>
@@ -625,11 +623,11 @@ If your Serverless Workflow application container image was built before configu
 </div>
 </li>
 <li>
-<p>Install your Serverless Workflow application using the container image.</p>
+<p>Install your workflow application using the container image.</p>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>You can use the native image due to the faster startup. For more information about installing the Serverless Workflow application, see <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Building Serverless Workflow Images using Quarkus CLI</a> document.</p>
+<p>You can use the native image due to the faster startup. For more information about installing the workflow application, see <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Building workflow images using Quarkus CLI</a> document.</p>
 </div>
 </div>
 </div>
@@ -637,7 +635,7 @@ If your Serverless Workflow application container image was built before configu
 </ol>
 </div>
 <div class="paragraph">
-<p>In the following procedures, you can find two examples of deploying your Serverless Workflow application, including:</p>
+<p>In the following procedures, you can find two examples of deploying your workflow application, including:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -650,15 +648,15 @@ If your Serverless Workflow application container image was built before configu
 </ul>
 </div>
 <div class="sect2">
-<h3 id="proc-deploy-sw-application-knative-cli"><a class="anchor" href="#proc-deploy-sw-application-knative-cli"></a>Deploying your Serverless Workflow application using Knative CLI</h3>
+<h3 id="proc-deploy-sw-application-knative-cli"><a class="anchor" href="#proc-deploy-sw-application-knative-cli"></a>Deploying your workflow application using Knative CLI</h3>
 <div class="paragraph">
-<p>Once you install your Serverless Workflow application using the container image, you can use the command-line tools, such as Knative CLI or <code>kubectl</code> to initiate the deployment process.</p>
+<p>Once you install your workflow application using the container image, you can use the command-line tools, such as Knative CLI or <code>kubectl</code> to initiate the deployment process.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Serverless Workflow application is installed.</p>
+<p>Workflow application is installed.</p>
 </li>
 <li>
 <p>Knative CLI is installed.</p>
@@ -672,11 +670,11 @@ If your Serverless Workflow application container image was built before configu
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>In a command terminal, execute to following command to deploy your Serverless Workflow application using Knative CLI:</p>
+<p>In a command terminal, execute to following command to deploy your workflow application using Knative CLI:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Example of deploying Serverless Workflow application using Knative CLI</div>
+<div class="title">Example of deploying workflow application using Knative CLI</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service create hello \
     --image=dev.local/kogito/serverless-workflow-greeting-quarkus:1.0-native \
@@ -705,7 +703,7 @@ http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io</code></
 </div>
 </li>
 <li>
-<p>Use the URL in the output to send request to your Serverless Workflow application.</p>
+<p>Use the URL in the output to send request to your workflow application.</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -727,15 +725,15 @@ http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io</code></
 </div>
 </div>
 <div class="sect2">
-<h3 id="proc-deploy-sw-application-kubectl"><a class="anchor" href="#proc-deploy-sw-application-kubectl"></a>Deploying your Serverless Workflow application using kubectl</h3>
+<h3 id="proc-deploy-sw-application-kubectl"><a class="anchor" href="#proc-deploy-sw-application-kubectl"></a>Deploying your workflow application using <code>kubectl</code></h3>
 <div class="paragraph">
-<p>You can also use kubectl command-line interface to deploy your Serverless Workflow application.</p>
+<p>You can also use <code>kubectl</code> command-line interface to deploy your workflow application.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Serverless Workflow application is installed.</p>
+<p>Workflow application is installed.</p>
 </li>
 <li>
 <p><code>kubectl</code> command-line tool is installed.</p>
@@ -746,7 +744,7 @@ http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io</code></
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>To deploy your Serverless Workflow application, you can use plain Kubernetes objects. Therefore, instead of creating <code>knative</code>, <code>yaml|json</code> descriptors, you can leverage the Quarkus Kubernetes extension and Kogito Knative add-on to generate the descriptors.</p>
+<p>To deploy your workflow application, you can use plain Kubernetes objects. Therefore, instead of creating <code>knative</code>, <code>yaml|json</code> descriptors, you can leverage the Quarkus Kubernetes extension and Kogito Knative add-on to generate the descriptors.</p>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -792,7 +790,7 @@ quarkus-kubernetes 'org.kie.kogito:kogito-addons-quarkus-knative-eventing:1.24.1
 </div>
 </li>
 <li>
-<p>To generate the <code>knative</code>, <code>yaml|json</code> descriptors, set the following system properties with <code>-D</code> prefix (if using Quarkus CLI) in the <code>application.properties</code> file of your Serverless Workflow application:</p>
+<p>To generate the <code>knative</code>, <code>yaml|json</code> descriptors, set the following system properties with <code>-D</code> prefix (if using Quarkus CLI) in the <code>application.properties</code> file of your workflow application:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -806,11 +804,11 @@ quarkus.knative.name=greeting-quarkus-kubectl</code></pre>
 </div>
 </li>
 <li>
-<p>Build your Serverless Workflow application.</p>
+<p>Build your workflow application.</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Build your Serverless Workflow application</div>
+<div class="title">Build your workflow application</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
 apiVersion: serving.knative.dev/v1
@@ -859,20 +857,20 @@ spec:
 </div>
 </div>
 <div class="paragraph">
-<p>You can find the previous content in the generated files in the <code>target/kubernetes</code> directory:</p>
+<p>You can find the previous content in the following generated files in the <code>target/kubernetes</code> directory:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>knative.json</p>
+<p><code>knative.json</code></p>
 </li>
 <li>
-<p>knative.yml</p>
+<p><code>knative.yml</code></p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Once the files are generated, you might be required to add the <code>imagePullPolicy</code> manually before deploying the Serverless Workflow application.</p>
+<p>Once the files are generated, you might be required to add the <code>imagePullPolicy</code> manually before deploying the workflow application.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -885,8 +883,7 @@ spec:
 <p>Some of the system properties are not working properly due to a bug in decorate API. For more information about the bug, see <a href="https://github.com/quarkusio/quarkus/issues/23832">Quarkus issue</a>.</p>
 </div>
 <div class="paragraph">
-<p>There is a small bug on the 'Decorate API' where some system properties are not taking effect, for more information please take a look at this <a href="https://github.com/quarkusio/quarkus/issues/23832">Quarkus issue</a>.
-After the file generation, you might be required to add the <code>imagePullPolicy</code> manually before deploying it.</p>
+<p>There is a small bug on the 'Decorate API' where some system properties are not taking effect, for more information take a look at this <a href="https://github.com/quarkusio/quarkus/issues/23832">Quarkus issue</a>. After the file generation, you might be required to add the <code>imagePullPolicy</code> manually before deploying it.</p>
 </div>
 </td>
 </tr>
@@ -896,11 +893,11 @@ After the file generation, you might be required to add the <code>imagePullPolic
 </div>
 </li>
 <li>
-<p>Enter the following command to deploy the Serverless Workflow application using kubectl:</p>
+<p>Enter the following command to deploy the workflow application using <code>kubectl</code>:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Deploy Serverless Workflow using kubectl</div>
+<div class="title">Deploy workflow using <code>kubectl</code></div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl apply -f target/kubernetes/knative.yml</code></pre>
 </div>
@@ -909,7 +906,7 @@ After the file generation, you might be required to add the <code>imagePullPolic
 </div>
 </li>
 <li>
-<p>Verify if the Serverless Workflow application is deployed correctly using the following command:</p>
+<p>Verify if the workflow application is deployed correctly using the following command:</p>
 <div class="openblock">
 <div class="content">
 <div class="tabset is-loading">
@@ -951,11 +948,11 @@ greeting-quarkus-kubectl   http://greeting-quarkus-kubectl.serverless-workflow-g
 </div>
 </li>
 <li>
-<p>Access the Serverless Workflow application using the listed URL in the output.</p>
+<p>Access the workflow application using the listed URL in the output.</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Access Serverless Workflow application</div>
+<div class="title">Access workflow application</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://greeting-quarkus-kubectl.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet</code></pre>
 </div>
@@ -967,15 +964,15 @@ greeting-quarkus-kubectl   http://greeting-quarkus-kubectl.serverless-workflow-g
 </div>
 </div>
 <div class="sect2">
-<h3 id="proc-deploy-sw-application-quarkus-cli"><a class="anchor" href="#proc-deploy-sw-application-quarkus-cli"></a>Deploying your Serverless Workflow application using Quarkus CLI</h3>
+<h3 id="proc-deploy-sw-application-quarkus-cli"><a class="anchor" href="#proc-deploy-sw-application-quarkus-cli"></a>Deploying your workflow application using Quarkus CLI</h3>
 <div class="paragraph">
-<p>You can use the <a href="https://quarkus.io/guides/cli-tooling">Quarkus CLI</a> to abstract all of the complexities mentioned in the previous sections and deploy your Serverless Workflow application once the build completes.</p>
+<p>You can use the <a href="https://quarkus.io/guides/cli-tooling">Quarkus CLI</a> to abstract all of the complexities mentioned in the previous sections and deploy your workflow application once the build completes.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Serverless Workflow application is installed.</p>
+<p>Workflow application is installed.</p>
 </li>
 <li>
 <p>Quarkus CLI is installed. For more information, see <a href="https://quarkus.io/guides/cli-tooling">Building Quarkus Apps with Quarkus command line interface (CLI)</a>.</p>
@@ -986,7 +983,7 @@ greeting-quarkus-kubectl   http://greeting-quarkus-kubectl.serverless-workflow-g
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>To deploy your Serverless Workflow application using Quarkus CLI, set the following system properties in <code>application.properties</code> file:</p>
+<p>To deploy your workflow application using Quarkus CLI, set the following system properties in <code>application.properties</code> file:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -1001,15 +998,15 @@ quarkus.container-image.push=false <i class="conum" data-value="3"></i><b>(3)</b
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>- Property for the Knative resource name</td>
+<td>Property for the Knative resource name</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>- Property to set whether or not deploy on an active Kubernetes cluster</td>
+<td>Property to set whether or not deploy on an active Kubernetes cluster</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>- Property to whether or not push images when using Minikube&#8217;s remove Docker daemon to avoid image validation</td>
+<td>Property to whether or not push images when using Minikube&#8217;s remove Docker daemon to avoid image validation</td>
 </tr>
 </table>
 </div>
@@ -1032,14 +1029,14 @@ quarkus.container-image.push=false <i class="conum" data-value="3"></i><b>(3)</b
 </div>
 </li>
 <li>
-<p>Verify if your Serverless Workflow application is deployed correctly:</p>
+<p>Verify if your workflow application is deployed correctly:</p>
 <div class="openblock">
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset3_kubectl"></a>kubectl</p>
+<p>[[tabset3_-code-kubectl&#8212;&#8203;code-]]<code>kubectl</code></p>
 </li>
 <li>
 <p><a id="tabset3_knative-cli"></a>Knative CLI</p>
@@ -1047,7 +1044,7 @@ quarkus.container-image.push=false <i class="conum" data-value="3"></i><b>(3)</b
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset3_kubectl">
+<div class="tab-pane" aria-labelledby="tabset3_-code-kubectl--code-">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get services.serving.knative.dev greeting-quarkus-cli</code></pre>
@@ -1074,11 +1071,11 @@ greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-
 </div>
 </li>
 <li>
-<p>You can access your Serverless Workflow application using the listed URL in the output.</p>
+<p>You can access your workflow application using the listed URL in the output.</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Access your Serverless Workflow application</div>
+<div class="title">Access your workflow application</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet.37.sslip.io/jsongreet</code></pre>
 </div>

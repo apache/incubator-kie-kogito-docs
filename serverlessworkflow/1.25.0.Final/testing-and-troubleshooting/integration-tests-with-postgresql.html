@@ -67,7 +67,7 @@
     <span class="nav-text">Getting Started</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first Serverless Workflow service</a>
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
@@ -184,7 +184,7 @@
     <a class="nav-link" href="mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your Serverless Workflow application using REST Assured</a>
+    <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
@@ -196,7 +196,7 @@
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a Serverless Workflow service using PostgreSQL</a>
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -205,7 +205,7 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building Serverless Workflow Images using Quarkus CLI</a>
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
@@ -217,7 +217,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying Serverless Workflow data in dashboards</a>
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -290,7 +290,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can test your integrated Serverless Workflow application using PostgreSQL persistence.</p>
+<p>This document describes how you can test your integrated workflow application using PostgreSQL persistence.</p>
 </div>
 <div class="paragraph">
 <p>The example described in this document is based on the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-quarkus"><code>serverless-workflow-callback-quarkus</code></a> example application.</p>
@@ -309,7 +309,7 @@
 <p><code>@QuarkusIntegrationTest</code>: This annotation is used to launch and test the artifact produced by the Serverless Workflow Quarkus build. For more information, see <a href="https://quarkus.io/guides/getting-started-testing#quarkus-integration-test">Testing Quarkus application - Using <code>@QuarkusIntegrationTest</code></a> in Quarkus documentation.</p>
 </li>
 <li>
-<p>Quarkus Dev Services: This facilitates writing integration tests that need launching services to support the Serverless Workflow application. For more information, see <a href="https://quarkus.io/guides/getting-started-testing#launching-containers">Testing Quarkus application - launching containers</a> in Quarkus documentation.</p>
+<p>Quarkus Dev Services: This facilitates writing integration tests that need launching services to support the workflow application. For more information, see <a href="https://quarkus.io/guides/getting-started-testing#launching-containers">Testing Quarkus application - launching containers</a> in Quarkus documentation.</p>
 <div class="paragraph">
 <p><code>@QuarkusIntegrationTest</code> works immediately with the additional containers that are launched using <a href="https://quarkus.io/guides/dev-services">Quarkus Dev Services</a>.</p>
 </div>
@@ -319,24 +319,24 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="proc-test-sw-application-postgresql"><a class="anchor" href="#proc-test-sw-application-postgresql"></a>Testing a Serverless Workflow application using PostgreSQL persistence</h2>
+<h2 id="proc-test-sw-application-postgresql"><a class="anchor" href="#proc-test-sw-application-postgresql"></a>Testing a workflow application using PostgreSQL persistence</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can test your Serverless Workflow application using PostgreSQL persistence.</p>
+<p>You can test your workflow application using PostgreSQL persistence.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>A Serverless Workflow project is created.</p>
+<p>A workflow project is created.</p>
 <div class="paragraph">
 <p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
 </div>
 </li>
 <li>
-<p>Serverless Workflow application persistence is enabled using PostgreSQL.</p>
+<p>Workflow application persistence is enabled using PostgreSQL.</p>
 <div class="paragraph">
-<p>For more information, see <a href="../persistence/persistence-with-postgresql.html" class="xref page">Running Serverless Workflow service using PostgreSQL</a>.</p>
+<p>For more information, see <a href="../persistence/persistence-with-postgresql.html" class="xref page">Running workflow service using PostgreSQL</a>.</p>
 </div>
 </li>
 <li>
@@ -348,7 +348,7 @@
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Add the required test dependencies to the <code>pom.xml</code> file of your Serverless Workflow application:</p>
+<p>Add the required test dependencies to the <code>pom.xml</code> file of your workflow application:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -387,10 +387,10 @@
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The <a href="https://quarkus.io/guides/databases-dev-services">Quarkus Dev Services for Databases</a> is enabled when a reactive or JDBC data source extension is present in the Serverless Workflow application.</p>
+<p>The <a href="https://quarkus.io/guides/databases-dev-services">Quarkus Dev Services for Databases</a> is enabled when a reactive or JDBC data source extension is present in the workflow application.</p>
 </div>
 <div class="paragraph">
-<p>Ensure that the <code>pom.xml</code> file of your Serverless Workflow application contains the required dependency for PostgreSQL resources.</p>
+<p>Ensure that the <code>pom.xml</code> file of your workflow application contains the required dependency for PostgreSQL resources.</p>
 </div>
 <div class="listingblock">
 <div class="title">JDBC persistence add-on dependency</div>
@@ -423,7 +423,7 @@
 </div>
 </li>
 <li>
-<p>To run the integration tests, add Apache Maven Failsafe plug-in in the <code>pom.xml</code> file of your Serverless Workflow application.</p>
+<p>To run the integration tests, add Apache Maven Failsafe plug-in in the <code>pom.xml</code> file of your workflow application.</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -460,7 +460,7 @@
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The additional containers contain a full set of default configurations, including PostgreSQL Docker image name, default user, and default password. The required configuration to link the Serverless Workflow application with the Quarkus Dev PostgreSQL container is automatically added to the integration test. Quarkus provides the properties such as <code>quarkus.datasource.reactive.url</code>, <code>quarkus.datasource.jdbc.url</code>, <code>quarkus.datasource.username</code>, or <code>quarkus.datasource.password</code>, when you start the container.</p>
+<p>The additional containers contain a full set of default configurations, including PostgreSQL Docker image name, default user, and default password. The required configuration to link the workflow application with the Quarkus Dev PostgreSQL container is automatically added to the integration test. Quarkus provides the properties such as <code>quarkus.datasource.reactive.url</code>, <code>quarkus.datasource.jdbc.url</code>, <code>quarkus.datasource.username</code>, or <code>quarkus.datasource.password</code>, when you start the container.</p>
 </div>
 <div class="paragraph">
 <p>For more information, see <a href="https://quarkus.io/guides/databases-dev-services">Quarkus Dev Services for Databases</a> in Quarkus documentation.</p>
@@ -527,7 +527,7 @@ class CallbackRestIT { <i class="conum" data-value="2"></i><b>(2)</b>
 </table>
 </div>
 <div class="paragraph">
-<p>Once you specify the required resources and annotations, you can start testing the different interactions with the Serverless Workflow application as described in <a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your Serverless Workflow application using REST Assured</a> document.</p>
+<p>Once you specify the required resources and annotations, you can start testing the different interactions with the workflow application as described in <a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your workflow application using REST Assured</a> document.</p>
 </div>
 </div>
 </div>
@@ -555,13 +555,13 @@ class CallbackRestIT { <i class="conum" data-value="2"></i><b>(2)</b>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a></p>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a></p>
 </li>
 <li>
-<p><a href="../persistence/persistence-with-postgresql.html" class="xref page">Running Serverless Workflow service using PostgresSQL</a></p>
+<p><a href="../persistence/persistence-with-postgresql.html" class="xref page">Running a workflow service using PostgreSQL</a></p>
 </li>
 <li>
-<p><a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your Serverless Workflow application using REST Assured</a></p>
+<p><a href="basic-integration-tests-with-restassured.html" class="xref page">Testing your workflow application using REST Assured</a></p>
 </li>
 <li>
 <p><a href="https://quarkus.io/guides/getting-started-testing">Testing a Quarkus application</a></p>
