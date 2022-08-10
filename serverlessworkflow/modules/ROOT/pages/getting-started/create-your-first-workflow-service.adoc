@@ -27,7 +27,7 @@ and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-
 For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {context} tooling].
 
 ifeval::["{quarkus_cli_platform_redhat}" != ""]
-include::../../pages/_common-content/productized-instructions.adoc[]
+include::../../pages/_common-content/downstream-project-setup-instructions.adoc[]
 endif::[]
 
 [[proc-boostrapping-the-project]]
@@ -93,7 +93,11 @@ kn workflow create --name my-project --extension quarkus-jsonp,quarkus-smallrye-
 For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
 --
 ====
-
++
+ifeval::["{quarkus_cli_platform_redhat}" != ""]
+include::../../pages/_common-content/downstream-post-create-project.adoc[]
+endif::[]
++
 . To verify that project is created, compile the project using the following command:
 +
 [tabs]
