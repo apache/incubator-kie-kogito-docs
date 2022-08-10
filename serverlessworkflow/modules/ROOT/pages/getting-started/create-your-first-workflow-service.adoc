@@ -1,5 +1,11 @@
 = Creating your first workflow service
 
+:effective_kogito_version: {page-version}
+
+ifeval::["{quarkus_cli_platform_redhat}" != ""]
+:effective_kogito_version: {kogito_version_redhat}
+endif::[]
+
 As a developer, you can use {context} and create a `Hello World` application, which includes the following procedures:
 
 * <<proc-boostrapping-the-project,Bootstrapping a project>>
@@ -85,12 +91,13 @@ Knative CLI::
 +
 --
 .Create a project using Knative CLI
+
 [source,shell,subs="attributes"]
 ----
 kn workflow create \
   --name serverless-workflow-hello-world \
   --extension quarkus-jsonp,quarkus-smallrye-openapi \
-  --kogito-version={kogito_version} \
+  --kogito-version={effective_kogito_version} \
   --quarkus-version={quarkus_version}
 ----
 
