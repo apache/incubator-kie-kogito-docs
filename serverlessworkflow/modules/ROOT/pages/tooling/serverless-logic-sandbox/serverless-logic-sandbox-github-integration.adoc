@@ -1,0 +1,51 @@
+= GitHub integration
+:compat-mode!:
+// Metadata:
+:description: Serverless Logic Sandbox github integration
+:keywords: kogito, workflow, serverless, editor, sandbox, settings, github, integration
+
+The Serverless Logic Sandbox implements a web version of a git client, allowing users to create, commit, push and pull repositories, making it possible sync workspaces remotely.
+
+This document describes how to configure the integration and sync your projects. 
+
+[[proc-setting-github-token-serverless-logic-sandbox]]
+== Setting up your GitHub token
+
+You can generate a token from your GitHub account settings page and add it to the Serverless Logic Sandbox settings tab.
+
+.Prerequisites
+* GitHub account.
+
+.Procedure
+. In the Serverless Logic Sandbox, click on the **Cog wheel** on the top right corner and go to the **GitHub** tab;
+. From there, you'll see a link to the GitHub token settings page and the **Token** field.
+. Click the link:{https://github.com/settings/tokens}[link] and create your GitHub token, making sure you select both **repo** and **gist** options. This is important, as those are the permissions required for creating and updating repositories and gists.
+. Copy the token generated and paste it into the GitHub settings tab on the Serverless Logic Sandbox.
+. The contents of the tab should be updated, showing that you're signed into GitHub and have all the permissions required.
+
+
+[[proc-sync-workspace-github-serverless-logic-sandbox]]
+== Syncing your workspaces with GitHub
+
+After configuring your GitHub token you can now.
+
+.Prerequisites
+* You have configured your GitHub token on the Serverless Logic Sandbox. 
+
+.Procedure
+. Create or open a workspace;
+. Add or edit files;
+. Click **Share -> Github: Create Repository**;
+. Name your repository and select if it's going to be **Public** or **Private**;
+. Selecting the **Use Quarkus Accelerator** option will create a repository with a base Quarkus project, moving the workspace files to `src/main/resources`.
+
++
+--
+.Creating a repository for your workspace
+image::tooling/serverless-logic-sandbox/serverless-logic-sandbox-github-repo.png[]
+--
+
+. To update the remote repository with your local changes click on **Sync -> Push**;
+. To get new updates from the remote repository click on **Sync -> Pull**;
+
+include::../../../pages/_common-content/report-issue.adoc[]
