@@ -27,7 +27,7 @@ and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-
 For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {context} tooling].
 
 ifeval::["{quarkus_cli_platform_redhat}" != ""]
-include::../../pages/_common-content/productized-instructions.adoc[]
+include::../../pages/_common-content/downstream-project-setup-instructions.adoc[]
 endif::[]
 
 [[proc-boostrapping-the-project]]
@@ -47,7 +47,7 @@ Quarkus CLI::
 [source,shell,subs="attributes+"]
 ----
 quarkus create app \
-    -x={kogito_sw_gav} \
+    -x={kogito_sw_ga} \
     -x=quarkus-container-image-jib \
     -x=quarkus-resteasy-jackson \
     -x=quarkus-smallrye-openapi \
@@ -57,7 +57,7 @@ quarkus create app \
 
 The previous command creates a Maven Quarkus project in the `serverless-workflow-hello-world` directory containing the required dependencies, including:
 
-* `{kogito_sw_gav}`: Adds support for workflows.
+* `{kogito_sw_ga}`: Adds support for workflows.
 * `quarkus-container-image-jib`: Adds support for Container Image Builds.
 * `quarkus-resteasy-jackson`: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request.
 * `quarkus-smallrye-openapi`: Adds support for Swagger documentation when you run the application in development mode.
@@ -74,7 +74,7 @@ Apache Maven::
 mvn {quarkus_platform}:quarkus-maven-plugin:{quarkus_version}:create \
     -DprojectGroupId=org.kie.kogito.examples \
     -DprojectArtifactId=serverless-workflow-hello-world \
-    -Dextensions="{kogito_sw_gav},quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi" \
+    -Dextensions="{kogito_sw_ga},quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi" \
     -DnoCode
 cd serverless-workflow-hello-world
 ----
@@ -93,7 +93,11 @@ kn workflow create --name my-project --extension quarkus-jsonp,quarkus-smallrye-
 For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
 --
 ====
-
++
+ifeval::["{quarkus_cli_platform_redhat}" != ""]
+include::../../pages/_common-content/downstream-post-create-project.adoc[]
+endif::[]
++
 . To verify that project is created, compile the project using the following command:
 +
 [tabs]
