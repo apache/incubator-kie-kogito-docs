@@ -300,7 +300,7 @@ For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-over
 +
 [tabs]
 ====
-Quarkus CLI/Apache Maven::
+Quarkus CLI or Apache Maven::
 +
 .Example response
 [source,shell,subs="attributes"]
@@ -352,7 +352,7 @@ Knative CLI::
 ----
 
 +
-.Check if your service is ready
+.Verify Knative service
 [source,shell]
 ----
 kn service list
@@ -376,7 +376,7 @@ The returned URL must be used to access the deployed service.
 +
 [tabs]
 ====
-Quarkus CLI/Apache Maven::
+Quarkus CLI or Apache Maven::
 +
 --
 .Example request
@@ -389,7 +389,9 @@ Knative CLI::
 
 +
 --
-.Example request - Use the URL returned by the above command to access the deployed service.
+Use the URL returned by the previous command to access the deployed service:
+
+.Example request
 [source,shell]
 ----
 URL=$(kn service describe serverless-workflow-hello-world -o url)
