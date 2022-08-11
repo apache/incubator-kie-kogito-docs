@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>Event correlation in Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Event Correlation in Serverless Workflow">
+    <meta name="keywords" content="kogito, workflow, serverless, correlation, association, domain, events">
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -154,6 +156,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
   </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="event-correlation-with-workflows.html">Event correlation in Serverless Workflow</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="working-with-callbacks.html">Callback state in Serverless Workflow</a>
   </li>
@@ -263,6 +268,11 @@
 <button class="nav-toggle"></button>
   <a href="../../main/index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Eventing</li>
+    <li><a href="event-correlation-with-workflows.html">Event correlation in Serverless Workflow</a></li>
+  </ul>
 </nav>
 <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">1.24.1.Final</button>
@@ -279,7 +289,284 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page">Event correlation in Serverless Workflow</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Event correlation plays a significant role in large event-driven applications. It allows matching one or more events with a particular workflow instance. Correlation rules with domain information can be used when defining consumed events to match a workflow instance. Also, event correlation is a practical alternative to the internal identifier <code>processInstanceId</code> since you can use any external domain identifier as a correlation.</p>
+</div>
+<div class="paragraph">
+<p>A correlation definition consists of one or more attributes associated with an event and the respective workflow to which the event belongs. In <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#correlation-definition">Serverless Workflow specification</a>, the correlation property defines the possible correlations for a given event. Each element must contain a <code>contextAttributeName</code> property, which is set for the value that matches an attribute from an event.</p>
+</div>
+<div class="paragraph">
+<p>You can optionally set the <code>contextAttributeValue</code> property, which matches the value for the respective attribute defined in <code>contextAttributeName</code> property for the consumed events in a workflow.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The incoming events consumed by the engine must contain the correlation attributes, set in the definition as extension context attributes. The correlation attributes are compliant with the <a href="https://cloudevents.io/">CloudEvent</a> format, therefore, the attributes are not part of the event payload.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>A new workflow instance must be created using an event, which must be declared in the workflow definition file, containing correlation attributes in the event definition section. For more information about events, see <a href="handling-events-on-workflows.html" class="xref page">Event state in Serverless Workflow</a>. Once the event is consumed, the engine extracts the correlation attributes and associates the attributes with the created workflow instance.</p>
+</div>
+<div class="paragraph">
+<p>A start event does not trigger a correlation evaluation, but acts as a moment in which correlation attributes and values are set. The correlation attributes and values are evaluated against other incoming events that might trigger the given instance. Therefore, when a non-start event is consumed and correlation attributes are evaluated, then the engine continues the execution of the matched instances (if any).</p>
+</div>
+<div class="paragraph">
+<p>The following figure shows how engine processes the correlation:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/eventing/event-correlation-evaluation-flow.png" alt="event correlation evaluation flow">
+</div>
+<div class="title">Figure 1. Event correlation evaluation process</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ref-example-event-correlation"><a class="anchor" href="#ref-example-event-correlation"></a>Example of event correlation in a workflow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can see the correlation configuration in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-correlation-quarkus"><code>serverless-workflow-correlation-quarkus</code></a> example application, describing the setup and usage of event correlation in a workflow.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/eventing/correlation.sw.json.png" alt="Event correlation evaluation process" width="500">
+</div>
+<div class="title">Figure 2. Event correlation evaluation process</div>
+</div>
+<div class="paragraph">
+<p>The <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-correlation-quarkus/src/main/resources/correlation.sw.json">workflow definition file</a> contains the correlation information, in which the events section is defined as follows:</p>
+</div>
+<div id="ref-correlation-event-definition" class="listingblock">
+<div class="title">Example event correlation in a workflow</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  "events": [
+    {
+      "name": "newAccountEvent",
+      "source": "",
+      "type": "newAccountEventType",
+      "correlation": [
+        {
+          "contextAttributeName": "userid"
+        }
+      ]
+    },
+    {
+      "name": "validateAccountEmailEvent",
+      "source": "workflow",
+      "type": "validateAccountEmail"
+    },
+    {
+      "name": "validatedAccountEmailEvent",
+      "source": "workflow",
+      "type": "validatedAccountEmail",
+      "correlation": [
+        {
+          "contextAttributeName": "userid"
+        }
+      ]
+    },
+    {
+      "name": "activateAccountEvent",
+      "source": "workflow",
+      "type": "activateAccount"
+    },
+    {
+      "name": "activatedAccountEvent",
+      "source": "workflow",
+      "type": "activatedAccount",
+      "correlation": [
+        {
+          "contextAttributeName": "userid"
+        }
+      ]
+    }
+  ]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can create a workflow by consuming events as defined in the <a href="#ref-new-user-account-state"><code>New User Account Request</code></a> event state. The <code>New User Account Request</code> event state contains a reference of the <a href="#ref-correlation-event-definition"><code>newAccountEvent</code></a> event, containing a correlation definition for <code>userid</code> attribute.</p>
+</div>
+<div id="ref-new-user-account-state" class="listingblock">
+<div class="title">Example <code>New User Account Request</code> event state definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "name": "New User Account Request",
+  "type": "event",
+  "onEvents": [
+    {
+      "eventRefs": [
+        "newAccountEvent"
+      ]
+    }
+  ],
+  "transition": "Validate User Email"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the workflow consumes a new event of <a href="#ref-new-user-account-event"><code>newAccountEventType</code></a> type, a workflow instance is created. After that, the events consumed by the same workflow must contain the same correlation attribute and value, such as <code>userid</code> attribute and <code>12345</code> value. This correlation attribute and value is used to evaluate and match the workflow instance to continue the workflow execution.</p>
+</div>
+<div id="ref-new-user-account-event" class="listingblock">
+<div class="title">Example incoming start event <code>newAccountEvent</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "specversion": "0.3",
+  "id": "1d174d25-46ac-4785-bc76-457c2d37d2fe",
+  "source": "",
+  "type": "newAccountEventType",
+  "time": "2022-07-25T16:30:35.461988261-03:00",
+  "userid": "12345",
+  "data": {
+    "email": "test@test.com",
+    "userId": "12345"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In Serverless Workflow, correlating multiple events together is not supported, therefore, the events are evaluated with correlations independently.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Using the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-correlation-quarkus/src/main/resources/correlation.sw.json">workflow definition</a> in <code>serverless-workflow-correlation-quarkus</code> example application, you can define other events that are published and consumed by the workflow.</p>
+</div>
+<div class="paragraph">
+<p>The <code>serverless-workflow-correlation-quarkus</code> example application uses Callback states, such as <a href="#ref-validade-user-email-state"><code>Validate User Email</code></a>. This means that once the workflow execution reaches the Callback state, the workflow publishes an event of <a href="#ref-correlation-event-definition"><code>validateAccountEmailEvent</code></a> type and waits to receive an event of <a href="#ref-correlation-event-definition"><code>validatedAccountEmailEvent</code></a> type. For more information about callback state, see <a href="working-with-callbacks.html" class="xref page">Callback state in Serverless Workflow</a>.</p>
+</div>
+<div id="ref-validade-user-email-state" class="listingblock">
+<div class="title">Example Callback state definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "name": "Validate User Email",
+  "type": "callback",
+  "action": {
+    "name": "publish validate event",
+    "eventRef": {
+      "triggerEventRef": "validateAccountEmailEvent"
+    }
+  },
+  "eventRef": "validatedAccountEmailEvent",
+  "transition": "Activate User Account"
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The produced events contain the same correlation attributes when the workflow is created.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="ref-validade-user-email-event" class="listingblock">
+<div class="title">Example produced Callback state event <code>validateAccountEmailEvent</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "7640a0af-b7fb-4d94-9d9d-3aa1ace60e79",
+  "source": "/process/correlation",
+  "type": "validateAccountEmail",
+  "time": "2022-07-25T16:22:53.735128049-03:00",
+  "data": {
+    "email": "test@test.com",
+    "userId": "12345"
+  },
+  "specversion": "1.0",
+  "kogitoprocinstanceid": "69019826-daef-4fb4-880b-c1658c4e49bc",
+  "kogitoprocid": "correlation",
+  "kogitoprocversion": "1.0",
+  "kogitousertaskist": "1",
+  "kogitoproctype": "SW",
+  "userid": "12345"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All consumed events must contain the same correlation attributes since the consumed events are used to identify the workflow instance. The following example shows the consumed events containing same correlation attributes and values, such as <code>userid</code> and <code>12345</code>:</p>
+</div>
+<div id="ref-validaded-user-email-event" class="listingblock">
+<div class="title">Consumed Callback state event <code>validatedAccountEmailEvent</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "specversion": "1.0",
+  "id": "953f07a7-aea8-4956-8775-85ab59366fe6",
+  "source": "",
+  "type": "validatedAccountEmail",
+  "time": "2022-07-25T16:29:27.320408379-03:00",
+  "userid": "12345",
+  "data": null
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The engine stores the correlation information in the same persistence mechanism that is configured in the workflow application. If a persistence add-on is not configured, then the correlation information is stored in memory. This means that entire correlation information is lost when the workflow application restarts, therefore this process must be used for testing purposes. For more information about the persistence configuration, see <a href="../persistence/persistence-with-postgresql.html" class="xref page">Running a workflow service using PostgreSQL</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Currently, only <code>kogito-addons-quarkus-persistence-jdbc</code> persistence add-on supports correlation. The <code>kogito-addons-quarkus-persistence-jdbc</code>  add-on is configured for PostgreSQL. Other persistence add-ons will be supported in a future release.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="handling-events-on-workflows.html" class="xref page">Event state in Serverless Workflow</a></p>
+</li>
+<li>
+<p><a href="working-with-callbacks.html" class="xref page">Callback state in Serverless Workflow</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>

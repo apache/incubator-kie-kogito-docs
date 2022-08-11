@@ -155,6 +155,9 @@
     <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event correlation in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../eventing/working-with-callbacks.html">Callback state in Serverless Workflow</a>
   </li>
 </ul>
@@ -297,10 +300,8 @@
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Your workflow application is ready to use.</p>
-<div class="paragraph">
-<p>For more information about building the application container, see <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Building workflow images using Quarkus CLI</a>.</p>
-</div>
+<p>Your workflow application is ready to use.<br>
+For more information about building the application container, see <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Building workflow images using Quarkus CLI</a>.</p>
 </li>
 <li>
 <p>Minikube is installed.</p>
@@ -309,10 +310,8 @@
 <p><code>kubectl</code> command-line tool is installed. Otherwise, Minikube handles it.</p>
 </li>
 <li>
-<p>Knative CLI is installed.</p>
-<div class="paragraph">
-<p>For more information, see <a href="https://knative.dev/docs/install/client/">Install the Knative CLI</a>.</p>
-</div>
+<p>Knative CLI is installed.<br>
+For more information, see <a href="https://knative.dev/docs/client/install-kn/">Install the Knative CLI</a>.</p>
 </li>
 <li>
 <p>(Optional) Quarkus CLI is installed. For more information, see <a href="https://quarkus.io/guides/cli-tooling">Building Quarkus Apps with Quarkus command line interface (CLI)</a>.</p>
@@ -378,10 +377,8 @@
 <p>Minikube is installed.</p>
 </li>
 <li>
-<p>Knative CLI is installed.</p>
-<div class="paragraph">
-<p>For more information, see <a href="https://knative.dev/docs/install/client/">Install the Knative CLI</a>.</p>
-</div>
+<p>Knative CLI is installed.<br>
+For more information, see <a href="https://knative.dev/docs/client/install-kn/">Install the Knative CLI</a>.</p>
 </li>
 </ul>
 </div>
@@ -477,16 +474,15 @@
 <p>Minikube is installed.</p>
 </li>
 <li>
-<p>Knative CLI is installed.</p>
-<div class="paragraph">
-<p>For more information, see <a href="#proc-install-knative-minikube">Installing Knative on Minikube</a>.</p>
-</div>
+<p>Knative CLI is installed.<br>
+For more information, see <a href="#proc-install-knative-minikube">Installing Knative on Minikube</a>.</p>
 </li>
 <li>
-<p>(Optional) Quarkus CLI is installed. For more information, see <a href="https://quarkus.io/guides/cli-tooling">Building Quarkus Apps with Quarkus command line interface (CLI)</a>.</p>
+<p>(Optional) Quarkus CLI is installed.<br>
+For more information, see <a href="https://quarkus.io/guides/cli-tooling">Building Quarkus Apps with Quarkus command line interface (CLI)</a>.</p>
 </li>
 <li>
-<p>Workflow application container is ready.</p>
+<p>Serverless Workflow application container is ready.</p>
 </li>
 </ul>
 </div>
@@ -503,8 +499,15 @@
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">eval $(minikube -p minikube docker-env --profile knative)</code></pre>
 </div>
 </div>
+</div>
+</div>
+</li>
+<li>
+<p>Build your application to store it in the Minikube registry.</p>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>When using Minikube, you can share your local registry with the Docker Daemon.</p>
+<p>If your workflow application container image is built before configuring Docker to use the in-cluster Docker daemon, then you might need to build the image again so that the image is available in the Minikube registry.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -513,13 +516,8 @@
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-If your workflow application container image was built before configuring Docker, then you might need to build the image again so that the image is available on the Minikube Docker.
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>Ensure that you use the following system property when building native container images that use Minikube Docker Daemon:</p>
+<p>If you are building native container images, ensure that you use the following system property to use Minikube Docker Daemon:</p>
 </div>
 <div class="listingblock">
 <div class="title">System property to build container images</div>
@@ -527,15 +525,19 @@ If your workflow application container image was built before configuring Docker
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">-Dquarkus.native.remote-container-build=true</code></pre>
 </div>
 </div>
+</td>
+</tr>
+</table>
 </div>
-</div>
-</li>
-<li>
-<p>Use the <code>-Dquarkus.container-image.registry=some_of_the_values_above</code> property to enable Knative fetch the container images from Minikube Docker Daemon.</p>
-<div class="openblock">
-<div class="content">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>You might be required to tag the container images using one of the following registry options:</p>
+<p>You might be required to tag the container images using one of the following registry:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -548,16 +550,24 @@ If your workflow application container image was built before configuring Docker
 </ul>
 </div>
 <div class="paragraph">
-<p>You might need to set the <code>imagePullPolicy</code> to <code>Never</code> or <code>IfNotPresent</code>, otherwise Minikube pulls the images from a remote registry. This behavior can be avoided by tagging the image using previously listed domains.</p>
+<p>For more information, see <a href="https://github.com/knative/serving/issues/6101">How to use locally built docker image</a>.</p>
 </div>
 <div class="paragraph">
-<p>For more information, see <a href="https://github.com/knative/serving/issues/6101">How to use locally built docker image</a>.</p>
+<p>In that case, use the <code>-Dquarkus.container-image.registry=some_of_the_values_above</code> property to enable Knative fetch the container images from Minikube Docker Daemon.</p>
+</div>
+<div class="paragraph">
+<p>If you do not use the values, you might need to set the <code>imagePullPolicy</code> to <code>Never</code> or <code>IfNotPresent</code>, otherwise, Minikube pulls the images from a remote registry.
+This behavior can be avoided by tagging the image using previously listed domains.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 </li>
 <li>
-<p>To prepare the environment, start the Minikube tunnel using Knative profile:</p>
+<p>In a separate command terminal window, start the Minikube tunnel using the Knative profile to prepare the environment:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -623,11 +633,27 @@ If your workflow application container image was built before configuring Docker
 </div>
 </li>
 <li>
-<p>Install your workflow application using the container image.</p>
+<p>Deploy your workflow application using the Minikube registry.</p>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>You can use the native image due to the faster startup. For more information about installing the workflow application, see <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Building workflow images using Quarkus CLI</a> document.</p>
+<p>The next step is to deploy your workflow application to execute it.
+You can see the further sections for different procedures to deploy your workflow application.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can use the native image due to the faster startup.<br>
+For more information about installing the workflow application, see <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Building workflow images using Quarkus CLI</a> document.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -650,7 +676,7 @@ If your workflow application container image was built before configuring Docker
 <div class="sect2">
 <h3 id="proc-deploy-sw-application-knative-cli"><a class="anchor" href="#proc-deploy-sw-application-knative-cli"></a>Deploying your workflow application using Knative CLI</h3>
 <div class="paragraph">
-<p>Once you install your workflow application using the container image, you can use the command-line tools, such as Knative CLI or <code>kubectl</code> to initiate the deployment process.</p>
+<p>Once you have installed your workflow application into the Minikube registry, you can use the command-line tools, such as Knative CLI or <code>kubectl</code> to initiate the deployment process.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
@@ -659,10 +685,8 @@ If your workflow application container image was built before configuring Docker
 <p>Workflow application is installed.</p>
 </li>
 <li>
-<p>Knative CLI is installed.</p>
-<div class="paragraph">
-<p>For more information, see <a href="https://knative.dev/docs/install/client/">Install the Knative CLI</a>.</p>
-</div>
+<p>Knative CLI is installed.<br>
+For more information, see <a href="https://knative.dev/docs/client/install-kn/">Install the Knative CLI</a>.</p>
 </li>
 </ul>
 </div>
@@ -670,14 +694,14 @@ If your workflow application container image was built before configuring Docker
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>In a command terminal, execute to following command to deploy your workflow application using Knative CLI:</p>
+<p>In a command terminal, execute the following command to deploy your workflow application using Knative CLI:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
 <div class="title">Example of deploying workflow application using Knative CLI</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service create hello \
-    --image=dev.local/kogito/serverless-workflow-greeting-quarkus:1.0-native \
+    --image=dev.local/kogito/serverless-workflow-greeting-quarkus:1.0 \
     --pull-policy=IfNotPresent \
     --port 8080</code></pre>
 </div>
@@ -727,7 +751,8 @@ http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io</code></
 <div class="sect2">
 <h3 id="proc-deploy-sw-application-kubectl"><a class="anchor" href="#proc-deploy-sw-application-kubectl"></a>Deploying your workflow application using <code>kubectl</code></h3>
 <div class="paragraph">
-<p>You can also use <code>kubectl</code> command-line interface to deploy your workflow application.</p>
+<p>You can also use <code>kubectl</code> command-line interface and plain Kubernetes objects to deploy your workflow application.<br>
+And, instead of creating <code>knative</code> <code>yaml|json</code> descriptors, you can leverage the Quarkus Kubernetes extension and Kogito Knative add-on to generate the descriptors.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
@@ -738,13 +763,17 @@ http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io</code></
 <li>
 <p><code>kubectl</code> command-line tool is installed.</p>
 </li>
+<li>
+<p>(Optional) Quarkus CLI is installed<br>
+For more information about installing the Quarkus CLI, see <a href="https://quarkus.io/guides/cli-tooling#installing-the-cli">Installing the Quarkus CLI</a>.</p>
+</li>
 </ul>
 </div>
 <div class="olist arabic">
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>To deploy your workflow application, you can use plain Kubernetes objects. Therefore, instead of creating <code>knative</code>, <code>yaml|json</code> descriptors, you can leverage the Quarkus Kubernetes extension and Kogito Knative add-on to generate the descriptors.</p>
+<p>Add the Quarkus extensions to generate <code>knative</code> <code>yaml|json</code> descriptors.</p>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -790,11 +819,11 @@ quarkus-kubernetes 'org.kie.kogito:kogito-addons-quarkus-knative-eventing:1.25.0
 </div>
 </li>
 <li>
-<p>To generate the <code>knative</code>, <code>yaml|json</code> descriptors, set the following system properties with <code>-D</code> prefix (if using Quarkus CLI) in the <code>application.properties</code> file of your workflow application:</p>
+<p>To generate the <code>knative</code> <code>yaml|json</code> descriptors, set the following properties in the <code>application.properties</code> file of your workflow application:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">System properties to generate descriptors</div>
+<div class="title">System properties to generate knative descriptors</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus.kubernetes.deployment-target=knative
 quarkus.knative.name=greeting-quarkus-kubectl</code></pre>
@@ -807,8 +836,24 @@ quarkus.knative.name=greeting-quarkus-kubectl</code></pre>
 <p>Build your workflow application.</p>
 <div class="openblock">
 <div class="content">
+<div class="paragraph">
+<p>Once you have built your application, you can find the generated descriptors files in the <code>target/kubernetes</code> directory:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>knative.json</code></p>
+</li>
+<li>
+<p><code>knative.yml</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Following is an example of the generated files:</p>
+</div>
 <div class="listingblock">
-<div class="title">Build your workflow application</div>
+<div class="title">Knative descriptor example for a workflow application</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
 apiVersion: serving.knative.dev/v1
@@ -856,21 +901,19 @@ spec:
             timeoutSeconds: 10</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>You can find the previous content in the following generated files in the <code>target/kubernetes</code> directory:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>knative.json</code></p>
-</li>
-<li>
-<p><code>knative.yml</code></p>
-</li>
-</ul>
-</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
 <p>Once the files are generated, you might be required to add the <code>imagePullPolicy</code> manually before deploying the workflow application.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -897,7 +940,7 @@ spec:
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Deploy workflow using <code>kubectl</code></div>
+<div class="title">Deploy the workflow application using <code>kubectl</code></div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl apply -f target/kubernetes/knative.yml</code></pre>
 </div>
@@ -965,9 +1008,6 @@ greeting-quarkus-kubectl   http://greeting-quarkus-kubectl.serverless-workflow-g
 </div>
 <div class="sect2">
 <h3 id="proc-deploy-sw-application-quarkus-cli"><a class="anchor" href="#proc-deploy-sw-application-quarkus-cli"></a>Deploying your workflow application using Quarkus CLI</h3>
-<div class="paragraph">
-<p>You can use the <a href="https://quarkus.io/guides/cli-tooling">Quarkus CLI</a> to abstract all of the complexities mentioned in the previous sections and deploy your workflow application once the build completes.</p>
-</div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
@@ -975,13 +1015,34 @@ greeting-quarkus-kubectl   http://greeting-quarkus-kubectl.serverless-workflow-g
 <p>Workflow application is installed.</p>
 </li>
 <li>
-<p>Quarkus CLI is installed. For more information, see <a href="https://quarkus.io/guides/cli-tooling">Building Quarkus Apps with Quarkus command line interface (CLI)</a>.</p>
+<p>Quarkus CLI is installed.<br>
+For more information, see <a href="https://quarkus.io/guides/cli-tooling">Building Quarkus Apps with Quarkus command line interface (CLI)</a>.</p>
+</li>
+<li>
+<p>You have completed the steps in <a href="#proc-deploy-sw-application-kubectl">Deploying your workflow application using <code>kubectl</code></a></p>
 </li>
 </ul>
 </div>
 <div class="olist arabic">
 <div class="title">Procedure</div>
 <ol class="arabic">
+<li>
+<p>Add the Quarkus extensions to deploy the <code>knative</code> service</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>You can simply add the kubernetes and the Kogito knative extension to your project with the Quarkus CLI:</p>
+</div>
+<div class="listingblock">
+<div class="title">Add kubernetes and Kogito knative extensions to the project with Quarkus CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus extension add kubernetes
+quarkus extension add kogito-addons-quarkus-knative-eventing</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
 <li>
 <p>To deploy your workflow application using Quarkus CLI, set the following system properties in <code>application.properties</code> file:</p>
 <div class="openblock">
@@ -990,8 +1051,9 @@ greeting-quarkus-kubectl   http://greeting-quarkus-kubectl.serverless-workflow-g
 <div class="title">Required system properties</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.knative.name=greeting-quarkus-cli <i class="conum" data-value="1"></i><b>(1)</b>
-quarkus.kubernetes.deploy=true <i class="conum" data-value="2"></i><b>(2)</b>
-quarkus.container-image.push=false <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+quarkus.kubernetes.deployment-target=knative <i class="conum" data-value="2"></i><b>(2)</b>
+quarkus.kubernetes.deploy=true <i class="conum" data-value="3"></i><b>(3)</b>
+quarkus.container-image.push=false <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1036,22 +1098,22 @@ quarkus.container-image.push=false <i class="conum" data-value="3"></i><b>(3)</b
 <div class="ulist tabs">
 <ul>
 <li>
-<p>[[tabset3_-code-kubectl&#8212;&#8203;code-]]<code>kubectl</code></p>
+<p><a id="tabset3_on-kubectl"></a>On kubectl</p>
 </li>
 <li>
-<p><a id="tabset3_knative-cli"></a>Knative CLI</p>
+<p><a id="tabset3_on-knative-cli"></a>On Knative CLI</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset3_-code-kubectl--code-">
+<div class="tab-pane" aria-labelledby="tabset3_on-kubectl">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get services.serving.knative.dev greeting-quarkus-cli</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset3_knative-cli">
+<div class="tab-pane" aria-labelledby="tabset3_on-knative-cli">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service list greeting-quarkus-cli</code></pre>
