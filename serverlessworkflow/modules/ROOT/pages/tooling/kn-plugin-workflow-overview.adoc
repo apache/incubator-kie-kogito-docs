@@ -157,12 +157,16 @@ For more information about creating a workflow project, see <<proc-create-sw-pro
 . In Knative CLI, enter the following command to build your workflow project:
 +
 --
-.Build the project and generate a local image named `quay.io/my-project`
+.Build the project and generate a local image named `dev.local/my-project`
 [source,shell]
 ----
-kn workflow build --image my-project
-kn workflow build --image-name my-project
+kn workflow build --image dev.local/my-project
 ----
+
+[NOTE]
+====
+By using `dev.local` as repository, you can deploy your {context} project in a local environment without having to push the image to a container registry.
+====
 
 To use the `build` command, you need to provide either `--image` or `--image-name` flag. In the previous command, you can use the `[-i|--image]` in several ways, such as:
 
@@ -209,14 +213,14 @@ You can use the following commands to build a workflow project and to generate a
 .Build a project and generate a local image using Jib
 [source,shell]
 ----
-kn workflow build --image my-project --jib
+kn workflow build --image dev.local/my-project --jib
 ----
 The generated container image can be saved in the Docker runtime.
 
 .Build a project and generate a local image using Jib
 [source,shell]
 ----
-kn workflow build --image my-project --jib-podman
+kn workflow build --image dev.local/my-project --jib-podman
 ----
 Using the previous command, the generated container image can be saved in the Podman runtime.
 
@@ -307,7 +311,7 @@ include::../../pages/_common-content/getting-started-requirement.adoc[]
 .Clone `kie-tools` repository
 [source,shell]
 ----
-git clone git@github.com:kie-group/kie-tools.git
+git clone git@github.com:kiegroup/kie-tools.git
 ----
 --
 
