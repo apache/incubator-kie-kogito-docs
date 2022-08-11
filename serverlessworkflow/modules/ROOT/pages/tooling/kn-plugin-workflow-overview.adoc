@@ -293,12 +293,14 @@ You can use the `kubectl` command line if you want to use a complex deployment s
 --
 
 [[proc-build-sw-project-source]]
-== Building a workflow project from source
+== Build from source
 
-As an alternative, you can build your workflow project from source.
+As an alternative, you can build the Workflow plug-in from source.
 
 .Prerequisites
-include::../../pages/_common-content/getting-started-requirement.adoc[]
+* link:{node_install_url}[Node] {kie_tools_node_min_version} or later is installed.
+* link:{pnpm_install_url}[pnpm] {kie_tools_pnpm_min_version} or later is installed.
+* link:{golang_install_url}[Go] {kie_tools_golang_min_version} or later is installed.
 
 .Procedure
 . In a command terminal, enter the following command to clone the `kie-tools` GitHub repository:
@@ -307,11 +309,11 @@ include::../../pages/_common-content/getting-started-requirement.adoc[]
 .Clone `kie-tools` repository
 [source,shell]
 ----
-git clone git@github.com:kie-group/kie-tools.git
+git clone git@github.com:kiegroup/kie-tools.git
 ----
 --
 
-. Navigate to the cloned `kie-tools` directory and enter the following command to access the {context} plug-in:
+. Navigate to the cloned `kie-tools` directory and enter the following command to install the dependencies and link the repository packages:
 +
 --
 .Access {context} plug-in
@@ -319,22 +321,20 @@ git clone git@github.com:kie-group/kie-tools.git
 ----
 cd kie-tools
 pnpm bootstrap
-pnpm -F @kie-tools/kn-plugin-workflow... build:dev
 ----
 --
 
-. Go to the plug-in folder and enter the following command to build the workflow project:
+. In the repository root, enter the following command to build the Workflow plug-in:
 +
 --
 .Build workflow project from source
 [source,shell]
 ----
-cd packages/kn-plugin-workflow
-go mod tidy
+pnpm -r -F kn-plugin-workflow... build:dev
 ----
 --
 
-You have successfully built your workflow project from source.
+You have successfully built the Workflow plug-in project from source. This _Procedure_ generates an artifact compatible with your OS architecture in the `kie-tools/packages/kn-plugin-workflow/dist` folder.
 
 == Additional resources
 
