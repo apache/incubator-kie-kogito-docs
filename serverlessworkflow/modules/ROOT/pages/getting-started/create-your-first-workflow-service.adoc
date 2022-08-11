@@ -85,49 +85,16 @@ Knative CLI::
 +
 --
 .Create a project using Knative CLI
-[source,shell]
+
+[source,shell,subs="attributes"]
 ----
-kn workflow create --name my-project --extension quarkus-jsonp,quarkus-smallrye-openapi
+kn workflow create \
+  --name serverless-workflow-hello-world \
+  --extension quarkus-jsonp,quarkus-smallrye-openapi \
+  --quarkus-platform-group-id={quarkus_platform} \
+  --quarkus-version={quarkus_version}
 ----
 
-For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
---
-====
-+
-ifeval::["{quarkus_cli_platform_redhat}" != ""]
-include::../../pages/_common-content/downstream-post-create-project.adoc[]
-endif::[]
-+
-. To verify that project is created, compile the project using the following command:
-+
-[tabs]
-====
-Quarkus CLI::
-+
---
-.Compile your project using Quarkus CLI
-[source,shell]
-----
-quarkus build
-----
---
-Apache Maven::
-+
---
-.Compile your project using Apache Maven
-[source,shell]
-----
-mvn clean package
-----
---
-Knative CLI::
-+
---
-.Build your project and generate a local image called `quay.io/other-user/my-project:1.0.1`
-[source,shell]
-----
-kn workflow build --image my-user/my-project:1.0.0 --image-repository other-user --image-tag 1.0.1
-----
 For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
 --
 ====
@@ -205,6 +172,84 @@ xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Se
 ====
 --
 
+[[proc-building-application]]
+== Building your workflow application
+
+ifeval::["{quarkus_cli_platform_redhat}" != ""]
+include::../../pages/_common-content/downstream-post-create-project.adoc[]
+endif::[]
+
+. To verify that project is created, compile the project using the following command:
+
++
+[tabs]
+====
+Quarkus CLI::
++
+--
+.Compile your project using Quarkus CLI
+[source,shell]
+----
+quarkus build
+----
+--
+Apache Maven::
++
+--
+.Compile your project using Apache Maven
+[source,shell]
+----
+mvn clean package
+----
+--
+Knative CLI::
++
+--
+.Build your project and generate a local image called `dev.local/serverless-workflow-hello-world:latest`
+[source,shell]
+----
+kn workflow build --image dev.local/serverless-workflow-hello-world --verbose
+----
+The `--verbose` flag is used to display the output of the build command. This flag is optional.
+
+For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
+
+After building the image, add `imagePullPolicy: IfNotPresent` to the `target/kubernetes/knative.yml` file. Your file should look similar to:
+
+.Example `target/kubernetes/knative.yml` file
+[source,yaml]
+----
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    app.quarkus.io/build-timestamp: 2022-08-09 - 21:26:59 +0000
+  labels:
+    app.kubernetes.io/version: latest
+    app.kubernetes.io/name: serverless-workflow-hello-world
+  name: serverless-workflow-hello-world
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/version: latest
+        app.kubernetes.io/name: serverless-workflow-hello-world
+    spec:
+      containerConcurrency: 0
+      containers:
+        - image: dev.local/serverless-workflow-hello-world:latest
+          imagePullPolicy: IfNotPresent <1>
+          name: serverless-workflow-hello-world
+          ports:
+            - containerPort: 8080
+              name: http1
+              protocol: TCP
+----
+<1> `imagePullPolicy` field defines the policy for pulling the image from the registry.
+--
+====
+
 [[proc-running-application]]
 == Running your workflow application
 
@@ -245,6 +290,11 @@ kn workflow deploy
 For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
 --
 ====
+
++
+[tabs]
+====
+Quarkus CLI or Apache Maven::
 +
 .Example response
 [source,shell,subs="attributes"]
@@ -285,7 +335,42 @@ __  ____  __  _____   ___  __ ____  ______
 2022-05-25 14:38:13,380 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,182 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, inmemory-postgres, jdbc-postgresql, narayana-jta, oidc, reactive-routes, rest-client-reactive, rest-client-reactive-jackson, security, smallrye-context-propagation, smallrye-graphql-client, smallrye-health, smallrye-metrics, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx, vertx-graphql]
 ----
 
+
+Knative CLI::
++
+.Example response
+[source,shell]
+----
+✅ Knative service sucessufully created
+🚀 Deploy took: 194.263309ms
+----
+
++
+.Verify Knative service
+[source,shell]
+----
+kn service list
+----
+
++
+.Example response
+[source,shell]
+----
+NAME                              URL                                                                      LATEST                                  AGE   CONDITIONS   READY   REASON
+serverless-workflow-hello-world   http://serverless-workflow-hello-world.default.10.106.207.219.sslip.io   serverless-workflow-hello-world-00001   6s    3 OK / 3     True
+----
+
++
+The returned URL must be used to access the deployed service.
+
+====
+
 . Once your workflow application is started, you can send a request for the provided endpoint:
+
++
+[tabs]
+====
+Quarkus CLI or Apache Maven::
 +
 --
 .Example request
@@ -293,7 +378,24 @@ __  ____  __  _____   ___  __ ____  ______
 ----
 curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_world
 ----
+--
+Knative CLI::
 
++
+--
+Use the URL returned by the previous command to access the deployed service:
+
+.Example request
+[source,shell]
+----
+URL=$(kn service describe serverless-workflow-hello-world -o url)
+curl -X POST -H 'Content-Type:application/json' ${URL}/hello_world
+----
+--
+====
+
++
+--
 .Example response
 [source,shell]
 ----
@@ -301,7 +403,7 @@ curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_worl
 ----
 --
 
-. You can update your workflow with a new `mantra` value without restarting the application.
+. When running in development mode (using Quarkus CLI or Apache Maven), you can update your workflow with a new `mantra` value without restarting the application.
 +
 --
 .Update your workflow
