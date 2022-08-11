@@ -1,1 +1,58 @@
-//= Defining an input schema for workflows
+Defining an input schema for workflow
+=====================================
+:compat-mode!:
+
+DataInputSchema is one of the parameters in the Workflow definition as per the Serverless Workflow specification.
+
+The dataInputSchema property can be used to validate the workflow data input against a defined JSON Schema. dataInputSchema can be defined as follows:
+[source,json]
+----
+"dataInputSchema": {
+   "schema": "URL_to_json_schema",
+   "failOnValidationErrors": false
+}
+----
+
+"schema" property is an URI, which holds the path to the JSON schema used to validate the workflow data input. The JSON schema file should be placed in the resources section of the project.
+
+An example for a workflow definition with datainputschema can be found here- https://github.com/kiegroup/kogito-runtimes/blob/main/quarkus/extensions/kogito-quarkus-serverless-workflow-extension/kogito-quarkus-serverless-workflow-integration-test/src/main/resources/expression.sw.json#L16[GitHub repository]
+
+You can find a sample JSON schema here- https://github.com/kiegroup/kogito-runtimes/blob/main/quarkus/extensions/kogito-quarkus-serverless-workflow-extension/kogito-quarkus-serverless-workflow-integration-test/src/main/resources/schema/expression.json[GitHub repository]
+
+When a workflow definition has a dataInputSchema attribute defined,the application should generate an OpenAPI file (http://localhost/q/swagger-ui) referencing this schema file, which helps to correctly define the input data for the workflows.
+
+This documents describes about link:{open_api_spec_url}[OpenAPI] specification file.
+
+There are various REST frameworks that support the OpenAPI specification generation, including:
+
+* Java
+** link:{quarkus_swagger_url}[Quarkus - Using OpenAPI and Swagger UI]
+** link:{spring_swagger_url}[Spring Boot Documentation]
+* Go
+** link:{go_swagger_url}[Go Swagger Documentation]
+* Python
+** link:{python_flasgger_url}[Flasgger]
+* .NET
+** link:{dotnet_swagger_url}[ASP.NET Core web API documentation with Swagger/OpenAPI]
+* TypeScript
+** link:{npm_swagger_url}[Swagger UI Express]
+* PHP
+** link:{php_swagger_url}[swagger-php]
+
+If you do not have access to the REST service, which is used to add the OpenAPI specification generator, you can use Swagger Inspector. The link:{swagger_inspector_url}[Swagger Inspector] generates the specification file based on HTTP traffic.
+
+.Example component section with schema in an OpenAPI file
+[source,yaml]
+----
+components:
+  schemas:
+    GeneralError:
+      type: object
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+----
+[source,yaml]
