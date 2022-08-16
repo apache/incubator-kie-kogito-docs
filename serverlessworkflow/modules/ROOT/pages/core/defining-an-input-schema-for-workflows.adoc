@@ -1,9 +1,14 @@
-= Defining an input schema for workflow
+= Defining an input schema for {context}
 :compat-mode!:
+// Metadata:
+:description: Defining input schema for Serverless Workflow
+:keywords: kogito, workflow, serverless, dataInputSchema
 
-DataInputSchema is one of the parameters in the Workflow definition as per the Serverless Workflow specification.
+The dataInputSchema in the link:{spec_doc_url}#workflow-definition-structure[Serverless Workflow specification] is one of the parameters in the Workflow definition.
 
-The dataInputSchema property can be used to validate the workflow data input against a defined JSON Schema. dataInputSchema can be defined as follows:
+The dataInputSchema parameter is used to validate the workflow data input against a defined JSON Schema. It is important to provide a dataInputSchema, as it can be used to check if the provided workflow data input is a right one before any states are executed.
+
+The dataInputSchema can be defined as follows:
 [source,json]
 ----
 "dataInputSchema": {
@@ -14,31 +19,15 @@ The dataInputSchema property can be used to validate the workflow data input aga
 
 "schema" property is an URI, which holds the path to the JSON schema used to validate the workflow data input. The JSON schema file should be placed in the resources section of the project.
 
-An example for a workflow definition with datainputschema can be found here- https://github.com/kiegroup/kogito-runtimes/blob/main/quarkus/extensions/kogito-quarkus-serverless-workflow-extension/kogito-quarkus-serverless-workflow-integration-test/src/main/resources/expression.sw.json#L16[GitHub repository]
+An example for a workflow definition with datainputschema can be found here- link:{kogito_sw_examples_url}/serverless-workflow-expression-quarkus/src/main/resources/expression.sw.json[`serverless-workflow-expression-quarkus`]
 
-You can find a sample JSON schema here- https://github.com/kiegroup/kogito-runtimes/blob/main/quarkus/extensions/kogito-quarkus-serverless-workflow-extension/kogito-quarkus-serverless-workflow-integration-test/src/main/resources/schema/expression.json[GitHub repository]
+You can find a sample JSON schema here- link:{kogito_sw_examples_url}/src/main/resources/schema/expression.json[`serverless-workflow-expression-quarkus-json`]
 
-When a workflow definition has a dataInputSchema attribute defined,the application should generate an OpenAPI file (http://localhost/q/swagger-ui) referencing this schema file, which helps to correctly define the input data for the workflows.
+When a workflow definition has a dataInputSchema attribute defined, the application should generate an OpenAPI file (http://localhost/q/swagger-ui) referencing this schema file, which helps to correctly define the input data for the workflows.
 
 This documents describes about link:{open_api_spec_url}[OpenAPI] specification file.
 
-There are various REST frameworks that support the OpenAPI specification generation, including:
-
-* Java
-** link:{quarkus_swagger_url}[Quarkus - Using OpenAPI and Swagger UI]
-** link:{spring_swagger_url}[Spring Boot Documentation]
-* Go
-** link:{go_swagger_url}[Go Swagger Documentation]
-* Python
-** link:{python_flasgger_url}[Flasgger]
-* .NET
-** link:{dotnet_swagger_url}[ASP.NET Core web API documentation with Swagger/OpenAPI]
-* TypeScript
-** link:{npm_swagger_url}[Swagger UI Express]
-* PHP
-** link:{php_swagger_url}[swagger-php]
-
-If you do not have access to the REST service, which is used to add the OpenAPI specification generator, you can use Swagger Inspector. The link:{swagger_inspector_url}[Swagger Inspector] generates the specification file based on HTTP traffic.
+To generate an OpenAPI file for a Kogito Serverless workflow, the link:{quarkus_swagger_url}#expose-openapi-specifications[Quarkus dependency] must be added in the project.
 
 .Example component section with schema in an OpenAPI file
 [source,yaml]
