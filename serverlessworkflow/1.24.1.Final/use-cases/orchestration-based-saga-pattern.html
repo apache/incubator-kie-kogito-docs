@@ -239,20 +239,20 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">Kogito Serverless Workflow Guides</span>
-    <span class="version">1.24.1.Final</span>
+    <span class="version">1.24</span>
   </div>
   <ul class="components">
     <li class="component is-current">
-      <a class="title" href="../../main/index.html">Kogito Serverless Workflow Guides</a>
+      <a class="title" href="../../latest/index.html">Kogito Serverless Workflow Guides</a>
       <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../main/index.html">main</a>
-        </li>
         <li class="version">
-          <a href="../../1.25.0.Final/index.html">1.25.0.Final</a>
+          <a href="../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../latest/index.html">1.25</a>
         </li>
         <li class="version is-current">
-          <a href="../index.html">1.24.1.Final</a>
+          <a href="../index.html">1.24</a>
         </li>
       </ul>
     </li>
@@ -264,7 +264,7 @@
 <main class="article">
 <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
-  <a href="../../main/index.html" class="home-link"></a>
+  <a href="../../latest/index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
@@ -273,11 +273,11 @@
   </ul>
 </nav>
 <div class="page-versions">
-  <button class="version-menu-toggle" title="Show other versions of page">1.24.1.Final</button>
+  <button class="version-menu-toggle" title="Show other versions of page">1.24</button>
   <div class="version-menu">
-    <a class="version" href="../../main/use-cases/orchestration-based-saga-pattern.html">main</a>
-    <a class="version" href="../../1.25.0.Final/use-cases/orchestration-based-saga-pattern.html">1.25.0.Final</a>
-    <a class="version is-current" href="orchestration-based-saga-pattern.html">1.24.1.Final</a>
+    <a class="version" href="../../main/use-cases/orchestration-based-saga-pattern.html">snapshot</a>
+    <a class="version" href="../../latest/use-cases/orchestration-based-saga-pattern.html">1.25</a>
+    <a class="version is-current" href="orchestration-based-saga-pattern.html">1.24</a>
   </div>
 </div>
   <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.24.x/serverlessworkflow/modules/ROOT/pages/use-cases/orchestration-based-saga-pattern.adoc">Edit this Page</a></div>
@@ -306,7 +306,7 @@
 <h2 id="ref-sw-example-saga-pattern"><a class="anchor" href="#ref-sw-example-saga-pattern"></a>Example of Saga pattern a workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To understand the implementation of Saga pattern in a workflow, you can use the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-saga-quarkus"><code>serverless-workflow-saga-quarkus</code></a> example application in GitHub repository.</p>
+<p>To understand the implementation of Saga pattern in a workflow, you can use the <a href="https://github.com/kiegroup/kogito-examples/tree/1.24.x/serverless-workflow-examples/serverless-workflow-saga-quarkus"><code>serverless-workflow-saga-quarkus</code></a> example application in GitHub repository.</p>
 </div>
 <div class="paragraph">
 <p>The <code>serverless-workflow-saga-quarkus</code> example application is based on the order fulfillment process and describes how to define Saga pattern using Serverless Workflow. In the order fulfillment example, a user buys an item from an e-commerce application. The user adds the delivery information and payment details, and waits for the item to be delivered. The following figure shows the sequence of steps that are executed to complete an order:</p>
@@ -368,7 +368,7 @@
 <p>In the <code>serverless-workflow-saga-quarkus</code> example application, a <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md">workflow</a> is used that implements the Saga pattern, in which all the steps and compensation actions are defined. Also, the workflow plays the role of Saga Executor Coordinator (SEC), which orchestrates the calls to the participants in the Saga pattern.</p>
 </div>
 <div class="paragraph">
-<p>The workflow definition used to define the Saga pattern is available in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-saga-quarkus/src/main/resources/order-saga-error-handling.sw.json"><code>order-saga-error-handling.sw.json</code></a> file.</p>
+<p>The workflow definition used to define the Saga pattern is available in the <a href="https://github.com/kiegroup/kogito-examples/tree/1.24.x/serverless-workflow-examples/serverless-workflow-saga-quarkus/src/main/resources/order-saga-error-handling.sw.json"><code>order-saga-error-handling.sw.json</code></a> file.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -477,7 +477,7 @@
 <p>Once an error occurs during the workflow execution, the associated compensation action is triggered.</p>
 </div>
 <div class="paragraph">
-<p>An error definition uses the fully qualified class name (FQCN) for Java exceptions that are thrown by functions. In the previous example of error definition, <code>org.kie.kogito.ServiceException</code> is thrown by the service calls that are defined as <a href="#custom-function">Java methods</a> in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-saga-quarkus/src/main/java/org/kie/kogito/PaymentService.java"><code>PaymentService.java</code></a> file.</p>
+<p>An error definition uses the fully qualified class name (FQCN) for Java exceptions that are thrown by functions. In the previous example of error definition, <code>org.kie.kogito.ServiceException</code> is thrown by the service calls that are defined as <a href="#custom-function">Java methods</a> in the <a href="https://github.com/kiegroup/kogito-examples/tree/1.24.x/serverless-workflow-examples/serverless-workflow-saga-quarkus/src/main/java/org/kie/kogito/PaymentService.java"><code>PaymentService.java</code></a> file.</p>
 </div>
 <div id="custom-function" class="listingblock">
 <div class="title">Example custom function using a Java class and method</div>
