@@ -1,0 +1,52 @@
+= Deploying your projects
+:compat-mode!:
+// Metadata:
+:description: Serverless Logic Sandbox deploying your projects
+:keywords: kogito, workflow, serverless, editor, sandbox, settings, openshift, deploy, project
+
+Serverless Workflow projects can be deployed to an OpenShift instance via the OpenShift integration, allowing authors to test their implementations in a live environment.
+
+[[proc-deploy-first-serverless-project-serverless-logic-sandbox]]
+== Deploying your first simple serverless project
+
+Deploy your first Serverless Workflow project to an OpenShift instance and see it running live.
+
+.Prerequisites
+* OpenShift integration has to be correctly configured (see how to xref:tooling/serverless-logic-sandbox/serverless-logic-sandbox-openshift-integration.adoc[here]).
+
+.Procedure
+. Start by creating a project from one of the samples. For this tutorial, the **Greetings** sample is recommended, as it has no external dependencies and is easy to test and comprehend.
+. On the editor page, click on the **Try on OpenShift** button, then, on the context menu, click on **Deploy "greetings" (Serverless Workflow)**;
+. A modal should appear, showing deployment options:
+  * **Deploy as a project**: This will be available if your current workspace has a full project structure (with a single `pom.xml` file);
+  * **Advanced options**:
+    ** **Upload OpenAPI spec to Service Registry**: After a Serverless Workflow is deployed using the Quarkus template (applied by default) an OpenAPI spec is available in the deployed service. Checking this option will make the Serverless Logic Sandbox poll for this spec and upload it to your configured Service Registry (_To use this option, you need to configure your Service Account and Service Registry on the Settings page. You can check how to configure it xref:tooling/serverless-logic-sandbox/serverless-logic-sandbox-redhat-application-services-integration.adoc[here]_);
+    ** **Attach KafkaSource to the deployment**: If your Serverless Workflow has an Apache Kafka event dependency then this option should be checked (_To use this option, you need to configure your Service Account and Streams for Apache Kafka on the Settings page. You can check how to configure it xref:tooling/serverless-logic-sandbox/serverless-logic-sandbox-redhat-application-services-integration.adoc[here]_).
+. Leave everything unchecked and click on **Confirm**.
+. A toast should show the following message: **Your deployment has been successfully started and will be available shortly. Please do not close this browser tab until the operation is completed.** and clicking on the **OpenShift deployments** icon should show your deployment status.
++
+--
+.OpenShift deployment status (success)
+image:tooling/serverless-logic-sandbox/serverless-logic-sandbox-openshift-deployments.png[]
+--
+
+
+[[proc-check-deploy-status-serverless-logic-sandbox]]
+== Checking your deployment status
+
+After deployment is successful you can check out multiple information on your service in development mode.
+
+.Prerequisites
+* OpenShift integration has to be correctly configured (see how to xref:tooling/serverless-logic-sandbox/serverless-logic-sandbox-openshift-integration.adoc[here]);
+* Have a successfully deployed project.
+
+.Procedure
+. Click on the **OpenShift deployments** icon to show a list of deployments;
+. If your deployment is successful (listed with a emoji:white_check_mark[1x]) you can click on it to access the **Serverless Deployment** page and check on the **Swagger UI** interface, **Open API** specification and **Metrics** page via DashBuilder.
++
+--
+.Serverless deployment page
+image:tooling/serverless-logic-sandbox/serverless-logic-sandbox-serverless-deployment-page.png[]
+--
+
+include::../../../pages/_common-content/report-issue.adoc[]

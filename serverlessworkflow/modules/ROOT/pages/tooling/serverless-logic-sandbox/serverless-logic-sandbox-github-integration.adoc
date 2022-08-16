@@ -4,14 +4,14 @@
 :description: Serverless Logic Sandbox github integration
 :keywords: kogito, workflow, serverless, editor, sandbox, settings, github, integration
 
-The Serverless Logic Sandbox implements a web version of a git client, allowing users to create, commit, push and pull repositories, making it possible sync workspaces remotely.
+The Serverless Logic Sandbox implements a web version of a git client, allowing users to create, commit, push and pull repositories, making it possible to sync workspaces remotely.
 
 This document describes how to configure the integration and sync your projects. 
 
 [[proc-setting-github-token-serverless-logic-sandbox]]
 == Setting up your GitHub token
 
-You can generate a token from your GitHub account settings page and add it to the Serverless Logic Sandbox settings tab.
+Generate a token from your GitHub account settings page and add it to the Serverless Logic Sandbox settings tab.
 
 .Prerequisites
 * GitHub account.
@@ -19,7 +19,7 @@ You can generate a token from your GitHub account settings page and add it to th
 .Procedure
 . In the Serverless Logic Sandbox, click on the **Cog wheel** on the top right corner and go to the **GitHub** tab;
 . From there, you'll see a link to the GitHub token settings page and the **Token** field.
-. Click the link:{https://github.com/settings/tokens}[link] and create your GitHub token, making sure you select both **repo** and **gist** options. This is important, as those are the permissions required for creating and updating repositories and gists.
+. Click the link:{github_tokens_url}[link] and create your GitHub token, making sure you select both **repo** and **gist** options. This is important, as those are the permissions required for creating and updating repositories and gists.
 . Copy the token generated and paste it into the GitHub settings tab on the Serverless Logic Sandbox.
 . The contents of the tab should be updated, showing that you're signed into GitHub and have all the permissions required.
 
@@ -27,7 +27,7 @@ You can generate a token from your GitHub account settings page and add it to th
 [[proc-sync-workspace-github-serverless-logic-sandbox]]
 == Syncing your workspaces with GitHub
 
-After configuring your GitHub token you can now.
+After configuring your GitHub token you can now sync workspaces with remote repositories.
 
 .Prerequisites
 * You have configured your GitHub token on the Serverless Logic Sandbox. 
@@ -47,5 +47,20 @@ image::tooling/serverless-logic-sandbox/serverless-logic-sandbox-github-repo.png
 
 . To update the remote repository with your local changes click on **Sync -> Push**;
 . To get new updates from the remote repository click on **Sync -> Pull**;
+
+[[proc-import-workspace-github-serverless-logic-sandbox]]
+== Importing a workspace from GitHub
+
+Let's say you need to work from another computer or use a workspace created by someone else, in these cases importing a workspace from GitHub is useful. In this tutorial, you'll learn how to import these repositories as workspaces on your Serverless Logic Sandbox.
+
+.Prerequisites
+* You have configured your GitHub token on the Serverless Logic Sandbox;
+* Have a repository with Serverless Logic files.
+
+.Procedure
+. On GitHub, find the repository with your project and copy its URL;
+. Back on the Serverless Logic Sandbox, paste the URL to the **Import -> From URL** field and click on **Clone**;
+. The page should load your imported project, defaulting to a Serverless Logic file, if present;
+. If your GitHub user has access to push to this repository you'll be able to sync changes by clicking on **Sync -> Push**;
 
 include::../../../pages/_common-content/report-issue.adoc[]
