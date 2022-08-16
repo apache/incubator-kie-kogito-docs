@@ -14,6 +14,7 @@ import org.kie.jenkins.jobdsl.KogitoJobUtils
 
 jenkins_path = '.ci/jenkins'
 
+setupInitJob()
 setupPostReleaseJob()
 
 KogitoJobUtils.createQuarkusUpdateToolsJob(this, 'kogito-docs', [:], [:], [[
@@ -24,6 +25,26 @@ KogitoJobUtils.createQuarkusUpdateToolsJob(this, 'kogito-docs', [:], [:], [[
 /////////////////////////////////////////////////////////////////
 // Methods
 /////////////////////////////////////////////////////////////////
+
+void setupInitJob() {
+    def jobParams = KogitoJobUtils.getBasicJobParams(this, 'kogito-docs', Folder.INIT, "${jenkins_path}/Jenkinsfile.init", 'Kogito Docs Branch init job')
+    jobParams.env.putAll([
+        JENKINS_EMAIL_CREDS_ID: "${JENKINS_EMAIL_CREDS_ID}",
+
+        GIT_AUTHOR: "${GIT_AUTHOR_NAME}",
+
+        AUTHOR_CREDS_ID: "${GIT_AUTHOR_CREDENTIALS_ID}",
+    ])
+    KogitoJobTemplate.createPipelineJob(this, jobParams)?.with {
+        parameters {
+            stringParam('DISPLAY_NAME', '', 'Setup a specific build display name')
+
+            stringParam('BUILD_BRANCH_NAME', "${GIT_BRANCH}", 'Set the Git branch to checkout')
+
+            booleanParam('SEND_NOTIFICATION', true, 'In case you want the pipeline to send a notification on CI channel for this run.')
+        }
+    }
+}
 
 void setupPostReleaseJob() {
     def jobParams = KogitoJobUtils.getBasicJobParams(this, 'kogito-docs-post-release', Folder.RELEASE, "${jenkins_path}/Jenkinsfile.post-release", 'Kogito Docs Post Release')
