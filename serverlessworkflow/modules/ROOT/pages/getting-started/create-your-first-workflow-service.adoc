@@ -247,19 +247,25 @@ mvn clean quarkus:dev
 Knative CLI::
 +
 --
-.Deploy your project to authenticated cluster
+Currently, Knative CLI doesn't support yet running workflows locally. You can either:
+
+.Run your workflow application using Apache Maven
 [source,shell]
 ----
-kn workflow deploy
+mvn clean quarkus:dev
 ----
+
+.Run your workflow application using Quarkus CLI
+[source,shell]
+----
+quarkus dev
+----
+
 For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
+
+Also, to learn how to deploy and run your workflow application, see xref:cloud/deploying-on-minikube.adoc[{context} Deploying Serverless Workflow application on Minikube]
 --
 ====
-
-+
-[tabs]
-====
-Quarkus CLI or Apache Maven::
 +
 .Example response
 [source,shell,subs="attributes"]
@@ -300,65 +306,15 @@ __  ____  __  _____   ___  __ ____  ______
 2022-05-25 14:38:13,380 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,182 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, inmemory-postgres, jdbc-postgresql, narayana-jta, oidc, reactive-routes, rest-client-reactive, rest-client-reactive-jackson, security, smallrye-context-propagation, smallrye-graphql-client, smallrye-health, smallrye-metrics, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx, vertx-graphql]
 ----
 
-
-Knative CLI::
-+
-.Example response
-[source,shell]
-----
-✅ Knative service sucessufully created
-🚀 Deploy took: 194.263309ms
-----
-
-+
-.Check if your service is ready
-.Verify Knative service
-[source,shell]
-----
-kn service list
-----
-
-+
-.Example response
-[source,shell]
-----
-NAME                              URL                                                                      LATEST                                  AGE   CONDITIONS   READY   REASON
-serverless-workflow-hello-world   http://serverless-workflow-hello-world.default.10.106.207.219.sslip.io   serverless-workflow-hello-world-00001   6s    3 OK / 3     True
-----
-
-+
-The returned URL must be used to access the deployed service.
-
-====
-
 . Once your workflow application is started, you can send a request for the provided endpoint:
++
 
 +
-[tabs]
-====
-Quarkus CLI or Apache Maven::
-+
---
 .Example request
 [source,shell]
 ----
 curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_world
 ----
---
-Knative CLI::
-
-+
---
-Use the URL returned by the previous command to access the deployed service:
-
-.Example request
-[source,shell]
-----
-URL=$(kn service describe serverless-workflow-hello-world -o url) \
-  curl -X POST -H 'Content-Type:application/json' ${URL}/hello_world
-----
---
-====
 
 +
 --
