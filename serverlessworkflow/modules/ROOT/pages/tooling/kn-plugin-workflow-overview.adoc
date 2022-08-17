@@ -97,7 +97,7 @@ The `create` command sets up Quarkus project containing minimal extensions to bu
 * {context} plug-in for Knative CLI is installed.
 +
 For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {context} plug-in for Knative CLI>>.
-ifeval::["{quarkus_cli_platform_redhat}" != ""]
+ifeval::["{kogito_version_redhat}" != ""]
 * You followed the steps in xref:getting-started/create-your-first-workflow-service.adoc#proc-configuring-maven-rhbq[Configuring your Maven project to Red Hat build of Quarkus and OpenShift Serverless Logic]
 endif::[]
 
@@ -297,12 +297,14 @@ You can use the `kubectl` command line if you want to use a complex deployment s
 --
 
 [[proc-build-sw-project-source]]
-== Building a workflow project from source
+== Building from source
 
-As an alternative, you can build your workflow project from source.
+As an alternative, you can build the workflow plug-in from the source.
 
 .Prerequisites
-include::../../pages/_common-content/getting-started-requirement.adoc[]
+* link:{node_install_url}[Node] {kie_tools_node_min_version} or later is installed.
+* link:{pnpm_install_url}[pnpm] {kie_tools_pnpm_min_version} or later is installed.
+* link:{golang_install_url}[Go] {kie_tools_golang_min_version} or later is installed.
 
 .Procedure
 . In a command terminal, enter the following command to clone the `kie-tools` GitHub repository:
@@ -315,30 +317,28 @@ git clone git@github.com:kiegroup/kie-tools.git
 ----
 --
 
-. Navigate to the cloned `kie-tools` directory and enter the following command to access the {context} plug-in:
+. Navigate to the cloned `kie-tools` directory and enter the following command to install the dependencies and link the repository packages:
 +
 --
-.Access {context} plug-in
+.Navigate to the repository, install dependencies, and link packages
 [source,shell]
 ----
 cd kie-tools
 pnpm bootstrap
-pnpm -F @kie-tools/kn-plugin-workflow... build:dev
 ----
 --
 
-. Go to the plug-in folder and enter the following command to build the workflow project:
+. In the repository root, enter the following command to build the workflow plug-in:
 +
 --
-.Build workflow project from source
+.Build workflow plug-in from source
 [source,shell]
 ----
-cd packages/kn-plugin-workflow
-go mod tidy
+pnpm -r -F kn-plugin-workflow... build:dev
 ----
 --
 
-You have successfully built your workflow project from source.
+You have successfully built the workflow plug-in project from the source. This procedure generates an artifact compatible with your operating system architecture in the `kie-tools/packages/kn-plugin-workflow/dist` folder.
 
 == Additional resources
 
