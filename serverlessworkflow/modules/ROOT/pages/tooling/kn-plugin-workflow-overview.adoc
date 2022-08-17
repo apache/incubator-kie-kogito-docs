@@ -296,50 +296,6 @@ You can use the `kubectl` command line if you want to use a complex deployment s
 ====
 --
 
-[[proc-build-sw-project-source]]
-== Building a workflow project from source
-
-As an alternative, you can build your workflow project from source.
-
-.Prerequisites
-include::../../pages/_common-content/getting-started-requirement.adoc[]
-
-.Procedure
-. In a command terminal, enter the following command to clone the `kie-tools` GitHub repository:
-+
---
-.Clone `kie-tools` repository
-[source,shell]
-----
-git clone git@github.com:kiegroup/kie-tools.git
-----
---
-
-. Navigate to the cloned `kie-tools` directory and enter the following command to access the {context} plug-in:
-+
---
-.Access {context} plug-in
-[source,shell]
-----
-cd kie-tools
-pnpm bootstrap
-pnpm -F @kie-tools/kn-plugin-workflow... build:dev
-----
---
-
-. Go to the plug-in folder and enter the following command to build the workflow project:
-+
---
-.Build workflow project from source
-[source,shell]
-----
-cd packages/kn-plugin-workflow
-go mod tidy
-----
---
-
-You have successfully built your workflow project from source.
-
 == Additional resources
 
 * xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
