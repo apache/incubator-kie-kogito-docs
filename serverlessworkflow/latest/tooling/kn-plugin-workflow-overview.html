@@ -543,11 +543,24 @@ Use "kn workflow [command] --help" for more information about a command.</code><
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Build the project and generate a local image named <code>quay.io/my-project</code></div>
+<div class="title">Build the project and generate a local image named <code>dev.local/my-project</code></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project
-kn workflow build --image-name my-project</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image dev.local/my-project</code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>By using <code>dev.local</code> as repository, you can deploy your Serverless Workflow project in a local environment without having to push the image to a container registry.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>To use the <code>build</code> command, you need to provide either <code>--image</code> or <code>--image-name</code> flag. In the previous command, you can use the <code>[-i|--image]</code> in several ways, such as:</p>
@@ -641,7 +654,7 @@ kn workflow build --image-name my-project</code></pre>
 <div class="listingblock">
 <div class="title">Build a project and generate a local image using Jib</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project --jib</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image dev.local/my-project --jib</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -650,7 +663,7 @@ kn workflow build --image-name my-project</code></pre>
 <div class="listingblock">
 <div class="title">Build a project and generate a local image using Jib</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-project --jib-podman</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image dev.local/my-project --jib-podman</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -808,7 +821,7 @@ kn workflow build --image-name my-project</code></pre>
 <div class="listingblock">
 <div class="title">Clone <code>kie-tools</code> repository</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">git clone git@github.com:kie-group/kie-tools.git</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">git clone git@github.com:kiegroup/kie-tools.git</code></pre>
 </div>
 </div>
 </div>

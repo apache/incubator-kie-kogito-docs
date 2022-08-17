@@ -443,54 +443,11 @@ cd serverless-workflow-hello-world</code></pre>
 <div class="listingblock">
 <div class="title">Create a project using Knative CLI</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow create --name my-project --extension quarkus-jsonp,quarkus-smallrye-openapi</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>For more information about Knative CLI, see <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Serverless Workflow plug-in for Knative CLI</a>.</p>
-</div>
-</div>
-</div>
-</div>
-</li>
-<li>
-<p>To verify that project is created, compile the project using the following command:</p>
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset2_quarkus-cli"></a>Quarkus CLI</p>
-</li>
-<li>
-<p><a id="tabset2_apache-maven"></a>Apache Maven</p>
-</li>
-<li>
-<p><a id="tabset2_knative-cli"></a>Knative CLI</p>
-</li>
-</ul>
-</div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset2_quarkus-cli">
-<div class="listingblock">
-<div class="title">Compile your project using Quarkus CLI</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset2_apache-maven">
-<div class="listingblock">
-<div class="title">Compile your project using Apache Maven</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean package</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset2_knative-cli">
-<div class="listingblock">
-<div class="title">Build your project and generate a local image called <code>quay.io/other-user/my-project:1.0.1</code></div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image my-user/my-project:1.0.0 --image-repository other-user --image-tag 1.0.1</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow create \
+  --name serverless-workflow-hello-world \
+  --extension quarkus-jsonp,quarkus-smallrye-openapi \
+  --quarkus-platform-group-id=io.quarkus.platform \
+  --quarkus-version=2.11.2.Final</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -619,6 +576,65 @@ cd serverless-workflow-hello-world</code></pre>
 </div>
 </div>
 <div class="sect1">
+<h2 id="proc-building-application"><a class="anchor" href="#proc-building-application"></a>Building your workflow application</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>To verify that project is created, compile the project using the following command:</p>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_quarkus-cli"></a>Quarkus CLI</p>
+</li>
+<li>
+<p><a id="tabset2_apache-maven"></a>Apache Maven</p>
+</li>
+<li>
+<p><a id="tabset2_knative-cli"></a>Knative CLI</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_quarkus-cli">
+<div class="listingblock">
+<div class="title">Compile your project using Quarkus CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_apache-maven">
+<div class="listingblock">
+<div class="title">Compile your project using Apache Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean package</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_knative-cli">
+<div class="listingblock">
+<div class="title">Build your project and generate a local image called <code>dev.local/serverless-workflow-hello-world:latest</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image dev.local/serverless-workflow-hello-world --verbose</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>--verbose</code> flag is used to display the output of the build command. This flag is optional.</p>
+</div>
+<div class="paragraph">
+<p>For more information about Knative CLI, see <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Serverless Workflow plug-in for Knative CLI</a>.</p>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="proc-running-application"><a class="anchor" href="#proc-running-application"></a>Running your workflow application</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -673,6 +689,19 @@ cd serverless-workflow-hello-world</code></pre>
 </div>
 </div>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset4_quarkus-cli-or-apache-maven"></a>Quarkus CLI or Apache Maven</p>
+</li>
+<li>
+<p><a id="tabset4_knative-cli"></a>Knative CLI</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset4_quarkus-cli-or-apache-maven">
 <div class="listingblock">
 <div class="title">Example response</div>
 <div class="content">
@@ -712,17 +741,73 @@ __  ____  __  _____   ___  __ ____  ______
 2022-05-25 14:38:13,380 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,182 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, inmemory-postgres, jdbc-postgresql, narayana-jta, oidc, reactive-routes, rest-client-reactive, rest-client-reactive-jackson, security, smallrye-context-propagation, smallrye-graphql-client, smallrye-health, smallrye-metrics, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx, vertx-graphql]</code></pre>
 </div>
 </div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset4_knative-cli">
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">✅ Knative service sucessufully created
+🚀 Deploy took: 194.263309ms</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Verify Knative service</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service list</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">NAME                              URL                                                                      LATEST                                  AGE   CONDITIONS   READY   REASON
+serverless-workflow-hello-world   http://serverless-workflow-hello-world.default.10.106.207.219.sslip.io   serverless-workflow-hello-world-00001   6s    3 OK / 3     True</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The returned URL must be used to access the deployed service.</p>
+</div>
+</div>
+</div>
+</div>
 </li>
 <li>
 <p>Once your workflow application is started, you can send a request for the provided endpoint:</p>
-<div class="openblock">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset5_quarkus-cli-or-apache-maven"></a>Quarkus CLI or Apache Maven</p>
+</li>
+<li>
+<p><a id="tabset5_knative-cli"></a>Knative CLI</p>
+</li>
+</ul>
+</div>
 <div class="content">
+<div class="tab-pane" aria-labelledby="tabset5_quarkus-cli-or-apache-maven">
 <div class="listingblock">
 <div class="title">Example request</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_world</code></pre>
 </div>
 </div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset5_knative-cli">
+<div class="paragraph">
+<p>Use the URL returned by the previous command to access the deployed service:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">URL=$(kn service describe serverless-workflow-hello-world -o url) \
+  curl -X POST -H 'Content-Type:application/json' ${URL}/hello_world</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
 <div class="title">Example response</div>
 <div class="content">
@@ -733,7 +818,7 @@ __  ____  __  _____   ___  __ ____  ______
 </div>
 </li>
 <li>
-<p>You can update your workflow with a new <code>mantra</code> value without restarting the application.</p>
+<p>When running in development mode (using Quarkus CLI or Apache Maven), you can update your workflow with a new <code>mantra</code> value without restarting the application.</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">

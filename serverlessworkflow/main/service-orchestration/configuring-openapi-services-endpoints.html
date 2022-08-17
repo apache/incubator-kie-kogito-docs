@@ -441,6 +441,43 @@ paths:
 </tr>
 </table>
 </div>
+<div class="sect2">
+<h3 id="_using_uri_alias"><a class="anchor" href="#_using_uri_alias"></a>Using URI alias</h3>
+<div class="paragraph">
+<p>As an alternative to <code>kogito.sw.operationIdStrategy</code>, you can assign an alias name to an URI by using <code>workflow-uri-definitions</code> custom <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#extensions">extension</a>. Then you can use that alias as configuration key and in function definitions.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example workflow</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"extensions" : [ {
+      "extensionid": "workflow-uri-definitions",
+      "definitions": {
+        "remoteCatalog": "https://my.remote.host/apicatalog/apis/123/document",
+       }
+     }
+  ],
+  "functions": [
+        {
+          "name": "operation1",
+          "operation": "remoteCatalog#operation1"
+        },
+        {
+          "name": "operation2",
+          "operation": "remoteCatalog#operation2"
+        }
+    ]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example property</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.rest-client.remoteCatalog.url=http://localhost:8282/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example, Kogito uses <code>remoteCatalog</code> as configuration key.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
