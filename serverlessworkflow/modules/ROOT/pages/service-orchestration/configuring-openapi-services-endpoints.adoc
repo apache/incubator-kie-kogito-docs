@@ -113,6 +113,41 @@ In the previous example, {product_name} uses `stock-service_API` as configuratio
 A Kubernetes service endpoint can be used as a service URL if the target service is within the same cluster, such as `http://myservice.mynamespace.cluster.svc.local`.
 ====
 
+=== Using URI alias
+
+As an alternative to `kogito.sw.operationIdStrategy`, you can assign an alias name to an URI by using `workflow-uri-definitions` custom link:{spec_doc_url}#extensions[extension]. Then you can use that alias as configuration key and in function definitions. 
+
+.Example workflow
+[source,json]
+----
+"extensions" : [ {
+      "extensionid": "workflow-uri-definitions",
+      "definitions": {
+        "remoteCatalog": "https://my.remote.host/apicatalog/apis/123/document",
+       }
+     }
+  ], 
+  "functions": [
+        {
+          "name": "operation1",
+          "operation": "remoteCatalog#operation1"
+        }, 
+        {
+          "name": "operation2",
+          "operation": "remoteCatalog#operation2"
+        }
+    ]
+----
+
+.Example property
+[source, properties]
+----
+quarkus.rest-client.remoteCatalog.url=http://localhost:8282/
+----
+
+In the previous example, {product_name} uses `remoteCatalog` as configuration key.
+
+
 [[proc-configure-openapi-services-endpoints-different-environments]]
 == Configuring the OpenAPI services endpoints in different environments
 
