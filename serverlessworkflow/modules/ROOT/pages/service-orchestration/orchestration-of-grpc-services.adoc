@@ -223,7 +223,17 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 .Example response
 [source,shell]
 ----
-{"id":"abece3f9-0797-4c10-a1f5-8f3929724689","workflowdata":{"helloRequests":[{"name":"Javierito","language":"Spanish"},{"name":"John","language":"English"},{"name":"Jan","language":"Czech"}],"message":"Saludos desde gRPC service Javierito\nHello from gRPC service John\nHello from gRPC service Jan"}}
+
+
+{"workflowdata" : {
+                    "helloRequests" : [
+                                     {"name" : "Javierito", "language":"Spanish"},
+                                     {"name" : "John", "language":"English"},
+                                     {"name" : "Jan", "language":"Czech"}],
+                    "message":"Saludos desde gRPC service Javierito\nHello from gRPC service John\nHello from gRPC service Jan"
+                  }
+}
+
 ----
 
 === Bidirectional streaming gRPC
@@ -242,7 +252,20 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 .Example response
 [source,shell]
 ----
-{"id":"403876ed-0db4-40ca-a19c-158f563fef16","workflowdata":{"helloRequests":[{"name":"Javierito","language":"Spanish"},{"name":"John","language":"English"},{"name":"Jan","language":"Czech"}],"response":[{"message":"Saludos desde gRPC service Javierito"},{"message":"Hello from gRPC service John"},{"message":"Hello from gRPC service Jan"}]}}
+
+{"workflowdata" : {
+                    "helloRequests" : [
+                                     {"name" : "Javierito", "language":"Spanish"},
+                                     {"name" : "John", "language":"English"},
+                                     {"name" : "Jan", "language":"Czech"}],
+                    "response":[
+                                {"message":"Saludos desde gRPC service Javierito"},
+                                {"message":"Hello from gRPC service John"},
+                                {"message":"Hello from gRPC service Jan"}
+                               ]
+                  }
+}
+
 ----
 
 include::../../pages/_common-content/report-issue.adoc[]
