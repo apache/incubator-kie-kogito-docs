@@ -12,4 +12,42 @@ To use the Red Hat Build of Quarkus (RHBQ) libraries, you need to configure your
 .Procedure
 . To configure the Apache Maven `settings.xml` file and Quarkus extension registry client, follow the instructions in the link:{rhbq_config_maven_url}[Configuring the Maven settings.xml file for the online repository] and link:{rhbq_config_registry_url}[Configuring Quarkus extension registry client].
 +
+. Complement the configured Apache Maven `settings.xml` file with the following profile to have access to the {product_name} repository:
++
+.Profile to access the {product_name} repository
+[source,xml,subs="attributes+"]
+----
+<!-- Configure the {product_name} Maven repository -->
+<profile>
+  <id>red-hat-earlyaccess-maven-repository</id>
+  <activation>
+    <activeByDefault>true</activeByDefault>
+  </activation>
+  <repositories>
+    <repository>
+      <id>red-hat-earlyaccess-maven-repository</id>
+      <url>https://maven.repository.redhat.com/earlyaccess/all/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>red-hat-earlyaccess-maven-repository</id>
+      <url>https://maven.repository.redhat.com/earlyaccess/all/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+</profile>
+----
++
 . Follow the instructions in the link:{redhat_registry_auth_url}[Red Hat Container Registry Authentication] article to log in to the registry and use the {context} images locally.
