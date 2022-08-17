@@ -20,13 +20,13 @@ image::getting-started/hello-world-workflow.png[]
 .Prerequisites
 * Java {java_min_version} is installed with `JAVA_HOME` configured appropriately.
 * Apache Maven {maven_min_version} is installed.
-* {quarkus_cli_url}[Quarkus CLI] {quarkus_version} or xref:tooling/kn-plugin-workflow-overview.adoc[Knative CLI] {kn-cli-version} is installed.
+* {quarkus_cli_url}[Quarkus CLI] or xref:tooling/kn-plugin-workflow-overview.adoc[Knative Workflow CLI] {kn-cli-version} is installed.
 * Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.java[Red Hat Java Extension]
 and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
 
 For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {context} tooling].
 
-ifeval::["{quarkus_cli_platform_redhat}" != ""]
+ifeval::["{kogito_version_redhat}" != ""]
 include::../../pages/_common-content/downstream-project-setup-instructions.adoc[]
 endif::[]
 
@@ -51,7 +51,7 @@ quarkus create app \
     -x=quarkus-container-image-jib \
     -x=quarkus-resteasy-jackson \
     -x=quarkus-smallrye-openapi \
-    --no-code {quarkus_cli_platform_redhat} \
+    --no-code \
     org.kie.kogito.examples:serverless-workflow-hello-world:1.0
 ----
 
@@ -175,7 +175,7 @@ xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Se
 [[proc-building-application]]
 == Building your workflow application
 
-ifeval::["{quarkus_cli_platform_redhat}" != ""]
+ifeval::["{kogito_version_redhat}" != ""]
 include::../../pages/_common-content/downstream-post-create-project.adoc[]
 endif::[]
 
