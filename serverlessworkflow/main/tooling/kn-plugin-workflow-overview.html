@@ -795,19 +795,22 @@ Use "kn workflow [command] --help" for more information about a command.</code><
 </div>
 </div>
 <div class="sect1">
-<h2 id="proc-build-sw-project-source"><a class="anchor" href="#proc-build-sw-project-source"></a>Building a workflow project from source</h2>
+<h2 id="proc-build-sw-project-source"><a class="anchor" href="#proc-build-sw-project-source"></a>Building from source</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As an alternative, you can build your workflow project from source.</p>
+<p>As an alternative, you can build the workflow plug-in from the source.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>A workflow project is created.</p>
-<div class="paragraph">
-<p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
-</div>
+<p><a href="https://nodejs.org/en/download/package-manager/">Node</a> 16.13.2 or later is installed.</p>
+</li>
+<li>
+<p><a href="https://pnpm.io/installation">pnpm</a> 7.0.0 or later is installed.</p>
+</li>
+<li>
+<p><a href="https://go.dev/doc/install">Go</a> 1.19 or later is installed.</p>
 </li>
 </ul>
 </div>
@@ -828,29 +831,27 @@ Use "kn workflow [command] --help" for more information about a command.</code><
 </div>
 </li>
 <li>
-<p>Navigate to the cloned <code>kie-tools</code> directory and enter the following command to access the Serverless Workflow plug-in:</p>
+<p>Navigate to the cloned <code>kie-tools</code> directory and enter the following command to install the dependencies and link the repository packages:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Access Serverless Workflow plug-in</div>
+<div class="title">Navigate to the repository, install dependencies, and link packages</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd kie-tools
-pnpm bootstrap
-pnpm -F @kie-tools/kn-plugin-workflow... build:dev</code></pre>
+pnpm bootstrap</code></pre>
 </div>
 </div>
 </div>
 </div>
 </li>
 <li>
-<p>Go to the plug-in folder and enter the following command to build the workflow project:</p>
+<p>In the repository root, enter the following command to build the workflow plug-in:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
-<div class="title">Build workflow project from source</div>
+<div class="title">Build workflow plug-in from source</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd packages/kn-plugin-workflow
-go mod tidy</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">pnpm -r -F kn-plugin-workflow... build:dev</code></pre>
 </div>
 </div>
 </div>
@@ -859,7 +860,7 @@ go mod tidy</code></pre>
 </ol>
 </div>
 <div class="paragraph">
-<p>You have successfully built your workflow project from source.</p>
+<p>You have successfully built the workflow plug-in project from the source. This procedure generates an artifact compatible with your operating system architecture in the <code>kie-tools/packages/kn-plugin-workflow/dist</code> folder.</p>
 </div>
 </div>
 </div>
