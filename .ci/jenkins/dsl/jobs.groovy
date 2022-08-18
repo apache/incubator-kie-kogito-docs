@@ -27,7 +27,7 @@ KogitoJobUtils.createQuarkusUpdateToolsJob(this, 'kogito-docs', [:], [:], [[
 /////////////////////////////////////////////////////////////////
 
 void setupInitJob() {
-    def jobParams = KogitoJobUtils.getBasicJobParams(this, 'kogito-docs', Folder.INIT, "${jenkins_path}/Jenkinsfile.init", 'Kogito Docs Branch init job')
+    def jobParams = KogitoJobUtils.getBasicJobParams(this, 'kogito-docs', Folder.INIT_BRANCH, "${jenkins_path}/Jenkinsfile.init-branch", 'Kogito Docs Branch init job')
     jobParams.env.putAll([
         JENKINS_EMAIL_CREDS_ID: "${JENKINS_EMAIL_CREDS_ID}",
 
