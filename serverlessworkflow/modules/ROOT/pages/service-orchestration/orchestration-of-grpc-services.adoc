@@ -8,6 +8,7 @@
 :grpc_core_url: https://grpc.io/docs/what-is-grpc/core-concepts
 :grpc_json_mapping: https://developers.google.com/protocol-buffers/docs/proto3#json
 :grpc_configuration_url: https://quarkus.io/guides/grpc-service-consumption#client-configuration
+:grpc_enum_url:https://developers.google.com/protocol-buffers/docs/proto3#enum
 
 As a developer, you can invoke a gRPC service using a workflow application that runs with Quarkus. This document describes how to create a workflow that invokes a running gRPC service and how to configure properties to locate that running gRPC service.
 
@@ -145,6 +146,11 @@ quarkus.grpc.clients.Greeter.port=50051
 
 In the same GitHub repository as the example application, there is a link:{grpc_example_url}/serverless-workflow-greeting-server-rpc-quarkus[Maven project] which provides a simple implementation of the `Greeter` service. By default, this gRPC server runs on port `50051`. Therefore, the same port is used in the `application.properties` file.
 
+=== Default enum values
+
+gRPC link:{grpc_enum_url}[specification] requires enumeration types to have a default value. The default value is not included in the server response payload. Therefore, use an empty value such as `UNKNOWN` as default.
+If, for any reason, your default value is semantically valid and you want the value to be included in the workflow model, you must set `kogito.grpc.enum.includeDefault` property to true. This way enumeration fields are always filled by the workflow if the server response does not include them. 
+
 [[running-serverless-workflow-application]]
 == Running the workflow application
 
@@ -217,7 +223,17 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 .Example response
 [source,shell]
 ----
-{"id":"abece3f9-0797-4c10-a1f5-8f3929724689","workflowdata":{"helloRequests":[{"name":"Javierito","language":"Spanish"},{"name":"John","language":"English"},{"name":"Jan","language":"Czech"}],"message":"Saludos desde gRPC service Javierito\nHello from gRPC service John\nHello from gRPC service Jan"}}
+
+
+{"workflowdata" : {
+                    "helloRequests" : [
+                                     {"name" : "Javierito", "language":"Spanish"},
+                                     {"name" : "John", "language":"English"},
+                                     {"name" : "Jan", "language":"Czech"}],
+                    "message":"Saludos desde gRPC service Javierito\nHello from gRPC service John\nHello from gRPC service Jan"
+                  }
+}
+
 ----
 
 === Bidirectional streaming gRPC
@@ -236,7 +252,20 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 .Example response
 [source,shell]
 ----
-{"id":"403876ed-0db4-40ca-a19c-158f563fef16","workflowdata":{"helloRequests":[{"name":"Javierito","language":"Spanish"},{"name":"John","language":"English"},{"name":"Jan","language":"Czech"}],"response":[{"message":"Saludos desde gRPC service Javierito"},{"message":"Hello from gRPC service John"},{"message":"Hello from gRPC service Jan"}]}}
+
+{"workflowdata" : {
+                    "helloRequests" : [
+                                     {"name" : "Javierito", "language":"Spanish"},
+                                     {"name" : "John", "language":"English"},
+                                     {"name" : "Jan", "language":"Czech"}],
+                    "response":[
+                                {"message":"Saludos desde gRPC service Javierito"},
+                                {"message":"Hello from gRPC service John"},
+                                {"message":"Hello from gRPC service Jan"}
+                               ]
+                  }
+}
+
 ----
 
 include::../../pages/_common-content/report-issue.adoc[]
