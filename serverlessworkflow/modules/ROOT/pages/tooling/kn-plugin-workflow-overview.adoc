@@ -296,50 +296,6 @@ You can use the `kubectl` command line if you want to use a complex deployment s
 ====
 --
 
-[[proc-build-sw-project-source]]
-== Building from source
-
-As an alternative, you can build the workflow plug-in from the source.
-
-.Prerequisites
-* link:{node_install_url}[Node] {kie_tools_node_min_version} or later is installed.
-* link:{pnpm_install_url}[pnpm] {kie_tools_pnpm_min_version} or later is installed.
-* link:{golang_install_url}[Go] {kie_tools_golang_min_version} or later is installed.
-
-.Procedure
-. In a command terminal, enter the following command to clone the `kie-tools` GitHub repository:
-+
---
-.Clone `kie-tools` repository
-[source,shell]
-----
-git clone git@github.com:kiegroup/kie-tools.git
-----
---
-
-. Navigate to the cloned `kie-tools` directory and enter the following command to install the dependencies and link the repository packages:
-+
---
-.Navigate to the repository, install dependencies, and link packages
-[source,shell]
-----
-cd kie-tools
-pnpm bootstrap
-----
---
-
-. In the repository root, enter the following command to build the workflow plug-in:
-+
---
-.Build workflow plug-in from source
-[source,shell]
-----
-pnpm -r -F kn-plugin-workflow... build:dev
-----
---
-
-You have successfully built the workflow plug-in project from the source. This procedure generates an artifact compatible with your operating system architecture in the `kie-tools/packages/kn-plugin-workflow/dist` folder.
-
 == Additional resources
 
 * xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
