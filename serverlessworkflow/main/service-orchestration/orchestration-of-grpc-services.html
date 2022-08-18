@@ -499,6 +499,13 @@ quarkus.grpc.clients.Greeter.port=50051</code></pre>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_default_enum_values"><a class="anchor" href="#_default_enum_values"></a>Default enum values</h3>
+<div class="paragraph">
+<p>gRPC <a href="{grpc_enum_url}">specification</a> requires enumeration types to have a default value. The default value is not included in the server response payload. Therefore, use an empty value such as <code>UNKNOWN</code> as default.
+If, for any reason, your default value is semantically valid and you want the value to be included in the workflow model, you must set <code>kogito.grpc.enum.includeDefault</code> property to true. This way enumeration fields are always filled by the workflow if the server response does not include them.</p>
+</div>
+</div>
 <div class="sect1">
 <h2 id="running-serverless-workflow-application"><a class="anchor" href="#running-serverless-workflow-application"></a>Running the workflow application</h2>
 <div class="sectionbody">
@@ -582,7 +589,14 @@ quarkus.grpc.clients.Greeter.port=50051</code></pre>
 <div class="listingblock">
 <div class="title">Example response</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"abece3f9-0797-4c10-a1f5-8f3929724689","workflowdata":{"helloRequests":[{"name":"Javierito","language":"Spanish"},{"name":"John","language":"English"},{"name":"Jan","language":"Czech"}],"message":"Saludos desde gRPC service Javierito\nHello from gRPC service John\nHello from gRPC service Jan"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"workflowdata" : {
+                    "helloRequests" : [
+                                     {"name" : "Javierito", "language":"Spanish"},
+                                     {"name" : "John", "language":"English"},
+                                     {"name" : "Jan", "language":"Czech"}],
+                    "message":"Saludos desde gRPC service Javierito\nHello from gRPC service John\nHello from gRPC service Jan"
+                  }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -602,7 +616,18 @@ quarkus.grpc.clients.Greeter.port=50051</code></pre>
 <div class="listingblock">
 <div class="title">Example response</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"403876ed-0db4-40ca-a19c-158f563fef16","workflowdata":{"helloRequests":[{"name":"Javierito","language":"Spanish"},{"name":"John","language":"English"},{"name":"Jan","language":"Czech"}],"response":[{"message":"Saludos desde gRPC service Javierito"},{"message":"Hello from gRPC service John"},{"message":"Hello from gRPC service Jan"}]}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"workflowdata" : {
+                    "helloRequests" : [
+                                     {"name" : "Javierito", "language":"Spanish"},
+                                     {"name" : "John", "language":"English"},
+                                     {"name" : "Jan", "language":"Czech"}],
+                    "response":[
+                                {"message":"Saludos desde gRPC service Javierito"},
+                                {"message":"Hello from gRPC service John"},
+                                {"message":"Hello from gRPC service Jan"}
+                               ]
+                  }
+}</code></pre>
 </div>
 </div>
 </div>
