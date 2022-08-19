@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Defining an input schema for Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <title>Input schema definition for Serverless Workflow :: Kogito Serverless Workflow Guides</title>
     <meta name="description" content="Defining input schema for Serverless Workflow">
     <meta name="keywords" content="kogito, workflow, serverless, dataInputSchema">
     <meta name="generator" content="Antora 3.0.3">
@@ -94,7 +94,7 @@
     <a class="nav-link" href="configuration-properties.html">Configuration properties in Serverless Workflow</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="defining-an-input-schema-for-workflows.html">Defining an input schema for Serverless Workflow</a>
+    <a class="nav-link" href="defining-an-input-schema-for-workflows.html">Input schema definition for Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
@@ -277,7 +277,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Core</li>
-    <li><a href="defining-an-input-schema-for-workflows.html">Defining an input schema for Serverless Workflow</a></li>
+    <li><a href="defining-an-input-schema-for-workflows.html">Input schema definition for Serverless Workflow</a></li>
   </ul>
 </nav>
 <div class="page-versions">
@@ -296,17 +296,17 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Defining an input schema for Serverless Workflow</h1>
+<h1 class="page">Input schema definition for Serverless Workflow</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>The dataInputSchema in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-definition-structure">Serverless Workflow specification</a> is one of the parameters in the Workflow definition.</p>
+<p>The <code>dataInputSchema</code> in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-definition-structure">Serverless Workflow specification</a> is a parameter used in the workflow definition. The <code>dataInputSchema</code> parameter validates the workflow data input against a defined JSON Schema. It is important to provide <code>dataInputSchema</code>, as it is used to verify if the provided workflow data input is correct before any workflow states are executed.</p>
 </div>
 <div class="paragraph">
-<p>The dataInputSchema parameter is used to validate the workflow data input against a defined JSON Schema. It is important to provide a dataInputSchema, as it can be used to check if the provided workflow data input is a right one before any states are executed.</p>
-</div>
-<div class="paragraph">
-<p>The dataInputSchema can be defined as follows:</p>
+<p>You can define a <code>dataInputSchema</code> as follows:</p>
 </div>
 <div class="listingblock">
+<div class="title"><code>dataInputSchema</code> definition</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"dataInputSchema": {
    "schema": "URL_to_json_schema",
@@ -315,22 +315,16 @@
 </div>
 </div>
 <div class="paragraph">
-<p>"schema" property is an URI, which holds the path to the JSON schema used to validate the workflow data input. The URI can be a classpath URI, a file or a http.If a classpath URI is specified, the JSON schema file should be placed in the resources section of the project.</p>
+<p>In the previous definition, the <code>schema</code> property is a URI, which holds the path to the JSON schema used to validate the workflow data input. The URI can be a classpath URI, a file, or an HTTP. If a classpath URI is specified, then the JSON schema file must be placed in the resources section of the project.</p>
 </div>
 <div class="paragraph">
-<p>An example for a workflow definition with datainputschema can be found here- <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-expression-quarkus/src/main/resources/expression.sw.json"><code>serverless-workflow-expression-quarkus</code></a></p>
+<p>You can see the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-expression-quarkus/src/main/resources/expression.sw.json"><code>serverless-workflow-expression-quarkus</code></a> example application of a workflow definition with <code>dataInputSchema</code>. Also, for information about sample JSON schema, see <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/src/main/resources/schema/expression.json"><code>serverless-workflow-expression-quarkus-json</code></a>.</p>
 </div>
 <div class="paragraph">
-<p>You can find a sample JSON schema here- <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/src/main/resources/schema/expression.json"><code>serverless-workflow-expression-quarkus-json</code></a></p>
+<p>When a workflow definition contains a <code>dataInputSchema</code> attribute, the workflow application generates an OpenAPI file, such as <code><a href="http://localhost/q/swagger-ui" class="bare">http://localhost/q/swagger-ui</a></code>. The generated OpenAPI file references the schema file, which helps in defining the input data for the workflows. For more information about OpenAPI file, see <a href="https://spec.openapis.org/oas/v3.1.0.html">OpenAPI specification</a>.</p>
 </div>
 <div class="paragraph">
-<p>When a workflow definition has a dataInputSchema attribute defined, the application should generate an OpenAPI file (<a href="http://localhost/q/swagger-ui" class="bare">http://localhost/q/swagger-ui</a>) referencing this schema file, which helps to correctly define the input data for the workflows.</p>
-</div>
-<div class="paragraph">
-<p>This documents describes about <a href="https://spec.openapis.org/oas/v3.1.0.html">OpenAPI</a> specification file.</p>
-</div>
-<div class="paragraph">
-<p>To generate an OpenAPI file for a Kogito Serverless workflow, the <a href="{quarkus_swagger_url}#expose-openapi-specifications">Quarkus dependency</a> must be added in the project.</p>
+<p>If you want to generate an OpenAPI file for a workflow, then you must add the <a href="{quarkus_swagger_url}#expose-openapi-specifications">Quarkus dependency</a> in the project.</p>
 </div>
 <div class="listingblock">
 <div class="title">Example component section with schema in an OpenAPI file</div>
@@ -345,6 +339,32 @@
           type: integer
         message:
           type: string</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../service-orchestration/orchestration-of-openapi-based-services.html" class="xref page">Orchestrating the OpenAPI services</a></p>
+</li>
+<li>
+<p><a href="../service-orchestration/configuring-openapi-services-endpoints.html" class="xref page">Configuring the OpenAPI services endpoints</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
 </div>
 </div>
 </article>
