@@ -1,14 +1,14 @@
-= Defining an input schema for {context}
+= Input schema definition for {context}
 :compat-mode!:
 // Metadata:
 :description: Defining input schema for Serverless Workflow
 :keywords: kogito, workflow, serverless, dataInputSchema
 
-The dataInputSchema in the link:{spec_doc_url}#workflow-definition-structure[Serverless Workflow specification] is one of the parameters in the Workflow definition.
+The `dataInputSchema` in the link:{spec_doc_url}#workflow-definition-structure[Serverless Workflow specification] is a parameter used in the workflow definition. The `dataInputSchema` parameter validates the workflow data input against a defined JSON Schema. It is important to provide `dataInputSchema`, as it is used to verify if the provided workflow data input is correct before any workflow states are executed.
 
-The dataInputSchema parameter is used to validate the workflow data input against a defined JSON Schema. It is important to provide a dataInputSchema, as it can be used to check if the provided workflow data input is a right one before any states are executed.
+You can define a `dataInputSchema` as follows:
 
-The dataInputSchema can be defined as follows:
+.`dataInputSchema` definition
 [source,json]
 ----
 "dataInputSchema": {
@@ -17,17 +17,13 @@ The dataInputSchema can be defined as follows:
 }
 ----
 
-"schema" property is an URI, which holds the path to the JSON schema used to validate the workflow data input. The URI can be a classpath URI, a file or a http.If a classpath URI is specified, the JSON schema file should be placed in the resources section of the project.
+In the previous definition, the `schema` property is a URI, which holds the path to the JSON schema used to validate the workflow data input. The URI can be a classpath URI, a file, or an HTTP. If a classpath URI is specified, then the JSON schema file must be placed in the resources section of the project.
 
-An example for a workflow definition with datainputschema can be found here- link:{kogito_sw_examples_url}/serverless-workflow-expression-quarkus/src/main/resources/expression.sw.json[`serverless-workflow-expression-quarkus`]
+You can see the link:{kogito_sw_examples_url}/serverless-workflow-expression-quarkus/src/main/resources/expression.sw.json[`serverless-workflow-expression-quarkus`] example application of a workflow definition with `dataInputSchema`. Also, for information about sample JSON schema, see link:{kogito_sw_examples_url}/src/main/resources/schema/expression.json[`serverless-workflow-expression-quarkus-json`].
 
-You can find a sample JSON schema here- link:{kogito_sw_examples_url}/src/main/resources/schema/expression.json[`serverless-workflow-expression-quarkus-json`]
+When a workflow definition contains a `dataInputSchema` attribute, the workflow application generates an OpenAPI file, such as `http://localhost/q/swagger-ui`. The generated OpenAPI file references the schema file, which helps in defining the input data for the workflows. For more information about OpenAPI file, see link:{open_api_spec_url}[OpenAPI specification].
 
-When a workflow definition has a dataInputSchema attribute defined, the application should generate an OpenAPI file (http://localhost/q/swagger-ui) referencing this schema file, which helps to correctly define the input data for the workflows.
-
-This documents describes about link:{open_api_spec_url}[OpenAPI] specification file.
-
-To generate an OpenAPI file for a Kogito Serverless workflow, the link:{quarkus_swagger_url}#expose-openapi-specifications[Quarkus dependency] must be added in the project.
+If you want to generate an OpenAPI file for a workflow, then you must add the link:{quarkus_swagger_url}#expose-openapi-specifications[Quarkus dependency] in the project. 
 
 .Example component section with schema in an OpenAPI file
 [source,yaml]
@@ -43,4 +39,10 @@ components:
         message:
           type: string
 ----
-[source,yaml]
+
+== Additional resources
+
+* xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services]
+* xref:service-orchestration/configuring-openapi-services-endpoints.adoc[Configuring the OpenAPI services endpoints]
+
+include::../../pages/_common-content/report-issue.adoc[]
