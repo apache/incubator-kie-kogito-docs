@@ -212,6 +212,20 @@ Similarly you can have other admonitions:
 
 More details at [Antora documentation](https://docs.antora.org/antora/latest/asciidoc/admonitions/).
 
+## Generating Release Notes for Serverless Workflow
+
+1. Use the JIRA to search for the issues with:
+
+```
+project = Kogito and fixVersion = <version> and component in (Serverless) and type != Sub-task and type != Epic
+```
+
+Replace `<version>` with the given version, for example `1.26.0.Final`.
+
+2. Update the page [release_notes.adoc](serverlessworkflow/modules/ROOT/pages/release_notes.adoc)
+3. Align with the team what should be under "Notable chnages"
+4. Add the rest to "Other Changes and Bug Fixing".
+
 ## Useful Resources
 
 - [AsciiDoc Syntax Quick Reference](https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/)
