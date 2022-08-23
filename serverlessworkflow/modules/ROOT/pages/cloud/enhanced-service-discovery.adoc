@@ -1,0 +1,128 @@
+= Enhanced Service Discovery
+:compat-mode!:
+// Metadata:
+:description: Explain what is and how the service discovery works
+:keywords: kogito, workflow, quarkus, serverless, service-discovery, enhanced-service-discovery
+// links
+:quarkus_issue_url: https://github.com/quarkusio/quarkus/issues/27457
+
+
+The Enhanced Service Discovery allows you to have a static URI that will define the Kubernetes resource that you use
+to perform http requests, the following sketch demonstrate how the SWUrl is composed:
+
+[source,shell]
+----
+kubernetes:<group>/<version>/<kind>/<namespace>/<name>?<attributeName>=<attributeValue>
+\________/ \_____/ \_______/ \____/ \_________/ \____/ \______________________________/
+  scheme    group   version   kind   namespace   name   additional resource attributes
+            \____________________/                       \__________________________/
+                     GVK                                  Supported value: port_name
+----
+
+On the scheme, the following values are supported:
+
+* **kubernetes**
+* **openshift**
+* **knative**
+
+As GVK, for now, the following Kubernetes Resources are supported:
+
+* **v1/service**
+* **serving.knative.dev/v1/service**
+* **v1/pod**
+* **apps/v1/deployment**
+* **apps.openshift.io/v1/deploymentconfig**
+* **apps/v1/statefulset**
+* **route.openshift.io/v1/route**
+* **networking.k8s.io/v1/ingress**
+
+[TIP]
+====
+Note that the _GVK_(Group, Version and Kind) and the _Resource Name_ are mandatory and can't be empty, otherwhise, the engine will throw a validation issue and the discovery will not be performed. The **namespace** is not mandatory, however, if empty, the current namespace or context will be used.
+====
+
+== Configuration
+
+There are two **build time** system properties, which are:
+
+* `quarkus.kogito.sw.discovery.enabled`: Disable the service discovery. Defaults to _true_.
+* `quarkus.kogito.kubernetes-client.okhttp.static.logger`: Weather or not to print the `http`communication between the client and the Kubernetes API. Defaults to _false_.
+**  Note that, this system property can change in the future since this feature will be ported to the _quarkus-kubernetes-client_ extension. For more info please refer to this link:{quarkus_issue_url}[link].
+
+
+== Startup time: discovery enabled x disabled
+
+[tabs]
+====
+Service Discovery Enabled::
++
+[source,shell]
+----
+(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080
+----
+Service Discovery Disabled::
++
+[source,shell]
+----
+(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 1.507s. Listening on: http://0.0.0.0:8080
+----
+====
+
+[IMPORTANT]
+====
+When using this feature, you need to balance if the delayed startup time is something
+that your application can afford.
+====
+
+== How does it work?
+
+The service discovery is performed at the Quarkus _STATIC_INIT_ time, which means, before the application gets started. It scans the system properties and searches for the _SWUrl_ pattern, if at least one is found, the engine will parse the SWUrl and then query the Kubernetes API for the given resource and override the given system property. Let's see a small example of it:
+
+Suppose we have an application that will consume a resource running on Kubernetes, this resource is a Knative Service that exposes a function, that can be discovered with the following SWUrl:
+
+[source,shell]
+----
+org.kie.kogito.sw.knative.service=knative:v1/Service/serverless-workflow-greeting-quarkus/greeting-quarkus-cli
+----
+
+[NOTE]
+====
+Note that, the system property does not really matter, the discovery is all about the property value.
+====
+
+When the application is started, you should be able to see in the logs the Service Discovery in action:
+
+[source,shell]
+----
+$ java -jar target/quarkus-app/quarkus-run.jar
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2022-08-23 12:21:04,360 DEBUG [org.kie.kog.add.qua.k8s.SWDiscoveryConfigSourceInterceptor] (main) Configuring k8s client...
+2022-08-23 12:21:05,245 INFO  [io.qua.sma.ope.run.OpenApiRecorder] (main) Default CORS properties will be used, please use 'quarkus.http.cors' properties instead
+2022-08-23 12:21:05,420 DEBUG [org.kie.kog.add.qua.k8s.SWDiscoveryConfigSourceInterceptor] (main) SUCCESS SWUrl parsed: knative:v1/Service/serverless-workflow-greeting-quarkus/greeting-quarkus-cli
+2022-08-23 12:21:06,043 INFO  [org.kie.kog.add.qua.k8s.SwKubeResource] (main) Connected to kubernetes cluster v1.23.4, current namespace is serverless-workflow-greeting-quarkus ---- Resource name is greeting-quarkus-cli
+2022-08-23 12:21:06,045 INFO  [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Trying to adapt kubernetes client to knative
+2022-08-23 12:21:06,316 INFO  [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Found Knative endpoint at http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io
+2022-08-23 12:21:06,316 DEBUG [org.kie.kog.add.qua.k8s.SWDiscoveryConfigSourceInterceptor] (main) Discovered resource greeting-quarkus-cli - url http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io
+2022-08-23 12:21:06,375 INFO  [org.kie.kog.sw.AppLifecycle] (main) The application is starting
+2022-08-23 12:21:06,382 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (main) Registered Kogito CloudEvent extension
+2022-08-23 12:21:06,460 INFO  [io.quarkus] (main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080
+2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Profile prod activated.
+2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Installed features: [cache, cdi, hibernate-validator, jackson-jq, kogito-addon-kubernetes-extension, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, kubernetes, kubernetes-client, openshift-client, qute, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-openapi, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx]
+----
+
+[NOTE]
+====
+Note that the SWUrl was translated to `http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io`, and, when the sytem property is used at runtime, the new value will be used.
+====
+
+== Discovery Precedence
+
+Depending on the resource to be discovered, there are some paths to follow, please see the following image for more details:
+
+image::cloud/sw-discovery-flow.jpg[]
+
+
+include::../../pages/_common-content/report-issue.adoc[]
