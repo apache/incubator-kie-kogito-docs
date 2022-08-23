@@ -16,7 +16,7 @@ kubernetes:<group>/<version>/<kind>/<namespace>/<name>?<attributeName>=<attribut
 \________/ \_____/ \_______/ \____/ \_________/ \____/ \______________________________/
   scheme    group   version   kind   namespace   name   additional resource attributes
             \____________________/                       \__________________________/
-                Kubernetes GVK                                  Supported value: port_name
+                Kubernetes GVK                            Supported value: port_name
 ----
 
 The following scheme values are supported:
@@ -24,6 +24,7 @@ The following scheme values are supported:
 * **kubernetes**
 * **openshift**
 * **knative**
+
 
 For the GVK, the following Kubernetes Resources are currently supported:
 
@@ -47,39 +48,17 @@ The **namespace** is **optional**. In case of an empty value, the current namesp
 You can configure the Service Discovery with two **build time** properties, which are:
 
 * `quarkus.kogito.sw.discovery.enabled`: Enable the service discovery. Defaults to _true_.
-* `quarkus.kogito.kubernetes-client.okhttp.static.logger`: Whether or not to print the `http` communication between the client and the Kubernetes API. Defaults to _false_. +
-_This property may change in the future since this feature will be ported to the _quarkus-kubernetes-client_ extension. For more info please refer to this link:{quarkus_issue_url}[link]._
+* `quarkus.kogito.kubernetes-client.okhttp.static.logger`: Weather or not to print the `http` communication between the client and the Kubernetes API. Defaults to _false_.
 
-
-== Startup time: discovery enabled x disabled
-
-[tabs]
-====
-Service Discovery Enabled::
-+
-[source,shell]
-----
-(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080
-----
-Service Discovery Disabled::
-+
-[source,shell]
-----
-(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 1.507s. Listening on: http://0.0.0.0:8080
-----
-====
-
-[IMPORTANT]
-====
-When using this feature, you need to balance if the delayed startup time is something
-that your application can afford.
-====
 
 == How does it work?
 
-During application startup, the service discovery is performed at the Quarkus _STATIC_INIT_ time. First, it scans the Quarkus configuration and searches for the Kubernetes URI pattern. Then if at least one is found, the engine will parse the URI, query the Kubernetes API for the given resource, and override the given system property. Let's see a small example of it:
+During application startup, the service discovery is performed at the Quarkus _STATIC_INIT_ time. First, it scans +
+the Quarkus configuration and searches for the Kubernetes URI pattern. Then if at least one is found, the engine +
+will parse the URI, query the Kubernetes API for the given resource, and override the given system property.
 
-Suppose we have an application that will consume a resource running on Kubernetes, this resource is a Knative Service that exposes a function, that can be discovered with the following SWUrl:
+Suppose we have an application that will consume a resource running on Kubernetes, this resource is a Knative Service +
+that exposes a function, that can be discovered with the following SWUrl:
 
 [source,shell]
 ----
@@ -88,7 +67,7 @@ org.kie.kogito.sw.knative.service=knative:v1/Service/serverless-workflow-greetin
 
 [NOTE]
 ====
-Note that, the application property does not matter. The discovery is all about the property value.
+Note that, the application property does not matter. The Service Discovery only cares about the application property value.
 ====
 
 Once the application has started, you should be able to see in the logs the Service Discovery into action:
@@ -116,7 +95,8 @@ __  ____  __  _____   ___  __ ____  ______
 
 [NOTE]
 ====
-Note that the SWUrl was translated to `http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io` when the application started, and will be used at runtime any time it needs it.
+Note that the SWUrl was translated to `http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io` +
+when the application started, and will be used at runtime any time it needs it.
 ====
 
 == Discovery Precedence
@@ -124,6 +104,33 @@ Note that the SWUrl was translated to `http://greeting-quarkus-cli.serverless-wo
 Depending on the resource to be discovered, there are some paths to follow, please see the following image for more details:
 
 image::cloud/sw-discovery-flow.jpg[]
+
+
+== Startup time: discovery enabled x disabled
+
+As the Service Discovery scans the Quarkus Configurations during the startup, it can cause a small delay as shown below:
+
+[tabs]
+====
+Service Discovery Enabled::
++
+[source,shell]
+----
+(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080
+----
+Service Discovery Disabled::
++
+[source,shell]
+----
+(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 1.507s. Listening on: http://0.0.0.0:8080
+----
+====
+
+[IMPORTANT]
+====
+When using this feature, you need to balance if the delayed startup time is something
+that your application can afford.
+====
 
 
 include::../../pages/_common-content/report-issue.adoc[]
