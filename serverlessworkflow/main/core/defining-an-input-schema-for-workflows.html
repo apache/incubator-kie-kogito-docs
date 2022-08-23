@@ -315,16 +315,16 @@
 </div>
 </div>
 <div class="paragraph">
-<p>In the previous definition, the <code>schema</code> property is a URI, which holds the path to the JSON schema used to validate the workflow data input. The URI can be a classpath URI, a file, or an HTTP. If a classpath URI is specified, then the JSON schema file must be placed in the resources section of the project.</p>
+<p>In the previous definition, the <code>schema</code> property is a URI, which holds the path to the JSON schema used to validate the workflow data input. The URI can be a classpath URI, a file, or an HTTP URL. If a classpath URI is specified, then the JSON schema file must be placed in the resources section of the project.</p>
 </div>
 <div class="paragraph">
-<p>You can see the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-expression-quarkus/src/main/resources/expression.sw.json"><code>serverless-workflow-expression-quarkus</code></a> example application of a workflow definition with <code>dataInputSchema</code>. Also, for information about sample JSON schema, see <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/src/main/resources/schema/expression.json"><code>serverless-workflow-expression-quarkus-json</code></a>.</p>
+<p>You can see the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-expression-quarkus"><code>serverless-workflow-expression-quarkus</code></a> example application of a workflow definition with <code>dataInputSchema</code>. See the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-expression-quarkus/src/main/resources/expression.sw.json">Serverless Workflow JSON file</a> for more details.</p>
 </div>
 <div class="paragraph">
-<p>When a workflow definition contains a <code>dataInputSchema</code> attribute, the workflow application generates an OpenAPI file, such as <code><a href="http://localhost/q/swagger-ui" class="bare">http://localhost/q/swagger-ui</a></code>. The generated OpenAPI file references the schema file, which helps in defining the input data for the workflows. For more information about OpenAPI file, see <a href="https://spec.openapis.org/oas/v3.1.0.html">OpenAPI specification</a>.</p>
+<p>When a workflow definition contains a <code>dataInputSchema</code> attribute, the workflow application generates an OpenAPI file, such as <code><a href="http://localhost/q/openapi" class="bare">http://localhost/q/openapi</a></code>. The generated OpenAPI file references the schema file, which helps in defining the input data for the workflows. For more information about the OpenAPI file, see <a href="https://spec.openapis.org/oas/v3.1.0.html">OpenAPI specification</a>.</p>
 </div>
 <div class="paragraph">
-<p>If you want to generate an OpenAPI file for a workflow, then you must add the <a href="{quarkus_swagger_url}#expose-openapi-specifications">Quarkus dependency</a> in the project.</p>
+<p>If you want to generate an OpenAPI file for a workflow, then you must add the <a href="https://quarkus.io/guides/openapi-swaggerui#expose-openapi-specifications">Quarkus dependency</a> in the project.</p>
 </div>
 <div class="listingblock">
 <div class="title">Example component section with schema in an OpenAPI file</div>
