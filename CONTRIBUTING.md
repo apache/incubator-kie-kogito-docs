@@ -223,7 +223,7 @@ project = Kogito and fixVersion = <version> and component in (Serverless) and ty
 Replace `<version>` with the given version, for example `1.26.0.Final`.
 
 2. Update the page [release_notes.adoc](serverlessworkflow/modules/ROOT/pages/release_notes.adoc)
-3. Align with the team what should be under "Notable chnages"
+3. Align with the team what should be under "Notable changes"
 4. Add the rest to "Other Changes and Bug Fixing".
 
 ## Useful Resources
