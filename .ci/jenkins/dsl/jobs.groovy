@@ -11,10 +11,11 @@
 import org.kie.jenkins.jobdsl.model.Folder
 import org.kie.jenkins.jobdsl.KogitoJobTemplate
 import org.kie.jenkins.jobdsl.KogitoJobUtils
+import org.kie.jenkins.jobdsl.Utils
 
 jenkins_path = '.ci/jenkins'
 
-setupInitJob()
+createSetupBranchJob()
 setupPostReleaseJob()
 
 KogitoJobUtils.createQuarkusUpdateToolsJob(this, 'kogito-docs', [:], [:], [[
@@ -26,14 +27,16 @@ KogitoJobUtils.createQuarkusUpdateToolsJob(this, 'kogito-docs', [:], [:], [[
 // Methods
 /////////////////////////////////////////////////////////////////
 
-void setupInitJob() {
-    def jobParams = KogitoJobUtils.getBasicJobParams(this, 'kogito-docs', Folder.INIT_BRANCH, "${jenkins_path}/Jenkinsfile.init-branch", 'Kogito Docs Branch init job')
+void createSetupBranchJob() {
+    def jobParams = KogitoJobUtils.getBasicJobParams(this, 'kogito-docs', Folder.SETUP_BRANCH, "${jenkins_path}/Jenkinsfile.setup-branch", 'Kogito Docs Setup Branch job')
     jobParams.env.putAll([
         JENKINS_EMAIL_CREDS_ID: "${JENKINS_EMAIL_CREDS_ID}",
 
         GIT_AUTHOR: "${GIT_AUTHOR_NAME}",
 
         AUTHOR_CREDS_ID: "${GIT_AUTHOR_CREDENTIALS_ID}",
+
+        IS_MAIN_BRANCH: "${Utils.isMainBranch(this)}"
     ])
     KogitoJobTemplate.createPipelineJob(this, jobParams)?.with {
         parameters {
