@@ -77,7 +77,7 @@ that your application can afford.
 
 == How does it work?
 
-The service discovery is performed at the Quarkus _STATIC_INIT_ time, which means, before the application gets started. It scans the system properties and searches for the _SWUrl_ pattern, if at least one is found, the engine will parse the SWUrl and then query the Kubernetes API for the given resource and override the given system property. Let's see a small example of it:
+During application startup, the service discovery is performed at the Quarkus _STATIC_INIT_ time. First, it scans the Quarkus configuration and searches for the Kubernetes URI pattern. Then if at least one is found, the engine will parse the URI, query the Kubernetes API for the given resource, and override the given system property. Let's see a small example of it:
 
 Suppose we have an application that will consume a resource running on Kubernetes, this resource is a Knative Service that exposes a function, that can be discovered with the following SWUrl:
 
