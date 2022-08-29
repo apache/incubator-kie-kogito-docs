@@ -54,7 +54,7 @@ You can configure the Service Discovery with two **build time** properties, whic
 == How does it work?
 
 During application startup, the service discovery is performed at the Quarkus _STATIC_INIT_ time. First, it scans +
-the Quarkus configuration and searches for the Kubernetes URI pattern. Then if at least one is found, the engine +
+the Quarkus configuration values and searches for the Kubernetes URI pattern. Then if at least one is found, the engine +
 will parse the URI, query the Kubernetes API for the given resource, and override the given system property.
 
 Suppose we have an application that will consume a resource running on Kubernetes, this resource is a Knative Service +
