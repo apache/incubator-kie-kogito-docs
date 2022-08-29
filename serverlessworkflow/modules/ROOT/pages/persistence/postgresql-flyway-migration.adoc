@@ -1,0 +1,97 @@
+= Migrating Your PostgreSQL Database with a Kogito upgrade
+:flyway_install_url: https://flywaydb.org/download/community
+:flyway_migrate_existing_url: https://flywaydb.org/documentation/learnmore/existing
+
+Kogito provides an out-of-the-box way to manage your database schema changes with each upgrade. It uses Flyway to achieve this functionality.
+
+When you upgrade your Kogito version, by default it will pick up the latest changes available from Kogito and apply them automatically.
+
+== How to migrate
+
+=== Migrate using Flyway Config
+
+* Kogito provides a default mechanism for migrating your database while updating the Kogito version using the following `Flyway` properties (default value is `false`):
++
+[tabs]
+====
+Quarkus::
++
+--
+`quarkus.flyway.migrate-at-start=true`
+--
+Spring Boot::
++
+--
+`spring.flyway.migrate-at-start=true`
+--
+====
+This will create a schema history table `flyway_schema_history` in your database to track the version of each database, recording in it every versioned migration file applied to build that version.
+
+=== Migrate using Flyway CLI
+* If you want to migrate manually you can use the Flyway migration CLI tool.
+
+** Download Flyway migration command-line tool from the link:{flyway_install_url}[Download Flyway Community Edition] link.
+** Add the following properties in the `/conf/flyway.conf` file:
++
+--
+[source,console]
+----
+flyway.url=jdbc:postgresql://localhost:5432/foobardb
+flyway.user=foo
+flyway.password=bar
+----
+--
+** You can specify these options with commands as well. The Flyway CLI will prompt for the username and password if they are missing in the configuration.
++
+--
+[source,console]
+----
+$ flyway migrate -url=jdbc:postgresql://localhost:5432/foobardb -user=foo -password=bar
+----
+--
+** You can specify the location of the SQL files that need to be migrated using the `flyway.locations` option. For example,
++
+--
+[source,console]
+----
+flyway.locations=classpath:com.mycomp.migration,database/migrations,filesystem:/sql-migrations,s3:migrationsBucket,gcs:migrationsBucket
+----
+--
+
+=== Manually executing scripts
+You can use the provided SQL scripts in zip to migrate the database by executing them one by one.
+
+--
+[source,console]
+----
+> psql -H host -U username -d database_name -a -f create_table.sql
+----
+--
+
+== Baseline migration
+Whether to automatically call baseline when migrate is executed against a non-empty schema with no metadata table. This schema will then be baselined with the baselineVersion before executing the migrations. Only migrations above baselineVersion will then be applied.
+
+[tabs]
+====
+Quarkus::
++
+--
+`quarkus.flyway.migrate-at-start=true`
+--
+Spring Boot::
++
+--
+`spring.flyway.migrate-at-start=true`
+--
+Flyway CLI::
++
+--
+`./flyway -baselineOnMigrate="true" migrate`
+--
+====
+
+NOTE: Be careful when enabling this as it removes the safety net that ensures Flyway does not migrate the wrong database in case of a configuration mistake.
+
+For more details regarding existing Database setup, visit link:{flyway_migrate_existing_url}[Flyway Documentation].
+
+include::../../pages/_common-content/report-issue.adoc[]
