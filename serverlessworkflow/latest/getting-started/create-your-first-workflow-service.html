@@ -51,7 +51,7 @@
     </nav>
 </header>
 <div class="body">
-<div class="nav-container" data-component="serverlessworkflow" data-version="1.25.0.Final">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.26.0.Final">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -60,6 +60,9 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../release_notes.html">Release notes for Serverless Workflow</a>
+  </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Getting Started</span>
@@ -239,7 +242,7 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">Kogito Serverless Workflow Guides</span>
-    <span class="version">1.25</span>
+    <span class="version">1.26-RC</span>
   </div>
   <ul class="components">
     <li class="component is-current">
@@ -248,11 +251,11 @@
         <li class="version">
           <a href="../../main/index.html">snapshot</a>
         </li>
-        <li class="version">
-          <a href="../../1.26.0-SNAPSHOT/index.html">1.26-RC</a>
-        </li>
         <li class="version is-current is-latest">
-          <a href="../index.html">1.25</a>
+          <a href="../index.html">1.26-RC</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25</a>
         </li>
         <li class="version">
           <a href="../../1.24.1.Final/index.html">1.24</a>
@@ -276,15 +279,15 @@
   </ul>
 </nav>
 <div class="page-versions">
-  <button class="version-menu-toggle" title="Show other versions of page">1.25</button>
+  <button class="version-menu-toggle" title="Show other versions of page">1.26-RC</button>
   <div class="version-menu">
     <a class="version" href="../../main/getting-started/create-your-first-workflow-service.html">snapshot</a>
-    <a class="version" href="../../1.26.0-SNAPSHOT/getting-started/create-your-first-workflow-service.html">1.26-RC</a>
-    <a class="version is-current" href="create-your-first-workflow-service.html">1.25</a>
+    <a class="version is-current" href="create-your-first-workflow-service.html">1.26-RC</a>
+    <a class="version" href="../../1.25.0.Final/getting-started/create-your-first-workflow-service.html">1.25</a>
     <a class="version" href="../../1.24.1.Final/getting-started/create-your-first-workflow-service.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.25.x/serverlessworkflow/modules/ROOT/pages/getting-started/create-your-first-workflow-service.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.26.x/serverlessworkflow/modules/ROOT/pages/getting-started/create-your-first-workflow-service.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -314,7 +317,7 @@
 </ul>
 </div>
 <div class="paragraph">
-<p>Also, you can directly access an example application by cloning <code>serverless-workflow-examples/serverless-workflow-hello-world</code> from the <a href="https://github.com/kiegroup/kogito-examples/tree/1.25.x/serverless-workflow-examples/serverless-workflow-hello-world">GitHub repository</a>.</p>
+<p>Also, you can directly access an example application by cloning <code>serverless-workflow-examples/serverless-workflow-hello-world</code> from the <a href="https://github.com/kiegroup/kogito-examples/tree/1.26.x/serverless-workflow-examples/serverless-workflow-hello-world">GitHub repository</a>.</p>
 </div>
 <div class="paragraph">
 <p>This document describes how to create a workflow application that serves a <code>hello_world</code> endpoint. The workflow contains the following two states:</p>
@@ -342,7 +345,7 @@
 <p>Java 11+ is installed with <code>JAVA_HOME</code> configured appropriately.</p>
 </li>
 <li>
-<p>Apache Maven 3.8.1 is installed.</p>
+<p>Apache Maven 3.8.6 is installed.</p>
 </li>
 <li>
 <p><a href="https://quarkus.io/guides/cli-tooling">Quarkus CLI</a> or <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Knative Workflow CLI</a> 0.21.2 is installed.</p>
@@ -427,7 +430,7 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
 <div class="listingblock">
 <div class="title">Create a project using Apache Maven</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn io.quarkus.platform:quarkus-maven-plugin:2.10.2.Final:create \
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn io.quarkus.platform:quarkus-maven-plugin:2.11.2.Final:create \
     -DprojectGroupId=org.kie.kogito.examples \
     -DprojectArtifactId=serverless-workflow-hello-world \
     -Dextensions="kogito-quarkus-serverless-workflow,quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi" \
@@ -447,7 +450,7 @@ cd serverless-workflow-hello-world</code></pre>
   --name serverless-workflow-hello-world \
   --extension quarkus-jsonp,quarkus-smallrye-openapi \
   --quarkus-platform-group-id=io.quarkus.platform \
-  --quarkus-version=2.10.2.Final</code></pre>
+  --quarkus-version=2.11.2.Final</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -626,48 +629,6 @@ cd serverless-workflow-hello-world</code></pre>
 <div class="paragraph">
 <p>For more information about Knative CLI, see <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Serverless Workflow plug-in for Knative CLI</a>.</p>
 </div>
-<div class="paragraph">
-<p>After building the image, add <code>imagePullPolicy: IfNotPresent</code> to the <code>target/kubernetes/knative.yml</code> file. Your file should look similar to:</p>
-</div>
-<div class="listingblock">
-<div class="title">Example <code>target/kubernetes/knative.yml</code> file</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
-apiVersion: serving.knative.dev/v1
-kind: Service
-metadata:
-  annotations:
-    app.quarkus.io/build-timestamp: 2022-08-09 - 21:26:59 +0000
-  labels:
-    app.kubernetes.io/version: latest
-    app.kubernetes.io/name: serverless-workflow-hello-world
-  name: serverless-workflow-hello-world
-spec:
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/version: latest
-        app.kubernetes.io/name: serverless-workflow-hello-world
-    spec:
-      containerConcurrency: 0
-      containers:
-        - image: dev.local/serverless-workflow-hello-world:latest
-          imagePullPolicy: IfNotPresent <i class="conum" data-value="1"></i><b>(1)</b>
-          name: serverless-workflow-hello-world
-          ports:
-            - containerPort: 8080
-              name: http1
-              protocol: TCP</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>imagePullPolicy</code> field defines the policy for pulling the image from the registry.</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 </div>
@@ -751,7 +712,7 @@ spec:
 [INFO] Building serverless-workflow-hello-world 1.0
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO]
-[INFO] --- quarkus-maven-plugin:2.10.2.Final:dev (default-cli) @ serverless-workflow-hello-world ---
+[INFO] --- quarkus-maven-plugin:2.11.2.Final:dev (default-cli) @ serverless-workflow-hello-world ---
 [INFO] Invoking org.apache.maven.plugins:maven-resources-plugin:2.6:resources) @ serverless-workflow-hello-world
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
 [INFO] Copying 3 resources
@@ -761,7 +722,7 @@ __  ____  __  _____   ___  __ ____  ______
  -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
 --\___\_\____/_/ |_/_/|_/_/|_|\____/___/
 2022-05-25 14:38:09,741 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (Quarkus Main Thread) Registered Kogito CloudEvent extension
-2022-05-25 14:38:09,840 INFO  [io.quarkus] (Quarkus Main Thread) serverless-workflow-hello-world 1.0 on JVM (powered by Quarkus 2.10.2.Final) started in 6.470s. Listening on: http://localhost:8080
+2022-05-25 14:38:09,840 INFO  [io.quarkus] (Quarkus Main Thread) serverless-workflow-hello-world 1.0 on JVM (powered by Quarkus 2.11.2.Final) started in 6.470s. Listening on: http://localhost:8080
 2022-05-25 14:38:09,843 INFO  [io.quarkus] (Quarkus Main Thread) Profile dev activated. Live Coding activated.
 2022-05-25 14:38:09,843 INFO  [io.quarkus] (Quarkus Main Thread) Installed features: [cache, cdi, jackson-jq, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-openapi, smallrye-reactive-messaging, smallrye-reactive-messaging-http, swagger-ui, vertx]
 2022-05-25 14:38:12,877 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: __  ____  __  _____   ___  __ ____  ______
@@ -841,8 +802,8 @@ serverless-workflow-hello-world   http://serverless-workflow-hello-world.default
 <div class="listingblock">
 <div class="title">Example request</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">URL=$(kn service describe serverless-workflow-hello-world -o url)
-curl -X POST -H 'Content-Type:application/json' ${URL}/hello_world</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">URL=$(kn service describe serverless-workflow-hello-world -o url) \
+  curl -X POST -H 'Content-Type:application/json' ${URL}/hello_world</code></pre>
 </div>
 </div>
 </div>

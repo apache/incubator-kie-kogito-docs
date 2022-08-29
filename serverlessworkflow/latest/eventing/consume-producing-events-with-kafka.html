@@ -53,7 +53,7 @@
     </nav>
 </header>
 <div class="body">
-<div class="nav-container" data-component="serverlessworkflow" data-version="1.25.0.Final">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.26.0.Final">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -62,6 +62,9 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../release_notes.html">Release notes for Serverless Workflow</a>
+  </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Getting Started</span>
@@ -241,7 +244,7 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">Kogito Serverless Workflow Guides</span>
-    <span class="version">1.25</span>
+    <span class="version">1.26-RC</span>
   </div>
   <ul class="components">
     <li class="component is-current">
@@ -250,11 +253,11 @@
         <li class="version">
           <a href="../../main/index.html">snapshot</a>
         </li>
-        <li class="version">
-          <a href="../../1.26.0-SNAPSHOT/index.html">1.26-RC</a>
-        </li>
         <li class="version is-current is-latest">
-          <a href="../index.html">1.25</a>
+          <a href="../index.html">1.26-RC</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25</a>
         </li>
         <li class="version">
           <a href="../../1.24.1.Final/index.html">1.24</a>
@@ -278,15 +281,15 @@
   </ul>
 </nav>
 <div class="page-versions">
-  <button class="version-menu-toggle" title="Show other versions of page">1.25</button>
+  <button class="version-menu-toggle" title="Show other versions of page">1.26-RC</button>
   <div class="version-menu">
     <a class="version" href="../../main/eventing/consume-producing-events-with-kafka.html">snapshot</a>
-    <a class="version" href="../../1.26.0-SNAPSHOT/eventing/consume-producing-events-with-kafka.html">1.26-RC</a>
-    <a class="version is-current" href="consume-producing-events-with-kafka.html">1.25</a>
+    <a class="version is-current" href="consume-producing-events-with-kafka.html">1.26-RC</a>
+    <a class="version" href="../../1.25.0.Final/eventing/consume-producing-events-with-kafka.html">1.25</a>
     <a class="version" href="../../1.24.1.Final/eventing/consume-producing-events-with-kafka.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.25.x/serverlessworkflow/modules/ROOT/pages/eventing/consume-producing-events-with-kafka.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.26.x/serverlessworkflow/modules/ROOT/pages/eventing/consume-producing-events-with-kafka.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -409,7 +412,7 @@ kogito.addon.messaging.outgoing.defaultName=&lt;default channel name&gt;</code><
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The <a href="https://github.com/kiegroup/kogito-examples/tree/1.25.x/serverless-workflow-examples/serverless-workflow-callback-quarkus/src/main/resources/application.properties"><code>serverless-workflow-callback-quarkus</code></a> example application uses two CloudEvent types, including <code>wait</code> (incoming) and <code>resume</code> (outgoing).</p>
+<p>The <a href="https://github.com/kiegroup/kogito-examples/tree/1.26.x/serverless-workflow-examples/serverless-workflow-callback-quarkus/src/main/resources/application.properties"><code>serverless-workflow-callback-quarkus</code></a> example application uses two CloudEvent types, including <code>wait</code> (incoming) and <code>resume</code> (outgoing).</p>
 </div>
 <div class="paragraph">
 <p>Kafka topic names match the CloudEvent types. Therefore, it is suitable to select the mapping strategy of one channel per CloudEvent type. This suggests that two channels must be configured. Note that you do not need to set the optional <code>topic</code> property as the channel name matches the CloudEvent type.</p>
@@ -432,7 +435,7 @@ mp.messaging.outgoing.resume.value.serializer=org.apache.kafka.common.serializat
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The <a href="https://github.com/kiegroup/kogito-examples/tree/1.25.x/serverless-workflow-examples/serverless-workflow-events-quarkus/src/main/resources/application.properties"><code>serverless-workflow-events-quarkus</code></a> example application uses two CloudEvent types, including <code>applicants</code> (incoming) and <code>decisions</code> (outgoing).</p>
+<p>The <a href="https://github.com/kiegroup/kogito-examples/tree/1.26.x/serverless-workflow-examples/serverless-workflow-events-quarkus/src/main/resources/application.properties"><code>serverless-workflow-events-quarkus</code></a> example application uses two CloudEvent types, including <code>applicants</code> (incoming) and <code>decisions</code> (outgoing).</p>
 </div>
 <div class="paragraph">
 <p>As mentioned before, Kafka topic names match the CloudEvent types. However, to use the default channel functionality, <code>kogito_incoming_stream</code> and <code>kogito_outgoing_stream</code> are used as channel names. As explained before, since there is no specific channel name for the CloudEvent type, then the default channels are used. Also, the default channels need to be mapped to the desired topic name using the <code>topic</code> property.</p>
