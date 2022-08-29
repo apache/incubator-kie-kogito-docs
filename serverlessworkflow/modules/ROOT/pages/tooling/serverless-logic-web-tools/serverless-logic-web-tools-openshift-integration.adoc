@@ -1,0 +1,57 @@
+= OpenShift integration
+:compat-mode!:
+// Metadata:
+:description: {serverless_logic_web_tools_name} openshift integration
+:keywords: kogito, workflow, serverless, editor, web, tools, settings, openshift, integration
+
+Integrate with Red Hat® OpenShift®, an enterprise-ready Kubernetes container platform, allowing your projects to be deployed and tested online.
+
+[[proc-setting-kie-sandbox-extended-services-serverless-logic-web-tools]]
+== Setting up KIE Sandbox Extended Services
+
+The KIE Sandbox Extended Services tool is required to proxy requests to an OpenShift instance, thus making it possible to deploy and monitor projects.
+
+.Prerequisites
+* None.
+
+.Procedure
+. In the {serverless_logic_web_tools_name}, click on the **Cog wheel** (⚙️) on the top right corner and go to the **KIE Sandbox Extended Services** tab;
+. If you're not connected you should see the following message: "**You are not connected to KIE Sandbox Extended Services. Click to setup**" as well as a **Host** and **Port** fields filled with `http://localhost` and `21345` respectively;
+. Click the link in the message and a new window will appear, with your current operating system already selected and a link to download the latest version of the KIE Sandbox Extended Services;
+. Download the file and execute it; (You may need to grant permissions to run the file, depending on your OS and settings!)
+. The contents of the tab should be updated, showing that everything is set and you are connected to the KIE Sandbox Extended Services.
+
+
+[[proc-connecting-openshift-instance-serverless-logic-web-tools]]
+== Connecting to your OpenShift instance
+
+.Prerequisites
+* Have the KIE Sandbox Extended Services tool installed and running;
+* Have an OpenShift instance up (you can create a free developer sandbox here link:{openshift_developer_sandbox_url}[OpenShift Developer Sandbox]).
+
+.Procedure
+. Start by logging into your OpenShift instance console interface;
+. You'll need your OpenShift project name (also known as namespace), the API server and an access token:
+  * For the OpenShift project name look at the **Topology** tab, and in the top left corner you should see your project name;
++
+--
+.Getting the OpenShift project name and username menu
+image::tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-project.png[]
+--
+  * The API server and access token can be obtained by clicking on your username in the top right corner and then on **Copy login command**. A new page will open with your new API Token as well as an `oc cli` login command, from that command copy the **--server=** value;
++
+--
+.Getting the OpenShift access token and API server
+image::tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-info.png[]
+--
+. Having all that information, go back to the {serverless_logic_web_tools_name}, click on the **Cog wheel** (⚙️) on the top right corner and go to the **OpenShift** tab;
+. Fill the **Namespace (project)** field with the OpenShift instance project name;
+. Fill the **Host** field with the value copied from the **--server** flag;
+. Fill the **Token** field with the API Token;
+. Now you can click on **Connect** and if everything is correct the tab should update to show **You're connected to OpenShift**.
+
+Now you should be ready to start deploying your projects with the {serverless_logic_web_tools_name}, check how to do it xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.adoc[here].
+
+Note: If your OpenShift instance uses self-signed certificates you may need to enable `InsecureSkipVerify` on KIE Sandbox Extended Services.
+
+include::../../../pages/_common-content/report-issue.adoc[]
