@@ -20,7 +20,9 @@ kubernetes:<group>/<version>/<kind>/<namespace>/<name>?<attributeName>=<attribut
 \________/ \_____/ \_______/ \____/ \_________/ \____/ \______________________________/
   scheme    group   version   kind   namespace   name   additional resource attributes
             \____________________/                       \__________________________/
-                Kubernetes GVK                            Supported value: port_name
+                     GVK                                   Supported values:
+                                                            - port-name={PORT_NUMBER}
+                                                            - labels=label-name=label-value;other-label=other-value
 ----
 
 The following scheme values are supported:
@@ -47,12 +49,39 @@ The **GVK** (Group, Version and Kind) and the **Name** values are **mandatory** 
 The **namespace** is **optional**. In case of an empty value, the current namespace or context will be used.
 ====
 
+=== Additional Query Parameters
+
+Also known as Query String, are defined in the very same way that we are already used to do with URLs to assign value
+to specific attributes.
+
+There are available two query parameters to help the engine to be more precise when querying for the given Kubernetes Resource,
+which are:
+
+* Custom Labels: Can be used to filter services in case there are more than one Service with the same `Label Selector`
+but exposing different ports. In this case we can instruct the engine that, when more than 1 service is found, use the one
+that have the provided label, the label is defined with the following expression, for multiple labels use `semicolon`:
+** `labels=label-name=namevalue;another-label=another-value`
+** Example:
++
+[source,shell]
+----
+kubernetes:v1/pod/<namespace>/<pod-name>?labels=label-name=test-label
+----
+*** With the URI above we will instruct that, if there are more than 1 service exposing the given pod, the label
+`label-name=test-label` will be used to filter the service. If the label does not exist, the first found service will be used.
+
+* Custom port name: Useful for determine which port to use when there are many ports configured in the target Service or Container.
+It can be configured using the following patter:
+** `port-name=<PORT_NUMBER>`: Port Number expects a Integer value
+
+
 == Configuration
 
 You can configure the Service Discovery with two **build time** properties, which are:
 
 * `quarkus.kogito.sw.discovery.enabled`: Enable the service discovery. Defaults to _true_.
-* `quarkus.kogito.kubernetes-client.okhttp.static.logger`: Weather or not to print the `http` communication between the client and the Kubernetes API. Defaults to _false_.
+* `quarkus.kogito.kubernetes-client.okhttp.static.logger`: Weather or not to print the `http` communication between the +
+client and the Kubernetes API. Defaults to _false_.
 
 
 == How does it work?
@@ -103,7 +132,6 @@ __  ____  __  _____   ___  __ ____  ______
 Note that the URI was translated to `http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io` +
 when the application started, and will be used at runtime any time it needs it.
 ====
-
 == Discovery Precedence
 
 Depending on the resource to be discovered, there are some paths to follow, please see the following image for more details:
@@ -133,8 +161,9 @@ Service Discovery Disabled::
 
 [IMPORTANT]
 ====
-When using this feature, you need to balance if the delayed startup time is something
-that your application can afford.
+When using this feature, you need to balance if the delayed startup time is something that your application can afford. +
+If the URI pattern is not found in the Application Properties, the discovery will not be triggered, however, it will be +
+scanned anyway but a very shorter time will be needed to go through the startup scan.
 ====
 
 
