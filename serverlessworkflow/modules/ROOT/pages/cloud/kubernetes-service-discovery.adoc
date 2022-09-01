@@ -46,6 +46,22 @@ For the Kubernetes GVK, the following resources are currently supported:
 ====
 The **Kubernetes GVK** (Group, Version and Kind) and the **Name** values are **mandatory** and can't be empty, otherwise, the engine will throw a validation issue and the discovery will not be performed.  +
 The **Namespace** is **optional**. In case of an empty value, the current namespace or context will be used.
+
+For **OpenShift** specific resources, **Deployment Config** or **Routes**, you will be required to add the following dependency in your Application's classpath:
+
+[source,xml,subs="attributes+"]
+----
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-openshift-client</artifactId>
+</dependency>
+----
+
+It can be added with link:{quarkus_cli_url}[Quarkus CLI]:
+[source,shell]
+----
+quarkus extension add quarkus-openshift-client
+----
 ====
 
 === Additional Query Parameters
@@ -71,13 +87,13 @@ kubernetes:v1/pod/<namespace>/<pod-name>?labels=label-name=test-label
 
 * Custom port name: Useful for determine which port to use when there are many ports configured in the target Service or Container.
 It can be configured using the following patter:
-** `port-name=<PORT_NUMBER>`: Port Number expects a Integer value
+** `port-name=<PORT_NAME>`: the port name to be queried.
 
 
 == Configuration
 
 There are no specific configuration for the Discovery to work properly except by using the expected URI pattern.
-However, the okhttp communication interceptor, which logs the communication between the applcation and the Kubernetes API +
+However, the okhttp communication interceptor, which logs the communication between the application and the Kubernetes API +
 is disabled by default, if there is a need to debug it, it can be enabled back just by setting this application property:
 
 [source,shell]
