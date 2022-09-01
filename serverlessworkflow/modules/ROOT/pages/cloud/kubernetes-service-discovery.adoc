@@ -77,11 +77,14 @@ It can be configured using the following patter:
 
 == Configuration
 
-You can configure the Service Discovery with two **build time** properties, which are:
+There are no specific configuration for the Discovery to work properly except by using the expected URI pattern.
+However, the okhttp communication interceptor, which logs the communication between the applcation and the Kubernetes API +
+is disabled by default, if there is a need to debug it, it can be enabled back just by setting this application property:
 
-* `quarkus.kogito.sw.discovery.enabled`: Enable the service discovery. Defaults to _true_.
-* `quarkus.kogito.kubernetes-client.okhttp.static.logger`: Weather or not to print the `http` communication between the +
-client and the Kubernetes API. Defaults to _false_.
+[source,shell]
+----
+quarkus.log.category."okhttp3.OkHttpClient".level=INFO
+----
 
 
 == How does it work?
@@ -101,7 +104,7 @@ org.kie.kogito.sw.knative.service=knative:v1/Service/serverless-workflow-greetin
 
 [NOTE]
 ====
-Note that, the application property does not matter. The Service Discovery only cares about the application property value.
+The application property _name_ is not read by the service discovery engine, only property _value_.
 ====
 
 Once the application has started, you should be able to see in the logs the Service Discovery into action:
@@ -117,8 +120,8 @@ __  ____  __  _____   ___  __ ____  ______
 2022-08-23 12:21:05,245 INFO  [io.qua.sma.ope.run.OpenApiRecorder] (main) Default CORS properties will be used, please use 'quarkus.http.cors' properties instead
 2022-08-23 12:21:05,420 DEBUG [org.kie.kog.add.qua.k8s.SWDiscoveryConfigSourceInterceptor] (main) SUCCESS KubeURI parsed: knative:v1/Service/serverless-workflow-greeting-quarkus/greeting-quarkus-cli
 2022-08-23 12:21:06,043 INFO  [org.kie.kog.add.qua.k8s.SwKubeResource] (main) Connected to kubernetes cluster v1.23.4, current namespace is serverless-workflow-greeting-quarkus ---- Resource name is greeting-quarkus-cli
-2022-08-23 12:21:06,045 INFO  [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Trying to adapt kubernetes client to knative
-2022-08-23 12:21:06,316 INFO  [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Found Knative endpoint at http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io
+2022-08-23 12:21:06,045 DEBUG [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Trying to adapt kubernetes client to knative
+2022-08-23 12:21:06,316 DEBUG [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Found Knative endpoint at http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io
 2022-08-23 12:21:06,316 DEBUG [org.kie.kog.add.qua.k8s.SWDiscoveryConfigSourceInterceptor] (main) Discovered resource greeting-quarkus-cli - url http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io
 2022-08-23 12:21:06,375 INFO  [org.kie.kog.sw.AppLifecycle] (main) The application is starting
 2022-08-23 12:21:06,382 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (main) Registered Kogito CloudEvent extension
@@ -164,7 +167,34 @@ Service Discovery Disabled::
 When using this feature, you need to balance if the delayed startup time is something that your application can afford. +
 If the URI pattern is not found in the Application Properties, the discovery will not be triggered, however, it will be +
 scanned anyway but a very shorter time will be needed to go through the startup scan.
+
+However, it still can be fully disabled by excluding the `kogito-addons-quarkus-kubernetes` addon from the Application's +
+classpath. It can be done with the following maven exclusions:
+
+[source,shell]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-quarkus-serverless-workflow</artifactId>
+  <exclusions>
+    <exclusion>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>kogito-addons-quarkus-kubernetes</artifactId>
+    </exclusion>
+    <exclusion>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>kogito-addons-quarkus-kubernetes-deployment</artifactId>
+    </exclusion>
+  </exclusions>
+</dependency>
+----
+
 ====
+
+
+== Additional resources
+
+* xref:service-orchestration/configuring-openapi-services-endpoints.adoc[Configuring the OpenAPI services endpoints]
 
 
 include::../../pages/_common-content/report-issue.adoc[]
