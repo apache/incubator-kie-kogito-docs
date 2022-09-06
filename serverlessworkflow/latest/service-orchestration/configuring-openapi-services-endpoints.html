@@ -51,7 +51,7 @@
     </nav>
 </header>
 <div class="body">
-<div class="nav-container" data-component="serverlessworkflow" data-version="1.26.0.Final">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.27.0.Final">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -95,6 +95,9 @@
     <a class="nav-link" href="../core/configuration-properties.html">Configuration properties in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/defining-an-input-schema-for-workflows.html">Input schema definition for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../core/custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
   </li>
 </ul>
@@ -126,6 +129,27 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../tooling/kn-plugin-workflow-overview.html">Serverless Workflow plug-in for Knative CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">GitHub integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">OpenShift integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Red Hat OpenShift Application and Data Services integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deploying projects</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-enable-kogito-swf-visualization.html">Kogito Serverless Workflow Visualization</a>
+  </li>
+</ul>
   </li>
 </ul>
   </li>
@@ -242,7 +266,7 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">Kogito Serverless Workflow Guides</span>
-    <span class="version">1.26</span>
+    <span class="version">1.27</span>
   </div>
   <ul class="components">
     <li class="component is-current">
@@ -251,11 +275,11 @@
         <li class="version">
           <a href="../../main/index.html">snapshot</a>
         </li>
-        <li class="version">
-          <a href="../../1.27.0-SNAPSHOT/index.html">1.27-RC</a>
-        </li>
         <li class="version is-current is-latest">
-          <a href="../index.html">1.26</a>
+          <a href="../index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../1.26.0.Final/index.html">1.26</a>
         </li>
         <li class="version">
           <a href="../../1.25.0.Final/index.html">1.25</a>
@@ -282,16 +306,16 @@
   </ul>
 </nav>
 <div class="page-versions">
-  <button class="version-menu-toggle" title="Show other versions of page">1.26</button>
+  <button class="version-menu-toggle" title="Show other versions of page">1.27</button>
   <div class="version-menu">
     <a class="version" href="../../main/service-orchestration/configuring-openapi-services-endpoints.html">snapshot</a>
-    <a class="version" href="../../1.27.0-SNAPSHOT/service-orchestration/configuring-openapi-services-endpoints.html">1.27-RC</a>
-    <a class="version is-current" href="configuring-openapi-services-endpoints.html">1.26</a>
+    <a class="version is-current" href="configuring-openapi-services-endpoints.html">1.27</a>
+    <a class="version" href="../../1.26.0.Final/service-orchestration/configuring-openapi-services-endpoints.html">1.26</a>
     <a class="version" href="../../1.25.0.Final/service-orchestration/configuring-openapi-services-endpoints.html">1.25</a>
     <a class="version" href="../../1.24.1.Final/service-orchestration/configuring-openapi-services-endpoints.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.26.x/serverlessworkflow/modules/ROOT/pages/service-orchestration/configuring-openapi-services-endpoints.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.27.x/serverlessworkflow/modules/ROOT/pages/service-orchestration/configuring-openapi-services-endpoints.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -448,6 +472,43 @@ paths:
 </tr>
 </table>
 </div>
+<div class="sect2">
+<h3 id="_using_uri_alias"><a class="anchor" href="#_using_uri_alias"></a>Using URI alias</h3>
+<div class="paragraph">
+<p>As an alternative to <code>kogito.sw.operationIdStrategy</code>, you can assign an alias name to an URI by using <code>workflow-uri-definitions</code> custom <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#extensions">extension</a>. Then you can use that alias as configuration key and in function definitions.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example workflow</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"extensions" : [ {
+      "extensionid": "workflow-uri-definitions",
+      "definitions": {
+        "remoteCatalog": "https://my.remote.host/apicatalog/apis/123/document",
+       }
+     }
+  ],
+  "functions": [
+        {
+          "name": "operation1",
+          "operation": "remoteCatalog#operation1"
+        },
+        {
+          "name": "operation2",
+          "operation": "remoteCatalog#operation2"
+        }
+    ]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example property</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.rest-client.remoteCatalog.url=http://localhost:8282/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example, Kogito uses <code>remoteCatalog</code> as configuration key.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -471,7 +532,7 @@ paths:
 </table>
 </div>
 <div class="paragraph">
-<p>The testing procedure described in this document is based on the <code>serverless-workflow-stock-profit</code> example application in <a href="https://github.com/kiegroup/kogito-examples/tree/1.26.x/serverless-workflow-examples/serverless-workflow-stock-profit">GitHub repository</a>. The <code>serverless-workflow-stock-profit</code> example application is a workflow that computes the profit for a given stock based on an existing stock portfolio.</p>
+<p>The testing procedure described in this document is based on the <code>serverless-workflow-stock-profit</code> example application in <a href="https://github.com/kiegroup/kogito-examples/tree/1.27.x/serverless-workflow-examples/serverless-workflow-stock-profit">GitHub repository</a>. The <code>serverless-workflow-stock-profit</code> example application is a workflow that computes the profit for a given stock based on an existing stock portfolio.</p>
 </div>
 <div class="paragraph">
 <p>The <code>serverless-workflow-stock-profit</code> example application sends request to the following services:</p>

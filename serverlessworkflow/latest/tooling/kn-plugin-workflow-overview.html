@@ -51,7 +51,7 @@
     </nav>
 </header>
 <div class="body">
-<div class="nav-container" data-component="serverlessworkflow" data-version="1.26.0.Final">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.27.0.Final">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -95,6 +95,9 @@
     <a class="nav-link" href="../core/configuration-properties.html">Configuration properties in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/defining-an-input-schema-for-workflows.html">Input schema definition for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../core/custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
   </li>
 </ul>
@@ -126,6 +129,27 @@
   </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="kn-plugin-workflow-overview.html">Serverless Workflow plug-in for Knative CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">GitHub integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">OpenShift integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Red Hat OpenShift Application and Data Services integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deploying projects</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serverless-logic-web-tools/serverless-logic-web-tools-enable-kogito-swf-visualization.html">Kogito Serverless Workflow Visualization</a>
+  </li>
+</ul>
   </li>
 </ul>
   </li>
@@ -242,7 +266,7 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">Kogito Serverless Workflow Guides</span>
-    <span class="version">1.26</span>
+    <span class="version">1.27</span>
   </div>
   <ul class="components">
     <li class="component is-current">
@@ -251,11 +275,11 @@
         <li class="version">
           <a href="../../main/index.html">snapshot</a>
         </li>
-        <li class="version">
-          <a href="../../1.27.0-SNAPSHOT/index.html">1.27-RC</a>
-        </li>
         <li class="version is-current is-latest">
-          <a href="../index.html">1.26</a>
+          <a href="../index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../1.26.0.Final/index.html">1.26</a>
         </li>
         <li class="version">
           <a href="../../1.25.0.Final/index.html">1.25</a>
@@ -282,16 +306,16 @@
   </ul>
 </nav>
 <div class="page-versions">
-  <button class="version-menu-toggle" title="Show other versions of page">1.26</button>
+  <button class="version-menu-toggle" title="Show other versions of page">1.27</button>
   <div class="version-menu">
     <a class="version" href="../../main/tooling/kn-plugin-workflow-overview.html">snapshot</a>
-    <a class="version" href="../../1.27.0-SNAPSHOT/tooling/kn-plugin-workflow-overview.html">1.27-RC</a>
-    <a class="version is-current" href="kn-plugin-workflow-overview.html">1.26</a>
+    <a class="version is-current" href="kn-plugin-workflow-overview.html">1.27</a>
+    <a class="version" href="../../1.26.0.Final/tooling/kn-plugin-workflow-overview.html">1.26</a>
     <a class="version" href="../../1.25.0.Final/tooling/kn-plugin-workflow-overview.html">1.25</a>
     <a class="version" href="../../1.24.1.Final/tooling/kn-plugin-workflow-overview.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.26.x/serverlessworkflow/modules/ROOT/pages/tooling/kn-plugin-workflow-overview.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.27.x/serverlessworkflow/modules/ROOT/pages/tooling/kn-plugin-workflow-overview.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -798,75 +822,6 @@ Use "kn workflow [command] --help" for more information about a command.</code><
 </div>
 </li>
 </ol>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="proc-build-sw-project-source"><a class="anchor" href="#proc-build-sw-project-source"></a>Building a workflow project from source</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>As an alternative, you can build your workflow project from source.</p>
-</div>
-<div class="ulist">
-<div class="title">Prerequisites</div>
-<ul>
-<li>
-<p>A workflow project is created.</p>
-<div class="paragraph">
-<p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="olist arabic">
-<div class="title">Procedure</div>
-<ol class="arabic">
-<li>
-<p>In a command terminal, enter the following command to clone the <code>kie-tools</code> GitHub repository:</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Clone <code>kie-tools</code> repository</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">git clone git@github.com:kiegroup/kie-tools.git</code></pre>
-</div>
-</div>
-</div>
-</div>
-</li>
-<li>
-<p>Navigate to the cloned <code>kie-tools</code> directory and enter the following command to access the Serverless Workflow plug-in:</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Access Serverless Workflow plug-in</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd kie-tools
-pnpm bootstrap
-pnpm -F @kie-tools/kn-plugin-workflow... build:dev</code></pre>
-</div>
-</div>
-</div>
-</div>
-</li>
-<li>
-<p>Go to the plug-in folder and enter the following command to build the workflow project:</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Build workflow project from source</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd packages/kn-plugin-workflow
-go mod tidy</code></pre>
-</div>
-</div>
-</div>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>You have successfully built your workflow project from source.</p>
 </div>
 </div>
 </div>
