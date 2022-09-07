@@ -41,15 +41,15 @@ A modal appears, displaying the following deployment options:
 ** If *Deploy as a project* option is disabled, a pre-built image container, containing a Quarkus project is used and the workflow files are placed in the `src/main/resources` folder of the project. In this case, ensure that the workflow files do not have other dependencies as the dependencies are not included in the deployment.
 ** If *Deploy as a project* option is enabled, all the workflow files are deployed as-is, indicating that no project template is used. Therefore, ensure that the project is deployable.
 
-* *Upload OpenAPI spec to Service Registry*: After a workflow is deployed, an OpenAPI specification is available in the deployed service. When you check this option, the {serverless_logic_web_tools_name} poll for the OpenAPI specification is created and uploaded to your configured service registry. To use this option, you need to configure your service account and service registry on the *Settings* page. To configure the service account and service registry, see xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.adoc[Integrating with Red Hat OpenShift Application and Data Services].
+* *Upload OpenAPI spec to Service Registry*: After a workflow is deployed, an OpenAPI specification is available in the deployed service. When you check this option, the {serverless_logic_web_tools_name} fetches the OpenAPI specification, and when ready, the OpenAPI specification is uploaded to your configured service registry. To use this option, you need to configure your service account and service registry on the *Settings* page. To configure the service account and service registry, see xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.adoc[Integrating with Red Hat OpenShift Application and Data Services].
 
-* *Attach KafkaSource to the deployment*: You must check this option, if your workflow contains an Apache Kafka event dependency. To use this option, you need to configure your service account and streams for Apache Kafka on the *Settings* page. To configure your service account and Apache Kafka streams, see xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.adoc[Integrating with Red Hat OpenShift Application and Data Services].
+* *Attach KafkaSource to the deployment*: You must check this option if your workflow contains an Apache Kafka event dependency. To use this option, you need to configure your service account and streams for Apache Kafka on the *Settings* page. To configure your service account and Apache Kafka streams, see xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.adoc[Integrating with Red Hat OpenShift Application and Data Services].
 --
 
 . Uncheck all options and click *Confirm*.
 +
 --
-A pop-up appears displaying *Your deployment has been successfully started and will be available shortly. Please do not close this browser tab until the operation is completed.* message and a *OpenShift deployments* icon. Clicking on the *OpenShift deployments* icon shows your deployment status. The deployment process takes a few minutes since a build needs to be completed before the services are active.
+A pop-up appears displaying *Your deployment has been successfully started and will be available shortly. Please do not close this browser tab until the operation is completed.* message. Clicking on the *OpenShift deployments* icon shows your deployment status. The deployment process takes a few minutes since a build needs to be completed before the services are active.
 
 .OpenShift deployment status
 image:tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-deployments.png[]
@@ -65,7 +65,7 @@ After the deployment of your {context} project is successful, you can verify var
 +
 For more information, see xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.adoc[Integrating your {context} project with OpenShift using {serverless_logic_web_tools_name}].
 * Your {context} project is deployed successfully.
-* Deployed project must be deployed using the *Deploy as a project* option as unchecked, as the deployment page is only available using the pre-built image container. If the option *Deploy as a project* option is checked the tool opens `index.html` file of your project.
+* Deployed project must be deployed using the *Deploy as a project* option as unchecked, as the deployment page is only available using the pre-built image container. If the option *Deploy as a project* option is checked the tool opens the `index.html` file your project provides, if any.
 
 .Procedure
 . Click on the *OpenShift deployments* icon to view a list of deployments.
