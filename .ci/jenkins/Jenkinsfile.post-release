@@ -38,8 +38,7 @@ pipeline {
 
                     // Verify version is set and if on right release branch
                     assert getKogitoVersion()
-                    // TODO to set back
-                    // assert getBuildBranch() == util.getReleaseBranchFromVersion(getKogitoVersion())
+                    assert getBuildBranch() == util.getReleaseBranchFromVersion(getKogitoVersion())
                 }
             }
         }
@@ -52,9 +51,12 @@ pipeline {
                         checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
                         sh "git checkout ${getBuildBranch()}"
 
-                        updateYaml('serverlessworkflow/antora.yml') { swfAntoraConfig ->
-                            swfAntoraConfig.version = getKogitoVersion()
-                        }
+                        String antoraFile = 'serverlessworkflow/antora.yml'
+                        sh """
+                            sed -i 's|^version:.*|version: ${getKogitoVersion()}|g' ${antoraFile}
+                            sed -i 's|^display_version:.*|display_version: ${getKogitoMajorMinorVersion()}|g' ${antoraFile}
+                            sed -i 's|^prerelease:.*||g' ${antoraFile}
+                        """
 
                         // Add changed files, commit, open and merge PR
                         if (githubscm.isThereAnyChanges()) {
@@ -66,33 +68,6 @@ pipeline {
 
                         // Tag repository
                         githubscm.tagLocalAndRemoteRepository('origin', getKogitoVersion(), getGitAuthorCredsID(), env.BUILD_TAG, true)
-                    }
-                }
-            }
-        }
-
-        stage('Update Kogito Docs main branch') {
-            steps {
-                script {
-                    dir('kogito-docs') {
-                        deleteDir()
-                        checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), 'main', false, getGitAuthorCredsID()))
-                        sh "git checkout main"
-
-                        updateYaml('antora-playbook.yml') { antoraConfig ->
-                            if (!antoraConfig.content.sources[0].tags) {
-                                antoraConfig.content.sources[0].tags = []
-                            }
-                            antoraConfig.content.sources[0].tags.add([ name: getKogitoVersion() ])
-                        }
-
-                        // Add changed files, commit, open and merge PR
-                        if (githubscm.isThereAnyChanges()) {
-                            githubscm.commitChanges("Release Kogito ${getKogitoVersion()}")
-                            githubscm.pushObject('origin', 'main', getGitAuthorCredsID())
-                        } else {
-                            echo "No changes to push."
-                        }
                     }
                 }
             }
@@ -123,6 +98,11 @@ String getKogitoVersion() {
     return params.KOGITO_VERSION
 }
 
+String getKogitoMajorMinorVersion() {
+    String[] vsSplit = getKogitoVersion().split('\\.')
+    return "${vsSplit[0]}.${vsSplit[1]}"
+}
+
 String getBuildBranch() {
     return params.BUILD_BRANCH_NAME
 }
@@ -133,10 +113,4 @@ String getGitAuthor() {
 
 String getGitAuthorCredsID() {
     return env.AUTHOR_CREDS_ID
-}
-
-void updateYaml(String filePath, Closure updateClosure) {
-    def yamlData = readYaml(file: filePath)
-    updateClosure(yamlData)
-    writeYaml(file: filePath, data: yamlData, overwrite: true)
 }

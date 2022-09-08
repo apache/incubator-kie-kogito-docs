@@ -12,50 +12,42 @@ To use the Red Hat Build of Quarkus (RHBQ) libraries, you need to configure your
 .Procedure
 . To configure the Apache Maven `settings.xml` file and Quarkus extension registry client, follow the instructions in the link:{rhbq_config_maven_url}[Configuring the Maven settings.xml file for the online repository] and link:{rhbq_config_registry_url}[Configuring Quarkus extension registry client].
 +
-. After the project is created, add the following dependency to the `pom.xml` file of your project:
+. Complement the configured Apache Maven `settings.xml` file with the following profile to have access to the {product_name} repository:
 +
-.Dependencies in `pom.xml` file
+.Profile to access the {product_name} repository
 [source,xml,subs="attributes+"]
 ----
-<project>
-    ...
-    <dependencyManagement>
-        <dependencies>
-            ...
-            <dependency>
-                <groupId>org.kie.kogito</groupId>
-                <artifactId>kogito-bom</artifactId>
-                <version>{kogito_version_redhat}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-    ...
-</project>
-----
-+
-. Remove the `quarkus-kogito-bom` dependency from the `pom.xml` file of your project:
-+
-.Dependencies in `pom.xml` file
-[source,xml,subs="attributes+"]
-----
-<project>
-    ...
-    <dependencyManagement>
-        <dependencies>
-            ...
-            <dependency>
-                <groupId>io.quarkus.platform</groupId>
-                <artifactId>quarkus-kogito-bom</artifactId>
-                <version>2.7.6.Final</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-    ...
-</project>
+<!-- Configure the {product_name} Maven repository -->
+<profile>
+  <id>red-hat-earlyaccess-maven-repository</id>
+  <activation>
+    <activeByDefault>true</activeByDefault>
+  </activation>
+  <repositories>
+    <repository>
+      <id>red-hat-earlyaccess-maven-repository</id>
+      <url>https://maven.repository.redhat.com/earlyaccess/all/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>red-hat-earlyaccess-maven-repository</id>
+      <url>https://maven.repository.redhat.com/earlyaccess/all/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+</profile>
 ----
 +
 . Follow the instructions in the link:{redhat_registry_auth_url}[Red Hat Container Registry Authentication] article to log in to the registry and use the {context} images locally.

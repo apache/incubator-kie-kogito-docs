@@ -1,1 +1,48 @@
-//= Defining an input schema for workflows
+= Input schema definition for {context}
+:compat-mode!:
+// Metadata:
+:description: Defining input schema for Serverless Workflow
+:keywords: kogito, workflow, serverless, dataInputSchema
+
+The `dataInputSchema` in the link:{spec_doc_url}#workflow-definition-structure[Serverless Workflow specification] is a parameter used in the workflow definition. The `dataInputSchema` parameter validates the workflow data input against a defined JSON Schema. It is important to provide `dataInputSchema`, as it is used to verify if the provided workflow data input is correct before any workflow states are executed.
+
+You can define a `dataInputSchema` as follows:
+
+.`dataInputSchema` definition
+[source,json]
+----
+"dataInputSchema": {
+   "schema": "URL_to_json_schema",
+   "failOnValidationErrors": false
+}
+----
+
+In the previous definition, the `schema` property is a URI, which holds the path to the JSON schema used to validate the workflow data input. The URI can be a classpath URI, a file, or an HTTP URL. If a classpath URI is specified, then the JSON schema file must be placed in the resources section of the project.
+
+You can see the link:{kogito_sw_examples_url}/serverless-workflow-expression-quarkus[`serverless-workflow-expression-quarkus`] example application of a workflow definition with `dataInputSchema`. See the link:{kogito_sw_examples_url}/serverless-workflow-expression-quarkus/src/main/resources/expression.sw.json[Serverless Workflow JSON file] for more details.
+
+When a workflow definition contains a `dataInputSchema` attribute, the workflow application generates an OpenAPI file, such as `http://localhost/q/openapi`. The generated OpenAPI file references the schema file, which helps in defining the input data for the workflows. For more information about the OpenAPI file, see link:{open_api_spec_url}[OpenAPI specification].
+
+If you want to generate an OpenAPI file for a workflow, then you must add the link:{quarkus_swagger_url}#expose-openapi-specifications[Quarkus dependency] in the project. 
+
+.Example component section with schema in an OpenAPI file
+[source,yaml]
+----
+components:
+  schemas:
+    GeneralError:
+      type: object
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+----
+
+== Additional resources
+
+* xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services]
+* xref:service-orchestration/configuring-openapi-services-endpoints.adoc[Configuring the OpenAPI services endpoints]
+
+include::../../pages/_common-content/report-issue.adoc[]

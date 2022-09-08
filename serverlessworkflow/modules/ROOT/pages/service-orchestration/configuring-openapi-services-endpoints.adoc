@@ -113,6 +113,41 @@ In the previous example, {product_name} uses `stock-service_API` as configuratio
 A Kubernetes service endpoint can be used as a service URL if the target service is within the same cluster, such as `http://myservice.mynamespace.cluster.svc.local`.
 ====
 
+=== Using URI alias
+
+As an alternative to `kogito.sw.operationIdStrategy`, you can assign an alias name to an URI by using `workflow-uri-definitions` custom link:{spec_doc_url}#extensions[extension]. Then you can use that alias as configuration key and in function definitions. 
+
+.Example workflow
+[source,json]
+----
+"extensions" : [ {
+      "extensionid": "workflow-uri-definitions",
+      "definitions": {
+        "remoteCatalog": "https://my.remote.host/apicatalog/apis/123/document",
+       }
+     }
+  ], 
+  "functions": [
+        {
+          "name": "operation1",
+          "operation": "remoteCatalog#operation1"
+        }, 
+        {
+          "name": "operation2",
+          "operation": "remoteCatalog#operation2"
+        }
+    ]
+----
+
+.Example property
+[source, properties]
+----
+quarkus.rest-client.remoteCatalog.url=http://localhost:8282/
+----
+
+In the previous example, {product_name} uses `remoteCatalog` as configuration key.
+
+
 [[proc-configure-openapi-services-endpoints-different-environments]]
 == Configuring the OpenAPI services endpoints in different environments
 
@@ -127,7 +162,7 @@ The testing procedure described in this document is based on the `serverless-wor
 
 The `serverless-workflow-stock-profit` example application sends request to the following services:
 
-* `stock-portfolio`: Calculates the stock portfolio profit for a given stock based on the current stock price.
+* `stock-portfolio-service`: Calculates the stock portfolio profit for a given stock based on the current stock price.
 * `stock-service`: Retrieves the current stock price.
 
 Developing an application using a service that returns different results every time can be difficult, therefore the `stock-service` uses the following implementations depending on the environment.
@@ -197,7 +232,7 @@ The `stock-profit` service contains the following workflow definition:
 ----
 
 <1> Defines the `stock-service` service operation
-<2> Defines the `stock-portfolio` service operation
+<2> Defines the `stock-portfolio-service` service operation
 
 {product_name} leverages Quarkus profiles to configure the workflow application depending on the target environment.
 
@@ -258,17 +293,17 @@ After defining the URLs of the services, you can run the services that the workf
 For more information, see <<proc-config-openapi-services-defining-urls, Defining the URLs of the services in different environments>>.
 
 .Procedure
-. In a separate command terminal window, run the `stock-portfolio` service:
+. In a separate command terminal window, run the `stock-portfolio-service` service:
 +
 --
-Run the `stock-portfolio` service
+Run the `stock-portfolio-service` service
 [source,shell]
 ----
-cd stock-portfolio
+cd stock-portfolio-service
 mvn quarkus:dev -Ddebug=false
 ----
 
-You can access the `stock-portfolio` service at `http://localhost:8282/`.
+You can access the `stock-portfolio-service` service at `http://localhost:8282/`.
 --
 
 . In a separate command terminal window, run the `real-stock-service` service:

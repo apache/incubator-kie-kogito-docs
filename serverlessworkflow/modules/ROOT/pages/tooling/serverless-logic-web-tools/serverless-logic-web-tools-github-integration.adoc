@@ -1,0 +1,68 @@
+= GitHub integration
+:compat-mode!:
+// Metadata:
+:description: {serverless_logic_web_tools_name} github integration
+:keywords: kogito, workflow, serverless, editor, web, tools, settings, github, integration
+
+The {serverless_logic_web_tools_name} implements a web version of a git client, allowing users to clone, create, commit, push and pull repositories, making it possible to sync workspaces remotely.
+
+This document describes how to configure the integration and sync your projects. 
+
+[[proc-setting-github-token-serverless-logic-web-tools]]
+== Setting up your GitHub token
+
+Generate a token from your GitHub account settings page and add it to the {serverless_logic_web_tools_name} settings tab.
+
+.Prerequisites
+* GitHub account.
+
+.Procedure
+. In the {serverless_logic_web_tools_name}, click on the **Cog wheel** (⚙️) on the top right corner and go to the **GitHub** tab;
+. From there, you'll see a link to the GitHub token settings page and the **Token** field;
+. Click the link:{github_tokens_url}[link] and create your GitHub token, making sure you select at least the **repo** option. Optionally select **gist** as well, as it will give you the ability to import and update gists;
+. Copy the token generated and paste it into the GitHub settings tab on the {serverless_logic_web_tools_name};
+. The contents of the tab should be updated, showing that you're signed into GitHub and have all the permissions required.
+
+
+[[proc-sync-workspace-github-serverless-logic-web-tools]]
+== Syncing your workspaces with GitHub
+
+After configuring your GitHub token you can now sync workspaces with remote repositories.
+
+.Prerequisites
+* You have configured your GitHub token on the {serverless_logic_web_tools_name}. 
+
+.Procedure
+. Create or open a workspace;
+. Add or edit files;
+. Click **Share -> Github: Create Repository**;
+. Name your repository and select if it's going to be **Public** or **Private**;
+. Selecting the **Use Quarkus Accelerator** option will create a repository with a base Quarkus project, moving the workspace files to `src/main/resources`.
+
++
+--
+.Creating a repository for your workspace
+image::tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-repo.png[]
+--
+
+. To update the remote repository with your local changes click on **Sync -> Push**;
+. To get new updates from the remote repository click on **Sync -> Pull**;
+
+Currently, the tool cannot resolve merge conflicts, so make sure to always pull new changes before working on your files.
+
+[[proc-import-workspace-github-serverless-logic-web-tools]]
+== Importing a workspace from GitHub
+
+Let's say you need to work from another computer or use a workspace created by someone else, in these cases importing a workspace from GitHub is useful. In this tutorial, you'll learn how to import these repositories as workspaces on {serverless_logic_web_tools_name}.
+
+.Prerequisites
+* You have configured your GitHub token on the {serverless_logic_web_tools_name};
+* Have a repository with Serverless Logic files.
+
+.Procedure
+. On GitHub, find the repository with your project and copy its URL;
+. Back on the {serverless_logic_web_tools_name}, paste the URL to the **Import -> From URL** field and click on **Clone**;
+. The page should load your imported project, defaulting to a Serverless Logic file, if present;
+. If your GitHub user has access to push to this repository you'll be able to sync changes by clicking on **Sync -> Push**;
+
+include::../../../pages/_common-content/report-issue.adoc[]

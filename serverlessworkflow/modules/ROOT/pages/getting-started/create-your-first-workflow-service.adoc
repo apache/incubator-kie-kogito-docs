@@ -7,7 +7,7 @@ As a developer, you can use {context} and create a `Hello World` application, wh
 * <<proc-running-application,Running your workflow application>>
 * <<proc-testing-application,Testing your workflow application>>
 
-Also, you can directly access an example application by cloning `serverless-workflow-examples/serverless-workflow-hello-world` from the https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-hello-world[GitHub repository].
+Also, you can directly access an example application by cloning `serverless-workflow-examples/serverless-workflow-hello-world` from the link:{kogito_sw_examples_url}/serverless-workflow-hello-world[GitHub repository].
 
 This document describes how to create a workflow application that serves a `hello_world` endpoint. The workflow contains the following two states:
 
@@ -20,14 +20,14 @@ image::getting-started/hello-world-workflow.png[]
 .Prerequisites
 * Java {java_min_version} is installed with `JAVA_HOME` configured appropriately.
 * Apache Maven {maven_min_version} is installed.
-* {quarkus_cli_url}[Quarkus CLI] {quarkus_version} or xref:tooling/kn-plugin-workflow-overview.adoc[Knative CLI] {kn-cli-version} is installed.
+* {quarkus_cli_url}[Quarkus CLI] or xref:tooling/kn-plugin-workflow-overview.adoc[Knative Workflow CLI] {kn_cli_version} is installed.
 * Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.java[Red Hat Java Extension]
 and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
 
 For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {context} tooling].
 
-ifeval::["{quarkus_cli_platform_redhat}" != ""]
-include::../../pages/_common-content/productized-instructions.adoc[]
+ifeval::["{kogito_version_redhat}" != ""]
+include::../../pages/_common-content/downstream-project-setup-instructions.adoc[]
 endif::[]
 
 [[proc-boostrapping-the-project]]
@@ -47,17 +47,17 @@ Quarkus CLI::
 [source,shell,subs="attributes+"]
 ----
 quarkus create app \
-    -x={kogito_sw_gav} \
+    -x={kogito_sw_ga} \
     -x=quarkus-container-image-jib \
     -x=quarkus-resteasy-jackson \
     -x=quarkus-smallrye-openapi \
-    --no-code {quarkus_cli_platform_redhat} \
+    --no-code \
     org.kie.kogito.examples:serverless-workflow-hello-world:1.0
 ----
 
 The previous command creates a Maven Quarkus project in the `serverless-workflow-hello-world` directory containing the required dependencies, including:
 
-* `{kogito_sw_gav}`: Adds support for workflows.
+* `{kogito_sw_ga}`: Adds support for workflows.
 * `quarkus-container-image-jib`: Adds support for Container Image Builds.
 * `quarkus-resteasy-jackson`: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request.
 * `quarkus-smallrye-openapi`: Adds support for Swagger documentation when you run the application in development mode.
@@ -74,57 +74,28 @@ Apache Maven::
 mvn {quarkus_platform}:quarkus-maven-plugin:{quarkus_version}:create \
     -DprojectGroupId=org.kie.kogito.examples \
     -DprojectArtifactId=serverless-workflow-hello-world \
-    -Dextensions="{kogito_sw_gav},quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi" \
+    -Dextensions="{kogito_sw_ga},quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi" \
     -DnoCode
 cd serverless-workflow-hello-world
 ----
 
 In the previous command, `org.kie.kogito.examples`, `serverless-workflow-hello-world`, and `1.0` is group ID, artifact ID, and version of your project respectively. `-DnoCode` prevents the generation of workflow example code.
 --
-Knative CLI::
+Knative workflow CLI::
 +
 --
-.Create a project using Knative CLI
-[source,shell]
+.Create a project using Knative workflow CLI
+
+[source,shell,subs="attributes"]
 ----
-kn workflow create --name my-project --extension quarkus-jsonp,quarkus-smallrye-openapi
+kn workflow create \
+  --name serverless-workflow-hello-world \
+  --extension quarkus-jsonp,quarkus-smallrye-openapi \
+  --quarkus-platform-group-id={quarkus_platform} \
+  --quarkus-version={quarkus_version}
 ----
 
-For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
---
-====
-
-. To verify that project is created, compile the project using the following command:
-+
-[tabs]
-====
-Quarkus CLI::
-+
---
-.Compile your project using Quarkus CLI
-[source,shell]
-----
-quarkus build
-----
---
-Apache Maven::
-+
---
-.Compile your project using Apache Maven
-[source,shell]
-----
-mvn clean package
-----
---
-Knative CLI::
-+
---
-.Build your project and generate a local image called `quay.io/other-user/my-project:1.0.1`
-[source,shell]
-----
-kn workflow build --image my-user/my-project:1.0.0 --image-repository other-user --image-tag 1.0.1
-----
-For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
+For more information about Knative workflow CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
 --
 ====
 
@@ -201,6 +172,49 @@ xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Se
 ====
 --
 
+[[proc-building-application]]
+== Building your workflow application
+
+ifeval::["{kogito_version_redhat}" != ""]
+include::../../pages/_common-content/downstream-post-create-project.adoc[]
+endif::[]
+
+. To verify that project is created, compile the project using the following command:
++
+[tabs]
+====
+Quarkus CLI::
++
+--
+.Compile your project using Quarkus CLI
+[source,shell]
+----
+quarkus build
+----
+--
+Apache Maven::
++
+--
+.Compile your project using Apache Maven
+[source,shell]
+----
+mvn clean package
+----
+--
+Knative workflow CLI::
++
+--
+.Build your project and generate a local image called `dev.local/serverless-workflow-hello-world:latest`
+[source,shell]
+----
+kn workflow build --image dev.local/serverless-workflow-hello-world --verbose
+----
+The `--verbose` flag is used to display the output of the build command. This flag is optional.
+
+For more information about Knative workflow CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
+--
+====
+
 [[proc-running-application]]
 == Running your workflow application
 
@@ -230,15 +244,26 @@ Apache Maven::
 mvn clean quarkus:dev
 ----
 --
-Knative CLI::
+Knative workflow CLI:
 +
 --
-.Deploy your project to authenticated cluster
+Currently, Knative workflow CLI doesn't support yet running workflows locally. You can either:
+
+.Run your workflow application using Apache Maven
 [source,shell]
 ----
-kn workflow deploy
+mvn clean quarkus:dev
 ----
-For more information about Knative CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
+
+.Run your workflow application using Quarkus CLI
+[source,shell]
+----
+quarkus dev
+----
+
+For more information about Knative workflow CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
+
+Also, to deploy and run your workflow application, see xref:cloud/deploying-on-minikube.adoc[Deploying workflow application on Minikube]
 --
 ====
 +
@@ -283,13 +308,16 @@ __  ____  __  _____   ___  __ ____  ______
 
 . Once your workflow application is started, you can send a request for the provided endpoint:
 +
---
+
++
 .Example request
 [source,shell]
 ----
 curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_world
 ----
 
++
+--
 .Example response
 [source,shell]
 ----
@@ -297,7 +325,7 @@ curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_worl
 ----
 --
 
-. You can update your workflow with a new `mantra` value without restarting the application.
+. When running in development mode (using Quarkus CLI or Apache Maven), you can update your workflow with a new `mantra` value without restarting the application.
 +
 --
 .Update your workflow

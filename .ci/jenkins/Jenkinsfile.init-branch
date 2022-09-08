@@ -1,0 +1,150 @@
+import org.jenkinsci.plugins.workflow.libs.Library
+
+@Library('jenkins-pipeline-shared-libraries')_
+
+pipeline {
+    agent {
+        label 'kie-rhel7 && !master'
+    }
+
+    tools {
+        nodejs 'nodejs-16.2.0'
+    }
+
+    options {
+        timestamps()
+        timeout(time: 60, unit: 'MINUTES')
+    }
+
+    // parameters {
+    // For parameters, check into .jenkins/dsl/jobs.groovy file
+    // }
+
+    environment {
+        // Some generated env is also defined into .jenkins/dsl/jobs.groovy file
+
+        CI_EMAIL_TO = credentials("${JENKINS_EMAIL_CREDS_ID}")
+    }
+
+    stages {
+        stage('Initialization') {
+            steps {
+                script {
+                    cleanWs()
+
+                    if (params.DISPLAY_NAME) {
+                        currentBuild.displayName = params.DISPLAY_NAME
+                    }
+
+                    if (getBuildBranch().split("\\.").length != 3) {
+                        error "Build branch name '${getBuildBranch()}' is in the wrong format. It should be X.Y.x"
+                    }
+                }
+            }
+        }
+
+        stage('Update Kogito Docs release branch') {
+            steps {
+                script {
+                    dir("kogito-docs-${getBuildBranch()}") {
+                        deleteDir()
+                        checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
+                        sh "git checkout ${getBuildBranch()}"
+
+                        String[] branchSplit = getBuildBranch().split("\\.")
+                        String displayVersion = "${branchSplit[0]}.${branchSplit[1]}-RC"
+                        String version = "${branchSplit[0]}.${branchSplit[1]}.0-SNAPSHOT"
+                        String prereleaseStr = 'rc'
+                        String swExamplesURL = "https://github.com/kiegroup/kogito-examples/tree/${getBuildBranch()}/serverless-workflow-examples"
+                        String antoraFile = 'serverlessworkflow/antora.yml'
+
+                        sh """
+                            sed -i 's|^version:.*|version: ${version}|g' ${antoraFile}
+                            sed -i 's|^display_version:.*|display_version: ${displayVersion}|g' ${antoraFile}
+                            sed -i 's|^prerelease:.*|prerelease: ${prereleaseStr}|g' ${antoraFile}
+                            sed -i 's|kogito_sw_examples_url:.*|kogito_sw_examples_url: ${swExamplesURL}|g' ${antoraFile}
+                        """
+
+                        // Add changed files, commit, open and merge PR
+                        if (githubscm.isThereAnyChanges()) {
+                            githubscm.commitChanges("Init ${getBuildBranch()} branch")
+                            githubscm.pushObject('origin', getBuildBranch(), getGitAuthorCredsID())
+                        } else {
+                            echo 'No changes to push.'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Update Kogito Docs main branch') {
+            steps {
+                script {
+                    dir('kogito-docs') {
+                        deleteDir()
+                        checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), 'main', false, getGitAuthorCredsID()))
+                        sh 'git checkout main'
+
+                        updateYaml('antora-playbook.yml') { antoraConfig ->
+                            if (!antoraConfig.content.sources[0].branches) {
+                                antoraConfig.content.sources[0].branches = []
+                            }
+                            if (!antoraConfig.content.sources[0].branches.find { it == getBuildBranch() }) {
+                                antoraConfig.content.sources[0].branches.add(getBuildBranch())
+                        }
+                    }
+
+                        // Add changed files, commit, open and merge PR
+                        if (githubscm.isThereAnyChanges()) {
+                            githubscm.commitChanges("Add branch ${getBuildBranch()} for generation")
+                            githubscm.pushObject('origin', 'main', getGitAuthorCredsID())
+                        } else {
+                            echo 'No changes to push.'
+                        }
+                }
+            }
+        }
+    }
+}
+    post {
+        unsuccessful {
+            sendNotification()
+        }
+        cleanup {
+            script {
+                // Clean also docker in case of usage of testcontainers lib
+                util.cleanNode('docker')
+            }
+        }
+    }
+}
+
+void sendNotification() {
+    mailer.sendMarkdownTestSummaryNotification('Post-release', "[${getBuildBranch()}] Kogito Docs", [env.CI_EMAIL_TO])
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Getter / Setter
+//////////////////////////////////////////////////////////////////////////////
+
+String getKogitoVersion() {
+    return params.KOGITO_VERSION
+}
+
+String getBuildBranch() {
+    return params.BUILD_BRANCH_NAME
+}
+
+String getGitAuthor() {
+    return env.GIT_AUTHOR
+}
+
+String getGitAuthorCredsID() {
+    return env.AUTHOR_CREDS_ID
+}
+
+void updateYaml(String filePath, Closure updateClosure) {
+    def yamlData = readYaml(file: filePath)
+    updateClosure(yamlData)
+    writeYaml(file: filePath, data: yamlData, overwrite: true)
+}
