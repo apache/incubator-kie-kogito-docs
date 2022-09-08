@@ -1,5 +1,5 @@
-Exposing the workflow base metrics to Prometheus
-================================================
+Exposing the workflow base metrics to Prometheus on Openshift
+=============================================================
 11-03-2022
 :compat-mode!:
 // Metadata:
@@ -11,6 +11,7 @@ Exposing the workflow base metrics to Prometheus
 :grafana_url: https://grafana.com/
 :quarkus_micrometer_url: https://quarkus.io/guides/micrometer
 :openshift_monitoring_url: https://docs.openshift.com/container-platform/4.7/monitoring/enabling-monitoring-for-user-defined-projects.html
+:prometheus_operator_url: https://prometheus-operator.dev/
 
 Kogito Serverless Workflow generate metrics that can be consumed by Prometheus and visualized by dashboard tools such as link:{openshift_micrometer_url}[Openshift], link:{dashbuilder_url}[Dashbuilder] and link:{grafana_url}[Grafana].
 
@@ -65,6 +66,11 @@ oc apply -f service-monitor.yaml
 ----
 
 What we have just done is to create a Service Monitor named `prometheus-app-monitor` that will select apps with the label selector `app-with-metrics: serverless-workflow-app`, make sure that your Serverless Workflow application has this label. Then, OpenShift will call the endpoint `/q/metrics` for all the services labeled with  `app-with-metrics: serverless-workflow-app` every 30 seconds. For more details check the link:{openshift_micrometer_url}:[Monitoring Quarkus apps using Micrometer and Prometheus into OpenShift] guide.
+
+[NOTE]
+====
+Kubernetes and minikube users can check the link:{prometheus_operator_url}[Prometheus Operator project].
+====
 
 
 == Consuming metrics from Prometheus
