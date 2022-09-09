@@ -15,13 +15,13 @@ The following sketch demonstrates how this URI is composed:
 
 [source,shell]
 ----
-kubernetes:<group>/<version>/<kind>/<namespace>/<name>?<attributeName>=<attributeValue>
-\________/ \_____/ \_______/ \____/ \_________/ \____/ \______________________________/
-  scheme    group   version   kind   namespace   name   additional resource attributes
-            \____________________/                       \__________________________/
-                     GVK                                   Supported values:
-                                                            - port-name={PORT_NUMBER}
-                                                            - labels=label-name=label-value;other-label=other-value
+kubernetes:<group>/<version>/<kind>/<namespace>/<resourceName>?<attributeName>=<attributeValue>
+\________/ \_____/ \_______/ \____/ \_________/ \____________/ \______________________________/
+  scheme    group   version   kind   namespace   resourceName   additional resource attributes
+            \____________________/                               \__________________________/
+                     GVK                                           Supported values:
+                                                                   - port-name={PORT_NUMBER}
+                                                                   - labels=label-name=label-value;other-label=other-value
 ----
 
 The following scheme values are supported:
@@ -44,24 +44,10 @@ For the Kubernetes GVK, the following resources are currently supported:
 
 [IMPORTANT]
 ====
-The **Kubernetes GVK** (Group, Version and Kind) and the **Name** values are **mandatory** and can't be empty, otherwise, the engine will throw a validation issue and the discovery will not be performed.  +
+The **Kubernetes GVK** (Group, Version and Kind) is **mandatory** and can't be empty, otherwise,
+the engine will throw a validation issue and the discovery will not be performed. The last value in the URI
+will always be considered as **Resource Name**.
 The **Namespace** is **optional**. In case of an empty value, the current namespace or context will be used.
-
-For **OpenShift** specific resources, **Deployment Config** or **Routes**, you will be required to add the following dependency in your Application's classpath:
-
-[source,xml,subs="attributes+"]
-----
-<dependency>
-  <groupId>io.quarkus</groupId>
-  <artifactId>quarkus-openshift-client</artifactId>
-</dependency>
-----
-
-It can be added with link:{quarkus_cli_url}[Quarkus CLI]:
-[source,shell]
-----
-quarkus extension add quarkus-openshift-client
-----
 ====
 
 === Additional Query Parameters
@@ -132,7 +118,7 @@ __  ____  __  _____   ___  __ ____  ______
 --\___\_\____/_/ |_/_/|_/_/|_|\____/___/
 2022-08-23 12:21:04,360 DEBUG [org.kie.kog.add.qua.k8s.SWDiscoveryConfigSourceInterceptor] (main) Configuring k8s client...
 2022-08-23 12:21:05,245 INFO  [io.qua.sma.ope.run.OpenApiRecorder] (main) Default CORS properties will be used, please use 'quarkus.http.cors' properties instead
-2022-08-23 12:21:05,420 DEBUG [org.kie.kog.add.qua.k8s.par.KubeURI] (main)  KubeURI successfully parsed: knative:v1/Service/serverless-workflow-greeting-quarkus/greeting-quarkus-cli
+2022-08-23 12:21:05,420 DEBUG [org.kie.kog.add.qua.k8s.par.KubeURI] (main)  KubeURI successfully parsed: KubeURI{protocol='knative', gvk=GVK{group='', version='v1', kind='service'}, namespace='serverless-workflow-greeting-quarkus', resourceName='greeting-quarkus-cli'}
 2022-08-23 12:21:06,043 INFO  [org.kie.kog.add.qua.k8s.KubeResourceDiscovery] (main) Connected to kubernetes cluster  v1.23.4, current namespace is serverless-workflow-greeting-quarkus. Resource name for discovery is greeting-quarkus-cli
 2022-08-23 12:21:06,045 DEBUG [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Trying to adapt kubernetes client to knative
 2022-08-23 12:21:06,316 DEBUG [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Found Knative endpoint at http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io
@@ -140,7 +126,7 @@ __  ____  __  _____   ___  __ ____  ______
 2022-08-23 12:21:06,382 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (main) Registered Kogito CloudEvent extension
 2022-08-23 12:21:06,460 INFO  [io.quarkus] (main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080
 2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Profile prod activated.
-2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Installed features: [cache, cdi, hibernate-validator, jackson-jq, kogito-addon-kubernetes-extension, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, kubernetes, kubernetes-client, openshift-client, qute, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-openapi, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx]
+2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Installed features: [cache, cdi, jackson-jq, kogito-addon-kubernetes-extension, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, kubernetes, kubernetes-client, openshift-client, qute, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-openapi, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx]
 ----
 
 [NOTE]
