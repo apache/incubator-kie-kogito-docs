@@ -416,6 +416,8 @@
 <div class="paragraph">
 <p>Kogito supports the <code>java</code> functions within an Apache Maven project, in which you define your workflow service.</p>
 </div>
+<div class="sect2">
+<h3 id="_function_definition"><a class="anchor" href="#_function_definition"></a>Function Definition</h3>
 <div class="paragraph">
 <p>The following example shows the declaration of a <code>java</code> function:</p>
 </div>
@@ -449,84 +451,123 @@
 </tr>
 </table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_function_arguments"><a class="anchor" href="#_function_arguments"></a>Function Arguments</h3>
 <div class="paragraph">
-<p>Your method interface must receive a <a href="https://github.com/FasterXML/jackson">Jackson&#8217;s</a> <code>JsonNode</code> object and return either <code>void</code> or another <code>JsonNode</code> as shown in the following example:</p>
+<p>Your method interface signature must copy the arguments passed by the workflow.</p>
+</div>
+<div class="paragraph">
+<p>For example, if you invoke a function using one argument as follows, then your method signature assumes that the <code>number</code> model variable is an integer:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a <code>java</code> function reference with one argument</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+ "functionRef": {
+   "refName": "myFunction",
+   "arguments": {
+     "number": "${.number}"
+   }
+ }</code></pre>
+</div>
 </div>
 <div class="listingblock">
 <div class="title">Example of a <code>java</code> function implementation</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class MyInterfaceOrClass {
 
-    public void myMethod(JsonNode workflowData) {
-        // do whatever I want with the JsonNode:
-        // { "workflowdata": {} }
+  public void myMethod(int number) {
+        if (number % 2 != 0) {
+            throw new IllegalArgumentException("Odd situation");
+        }
     }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As a particular case, if you provide no argument in the workflow definition, the signature of the Java method might include a <a href="https://github.com/FasterXML/jackson">Jackson&#8217;s</a> <code>JsonNode</code> parameter. This means that the Java method expects the entire workflow model as input.</p>
+</div>
+<div class="paragraph">
+<p>When using the following example function reference with no arguments, and if the method signature contains a <code>JsonNode</code> parameter, the entire workflow model is passed when the method call is performed.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a <code>java</code> function reference with no arguments</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "functionRef": {
+    "refName": "myFunction"
+   }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example of a <code>java</code> function implementation</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class MyInterfaceOrClass {
+
 
     public JsonNode myMethod(JsonNode workflowData) {
-        // do whatever I want with the JsonNode:
-        // { "workflowdata": {} }
+        // do whatever I want with the Workflow model
+        ......
         // return the modified content:
         return workflowData;
     }
 }</code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_function_return_values"><a class="anchor" href="#_function_return_values"></a>Function return values</h3>
 <div class="paragraph">
-<p>To call the function shown in the previous example within your workflow service, you can extract the required JSON value using <a href="understanding-jq-expressions.html" class="xref page"><code>jq</code> expression</a> or pass the JSON value without using arguments.</p>
+<p>If your method returns a <code>JsonNode</code>, the content of that node is merged into the workflow model (you can use an action data filter to control what is merged).</p>
 </div>
 <div class="paragraph">
-<p>In the following example, the caller sends the entire payload:</p>
+<p>The same occurs if your method returns any Java <code>Object</code> descendant that is not a primitive wrapper, the Java object is recursively converted to a JSON object and the result is merged into the workflow model (you can use an action data filter to control what is merged).</p>
+</div>
+<div class="paragraph">
+<p>If your method returns a primitive type or their corresponding wrapper object (int, boolean, long, and so on), then the primitive value is added to the workflow model with the name <code>response</code> (you can change that name using an action data filter).</p>
+</div>
+<div class="paragraph">
+<p>If your method returns Java collections, it is converted to a JSON array and added to the workflow model with the name <code>response</code> (you can change that name using an action data filter).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_function_accessing_kogito_context"><a class="anchor" href="#_function_accessing_kogito_context"></a>Function accessing Kogito context</h3>
+<div class="paragraph">
+<p>If you need access to process contextual information (for example, Kogito process instance ID) inside your Java service, you can add a <code>KogitoProcessContext</code> parameter as the last one in the method signature.</p>
+</div>
+<div class="paragraph">
+<p>Therefore, if you need to do so, you can update the signature of methods from previous sections.</p>
 </div>
 <div class="listingblock">
-<div class="title">Example of a <code>java</code> function reference within a <code>state</code></div>
+<div class="title">Example of a function accessing Kogito context</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "states": [
-    {
-      "name": "myState",
-      "type": "operation",
-      "actions": [
-        {
-          "name": "callJavaFunctionAction",
-          "functionRef": {
-            "refName": "myFunction"
-          }
-        }
-      ]
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class MyInterfaceOrClass {
+
+
+    public JsonNode myMethod(JsonNode workflowData, KogitoProcessContext context ) {
+        // do whatever I want with the JsonNode and the Kogito process context
+        ......
+        // return the modified content:
+        return workflowData;
     }
-  ]
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Alternatively, you can pass the necessary data as shown in the following example:</p>
-</div>
 <div class="listingblock">
-<div class="title">Example of a <code>java</code> function reference within a <code>state</code> passing the necessary data</div>
+<div class="title">Example of a function accessing Kogito context</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "states": [
-    {
-      "name": "myState",
-      "type": "operation",
-      "actions": [
-        {
-          "name": "callJavaFunctionAction",
-          "functionRef": {
-            "refName": "myFunction",
-            "arguments": {
-              "data": "${ .my.expression.to.data }"
-            }
-          }
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class MyInterfaceOrClass {
+
+
+    public void myMethod(int number, KogitoProcessContext context) {
+        if (number % 2 != 0) {
+            throw new IllegalArgumentException("Odd situation");
         }
-      ]
     }
-  ]
 }</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>In the previous example, the <code>JsonNode</code> that the <code>java</code> function returns is the new payload in the workflow execution.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -541,6 +582,7 @@
 </td>
 </tr>
 </table>
+</div>
 </div>
 </div>
 </div>
