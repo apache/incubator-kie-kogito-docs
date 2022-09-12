@@ -9,7 +9,9 @@ This document describes the link:{spec_doc_url}#Callback-State[Callback state] a
 
 From a workflow perspective, asynchronous service indicates that the control is returned to the caller immediately without waiting for the action to be completed. Once the action is completed, a link:{cloud_events_url}[CloudEvent] is published to resume the workflow.
 
-For the workflow to identify the published CloudEvent it is waiting for, the external service developer includes the workflow instance ID in the CloudEvent header or uses the xref:eventing/event-correlation-with-workflows.adoc[Event correlation]. 
+For the workflow to identify the published CloudEvent it is waiting for, the external service developer includes the workflow instance ID in the CloudEvent header or uses the xref:eventing/event-correlation-with-workflows.adoc[Event correlation]. The following figure displays the process:
+
+image::eventing/callbacks-explained.png[]
 
 The workflow correlation described in this document focuses on the former mechanism that is based on the fact that each workflow instance contains a unique identifier, which is generated automatically.
 
@@ -95,9 +97,9 @@ An link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/j
 
 After that, the workflow application consumes the event published by the listener and sets the result field. The consumed CloudEvent contains an attribute named `kogitoprocrefid`, which holds the workflow instance ID of the workflow.
 
-The `kogitoprocrefid` attribute is crucial because when the correlation is not used, then this attribute is the only way for the Callback state to identify that the related CloudEvent needs to be used to resume the workflow.
+The `kogitoprocrefid` attribute is crucial because when the correlation is not used, then this attribute is the only way for the Callback state to identify that the related CloudEvent needs to be used to resume the workflow. For more information about correlation, see xref:eventing/event-correlation-with-workflows.adoc[Event correlation in {context}].
 
-Note that each workflow is identified by a unique instance ID, which is automatically included in any published CloudEvent, as `kogitoprocinstance` CloudEvent attribute.
+Note that each workflow is identified by a unique instance ID, which is automatically included in any published CloudEvent, as `kogitoprocinstanceid` CloudEvent extension.
 
 The following example shows that the event listener takes the workflow instance ID of a workflow from a CloudEvent attribute named `kogitoprocinstanceid`, which is associated with the CloudEvent that is consumed. 
 
@@ -117,7 +119,7 @@ The following example shows that the event listener takes the workflow instance 
 Apache Kafka configuration in `serverless-workflow-callback-quarkus`::
 +
 --
-The `serverless-workflow-callback-quarkus` example application requires an external broker to manage the associated CloudEvents. The default setup in the `serverless-workflow-callback-quarkus` example application uses link:{kafka_doc_url}[Apache Kafka]. However, you can also use Knative Eventing.
+The `serverless-workflow-callback-quarkus` example application requires an external broker to manage the associated CloudEvents. The default setup in the `serverless-workflow-callback-quarkus` example application uses link:{kafka_doc_url}[Apache Kafka]. However, you can also use xref:eventing/consume-produce-events-with-knative-eventing.adoc[Knative Eventing].
 
 Apache Kafka uses topics to publish or consume messages. In the `serverless-workflow-callback-quarkus` example application, two topics are used, matching the name of the CloudEvent types that are defined in the workflow, such as `resume` and `wait`. The `resume` and `wait` CloudEvent types are configured in the link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/resources/application.properties[`application.properties`] file. 
 
