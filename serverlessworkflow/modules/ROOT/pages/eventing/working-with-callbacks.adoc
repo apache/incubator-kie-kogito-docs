@@ -9,7 +9,7 @@ This document describes the link:{spec_doc_url}#Callback-State[Callback state] a
 
 From a workflow perspective, asynchronous service indicates that the control is returned to the caller immediately without waiting for the action to be completed. Once the action is completed, a link:{cloud_events_url}[CloudEvent] is published to resume the workflow.
 
-For the workflow to identify the published CloudEvent it is waiting for, the external service developer includes the workflow instance ID in the CloudEvent header or uses the xref:eventing/event-correlation-with-workflows.adoc[Event correlation]. The image below illustrates this process.
+For the workflow to identify the published CloudEvent it is waiting for, the external service developer includes the workflow instance ID in the CloudEvent header or uses the xref:eventing/event-correlation-with-workflows.adoc[Event correlation]. The following figure displays the process:
 
 image::eventing/callbacks-explained.png[]
 
@@ -97,7 +97,7 @@ An link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/j
 
 After that, the workflow application consumes the event published by the listener and sets the result field. The consumed CloudEvent contains an attribute named `kogitoprocrefid`, which holds the workflow instance ID of the workflow.
 
-The `kogitoprocrefid` **attribute is crucial** because when the correlation is not used, then this attribute is the only way for the Callback state to identify that the related CloudEvent needs to be used to resume the workflow. For more information about correlation, see the guide xref:eventing/event-correlation-with-workflows.adoc[Event correlation in {context}].
+The `kogitoprocrefid` attribute is crucial because when the correlation is not used, then this attribute is the only way for the Callback state to identify that the related CloudEvent needs to be used to resume the workflow. For more information about correlation, see xref:eventing/event-correlation-with-workflows.adoc[Event correlation in {context}].
 
 Note that each workflow is identified by a unique instance ID, which is automatically included in any published CloudEvent, as `kogitoprocinstanceid` CloudEvent extension.
 
