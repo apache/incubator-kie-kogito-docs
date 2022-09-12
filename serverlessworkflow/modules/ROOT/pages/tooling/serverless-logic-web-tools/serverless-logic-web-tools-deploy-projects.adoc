@@ -1,55 +1,75 @@
-= Deploying your projects
+= Deploying your {context} projects using {serverless_logic_web_tools_name}
 :compat-mode!:
 // Metadata:
 :description: {serverless_logic_web_tools_name} deploying your projects
 :keywords: kogito, workflow, serverless, editor, web, tools, settings, openshift, deploy, project
 
-{context} projects can be deployed to an OpenShift instance via the OpenShift integration, allowing authors to test their implementations in a live environment. Note that these deployments are not meant for production, only development purposes.
+You can deploy your {context} projects to an OpenShift instance using the OpenShift integration. The OpenShift integration allows you test your implementations in a live environment. 
+
+[NOTE]
+====
+The deployments described in this document are for development purposes, but not for production.
+====
 
 [[proc-deploy-first-serverless-project-serverless-logic-web-tools]]
-== Deploying your first simple serverless project
+== Deploying your first {context} project
 
-Deploy your first {context} project to an OpenShift instance and see it running live.
+You can deploy your first {context} project to an OpenShift instance and run the project in a live environment.
 
 .Prerequisites
-* OpenShift integration has to be correctly configured (see how to xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.adoc[here]).
+* OpenShift integration is configured correctly.
++
+For more information, see xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.adoc[Integrating your {context} project with OpenShift using {serverless_logic_web_tools_name}].
 
 .Procedure
-. Start by creating a project from one of the samples. For this tutorial, the **Greetings** sample is recommended, as it has no external dependencies and is easy to test and comprehend. Here's a brief explanation of what it does:
-+
-____
-This example shows a single Operation State with one action that calls the "greeting" function. The workflow data input is assumed to be the name of the person to greet. The result of the action is assumed to be the greeting for the provided person's name, which is added to the state's data and becomes the workflow data output.
-____
-. On the editor page, click on the **Try on OpenShift** button, then, on the context menu, click on **Deploy "greetings" ({context})**;
-. A modal should appear, showing deployment options:
-  * **Deploy as a project**: This will be available if your current workspace has a full project structure (with a single `pom.xml` file);
-    ** If the option is **disabled**: A pre-built image container that contains a Quarkus project will be used and all serverless workflow files will be placed inside `src/main/resources` folder of the project. In this case, it is important to make sure the serverless workflow files do not have any other dependencies because they are not included in the deployment.
-    ** If the option is **enabled**: All files in the workspace will be deployed as-is, meaning no project template will be used. So it is up to you to make sure the project is _deployable_.
-  * **Advanced options**:
-    ** **Upload OpenAPI spec to Service Registry**: After a {context} is deployed, an OpenAPI spec is available in the deployed service. Checking this option will make the {serverless_logic_web_tools_name} poll for this spec and upload it to your configured Service Registry (_To use this option, you need to configure your Service Account and Service Registry on the Settings page. You can check how to configure it xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.adoc[here]_);
-    ** **Attach KafkaSource to the deployment**: If your {context} has an Apache Kafka event dependency then this option should be checked (_To use this option, you need to configure your Service Account and Streams for Apache Kafka on the Settings page. You can check how to configure it xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.adoc[here]_).
-. Leave everything unchecked and click on **Confirm**.
-. A toast should show the following message: **Your deployment has been successfully started and will be available shortly. Please do not close this browser tab until the operation is completed.** and clicking on the **OpenShift deployments** icon should show your deployment status. The process should take a few minutes since a build needs to be completed before the services are up.
+. Create a project using an example application in link:{kogito_sw_examples_url}[GitHub].
 +
 --
-.OpenShift deployment status (success)
+You can use the link:https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-quarkus[`serverless-workflow-greeting-quarkus`] example application, which does not contain external dependencies, and is easy to test and comprehend. 
+
+The `serverless-workflow-greeting-quarkus` example application contains a single operation state with one action, sending request to the `greeting` function. In the example application, the workflow data is assumed to be the name of the person to greet, and the result is the greeting for the person. The result is added to the state data, which later becomes the workflow data output.
+--
+
+. On the editor page, click *Try on OpenShift* button.
+. On the context menu, click *Deploy "greetings" ({context})*.
++
+--
+A modal appears, displaying the following deployment options:
+
+* *Deploy as a project*: This option is available if your current workspace contains the entire project structure including a single `pom.xml` file.
+
+** If *Deploy as a project* option is disabled, a pre-built image container, containing a Quarkus project is used and the workflow files are placed in the `src/main/resources` folder of the project. In this case, ensure that the workflow files do not have other dependencies as the dependencies are not included in the deployment.
+** If *Deploy as a project* option is enabled, all the workflow files are deployed as-is, indicating that no project template is used. Therefore, ensure that the project is deployable.
+
+* *Upload OpenAPI spec to Service Registry*: After a workflow is deployed, an OpenAPI specification is available in the deployed service. When you check this option, the {serverless_logic_web_tools_name} fetches the OpenAPI specification, and when ready, the OpenAPI specification is uploaded to your configured service registry. To use this option, you need to configure your service account and service registry on the *Settings* page. To configure the service account and service registry, see xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.adoc[Integrating with Red Hat OpenShift Application and Data Services].
+
+* *Attach KafkaSource to the deployment*: You must check this option if your workflow contains an Apache Kafka event dependency. To use this option, you need to configure your service account and streams for Apache Kafka on the *Settings* page. To configure your service account and Apache Kafka streams, see xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.adoc[Integrating with Red Hat OpenShift Application and Data Services].
+--
+
+. Uncheck all options and click *Confirm*.
++
+--
+A pop-up appears displaying *Your deployment has been successfully started and will be available shortly. Please do not close this browser tab until the operation is completed.* message. Clicking on the *OpenShift deployments* icon shows your deployment status. The deployment process takes a few minutes since a build needs to be completed before the services are active.
+
+.OpenShift deployment status
 image:tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-deployments.png[]
 --
 
+[[proc-verify-deploy-status-serverless-logic-web-tools]]
+== Verifying the deployment status of your first project
 
-[[proc-check-deploy-status-serverless-logic-web-tools]]
-== Checking your deployment status
-
-After deployment is successful you can check out multiple information about your service.
+After the deployment of your {context} project is successful, you can verify various information about the deployed service.
 
 .Prerequisites
-* OpenShift integration has to be correctly configured (see how to xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.adoc[here]);
-* Have a successfully deployed project.
-* The deployed project must have been deployed with the *Deploy as a project* option *unchecked*, as the Serverless deployment page is only available via the pre-built image container. If the option was checked the tool will open whatever `index.html` file your project provided.
+* OpenShift integration is configured correctly.
++
+For more information, see xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.adoc[Integrating your {context} project with OpenShift using {serverless_logic_web_tools_name}].
+* Your {context} project is deployed successfully.
+* Deployed project must be deployed using the *Deploy as a project* option as unchecked, as the deployment page is only available using the pre-built image container. If the option *Deploy as a project* option is checked the tool opens the `index.html` file your project provides, if any.
 
 .Procedure
-. Click on the **OpenShift deployments** icon to show a list of deployments;
-. If your deployment is successful (listed with a emoji:white_check_mark[1x]) you can click on it to access the **Serverless Deployment** page and check on the **Swagger UI** interface, **Open API** specification and **Metrics** page via DashBuilder.
+. Click on the *OpenShift deployments* icon to view a list of deployments.
+. If your deployment is successful (listed with emoji:white_check_mark[1x]), you can click on it and access the deployment page to check the *Swagger UI*, *Open API* specification, and *Metrics* page using DashBuilder.
 +
 --
 .Serverless deployment page
