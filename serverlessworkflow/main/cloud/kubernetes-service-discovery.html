@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Parallelism in Serverless Workflow :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Working with parallelism in Serverless Workflow">
-    <meta name="keywords" content="kogito, workflow, quarkus, serverless, parallelism">
+    <title>Kubernetes Service Discovery for Serverless Workflow Application :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Explain what is and how the service discovery works">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, service-discovery, enhanced-service-discovery">
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -85,22 +85,22 @@
     <span class="nav-text">Core</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="understanding-jq-expressions.html">jq expressions in Serverless Workflow</a>
+    <a class="nav-link" href="../core/understanding-jq-expressions.html">jq expressions in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
-  </li>
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="working-with-parallelism.html">Parallelism in Serverless Workflow</a>
+    <a class="nav-link" href="../core/understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="configuration-properties.html">Configuration properties in Serverless Workflow</a>
+    <a class="nav-link" href="../core/working-with-parallelism.html">Parallelism in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="defining-an-input-schema-for-workflows.html">Input schema definition for Serverless Workflow</a>
+    <a class="nav-link" href="../core/configuration-properties.html">Configuration properties in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
+    <a class="nav-link" href="../core/defining-an-input-schema-for-workflows.html">Input schema definition for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
   </li>
 </ul>
   </li>
@@ -235,13 +235,13 @@
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
+    <a class="nav-link" href="build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
+    <a class="nav-link" href="deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../cloud/kubernetes-service-discovery.html">Kubernetes Service Discovery for Serverless Workflow Application</a>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="kubernetes-service-discovery.html">Kubernetes Service Discovery for Serverless Workflow Application</a>
   </li>
 </ul>
   </li>
@@ -306,250 +306,196 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
-    <li>Core</li>
-    <li><a href="working-with-parallelism.html">Parallelism in Serverless Workflow</a></li>
+    <li>Cloud</li>
+    <li><a href="kubernetes-service-discovery.html">Kubernetes Service Discovery for Serverless Workflow Application</a></li>
   </ul>
 </nav>
 <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">snapshot</button>
   <div class="version-menu">
-    <a class="version is-current" href="working-with-parallelism.html">snapshot</a>
-    <a class="version" href="../../latest/core/working-with-parallelism.html">1.27</a>
-    <a class="version" href="../../1.26.0.Final/core/working-with-parallelism.html">1.26</a>
-    <a class="version" href="../../1.25.0.Final/core/working-with-parallelism.html">1.25</a>
-    <a class="version" href="../../1.24.1.Final/core/working-with-parallelism.html">1.24</a>
+    <a class="version is-current" href="kubernetes-service-discovery.html">snapshot</a>
+    <a class="version is-missing" href="../../latest/index.html">1.27</a>
+    <a class="version is-missing" href="../../1.26.0.Final/index.html">1.26</a>
+    <a class="version is-missing" href="../../1.25.0.Final/index.html">1.25</a>
+    <a class="version is-missing" href="../../1.24.1.Final/index.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/core/working-with-parallelism.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/cloud/kubernetes-service-discovery.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Parallelism in Serverless Workflow</h1>
+<h1 class="page">Kubernetes Service Discovery for Serverless Workflow Application</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can run parallel tasks in Serverless Workflow.</p>
+<p>The Kubernetes Service Discovery allows you to have a static URI that defines a Kubernetes resource that will be used
+to perform HTTP requests. The resource defined in the URI will then be queried in the current Kubernetes cluster and
+translated to a valid URL. The service discovery feature works during the Application startup, it scans all Quarkus
+configuration in search of the following URI pattern. Thus, you should keep in mind that, if the startup time matters to you,
+then you should consider to use a static URL instead. The following sketch demonstrates how this URI is composed:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubernetes:&lt;group&gt;/&lt;version&gt;/&lt;kind&gt;/&lt;namespace&gt;/&lt;resourceName&gt;?&lt;attributeName&gt;=&lt;attributeValue&gt;
+\________/ \_____/ \_______/ \____/ \_________/ \____________/ \______________________________/
+  scheme    group   version   kind   namespace   resourceName   additional resource attributes
+            \____________________/                               \__________________________/
+                     GVK                                           Supported values:
+                                                                   - port-name={PORT_NUMBER}
+                                                                   - labels=label-name=label-value;other-label=other-value</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>The testing procedure described in this document is based on the <code>serverless-workflow-service-calls-quarkus</code> example application in <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-service-calls-quarkus">GitHub repository</a>.</p>
+<p>The following scheme values are supported:</p>
 </div>
-<div class="admonitionblock warning">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>kubernetes</strong></p>
+</li>
+<li>
+<p><strong>openshift</strong></p>
+</li>
+<li>
+<p><strong>knative</strong></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For the Kubernetes GVK, the following resources are currently supported:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>v1/service</strong></p>
+</li>
+<li>
+<p><strong>serving.knative.dev/v1/service</strong></p>
+</li>
+<li>
+<p><strong>v1/pod</strong></p>
+</li>
+<li>
+<p><strong>apps/v1/deployment</strong></p>
+</li>
+<li>
+<p><strong>apps.openshift.io/v1/deploymentconfig</strong></p>
+</li>
+<li>
+<p><strong>apps/v1/statefulset</strong></p>
+</li>
+<li>
+<p><strong>route.openshift.io/v1/route</strong></p>
+</li>
+<li>
+<p><strong>networking.k8s.io/v1/ingress</strong></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock important">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
+<i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Kogito serializes the execution of parallel tasks. Therefore, the word "parallel" does not indicate simultaneous execution, but it means that there is no logical dependency between the execution of branches. An inactive branch can start or resume the execution of a task without waiting for an active branch to be completed, in case the latter suspends the execution (for example, wait for an event reception).</p>
+<p>The <strong>Kubernetes GVK</strong> (Group, Version and Kind) is <strong>mandatory</strong> and can&#8217;t be empty, otherwise,
+the engine will throw a validation issue and the discovery will not be performed. The last value in the URI
+will always be considered as <strong>Resource Name</strong>.
+The <strong>Namespace</strong> is <strong>optional</strong>. In case of an empty value, the current namespace or context will be used.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>The <code>serverless-workflow-service-calls-quarkus</code> example application is a workflow that concatenates three strings and returns a result. The concatenation in the example application is done in parallel, which includes one branch per three strings.</p>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="proc-parallel-creating-the-workflow"><a class="anchor" href="#proc-parallel-creating-the-workflow"></a>Creating a parallel workflow</h2>
+<h2 id="_additional_query_parameters"><a class="anchor" href="#_additional_query_parameters"></a>Additional Query Parameters</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can create a workflow, which performs a series of parallel tasks.</p>
+<p>Also known as Query String, they are defined in the very same way that we are already used to do with URLs to assign value
+to specific attributes.</p>
+</div>
+<div class="paragraph">
+<p>Two query parameters are available to help the engine to be more precise when querying for the given Kubernetes Resource:</p>
 </div>
 <div class="ulist">
-<div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>A workflow project is created.</p>
-<div class="paragraph">
-<p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+<p><strong>Custom Labels</strong>: Useful to filter services in case there are more than one Service with the same <code>Label Selector</code>
+but exposing different ports. In this case we can instruct the engine that, when more than 1 service is found, it should use the one
+that have the provided label. The label is defined with the following expression, for multiple labels use <code>semicolon</code>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>labels=label-name=namevalue;another-label=another-value</code><br>
+Example:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubernetes:v1/pod/&lt;namespace&gt;/&lt;pod-name&gt;?labels=label-name=test-label</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>With the URI above we will instruct that, if there are more than 1 service exposing the given pod, the label
+<code>label-name=test-label</code> will be used to filter the service. If the label does not exist, the first found service will be used.</p>
+</li>
+</ul>
 </div>
 </li>
 </ul>
 </div>
-<div class="olist arabic">
-<div class="title">Procedure</div>
-<ol class="arabic">
-<li>
-<p>Create a workflow file named as <code>parallel.sw.json</code> under the <code>src/main/resources/</code> directory.</p>
 </li>
 <li>
-<p>Add the following content to the <code>parallel.sw.json</code> file:</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Example content for <code>parallel.sw.json</code> file</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "id": "parallel",
-  "version": "1.0",
-  "specVersion": "0.8",
-  "name": "Welcome to the Parallel dimension",
-  "description": "Testing parallelism",
-  "start": "Parallel",
-  "functions": [
-    {
-      "name": "concatA",
-      "type": "expression",
-      "operation": ".result|=.+\"A\"" <i class="conum" data-value="1"></i><b>(1)</b>
-    },
-    {
-      "name": "concatB",
-      "type": "expression",
-      "operation": ".result|=.+\"B\"" <i class="conum" data-value="2"></i><b>(2)</b>
-    },
-    {
-      "name": "concatC",
-      "type": "expression",
-      "operation": ".result|=.+\"C\"" <i class="conum" data-value="3"></i><b>(3)</b>
-    }
-  ],
-  "states": [
-    {
-      "name": "Parallel",
-      "type": "parallel", <i class="conum" data-value="4"></i><b>(4)</b>
-      "branches": [ <i class="conum" data-value="5"></i><b>(5)</b>
-        {
-          "name": "branchA",
-          "actions": [
-            {
-              "functionRef": "concatA" <i class="conum" data-value="6"></i><b>(6)</b>
-            }
-          ]
-        },
-        {
-          "name": "branchB",
-          "actions": [
-            {
-              "functionRef": "concatB" <i class="conum" data-value="7"></i><b>(7)</b>
-            }
-          ]
-        },
-        {
-          "name": "branchC",
-          "actions": [
-            {
-              "functionRef": "concatC" <i class="conum" data-value="8"></i><b>(8)</b>
-            }
-          ]
-        }
-      ],
-      "completionType": "allOf", <i class="conum" data-value="9"></i><b>(9)</b>
-      "end": {
-        "terminate": true
-      }
-    }
-  ]
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Function that concatenates the string <code>A</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Function that concatenates the string <code>B</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Function that concatenates the string <code>C</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Defines the type of the state as <code>parallel</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Defines the branches that run in parallel.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Defines the function that runs in <code>branchA</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Defines the function that runs in <code>branchB</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Defines the function that runs in <code>branchC</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Defines the completion type of the parallel state as <code>allOf</code>. This means that the parallel state is completed when all the branches are completed.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="proc-parallel-run-workflow"><a class="anchor" href="#proc-parallel-run-workflow"></a>Running a parallel workflow</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>After you create a workflow that performs a series of parallel tasks, you can run the workflow.</p>
-</div>
+<p><strong>Custom port name</strong>: Useful to determine which port to use when there are many ports configured in the target Service or Container.
+It can be configured using the following patter:</p>
 <div class="ulist">
-<div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>A parallel workflow is created.</p>
-<div class="paragraph">
-<p>For more information, see <a href="#proc-parallel-creating-the-workflow">Creating a parallel workflow</a>.</p>
-</div>
+<p><code>port-name=&lt;PORT_NAME&gt;</code>: the port name to be queried.</p>
 </li>
-<li>
-<p>The workflow application is up and running.</p>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>You can start the workflow application in development mode by using the following command:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn quarkus:dev</code></pre>
-</div>
-</div>
-</div>
+</ul>
 </div>
 </li>
 </ul>
 </div>
-<div class="olist arabic">
-<div class="title">Procedure</div>
-<ol class="arabic">
-<li>
-<p>To run the created parallel workflow, send a request to the <code>/parallel</code> endpoint as shown in the following example request:</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Example request</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
-  'http://localhost:8080/parallel' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "workflowdata": {}
-}'</code></pre>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_configuration"><a class="anchor" href="#_configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There is no specific configuration for the Discovery to work properly except by using the expected URI pattern.
+However, the okhttp communication interceptor, which logs the communication between the application and the Kubernetes API is disabled by default.<br>
+If there is a need to debug it, it can be enabled just by setting this application property:</p>
+</div>
 <div class="listingblock">
-<div class="title">Example response</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{"id":"358f97ba-f0f9-4f25-86cc-4b35e85c2406","workflowdata":{"result":"ABC"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus.log.category."okhttp3.OkHttpClient".level=INFO</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_does_it_work"><a class="anchor" href="#_how_does_it_work"></a>How does it work?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>During application startup, the service discovery is performed at the Quarkus <em>STATIC_INIT</em> time.<br>
+First, it scans the Quarkus configuration values and searches for the Kubernetes URI pattern.<br>
+Then if at least one is found, the engine will parse the URI, query the Kubernetes API for the given resource, and override the given property.</p>
+</div>
+<div class="paragraph">
+<p>Suppose we have an application that will consume a resource running on Kubernetes. This resource is a Knative Service that exposes a function that can be discovered with the following URI:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">org.kie.kogito.sw.knative.service=knative:v1/Service/serverless-workflow-greeting-quarkus/greeting-quarkus-cli</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -560,145 +506,33 @@
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The <code>"result":"ABC"</code> in the previous example response might be different in each request since the branches are running in parallel and the execution order of the branches is unpredictable.</p>
+<p>The application property <em>name</em> is not read by the service discovery engine, only property <em>value</em>.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Note that the parallel workflow data shows the concatenated string as result.</p>
-</div>
-</div>
-</div>
-</li>
-</ol>
-</div>
-<div class="sect2">
-<h3 id="proc-parallel-run-branches"><a class="anchor" href="#proc-parallel-run-branches"></a>Running some branches in parallel workflow</h3>
-<div class="paragraph">
-<p>You can define the <code>"completionType": "atLeast"</code> to run only some branches in parallel workflow, instead of defining <code>"completionType": "allOf"</code>. When you define <code>"completionType": "atLeast"</code>, you also need to define the minimum number of branches that you want to run by defining the <code>"numCompleted":</code> property.</p>
-</div>
-<div class="ulist">
-<div class="title">Prerequisites</div>
-<ul>
-<li>
-<p>A parallel workflow is created.</p>
-<div class="paragraph">
-<p>For more information, see <a href="#proc-parallel-creating-the-workflow">Creating a parallel workflow</a>.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="olist arabic">
-<div class="title">Procedure</div>
-<ol class="arabic">
-<li>
-<p>Change the <code>completionType</code> property to <code>"atLeast"</code> and add the <code>"numCompleted": 2</code> property to the parallel state.</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Example parallel workflow</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "id": "parallel",
-  "version": "1.0",
-  "specVersion": "0.8",
-  "name": "Welcome to the Parallel dimension",
-  "description": "Testing parallelism",
-  "start": "Parallel",
-  "functions": [
-    {
-      "name": "concatA",
-      "type": "expression",
-      "operation": ".result|=.+\"A\""
-    },
-    {
-      "name": "concatB",
-      "type": "expression",
-      "operation": ".result|=.+\"B\""
-    },
-    {
-      "name": "concatC",
-      "type": "expression",
-      "operation": ".result|=.+\"C\""
-    }
-  ],
-  "states": [
-    {
-      "name": "Parallel",
-      "type": "parallel",
-      "branches": [
-        {
-          "name": "branchA",
-          "actions": [
-            {
-              "functionRef": "concatA"
-            }
-          ]
-        },
-        {
-          "name": "branchB",
-          "actions": [
-            {
-              "functionRef": "concatB"
-            }
-          ]
-        },
-        {
-          "name": "branchC",
-          "actions": [
-            {
-              "functionRef": "concatC"
-            }
-          ]
-        }
-      ],
-      "completionType": "atLeast", <i class="conum" data-value="1"></i><b>(1)</b>
-      "numCompleted": "2", <i class="conum" data-value="2"></i><b>(2)</b>
-      "end": {
-        "terminate": true
-      }
-    }
-  ]
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Defines the completion type of the parallel state as <code>atLeast</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Defines the minimum number of branches that you want to run. This means that the parallel state is completed when at least two branches are completed.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</li>
-<li>
-<p>To run the created parallel workflow, send a request to the <code>/parallel</code> endpoint as shown in the following example:</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Example request</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
-  'http://localhost:8080/parallel' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "workflowdata": {}
-}'</code></pre>
-</div>
+<p>Once the application has started, you should be able to see in the logs the Kubernetes Service Discovery into action:</p>
 </div>
 <div class="listingblock">
-<div class="title">Example response</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"3da62df1-c4e7-48c9-a3e4-7f63872c92f4","workflowdata":{"result":"BC"}}</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ java -jar target/quarkus-app/quarkus-run.jar
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,&lt; / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2022-08-23 12:21:04,360 DEBUG [org.kie.kog.add.qua.k8s.SWDiscoveryConfigSourceInterceptor] (main) Configuring k8s client...
+2022-08-23 12:21:05,245 INFO  [io.qua.sma.ope.run.OpenApiRecorder] (main) Default CORS properties will be used, please use 'quarkus.http.cors' properties instead
+2022-08-23 12:21:05,420 DEBUG [org.kie.kog.add.qua.k8s.par.KubeURI] (main)  KubeURI successfully parsed: KubeURI{protocol='knative', gvk=GVK{group='', version='v1', kind='service'}, namespace='serverless-workflow-greeting-quarkus', resourceName='greeting-quarkus-cli'}
+2022-08-23 12:21:06,043 INFO  [org.kie.kog.add.qua.k8s.KubeResourceDiscovery] (main) Connected to kubernetes cluster  v1.23.4, current namespace is serverless-workflow-greeting-quarkus. Resource name for discovery is greeting-quarkus-cli
+2022-08-23 12:21:06,045 DEBUG [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Trying to adapt kubernetes client to knative
+2022-08-23 12:21:06,316 DEBUG [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Found Knative endpoint at http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io
+2022-08-23 12:21:06,375 INFO  [org.kie.kog.sw.AppLifecycle] (main) The application is starting
+2022-08-23 12:21:06,382 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (main) Registered Kogito CloudEvent extension
+2022-08-23 12:21:06,460 INFO  [io.quarkus] (main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080
+2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Profile prod activated.
+2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Installed features: [cache, cdi, jackson-jq, kogito-addon-kubernetes-extension, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, kubernetes, kubernetes-client, openshift-client, qute, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-openapi, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx]</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -709,20 +543,96 @@
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The <code>"result":"BC"</code> in the response might be different in each request.</p>
+<p>Note that the URI was translated to <code><a href="http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io" class="bare">http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io</a></code> when the application started, and will be used at runtime any time it needs it.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_discovery_precedence"><a class="anchor" href="#_discovery_precedence"></a>Discovery Precedence</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>The parallel workflow data shows the concatenated string as result, but in this case, the workflow concatenates only two letters.</p>
+<p>Depending on the resource to be discovered, there are some paths to follow, please see the following image for more details:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/cloud/sw-discovery-flow.jpg" alt="sw discovery flow">
 </div>
 </div>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_startup_time_discovery_enabled_x_disabled"><a class="anchor" href="#_startup_time_discovery_enabled_x_disabled"></a>Startup time: discovery enabled x disabled</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As the Service Discovery scans the Quarkus Configurations during the startup, it can cause a small delay as shown below:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_service-discovery-enabled"></a>Service Discovery Enabled</p>
 </li>
-</ol>
+<li>
+<p><a id="tabset1_service-discovery-disabled"></a>Service Discovery Disabled</p>
+</li>
+</ul>
 </div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_service-discovery-enabled">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_service-discovery-disabled">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 1.507s. Listening on: http://0.0.0.0:8080</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When using this feature, you need to balance if the delayed startup time is something that your application can afford.<br>
+If the URI pattern is not found in the Application Properties, the discovery will not be triggered. However, the scanning will still be performed anyway. So a very short time will be needed to go through the startup scan.</p>
+</div>
+<div class="paragraph">
+<p>But, you can still fully disable the Kubernetes Service Discovery by excluding the <code>kogito-addons-quarkus-kubernetes</code> library from the Application&#8217;s classpath. It can be done with the following maven exclusions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">&lt;dependency&gt;
+  &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+  &lt;artifactId&gt;kogito-quarkus-serverless-workflow&lt;/artifactId&gt;
+  &lt;exclusions&gt;
+    &lt;exclusion&gt;
+      &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+      &lt;artifactId&gt;kogito-addons-quarkus-kubernetes&lt;/artifactId&gt;
+    &lt;/exclusion&gt;
+    &lt;exclusion&gt;
+      &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+      &lt;artifactId&gt;kogito-addons-quarkus-kubernetes-deployment&lt;/artifactId&gt;
+    &lt;/exclusion&gt;
+  &lt;/exclusions&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -732,7 +642,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a></p>
+<p><a href="../service-orchestration/configuring-openapi-services-endpoints.html" class="xref page">Configuring the OpenAPI services endpoints</a></p>
 </li>
 </ul>
 </div>
