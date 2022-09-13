@@ -1,4 +1,4 @@
-= Kubernetes Service Discovery for Serverless Workflow Application
+= Kubernetes service discovery in {context}
 :compat-mode!:
 // Metadata:
 :description: Explain what is and how the service discovery works
@@ -6,13 +6,11 @@
 // links
 :quarkus_issue_url: https://github.com/quarkusio/quarkus/issues/27457
 
+The Kubernetes service discovery allows you to have a static URI, defining a Kubernetes resource, which is used to perform HTTP requests. The Kubernetes resource defined in the URI is queried in the current Kubernetes cluster and translated in a valid URL. 
 
-The Kubernetes Service Discovery allows you to have a static URI that defines a Kubernetes resource that will be used
-to perform HTTP requests. The resource defined in the URI will then be queried in the current Kubernetes cluster and
-translated to a valid URL. The service discovery feature works during the Application startup, it scans all Quarkus
-configuration in search of the following URI pattern. Thus, you should keep in mind that, if the startup time matters to you,
-then you should consider to use a static URL instead. The following sketch demonstrates how this URI is composed:
+The Kubernetes service discovery feature works during the workflow application startup, in which this feature scans all the Quarkus configuration in search of the following URI pattern:
 
+.URI pattern in Kubernetes service discovery
 [source,shell]
 ----
 kubernetes:<group>/<version>/<kind>/<namespace>/<resourceName>?<attributeName>=<attributeValue>
@@ -24,78 +22,80 @@ kubernetes:<group>/<version>/<kind>/<namespace>/<resourceName>?<attributeName>=<
                                                                    - labels=label-name=label-value;other-label=other-value
 ----
 
-The following scheme values are supported:
+Therefore, you must keep in mind that if application startup time matters, then consider to use a static URL instead. 
 
-* **kubernetes**
-* **openshift**
-* **knative**
+The following scheme values are supported in the URI pattern:
 
+* `kubernetes`
+* `openshift`
+* `knative`
 
-For the Kubernetes GVK, the following resources are currently supported:
+The following resources are supported for the Kubernetes GVK (Group, Version, and Kind):
 
-* **v1/service**
-* **serving.knative.dev/v1/service**
-* **v1/pod**
-* **apps/v1/deployment**
-* **apps.openshift.io/v1/deploymentconfig**
-* **apps/v1/statefulset**
-* **route.openshift.io/v1/route**
-* **networking.k8s.io/v1/ingress**
+* `v1/service`
+* `serving.knative.dev/v1/service`
+* `v1/pod`
+* `apps/v1/deployment`
+* `apps.openshift.io/v1/deploymentconfig`
+* `apps/v1/statefulset`
+* `route.openshift.io/v1/route`
+* `networking.k8s.io/v1/ingress`
 
 [IMPORTANT]
 ====
-The **Kubernetes GVK** (Group, Version and Kind) is **mandatory** and can't be empty, otherwise,
-the engine will throw a validation issue and the discovery will not be performed. The last value in the URI
-will always be considered as **Resource Name**.
-The **Namespace** is **optional**. In case of an empty value, the current namespace or context will be used.
+The Kubernetes GVK is mandatory and cannot be empty. In case the Kubernetes GVK is empty, the engine throws a validation issue and discovery is not performed. The last value in the URI is always considered as resource name. 
+
+The `namespace` in the URI is optional, however, if `namespace` contains an empty value, the current namespace or context is used.
 ====
 
-== Additional Query Parameters
-
-Also known as Query String, they are defined in the very same way that we are already used to do with URLs to assign value
-to specific attributes.
-
-Two query parameters are available to help the engine to be more precise when querying for the given Kubernetes Resource:
-
-* **Custom Labels**: Useful to filter services in case there are more than one Service with the same `Label Selector`
-but exposing different ports. In this case we can instruct the engine that, when more than 1 service is found, it should use the one
-that have the provided label. The label is defined with the following expression, for multiple labels use `semicolon`:
-** `labels=label-name=namevalue;another-label=another-value` +
-    Example:
+Query parameters in URI::
 +
+--
+The query parameters are also known as query string. The query parameters are defined the similar way with URLs to assign value to specific attributes.
+
+The following query parameters help the engine to be more precise when querying for a given Kubernetes resource:
+
+* *Custom labels*: The custom labels are used to filter services in case there are more than one service with the same label selector but exposing different ports. In this case, you can instruct the engine that if more than one service is found, then the engine must use the service containing the provided label. 
++
+The label is defined with the following expression and in case of multiple labels, you can use semicolon (;):
++
+`labels=label-name=namevalue;another-label=another-value`
++
+.Example label definition in URI
 [source,shell]
 ----
 kubernetes:v1/pod/<namespace>/<pod-name>?labels=label-name=test-label
 ----
-*** With the URI above we will instruct that, if there are more than 1 service exposing the given pod, the label
-`label-name=test-label` will be used to filter the service. If the label does not exist, the first found service will be used.
++
+Using the previous URI example, if there are more than one service exposing the given pod, the `label-name=test-label` label is used to filter the service. If the label does not exist, the first found service is used.
 
-* **Custom port name**: Useful to determine which port to use when there are many ports configured in the target Service or Container.
-It can be configured using the following patter:
-** `port-name=<PORT_NAME>`: the port name to be queried.
+* *Custom port name*: The custom port name is used to determine which port to use when multiple ports are configured in the target service or container. You can configure the port name to be queried using the following pattern:
++
+`port-name=<PORT_NAME>`
+--
 
+Based on the resource to be discovered, the Kubernetes service discovery follows specific paths as shown in the following figure:
 
-== Configuration
+image::cloud/sw-discovery-flow.jpg[]
 
-There is no specific configuration for the Discovery to work properly except by using the expected URI pattern.
-However, the okhttp communication interceptor, which logs the communication between the application and the Kubernetes API is disabled by default. +
-If there is a need to debug it, it can be enabled just by setting this application property:
+There is no specific configuration required for the Kubernetes service discovery except by using the expected URI pattern. However, the `okhttp` communication interceptor, which logs the communication between the application and the Kubernetes API is disabled by default.
 
+You can enable the `okhttp` communication interceptor if there is a need to debug it by setting the following application property:
+
+.Property to enable `okhttp` communication interceptor
 [source,shell]
 ----
 quarkus.log.category."okhttp3.OkHttpClient".level=INFO
 ----
 
+[[ref-example-kubernetes-service-discovery]]
+== Example of Kubernetes service discovery in {context}
 
-== How does it work?
+The Kubernetes service discovery is performed at the _STATIC_INIT_ time of Quarkus during the workflow application startup. First, the service discovery scans the Quarkus configuration values and searches for the Kubernetes URI pattern. If the URI pattern is found, the engine parses the URI, queries the Kubernetes API for the given resource, and overrides the given property.
 
-During application startup, the service discovery is performed at the Quarkus _STATIC_INIT_ time. +
-First, it scans the Quarkus configuration values and searches for the Kubernetes URI pattern. +
-Then if at least one is found, the engine will parse the URI, query the Kubernetes API for the given resource, and override the given property.
+For example, consider an application that consumes a resource running on Kubernetes. This resource is a Knative service that exposes a function, which can be discovered using the following URI:
 
-Suppose we have an application that will consume a resource running on Kubernetes. This resource is a Knative Service that exposes a function that can be discovered with the following URI:
-
-
+.Example URI
 [source,shell]
 ----
 org.kie.kogito.sw.knative.service=knative:v1/Service/serverless-workflow-greeting-quarkus/greeting-quarkus-cli
@@ -103,11 +103,12 @@ org.kie.kogito.sw.knative.service=knative:v1/Service/serverless-workflow-greetin
 
 [NOTE]
 ====
-The application property _name_ is not read by the service discovery engine, only property _value_.
+The service discovery engine does not read the application property `name`, but only `value`.
 ====
 
-Once the application has started, you should be able to see in the logs the Kubernetes Service Discovery into action:
+Once the workflow application is started, you can see the Kubernetes service discovery into action in the logs:
 
+.Example logs
 [source,shell]
 ----
 $ java -jar target/quarkus-app/quarkus-run.jar
@@ -130,28 +131,20 @@ __  ____  __  _____   ___  __ ____  ______
 
 [NOTE]
 ====
-Note that the URI was translated to `http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io` when the application started, and will be used at runtime any time it needs it.
+In the previous example, the URI is translated to `http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io` when the application started. The translated URI is used at runtime, when needed.
 ====
-== Discovery Precedence
 
-Depending on the resource to be discovered, there are some paths to follow, please see the following image for more details:
-
-image::cloud/sw-discovery-flow.jpg[]
-
-
-== Startup time: discovery enabled x disabled
-
-As the Service Discovery scans the Quarkus Configurations during the startup, it can cause a small delay as shown below:
+The Kubernetes service discovery scans the Quarkus configuration during the startup, which can also cause small delay as follows:
 
 [tabs]
 ====
-Service Discovery Enabled::
+Kubernetes service discovery is enabled::
 +
 [source,shell]
 ----
 (main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080
 ----
-Service Discovery Disabled::
+Kubernetes service discovery is disabled::
 +
 [source,shell]
 ----
@@ -161,11 +154,13 @@ Service Discovery Disabled::
 
 [IMPORTANT]
 ====
-When using this feature, you need to balance if the delayed startup time is something that your application can afford. +
-If the URI pattern is not found in the Application Properties, the discovery will not be triggered. However, the scanning will still be performed anyway. So a very short time will be needed to go through the startup scan.
+When using the Kubernetes service discovery feature, you need to balance if your application can afford the delayed startup time.
 
-But, you can still fully disable the Kubernetes Service Discovery by excluding the `kogito-addons-quarkus-kubernetes` library from the Application's classpath. It can be done with the following maven exclusions:
+If the URI pattern is not found in the application properties, then discovery is not triggered. However, the scanning is performed anyway. Therefore, a short time is required to go through the startup scan.
 
+You can disable the Kubernetes service discovery by excluding the `kogito-addons-quarkus-kubernetes` library from the classpath of the application as shown in the following Maven exclusions:
+
+.Example Maven exclusions
 [source,shell]
 ----
 <dependency>
