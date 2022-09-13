@@ -20,7 +20,7 @@ This document describes how to enable and expose metrics to Prometheus.
 
 == Enabling metrics
 
-For adding metrics to your Serverless Workflow application just add the dependency `org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus` to your Maven POM file and, after rebuild, the metrics will be available in `/q/metrics` URL.
+For adding metrics to your Serverless Workflow application just add the dependency `org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus` to your Maven POM file and, after rebuild, the metrics will be available at `/q/metrics` endpoint.
 
 .Dependency to be added to the `pom.xml` file to enable metrics
 [source,xml]
@@ -66,7 +66,7 @@ Then apply it:
 oc apply -f service-monitor.yaml
 ----
 
-What we have just done is to create a Service Monitor named `prometheus-app-monitor` that will select apps with the label selector `app-with-metrics: serverless-workflow-app`, make sure that your Serverless Workflow application has this label. Then, OpenShift will call the endpoint `/q/metrics` for all the services labeled with  `app-with-metrics: serverless-workflow-app` every 30 seconds. For more details check the link:{openshift_micrometer_url}:[Monitoring Quarkus apps using Micrometer and Prometheus into OpenShift] guide.
+What we have just done is to create a Service Monitor named `prometheus-app-monitor` that will select apps with the label selector `app-with-metrics: serverless-workflow-app`, make sure that your Serverless Workflow application has this label. Then, Prometheus will call the endpoint `/q/metrics` for all the services labeled with  `app-with-metrics: serverless-workflow-app` every 30 seconds. For more details check the link:{openshift_micrometer_url}:[Monitoring Quarkus apps using Micrometer and Prometheus into OpenShift] guide.
 
 == Consuming metrics from Kubernetes
 
@@ -75,7 +75,7 @@ Kubernetes is similar to Openshift but you will need to install manually the lin
 
 == Consuming metrics from Prometheus
 
-Prometheus can scrap metrics from a Kogito Serverless Workflow application using the following configuration:
+Prometheus can also scrap directly metrics from a Kogito Serverless Workflow application using the following configuration:
 
 .Prometheus Configuration
 [source,yaml]
