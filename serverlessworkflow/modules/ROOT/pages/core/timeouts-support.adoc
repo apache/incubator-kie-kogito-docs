@@ -229,56 +229,82 @@ All the descriptor files used to deploy the example infrastructure are present i
 
 The workflow application and job service uses a postgreSQL instance as the persistence backend to store information about the workflow instances and jobs, respectively.
 
-To run postgre SQL you need to apply the following on the cluster
+To run PostgreSQL you need to apply the following on the cluster
 
+.Callback state example with timeout
+[source, shell]
+----
 kubectl apply -f kubernetes/timeouts-showcase-database.yml
+----
 
-# After executing the command, you will see an output like this:
-
+.After executing the command, you will see an output like this:
+[source, shell]
+----
 secret/timeouts-showcase-database created
 deployment.apps/timeouts-showcase-database created
 service/timeouts-showcase-database created
+----
 
 ==== Job Service
-
+.Callback state example with timeout
+[source, shell]
+----
 kubectl apply -f kubernetes/jobs-service-postgresql.yml
+----
 
-# After executing the command, you will see an output like this:
-
+.After executing the command, you will see an output like this:
+[source, shell]
+----
 service/jobs-service-postgresql created
 deployment.apps/jobs-service-postgresql created
 trigger.eventing.knative.dev/jobs-service-postgresql-create-job-trigger created
 trigger.eventing.knative.dev/jobs-service-postgresql-cancel-job-trigger created
 sinkbinding.sources.knative.dev/jobs-service-postgresql-sb created
+----
 
 ==== Timeout showcase workflow
 
+.Callback state example with timeout
+[source, shell]
+----
 kubectl apply -f target/kubernetes/knative.yml
-
 kubectl apply -f target/kubernetes/kogito.yml
+----
 
-# After executing the commands you will see an output like this:
-
+.After executing the commands you will see an output like this:
+[source, shell]
+----
 service.serving.knative.dev/timeouts-showcase created
 
 trigger.eventing.knative.dev/visa-denied-event-type-trigger-timeouts-showcase created
 trigger.eventing.knative.dev/visa-approved-event-type-trigger-timeouts-showcase created
 trigger.eventing.knative.dev/callback-event-type-trigger-timeouts-showcase created
 sinkbinding.sources.knative.dev/sb-timeouts-showcase created
+----
 
 ==== Creating a workflow
 
 Getting the service URL
 
+.Callback state example with timeout
+[source, shell]
+----
 kn service list | grep timeouts-showcase
-
-Using the show UI
-Using REST APIs
+----
 
 ==== Creating a workflow instance
 
+
+=== Using the show UI
+
+
+=== Using REST APIs
+
 * Callback
 
+.Callback state example with timeout
+[source, shell]
+----
 curl -X 'POST' \
 'http://timeouts-showcase.default.10.105.86.217.sslip.io/callback_state_timeouts' \
 -H 'accept: */*' \
@@ -286,9 +312,13 @@ curl -X 'POST' \
 -d '{
 "workflowdata": {}
 }'
+----
 
 * Switch
 
+.Callback state example with timeout
+[source, shell]
+----
 curl -X 'POST' \
 'http://timeouts-showcase.default.10.105.86.217.sslip.io/callback_state_timeouts' \
 -H 'accept: */*' \
@@ -296,16 +326,29 @@ curl -X 'POST' \
 -d '{
 "workflowdata": {}
 }'
+----
 
 * Checking whether the instance was created
 
+.Callback state example with timeout
+[source, shell]
+----
 curl -X 'GET' 'http://timeouts-showcase.default.10.105.86.217.sslip.io/switch_state_timeouts'
+----
 
-# The command will produce an output like this, which indicates that the process is waiting for an event to arrive.
+The command will produce an output like this, which indicates that the process is waiting for an event to arrive.
 
+.Callback state example with timeout
+[source, shell]
+----
 [{"id":"2e8e1930-9bae-4d60-b364-6fbd61128f51","workflowdata":{}}]
+----
 
 * Checking the timeout was executed after 30 seconds:
 
+.Callback state example with timeout
+[source, shell]
+----
 curl -X 'GET' 'http://timeouts-showcase.default.10.105.86.217.sslip.io/switch_state_timeouts'
 []
+----
