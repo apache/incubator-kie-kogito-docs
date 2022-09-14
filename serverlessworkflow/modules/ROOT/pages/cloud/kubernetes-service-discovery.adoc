@@ -1,0 +1,195 @@
+= Kubernetes Service Discovery for Serverless Workflow Application
+:compat-mode!:
+// Metadata:
+:description: Explain what is and how the service discovery works
+:keywords: kogito, workflow, quarkus, serverless, service-discovery, enhanced-service-discovery
+// links
+:quarkus_issue_url: https://github.com/quarkusio/quarkus/issues/27457
+
+
+The Kubernetes Service Discovery allows you to have a static URI that defines a Kubernetes resource that will be used
+to perform HTTP requests. The resource defined in the URI will then be queried in the current Kubernetes cluster and
+translated to a valid URL. The service discovery feature works during the Application startup, it scans all Quarkus
+configuration in search of the following URI pattern. Thus, you should keep in mind that, if the startup time matters to you,
+then you should consider to use a static URL instead. The following sketch demonstrates how this URI is composed:
+
+[source,shell]
+----
+kubernetes:<group>/<version>/<kind>/<namespace>/<resourceName>?<attributeName>=<attributeValue>
+\________/ \_____/ \_______/ \____/ \_________/ \____________/ \______________________________/
+  scheme    group   version   kind   namespace   resourceName   additional resource attributes
+            \____________________/                               \__________________________/
+                     GVK                                           Supported values:
+                                                                   - port-name={PORT_NAME}
+                                                                   - labels=label-name=label-value;other-label=other-value
+----
+
+The following scheme values are supported:
+
+* **kubernetes**
+* **openshift**
+* **knative**
+
+
+For the Kubernetes GVK, the following resources are currently supported:
+
+* **v1/service**
+* **serving.knative.dev/v1/service**
+* **v1/pod**
+* **apps/v1/deployment**
+* **apps.openshift.io/v1/deploymentconfig**
+* **apps/v1/statefulset**
+* **route.openshift.io/v1/route**
+* **networking.k8s.io/v1/ingress**
+
+[IMPORTANT]
+====
+The **Kubernetes GVK** (Group, Version and Kind) is **mandatory** and can't be empty, otherwise,
+the engine will throw a validation issue and the discovery will not be performed. The last value in the URI
+will always be considered as **Resource Name**.
+The **Namespace** is **optional**. In case of an empty value, the current namespace or context will be used.
+====
+
+== Additional Query Parameters
+
+Also known as Query String, they are defined in the very same way that we are already used to do with URLs to assign value
+to specific attributes.
+
+Two query parameters are available to help the engine to be more precise when querying for the given Kubernetes Resource:
+
+* **Custom Labels**: Useful to filter services in case there are more than one Service with the same `Label Selector`
+but exposing different ports. In this case we can instruct the engine that, when more than 1 service is found, it should use the one
+that have the provided label. The label is defined with the following expression, for multiple labels use `semicolon`:
+** `labels=label-name=namevalue;another-label=another-value` +
+    Example:
++
+[source,shell]
+----
+kubernetes:v1/pod/<namespace>/<pod-name>?labels=label-name=test-label
+----
+*** With the URI above we will instruct that, if there are more than 1 service exposing the given pod, the label
+`label-name=test-label` will be used to filter the service. If the label does not exist, the first found service will be used.
+
+* **Custom port name**: Useful to determine which port to use when there are many ports configured in the target Service or Container.
+It can be configured using the following patter:
+** `port-name=<PORT_NAME>`: the port name to be queried.
+
+
+== Configuration
+
+There is no specific configuration for the Discovery to work properly except by using the expected URI pattern.
+However, the okhttp communication interceptor, which logs the communication between the application and the Kubernetes API is disabled by default. +
+If there is a need to debug it, it can be enabled just by setting this application property:
+
+[source,shell]
+----
+quarkus.log.category."okhttp3.OkHttpClient".level=INFO
+----
+
+
+== How does it work?
+
+During application startup, the service discovery is performed at the Quarkus _STATIC_INIT_ time. +
+First, it scans the Quarkus configuration values and searches for the Kubernetes URI pattern. +
+Then if at least one is found, the engine will parse the URI, query the Kubernetes API for the given resource, and override the given property.
+
+Suppose we have an application that will consume a resource running on Kubernetes. This resource is a Knative Service that exposes a function that can be discovered with the following URI:
+
+
+[source,shell]
+----
+org.kie.kogito.sw.knative.service=knative:v1/Service/serverless-workflow-greeting-quarkus/greeting-quarkus-cli
+----
+
+[NOTE]
+====
+The application property _name_ is not read by the service discovery engine, only property _value_.
+====
+
+Once the application has started, you should be able to see in the logs the Kubernetes Service Discovery into action:
+
+[source,shell]
+----
+$ java -jar target/quarkus-app/quarkus-run.jar
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2022-08-23 12:21:04,360 DEBUG [org.kie.kog.add.qua.k8s.SWDiscoveryConfigSourceInterceptor] (main) Configuring k8s client...
+2022-08-23 12:21:05,245 INFO  [io.qua.sma.ope.run.OpenApiRecorder] (main) Default CORS properties will be used, please use 'quarkus.http.cors' properties instead
+2022-08-23 12:21:05,420 DEBUG [org.kie.kog.add.qua.k8s.par.KubeURI] (main)  KubeURI successfully parsed: KubeURI{protocol='knative', gvk=GVK{group='', version='v1', kind='service'}, namespace='serverless-workflow-greeting-quarkus', resourceName='greeting-quarkus-cli'}
+2022-08-23 12:21:06,043 INFO  [org.kie.kog.add.qua.k8s.KubeResourceDiscovery] (main) Connected to kubernetes cluster  v1.23.4, current namespace is serverless-workflow-greeting-quarkus. Resource name for discovery is greeting-quarkus-cli
+2022-08-23 12:21:06,045 DEBUG [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Trying to adapt kubernetes client to knative
+2022-08-23 12:21:06,316 DEBUG [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Found Knative endpoint at http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io
+2022-08-23 12:21:06,375 INFO  [org.kie.kog.sw.AppLifecycle] (main) The application is starting
+2022-08-23 12:21:06,382 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (main) Registered Kogito CloudEvent extension
+2022-08-23 12:21:06,460 INFO  [io.quarkus] (main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080
+2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Profile prod activated.
+2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Installed features: [cache, cdi, jackson-jq, kogito-addon-kubernetes-extension, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, kubernetes, kubernetes-client, openshift-client, qute, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-openapi, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx]
+----
+
+[NOTE]
+====
+Note that the URI was translated to `http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io` when the application started, and will be used at runtime any time it needs it.
+====
+== Discovery Precedence
+
+Depending on the resource to be discovered, there are some paths to follow, please see the following image for more details:
+
+image::cloud/sw-discovery-flow.jpg[]
+
+
+== Startup time: discovery enabled x disabled
+
+As the Service Discovery scans the Quarkus Configurations during the startup, it can cause a small delay as shown below:
+
+[tabs]
+====
+Service Discovery Enabled::
++
+[source,shell]
+----
+(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080
+----
+Service Discovery Disabled::
++
+[source,shell]
+----
+(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 1.507s. Listening on: http://0.0.0.0:8080
+----
+====
+
+[IMPORTANT]
+====
+When using this feature, you need to balance if the delayed startup time is something that your application can afford. +
+If the URI pattern is not found in the Application Properties, the discovery will not be triggered. However, the scanning will still be performed anyway. So a very short time will be needed to go through the startup scan.
+
+But, you can still fully disable the Kubernetes Service Discovery by excluding the `kogito-addons-quarkus-kubernetes` library from the Application's classpath. It can be done with the following maven exclusions:
+
+[source,shell]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-quarkus-serverless-workflow</artifactId>
+  <exclusions>
+    <exclusion>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>kogito-addons-quarkus-kubernetes</artifactId>
+    </exclusion>
+    <exclusion>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>kogito-addons-quarkus-kubernetes-deployment</artifactId>
+    </exclusion>
+  </exclusions>
+</dependency>
+----
+
+====
+
+
+== Additional resources
+
+* xref:service-orchestration/configuring-openapi-services-endpoints.adoc[Configuring the OpenAPI services endpoints]
+
+
+include::../../pages/_common-content/report-issue.adoc[]
