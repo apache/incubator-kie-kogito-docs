@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Building workflow images using Quarkus CLI :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Build Serverless Application with Quarkus CLI">
-    <meta name="keywords" content="kogito, workflow, quarkus, serverless, quarkus-cli">
+    <title>Kubernetes Service Discovery for Serverless Workflow Application :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Explain what is and how the service discovery works">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, service-discovery, enhanced-service-discovery">
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -234,13 +234,13 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Cloud</span>
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="2">
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="kubernetes-service-discovery.html">Kubernetes Service Discovery for Serverless Workflow Application</a>
   </li>
 </ul>
@@ -307,313 +307,93 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Cloud</li>
-    <li><a href="build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a></li>
+    <li><a href="kubernetes-service-discovery.html">Kubernetes Service Discovery for Serverless Workflow Application</a></li>
   </ul>
 </nav>
 <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">1.27</button>
   <div class="version-menu">
-    <a class="version" href="../../main/cloud/build-workflow-image-with-quarkus-cli.html">snapshot</a>
-    <a class="version is-current" href="build-workflow-image-with-quarkus-cli.html">1.27</a>
-    <a class="version" href="../../1.26.0.Final/cloud/build-workflow-image-with-quarkus-cli.html">1.26</a>
-    <a class="version" href="../../1.25.0.Final/cloud/build-workflow-image-with-quarkus-cli.html">1.25</a>
-    <a class="version" href="../../1.24.1.Final/cloud/build-workflow-image-with-quarkus-cli.html">1.24</a>
+    <a class="version" href="../../main/cloud/kubernetes-service-discovery.html">snapshot</a>
+    <a class="version is-current" href="kubernetes-service-discovery.html">1.27</a>
+    <a class="version is-missing" href="../../1.26.0.Final/index.html">1.26</a>
+    <a class="version is-missing" href="../../1.25.0.Final/index.html">1.25</a>
+    <a class="version is-missing" href="../../1.24.1.Final/index.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.27.x/serverlessworkflow/modules/ROOT/pages/cloud/build-workflow-image-with-quarkus-cli.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.27.x/serverlessworkflow/modules/ROOT/pages/cloud/kubernetes-service-discovery.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Building workflow images using Quarkus CLI</h1>
+<h1 class="page">Kubernetes Service Discovery for Serverless Workflow Application</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how to build a Serverless Application Container image using the <a href="https://quarkus.io/guides/cli-tooling">Quarkus CLI</a>.</p>
-</div>
-<div class="ulist">
-<div class="title">Prerequisites</div>
-<ul>
-<li>
-<p>A workflow project is created.</p>
-<div class="paragraph">
-<p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
-</div>
-</li>
-<li>
-<p>Latest version of Docker is installed. Alternatively, you can use <a href="https://github.com/GoogleContainerTools/jib">Jib</a> to build container images. However, Docker is required to build GraalVM native image using the Quarkus native builder image.</p>
-</li>
-<li>
-<p>Optionally, GraalVM 22.2.0 is installed.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Quarkus provides a few extensions to build container images, such as <code>Jib</code>, <code>docker</code>, <code>s2i</code>, and <code>buildpacks</code>. For more information about the Quarkus extensions, see the <a href="https://quarkus.io/guides/container-image">Quarkus documentation</a>.</p>
-</div>
-<div class="paragraph">
-<p>The examples in this document assume that you have the Quarkus tooling installed. For more information about the tooling, see <a href="../getting-started/getting-familiar-with-our-tooling.html" class="xref page">Getting familiar with Serverless Workflow tooling</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="proc-using-example-application"><a class="anchor" href="#proc-using-example-application"></a>Using an example application</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To get started with building workflow images, you can use the <a href="https://github.com/kiegroup/kogito-examples/tree/1.27.x/serverless-workflow-examples/serverless-workflow-greeting-quarkus"><code>serverless-workflow-greeting-quarkus</code></a> example application.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-You can skip the following procedure if you already have a workflow application.
-</td>
-</tr>
-</table>
-</div>
-<div class="olist arabic">
-<div class="title">Procedure</div>
-<ol class="arabic">
-<li>
-<p>Clone the <a href="https://github.com/kiegroup/kogito-examples.git">kogito-examples</a> repository and navigate to the <a href="https://github.com/kiegroup/kogito-examples/tree/1.27.x/serverless-workflow-examples/serverless-workflow-greeting-quarkus"><code>serverless-workflow-greeting-quarkus</code></a> example application.</p>
-<div class="listingblock">
-<div class="title">Clone an example application</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">git clone --branch main https://github.com/kiegroup/kogito-examples.git
-cd kogito-examples/serverless-workflow-examples/serverless-workflow-greeting-quarkus</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>To run the example application, follow the instructions in <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a>.</p>
-</li>
-<li>
-<p>Install the Quarkus command line interface (CLI). For more information, see <a href="https://quarkus.io/guides/cli-tooling">Installing the Quarkus CLI</a>.</p>
-</li>
-<li>
-<p>Add the required Quarkus extension using Quarkus CLI:</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Add the Jib extension</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus extension add 'container-image-jib'</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>After adding the Jib extension, you can verify the newly added dependency in the <code>pom.xml</code> file:</p>
+<p>The Kubernetes Service Discovery allows you to have a static URI that defines a Kubernetes resource that will be used
+to perform HTTP requests. The resource defined in the URI will then be queried in the current Kubernetes cluster and
+translated to a valid URL. The service discovery feature works during the Application startup, it scans all Quarkus
+configuration in search of the following URI pattern. Thus, you should keep in mind that, if the startup time matters to you,
+then you should consider to use a static URL instead. The following sketch demonstrates how this URI is composed:</p>
 </div>
 <div class="listingblock">
-<div class="title">Verify the Jib extension</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-  &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
-  &lt;artifactId&gt;quarkus-container-image-jib&lt;/artifactId&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div>
-</div>
-</div>
-</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="proc-building-serverless-workflow-application"><a class="anchor" href="#proc-building-serverless-workflow-application"></a>Building the workflow application</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>After installing the required tooling, you can start building your workflow application.</p>
-</div>
-<div class="ulist">
-<div class="title">Prerequisites</div>
-<ul>
-<li>
-<p>You have created a Quarkus project.</p>
-</li>
-<li>
-<p>Quarkus CLI is installed.
-For more information about installing the Quarkus CLI, see <a href="https://quarkus.io/guides/cli-tooling#installing-the-cli">Installing the Quarkus CLI</a>.</p>
-</li>
-</ul>
-</div>
-<div class="olist arabic">
-<div class="title">Procedure</div>
-<ol class="arabic">
-<li>
-<p>In a command terminal, navigate to your Quarkus project.</p>
-</li>
-<li>
-<p>To build your workflow application on Quarkus, set the <code>quarkus.container-image.build</code> property value to <code>true</code> and run the following command:</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Build your workflow application</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build -Dquarkus.container-image.build=true</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubernetes:&lt;group&gt;/&lt;version&gt;/&lt;kind&gt;/&lt;namespace&gt;/&lt;resourceName&gt;?&lt;attributeName&gt;=&lt;attributeValue&gt;
+\________/ \_____/ \_______/ \____/ \_________/ \____________/ \______________________________/
+  scheme    group   version   kind   namespace   resourceName   additional resource attributes
+            \____________________/                               \__________________________/
+                     GVK                                           Supported values:
+                                                                   - port-name={PORT_NAME}
+                                                                   - labels=label-name=label-value;other-label=other-value</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The previous command builds your image with name: <code>{system_username}/{project_artifactId}:{project_version}</code>.</p>
-</div>
-<div class="paragraph">
-<p>Optionally, you can set the following properties to specify the image:</p>
+<p>The following scheme values are supported:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>quarkus.container-image.registry</code>: To define the registry address of the image, such as <code>quay.io</code>.</p>
+<p><strong>kubernetes</strong></p>
 </li>
 <li>
-<p><code>quarkus.container-image.group</code>: To define the registry namespace of the image. For example, <code>context/namespace</code> or in case of Kubernetes or OpenShift <code>namespace/project</code>.</p>
+<p><strong>openshift</strong></p>
 </li>
 <li>
-<p><code>quarkus.container-image.name</code>: To override the image name. By default, this property uses artifact ID.</p>
+<p><strong>knative</strong></p>
 </li>
 </ul>
 </div>
-<div class="listingblock">
-<div class="title">Build your workflow application with specific image information</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build -Dquarkus.container-image.build=true \
-    -Dquarkus.container-image.group=kogito \
-    -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
-    -Dquarkus.container-image.tag=1.0 \
-    -Dquarkus.container-image.registry=quay.io</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
 <div class="paragraph">
-<p>The added Jib extension caches the <code>target/lib</code> directory. Based on the size of your project, Jib speeds up the rebuilds.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</li>
-<li>
-<p>You can also push your workflow application to the defined registry. You need to set the <code>quarkus.container-image.push</code> property value to <code>true</code> (default value is <code>false</code>).</p>
-<div class="listingblock">
-<div class="title">Example of pushing the built workflow application to a registry</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build -Dquarkus.container-image.build=true \
-    -Dquarkus.container-image.group=kogito \
-    -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
-    -Dquarkus.container-image.tag=1.0 \
-    -Dquarkus.container-image.registry=quay.io \
-    -Dquarkus.container-image.push=true</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The previous command results in the following container image pushed to <code>quay.io</code>:</p>
-</div>
-<div class="paragraph">
-<p><code>quay.io/kogito/serverless-workflow-greeting-quarkus:1.0</code></p>
-</div>
-</li>
-<li>
-<p>Alternatively, you can create an Apache Maven profile to build the container image, which can be triggered by setting the target profile.</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Example Apache Maven profile</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;profile&gt;
-  &lt;id&gt;build-container&lt;/id&gt;
-  &lt;properties&gt;
-    &lt;quarkus.container-image.build&gt;true&lt;/quarkus.container-image.build&gt;
-    &lt;quarkus.container-image.group&gt;kogito&lt;/quarkus.container-image.group&gt;
-    &lt;quarkus.container-image.name&gt;serverless-workflow-greeting-quarkus&lt;/quarkus.container-image.name&gt;
-    &lt;quarkus.container-image.tag&gt;1.0&lt;/quarkus.container-image.tag&gt;
-    &lt;quarkus.container-image.registry&gt;quay.io&lt;/quarkus.container-image.registry&gt;
-    &lt;quarkus.container-image.push&gt;true&lt;/quarkus.container-image.push&gt;
-  &lt;/properties&gt;
-&lt;/profile&gt;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can activate the created Apache Maven profile using Quarkus CLI:</p>
-</div>
-<div class="listingblock">
-<div class="title">Activate the Apache Maven profile</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell"> quarkus build -- -Pbuild-container</code></pre>
-</div>
-</div>
-</div>
-</div>
-</li>
-</ol>
-</div>
-<div class="sect2">
-<h3 id="proc-building-serverless-workflow-application-using-native-image"><a class="anchor" href="#proc-building-serverless-workflow-application-using-native-image"></a>Building the workflow application using a native image</h3>
-<div class="paragraph">
-<p>When it comes to workflows, a small startup footprint is expected, which can be better when using the native builds to build a workflow application.</p>
+<p>For the Kubernetes GVK, the following resources are currently supported:</p>
 </div>
 <div class="ulist">
-<div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>You have created a Quarkus project.</p>
+<p><strong>v1/service</strong></p>
 </li>
 <li>
-<p>Quarkus CLI is installed.
-For more information about installing the Quarkus CLI, see <a href="https://quarkus.io/guides/cli-tooling">Installing the Quarkus CLI</a>.</p>
+<p><strong>serving.knative.dev/v1/service</strong></p>
+</li>
+<li>
+<p><strong>v1/pod</strong></p>
+</li>
+<li>
+<p><strong>apps/v1/deployment</strong></p>
+</li>
+<li>
+<p><strong>apps.openshift.io/v1/deploymentconfig</strong></p>
+</li>
+<li>
+<p><strong>apps/v1/statefulset</strong></p>
+</li>
+<li>
+<p><strong>route.openshift.io/v1/route</strong></p>
+</li>
+<li>
+<p><strong>networking.k8s.io/v1/ingress</strong></p>
 </li>
 </ul>
-</div>
-<div class="olist arabic">
-<div class="title">Procedure</div>
-<ol class="arabic">
-<li>
-<p>In a command terminal, navigate to your Quarkus project.</p>
-</li>
-<li>
-<p>To build a native image, pass the <code>--native</code> flag using Quarkus CLI:</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Example of building a native image</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build --native -Dquarkus.container-image.build=true \
-    -Dquarkus.container-image.group=kogito \
-    -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
-    -Dquarkus.container-image.tag=1.0-native \
-    -Dquarkus.container-image.registry=quay.io</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The previous command results in the following container image:</p>
-</div>
-<div class="paragraph">
-<p><code>quay.io/kogito/serverless-workflow-greeting-quarkus:1.0-native</code></p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>In case GraalVM is not installed, you can set the <code>-Dquarkus.native.container-build=true</code> system property, which creates a Linux executable.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -622,133 +402,237 @@ For more information about installing the Quarkus CLI, see <a href="https://quar
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-<div class="title">Configure Docker to use the in-cluster (Remote) Docker daemon</div>
 <div class="paragraph">
-<p>When build Container Images using a remote Docker Daemon, i.e. Minikube, you need to use the following system property instead of <code>-Dquarkus.native.container-build=true</code></p>
+<p>The <strong>Kubernetes GVK</strong> (Group, Version and Kind) is <strong>mandatory</strong> and can&#8217;t be empty, otherwise,
+the engine will throw a validation issue and the discovery will not be performed. The last value in the URI
+will always be considered as <strong>Resource Name</strong>.
+The <strong>Namespace</strong> is <strong>optional</strong>. In case of an empty value, the current namespace or context will be used.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_query_parameters"><a class="anchor" href="#_additional_query_parameters"></a>Additional Query Parameters</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Also known as Query String, they are defined in the very same way that we are already used to do with URLs to assign value
+to specific attributes.</p>
+</div>
+<div class="paragraph">
+<p>Two query parameters are available to help the engine to be more precise when querying for the given Kubernetes Resource:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Custom Labels</strong>: Useful to filter services in case there are more than one Service with the same <code>Label Selector</code>
+but exposing different ports. In this case we can instruct the engine that, when more than 1 service is found, it should use the one
+that have the provided label. The label is defined with the following expression, for multiple labels use <code>semicolon</code>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>labels=label-name=namevalue;another-label=another-value</code><br>
+Example:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubernetes:v1/pod/&lt;namespace&gt;/&lt;pod-name&gt;?labels=label-name=test-label</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>With the URI above we will instruct that, if there are more than 1 service exposing the given pod, the label
+<code>label-name=test-label</code> will be used to filter the service. If the label does not exist, the first found service will be used.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Custom port name</strong>: Useful to determine which port to use when there are many ports configured in the target Service or Container.
+It can be configured using the following patter:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>port-name=&lt;PORT_NAME&gt;</code>: the port name to be queried.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuration"><a class="anchor" href="#_configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There is no specific configuration for the Discovery to work properly except by using the expected URI pattern.
+However, the okhttp communication interceptor, which logs the communication between the application and the Kubernetes API is disabled by default.<br>
+If there is a need to debug it, it can be enabled just by setting this application property:</p>
 </div>
 <div class="listingblock">
-<div class="title">System property to use a remote Docker Daemon</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">-Dquarkus.native.remote-container-build=true</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus.log.category."okhttp3.OkHttpClient".level=INFO</code></pre>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_does_it_work"><a class="anchor" href="#_how_does_it_work"></a>How does it work?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>During application startup, the service discovery is performed at the Quarkus <em>STATIC_INIT</em> time.<br>
+First, it scans the Quarkus configuration values and searches for the Kubernetes URI pattern.<br>
+Then if at least one is found, the engine will parse the URI, query the Kubernetes API for the given resource, and override the given property.</p>
+</div>
+<div class="paragraph">
+<p>Suppose we have an application that will consume a resource running on Kubernetes. This resource is a Knative Service that exposes a function that can be discovered with the following URI:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">org.kie.kogito.sw.knative.service=knative:v1/Service/serverless-workflow-greeting-quarkus/greeting-quarkus-cli</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The application property <em>name</em> is not read by the service discovery engine, only property <em>value</em>.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>For more information about native builds, see <a href="https://quarkus.io/guides/building-native-image">Building a native executable</a>.</p>
+<p>Once the application has started, you should be able to see in the logs the Kubernetes Service Discovery into action:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ java -jar target/quarkus-app/quarkus-run.jar
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,&lt; / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2022-08-23 12:21:04,360 DEBUG [org.kie.kog.add.qua.k8s.SWDiscoveryConfigSourceInterceptor] (main) Configuring k8s client...
+2022-08-23 12:21:05,245 INFO  [io.qua.sma.ope.run.OpenApiRecorder] (main) Default CORS properties will be used, please use 'quarkus.http.cors' properties instead
+2022-08-23 12:21:05,420 DEBUG [org.kie.kog.add.qua.k8s.par.KubeURI] (main)  KubeURI successfully parsed: KubeURI{protocol='knative', gvk=GVK{group='', version='v1', kind='service'}, namespace='serverless-workflow-greeting-quarkus', resourceName='greeting-quarkus-cli'}
+2022-08-23 12:21:06,043 INFO  [org.kie.kog.add.qua.k8s.KubeResourceDiscovery] (main) Connected to kubernetes cluster  v1.23.4, current namespace is serverless-workflow-greeting-quarkus. Resource name for discovery is greeting-quarkus-cli
+2022-08-23 12:21:06,045 DEBUG [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Trying to adapt kubernetes client to knative
+2022-08-23 12:21:06,316 DEBUG [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Found Knative endpoint at http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io
+2022-08-23 12:21:06,375 INFO  [org.kie.kog.sw.AppLifecycle] (main) The application is starting
+2022-08-23 12:21:06,382 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (main) Registered Kogito CloudEvent extension
+2022-08-23 12:21:06,460 INFO  [io.quarkus] (main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080
+2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Profile prod activated.
+2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Installed features: [cache, cdi, jackson-jq, kogito-addon-kubernetes-extension, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, kubernetes, kubernetes-client, openshift-client, qute, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-openapi, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx]</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Note that the URI was translated to <code><a href="http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io" class="bare">http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io</a></code> when the application started, and will be used at runtime any time it needs it.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
-</li>
-</ol>
+<div class="sect1">
+<h2 id="_discovery_precedence"><a class="anchor" href="#_discovery_precedence"></a>Discovery Precedence</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Depending on the resource to be discovered, there are some paths to follow, please see the following image for more details:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/cloud/sw-discovery-flow.jpg" alt="sw discovery flow">
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="proc-testing-serverless-workflow-image"><a class="anchor" href="#proc-testing-serverless-workflow-image"></a>Testing your workflow image</h2>
+<h2 id="_startup_time_discovery_enabled_x_disabled"><a class="anchor" href="#_startup_time_discovery_enabled_x_disabled"></a>Startup time: discovery enabled x disabled</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After building your workflow image using Quarkus CLI, you can test the built image.</p>
+<p>As the Service Discovery scans the Quarkus Configurations during the startup, it can cause a small delay as shown below:</p>
 </div>
-<div class="ulist">
-<div class="title">Prerequisites</div>
-<ul>
-<li>
-<p>Latest version of Docker is installed.</p>
-</li>
-</ul>
-</div>
-<div class="olist arabic">
-<div class="title">Procedure</div>
-<ol class="arabic">
-<li>
-<p>Start JVM and native Container Images.</p>
-<div class="openblock">
-<div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset1_example-jvm-image"></a>Example JVM image</p>
+<p><a id="tabset1_service-discovery-enabled"></a>Service Discovery Enabled</p>
 </li>
 <li>
-<p><a id="tabset1_example-native-image"></a>Example native image</p>
+<p><a id="tabset1_service-discovery-disabled"></a>Service Discovery Disabled</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_example-jvm-image">
+<div class="tab-pane" aria-labelledby="tabset1_service-discovery-enabled">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0
-...
-INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final on JVM (powered by Quarkus 2.9.2.Final) started in 1.302s</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset1_example-native-image">
+<div class="tab-pane" aria-labelledby="tabset1_service-discovery-disabled">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0-native
-...
-INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final native (powered by Quarkus 2.9.2.Final) started in 0.039s</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 1.507s. Listening on: http://0.0.0.0:8080</code></pre>
 </div>
 </div>
 </div>
 </div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When using this feature, you need to balance if the delayed startup time is something that your application can afford.<br>
+If the URI pattern is not found in the Application Properties, the discovery will not be triggered. However, the scanning will still be performed anyway. So a very short time will be needed to go through the startup scan.</p>
 </div>
 <div class="paragraph">
-<p>Note that the startup of native image is faster than the JVM image.</p>
+<p>But, you can still fully disable the Kubernetes Service Discovery by excluding the <code>kogito-addons-quarkus-kubernetes</code> library from the Application&#8217;s classpath. It can be done with the following maven exclusions:</p>
 </div>
-</div>
-</div>
-</li>
-<li>
-<p>To invoke the workflow application, execute the following command once the container is started:</p>
-<div class="openblock">
-<div class="content">
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset2_example-request"></a>Example request</p>
-</li>
-<li>
-<p><a id="tabset2_example-response"></a>Example response</p>
-</li>
-</ul>
-</div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset2_example-request">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://localhost:8080/jsongreet</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">&lt;dependency&gt;
+  &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+  &lt;artifactId&gt;kogito-quarkus-serverless-workflow&lt;/artifactId&gt;
+  &lt;exclusions&gt;
+    &lt;exclusion&gt;
+      &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+      &lt;artifactId&gt;kogito-addons-quarkus-kubernetes&lt;/artifactId&gt;
+    &lt;/exclusion&gt;
+    &lt;exclusion&gt;
+      &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+      &lt;artifactId&gt;kogito-addons-quarkus-kubernetes-deployment&lt;/artifactId&gt;
+    &lt;/exclusion&gt;
+  &lt;/exclusions&gt;
+&lt;/dependency&gt;</code></pre>
 </div>
 </div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset2_example-response">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-    "id": "2acf710d-7e4a-481d-925c-dfd85a369987",
-    "workflowdata": {
-        "name": "John",
-        "language": "English",
-        "greeting": "Hello from JSON Workflow, "
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</li>
-</ol>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -758,7 +642,7 @@ INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final nati
 <div class="ulist">
 <ul>
 <li>
-<p><a href="deploying-on-minikube.html" class="xref page">Deploying your Serverless Workflow application on Minikube</a></p>
+<p><a href="../service-orchestration/configuring-openapi-services-endpoints.html" class="xref page">Configuring the OpenAPI services endpoints</a></p>
 </li>
 </ul>
 </div>
