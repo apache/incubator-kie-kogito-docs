@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Kubernetes Service Discovery for Serverless Workflow Application :: Kogito Serverless Workflow Guides</title>
+    <title>Kubernetes service discovery in Serverless Workflow :: Kogito Serverless Workflow Guides</title>
     <meta name="description" content="Explain what is and how the service discovery works">
     <meta name="keywords" content="kogito, workflow, quarkus, serverless, service-discovery, enhanced-service-discovery">
     <meta name="generator" content="Antora 3.0.3">
@@ -241,7 +241,7 @@
     <a class="nav-link" href="deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="kubernetes-service-discovery.html">Kubernetes Service Discovery for Serverless Workflow Application</a>
+    <a class="nav-link" href="kubernetes-service-discovery.html">Kubernetes service discovery in Serverless Workflow</a>
   </li>
 </ul>
   </li>
@@ -307,7 +307,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Cloud</li>
-    <li><a href="kubernetes-service-discovery.html">Kubernetes Service Discovery for Serverless Workflow Application</a></li>
+    <li><a href="kubernetes-service-discovery.html">Kubernetes service discovery in Serverless Workflow</a></li>
   </ul>
 </nav>
 <div class="page-versions">
@@ -327,17 +327,20 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Kubernetes Service Discovery for Serverless Workflow Application</h1>
+<h1 class="page">Kubernetes service discovery in Serverless Workflow</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Kubernetes Service Discovery allows you to have a static URI that defines a Kubernetes resource that will be used
-to perform HTTP requests. The resource defined in the URI will then be queried in the current Kubernetes cluster and
-translated to a valid URL. The service discovery feature works during the Application startup, it scans all Quarkus
-configuration in search of the following URI pattern. Thus, you should keep in mind that, if the startup time matters to you,
-then you should consider to use a static URL instead. The following sketch demonstrates how this URI is composed:</p>
+<p>The Kubernetes service discovery allows you to have a static URI, defining a Kubernetes resource, which is used to perform HTTP requests. The Kubernetes resource defined in the URI is queried in the current Kubernetes cluster and translated in a valid URL.</p>
+</div>
+<div class="paragraph">
+<p>The Kubernetes service discovery feature works during the workflow application startup, in which this feature scans all the Quarkus configuration in search of the URI pattern. Therefore, you must keep in mind that if application startup time matters, then consider to use a static URL instead.</p>
+</div>
+<div class="paragraph">
+<p>Following is the URI pattern in Kubernetes service discovery:</p>
 </div>
 <div class="listingblock">
+<div class="title">URI pattern in Kubernetes service discovery</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubernetes:&lt;group&gt;/&lt;version&gt;/&lt;kind&gt;/&lt;namespace&gt;/&lt;resourceName&gt;?&lt;attributeName&gt;=&lt;attributeValue&gt;
 \________/ \_____/ \_______/ \____/ \_________/ \____________/ \______________________________/
@@ -349,49 +352,49 @@ then you should consider to use a static URL instead. The following sketch demon
 </div>
 </div>
 <div class="paragraph">
-<p>The following scheme values are supported:</p>
+<p>The following scheme values are supported in the URI pattern:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>kubernetes</strong></p>
+<p><code>kubernetes</code></p>
 </li>
 <li>
-<p><strong>openshift</strong></p>
+<p><code>openshift</code></p>
 </li>
 <li>
-<p><strong>knative</strong></p>
+<p><code>knative</code></p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>For the Kubernetes GVK, the following resources are currently supported:</p>
+<p>The following resources are supported for the Kubernetes GVK (Group, Version, and Kind):</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>v1/service</strong></p>
+<p><code>v1/service</code></p>
 </li>
 <li>
-<p><strong>serving.knative.dev/v1/service</strong></p>
+<p><code>serving.knative.dev/v1/service</code></p>
 </li>
 <li>
-<p><strong>v1/pod</strong></p>
+<p><code>v1/pod</code></p>
 </li>
 <li>
-<p><strong>apps/v1/deployment</strong></p>
+<p><code>apps/v1/deployment</code></p>
 </li>
 <li>
-<p><strong>apps.openshift.io/v1/deploymentconfig</strong></p>
+<p><code>apps.openshift.io/v1/deploymentconfig</code></p>
 </li>
 <li>
-<p><strong>apps/v1/statefulset</strong></p>
+<p><code>apps/v1/statefulset</code></p>
 </li>
 <li>
-<p><strong>route.openshift.io/v1/route</strong></p>
+<p><code>route.openshift.io/v1/route</code></p>
 </li>
 <li>
-<p><strong>networking.k8s.io/v1/ingress</strong></p>
+<p><code>networking.k8s.io/v1/ingress</code></p>
 </li>
 </ul>
 </div>
@@ -403,79 +406,73 @@ then you should consider to use a static URL instead. The following sketch demon
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The <strong>Kubernetes GVK</strong> (Group, Version and Kind) is <strong>mandatory</strong> and can&#8217;t be empty, otherwise,
-the engine will throw a validation issue and the discovery will not be performed. The last value in the URI
-will always be considered as <strong>Resource Name</strong>.
-The <strong>Namespace</strong> is <strong>optional</strong>. In case of an empty value, the current namespace or context will be used.</p>
+<p>The Kubernetes GVK is mandatory and cannot be empty. In case the Kubernetes GVK is empty, the engine throws a validation issue and discovery is not performed. The last value in the URI is always considered as resource name.</p>
+</div>
+<div class="paragraph">
+<p>The <code>namespace</code> in the URI is optional, however, if <code>namespace</code> contains an empty value, the current namespace or context is used.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_additional_query_parameters"><a class="anchor" href="#_additional_query_parameters"></a>Additional Query Parameters</h2>
-<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Query parameters in URI</dt>
+<dd>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Also known as Query String, they are defined in the very same way that we are already used to do with URLs to assign value
-to specific attributes.</p>
+<p>Also known as query string. The query parameters are defined the similar way with URLs to assign value to specific attributes.</p>
 </div>
 <div class="paragraph">
-<p>Two query parameters are available to help the engine to be more precise when querying for the given Kubernetes Resource:</p>
+<p>The following query parameters help the engine to be more precise when querying for a given Kubernetes resource:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Custom Labels</strong>: Useful to filter services in case there are more than one Service with the same <code>Label Selector</code>
-but exposing different ports. In this case we can instruct the engine that, when more than 1 service is found, it should use the one
-that have the provided label. The label is defined with the following expression, for multiple labels use <code>semicolon</code>:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>labels=label-name=namevalue;another-label=another-value</code><br>
-Example:</p>
+<p><strong>Custom labels</strong>: The custom labels are used to filter services in case there are more than one service with the same label selector but exposing different ports. In this case, you can instruct the engine that if more than one service is found, then the engine must use the service containing the provided label.</p>
+<div class="paragraph">
+<p>The label is defined with the following expression and in case of multiple labels, you can use semicolon (;):</p>
+</div>
+<div class="paragraph">
+<p><code>labels=label-name=namevalue;another-label=another-value</code></p>
+</div>
 <div class="listingblock">
+<div class="title">Example label definition in URI</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubernetes:v1/pod/&lt;namespace&gt;/&lt;pod-name&gt;?labels=label-name=test-label</code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>With the URI above we will instruct that, if there are more than 1 service exposing the given pod, the label
-<code>label-name=test-label</code> will be used to filter the service. If the label does not exist, the first found service will be used.</p>
+<div class="paragraph">
+<p>Using the previous URI example, if there are more than one service exposing the given pod, the <code>label-name=test-label</code> label is used to filter the service. If the label does not exist, the first found service is used.</p>
+</div>
 </li>
-</ul>
+<li>
+<p><strong>Custom port name</strong>: The custom port name is used to determine which port to use when multiple ports are configured in the target service or container. You can configure the port name to be queried using the following pattern:</p>
+<div class="paragraph">
+<p><code>port-name=&lt;PORT_NAME&gt;</code></p>
 </div>
 </li>
 </ul>
 </div>
-</li>
-<li>
-<p><strong>Custom port name</strong>: Useful to determine which port to use when there are many ports configured in the target Service or Container.
-It can be configured using the following patter:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>port-name=&lt;PORT_NAME&gt;</code>: the port name to be queried.</p>
-</li>
-</ul>
 </div>
-</li>
-</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_configuration"><a class="anchor" href="#_configuration"></a>Configuration</h2>
+<h2 id="con-kubernetes-service-doscovery-configuration"><a class="anchor" href="#con-kubernetes-service-doscovery-configuration"></a>Configuration in Kubernetes service discovery</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There is no specific configuration for the Discovery to work properly except by using the expected URI pattern.
-However, the okhttp communication interceptor, which logs the communication between the application and the Kubernetes API is disabled by default.<br>
-If there is a need to debug it, it can be enabled just by setting this application property:</p>
+<p>There is no specific configuration required for the Kubernetes service discovery except by using the expected URI pattern. However, the <code>okhttp</code> communication interceptor, which logs the communication between the application and the Kubernetes API is disabled by default.</p>
+</div>
+<div class="paragraph">
+<p>You can enable the <code>okhttp</code> communication interceptor if there is a need to debug the communication between the client and the Kubernetes API by setting the following application property:</p>
 </div>
 <div class="listingblock">
+<div class="title">Application property to enable <code>okhttp</code> communication interceptor</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus.log.category."okhttp3.OkHttpClient".level=INFO</code></pre>
 </div>
@@ -483,17 +480,29 @@ If there is a need to debug it, it can be enabled just by setting this applicati
 </div>
 </div>
 <div class="sect1">
-<h2 id="_how_does_it_work"><a class="anchor" href="#_how_does_it_work"></a>How does it work?</h2>
+<h2 id="con-precedence-kubernetes-service-discovery"><a class="anchor" href="#con-precedence-kubernetes-service-discovery"></a>Precedence in Kubernetes service discovery</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>During application startup, the service discovery is performed at the Quarkus <em>STATIC_INIT</em> time.<br>
-First, it scans the Quarkus configuration values and searches for the Kubernetes URI pattern.<br>
-Then if at least one is found, the engine will parse the URI, query the Kubernetes API for the given resource, and override the given property.</p>
+<p>Based on the resource to be discovered, the Kubernetes service discovery follows specific paths as shown in the following figure:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/cloud/sw-discovery-flow.jpg" alt="sw discovery flow">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ref-example-kubernetes-service-discovery"><a class="anchor" href="#ref-example-kubernetes-service-discovery"></a>Example of Kubernetes service discovery in Serverless Workflow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Kubernetes service discovery is performed at the <em>STATIC_INIT</em> time of Quarkus during the workflow application startup. First, the service discovery scans the Quarkus configuration values and searches for the Kubernetes URI pattern. If the URI pattern is found, the engine parses the URI, queries the Kubernetes API searching for the given resource, and overrides the given application property.</p>
 </div>
 <div class="paragraph">
-<p>Suppose we have an application that will consume a resource running on Kubernetes. This resource is a Knative Service that exposes a function that can be discovered with the following URI:</p>
+<p>For example, consider an application that consumes a resource running on Kubernetes. This resource is a Knative service that exposes a function, which can be discovered using the following URI:</p>
 </div>
 <div class="listingblock">
+<div class="title">Example URI</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">org.kie.kogito.sw.knative.service=knative:v1/Service/serverless-workflow-greeting-quarkus/greeting-quarkus-cli</code></pre>
 </div>
@@ -506,16 +515,17 @@ Then if at least one is found, the engine will parse the URI, query the Kubernet
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The application property <em>name</em> is not read by the service discovery engine, only property <em>value</em>.</p>
+<p>The service discovery engine does not read the application property <code>name</code>, but only <code>value</code>.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Once the application has started, you should be able to see in the logs the Kubernetes Service Discovery into action:</p>
+<p>Once the workflow application is started, you can see the Kubernetes service discovery into action in the logs:</p>
 </div>
 <div class="listingblock">
+<div class="title">Example logs</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ java -jar target/quarkus-app/quarkus-run.jar
 __  ____  __  _____   ___  __ ____  ______
@@ -543,53 +553,35 @@ __  ____  __  _____   ___  __ ____  ______
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Note that the URI was translated to <code><a href="http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io" class="bare">http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io</a></code> when the application started, and will be used at runtime any time it needs it.</p>
+<p>In the previous example, the URI is translated to <code><a href="http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io" class="bare">http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io</a></code> when the application started. The translated URI is used at runtime, when needed.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_discovery_precedence"><a class="anchor" href="#_discovery_precedence"></a>Discovery Precedence</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Depending on the resource to be discovered, there are some paths to follow, please see the following image for more details:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../_images/cloud/sw-discovery-flow.jpg" alt="sw discovery flow">
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_startup_time_discovery_enabled_x_disabled"><a class="anchor" href="#_startup_time_discovery_enabled_x_disabled"></a>Startup time: discovery enabled x disabled</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>As the Service Discovery scans the Quarkus Configurations during the startup, it can cause a small delay as shown below:</p>
+<p>The Kubernetes service discovery scans the Quarkus configuration during the startup, which can also cause small delay as follows:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset1_service-discovery-enabled"></a>Service Discovery Enabled</p>
+<p><a id="tabset1_kubernetes-service-discovery-is-enabled"></a>Kubernetes service discovery is enabled</p>
 </li>
 <li>
-<p><a id="tabset1_service-discovery-disabled"></a>Service Discovery Disabled</p>
+<p><a id="tabset1_kubernetes-service-discovery-is-disabled"></a>Kubernetes service discovery is disabled</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_service-discovery-enabled">
+<div class="tab-pane" aria-labelledby="tabset1_kubernetes-service-discovery-is-enabled">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset1_service-discovery-disabled">
+<div class="tab-pane" aria-labelledby="tabset1_kubernetes-service-discovery-is-disabled">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 1.507s. Listening on: http://0.0.0.0:8080</code></pre>
@@ -606,13 +598,16 @@ __  ____  __  _____   ___  __ ____  ______
 </td>
 <td class="content">
 <div class="paragraph">
-<p>When using this feature, you need to balance if the delayed startup time is something that your application can afford.<br>
-If the URI pattern is not found in the Application Properties, the discovery will not be triggered. However, the scanning will still be performed anyway. So a very short time will be needed to go through the startup scan.</p>
+<p>When using the Kubernetes service discovery feature, you need to balance if your application can afford the delayed startup time.</p>
 </div>
 <div class="paragraph">
-<p>But, you can still fully disable the Kubernetes Service Discovery by excluding the <code>kogito-addons-quarkus-kubernetes</code> library from the Application&#8217;s classpath. It can be done with the following maven exclusions:</p>
+<p>If the URI pattern is not found in the application properties, then discovery is not triggered. However, the scanning is performed anyway. Therefore, a short time is required to go through the startup scan.</p>
+</div>
+<div class="paragraph">
+<p>You can disable the Kubernetes service discovery by excluding the <code>kogito-addons-quarkus-kubernetes</code> library from the classpath of the application as shown in the following Maven exclusions:</p>
 </div>
 <div class="listingblock">
+<div class="title">Example Maven exclusions</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">&lt;dependency&gt;
   &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
