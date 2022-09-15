@@ -23,7 +23,8 @@ Callback state can be used when you need to publish an event to trigger an exter
 
 Since the callback event halts the execution util the event is consumed, you can define an eventTimeout for it, and in case the event does not arrive in the defined duration time, the workflow continues the execution moving to the next state defined in the transition.
 
-.Callback state example with timeout
+[#callback-state]
+.Example of callback state with timeout
 [source,json]
 ----
 {
@@ -56,7 +57,8 @@ Since the callback event halts the execution util the event is consumed, you can
 
 Switch states can be defined with link:{spec_doc_url}#switch-state-event-conditions[eventConditions] property, where the workflow execution waits to make a decision depending on the events to be consumed and matched, defined through link:{spec_doc_url}#event-definition[event definition]. In this situation, you can define an event timeout, that controls the maximum time to wait for an event to match the conditions, if this time is expired, the workflow moves to the state defined in the `defaultCondition` property in the switch state.
 
-.Callback state example with timeout
+[#switch-state]
+.Example of switch state with timeout
 [source,json]
 ----
 {
@@ -98,7 +100,7 @@ The main goal of the Jobs Service is to work with only active jobs. The Jobs Ser
 
 An important configuration aspect of job service is the persistence mechanism, where all job information is stored in a database that makes this information durable upon service restarts and guarantees no information is lost.
 
-==== Postgre SQL
+==== PostgreSQL
 
 Using PostgreSQL is the recommended database to be used with job service where it is already configured with Flyway for the schema creation, in this way all tables are created by the service, in case you need to externally control the database schema, you can check the SQL scripts in (link) and apply them.
 You need to set the proper configuration parameters when starting job service. The example covers running PostgreSQL as a Kubernetes deployment but you can run it the way it fits in your environment, the important part is to set all the configuration parameters points to your running instance of PostgreSQL.
@@ -143,15 +145,16 @@ mp.messaging.outgoing.kogito-job-service-job-request-events.method=POST
 
 == Timeout showcase example
 
-In this example you can see a complete architecture, containing a serverless workflow application with timeouts configured alongside Job service running on Knative.
+In the link:{kogito_sw_examples_url}/serverless-workflow-timeouts-showcase[serverless-workflow-timeouts-showcase] you can see a complete architecture, containing a serverless workflow application with timeouts configured alongside Job service running on Knative.
 
-(architecture Image)
-
-There are two workflows to showcase timeouts usage: Callback and Switch states.
+There are two workflows to showcase timeouts usage: `Callback` and `Switch` states.
 
 Callback
 
 It is a simple workflow where once the execution reaches the callback state it waits for the event `callbackEvent`to be received and continue the execution.
+
+.Callback timeout workflow
+image::core/callback-state-timeouts.svg[]
 
 .Callback event
 [source, json]
@@ -164,74 +167,41 @@ It is a simple workflow where once the execution reaches the callback state it w
 ----
 
 A timeout is configured with a maximum time 30 seconds to be waited by the workflow to receive the callbackEvent, in case it does not arrive in time, the execution moves, and the eventData variable remains null.
+See the <<callback-state, callback state definition>>.
 
-.Callback state example with timeout
-[source, json]
-----
-{
-"name": "CallbackState",
-"type": "callback",
-"action": {
-"name": "callbackAction",
-"functionRef": {
-"refName": "systemOut",
-"arguments": {
-"message": "${\"callback-state-timeouts: \" + $WORKFLOW.instanceId + \" has executed the callbackFunction.\"}"
-}
-}
-},
-"eventRef": "callbackEvent",
-"transition": "CheckEventArrival",
-"timeouts": {
-"eventTimeout": "PT30S"
-}
-}
-----
+
+.Callback timeout workflow
+image::core/switch-state-timeouts.svg[]
 
 === Switch
 
-The switch example is similar to the callback but once the execution reaches the state, it waits for once of the two configured events, visaDeniedEvent or visaApprovedEvent, to be consumed. If any of the events is consumed before the configured timeout, it workflow move to the next state defined in the transition.
-If none of the events arrive before 30 seconds of timeout, the workflow then moves to the default transition state.
+The switch example is similar to the callback but once the execution reaches the state, it waits for once of the two configured events, `visaDeniedEvent` or `visaApprovedEvent`, to be consumed, see the <<switch-state, switch state definition>>.
+
+Whenever one of the events is consumed, before the configured timeout, the workflow execution moves to the next state defined in the `transition`.
+
+If none of the events arrive before 30 seconds of timeout, the workflow then moves to the state defined in `defaultCondition' transition.
 
 (image)
 
-.Callback state example with timeout
-[source, json]
-----
-{
-"name": "ChooseOnEvent",
-"type": "switch",
-"eventConditions": [
-{
-"eventRef": "visaApprovedEvent",
-"transition": "ApprovedVisa"
-},
-{
-"eventRef": "visaDeniedEvent",
-"transition": "DeniedVisa"
-}
-],
-"defaultCondition": {
-"transition": "HandleNoVisaDecision"
-},
-"timeouts": {
-"eventTimeout": "PT30S"
-}
-}
-----
-
 ==== Running the example
 
-To run the example you need to have a kubernetes or Openshift cluster running with Knative configured. In the example minikube is being used you can follow the steps described in the example's readme.
+In order to run the example you need to have a kubernetes or Openshift cluster running with Knative configured. In the example minikube is being used you can follow the steps described in the example's link:{kogito_sw_examples_url}/serverless-workflow-timeouts-showcase[readme].
+
 All the descriptor files used to deploy the example infrastructure are present in the kubernetes folder, and for the workflow application, the descriptors are placed on the target/kubernetes, generated after the build.
+
+The diagram below describes how is the architecture of the example to be deployed on kubernetes and Knative.
+
+.Knative Workflow with Job service architecture
+image::core/jobs-service-knative-architecture.png[]
 
 ==== Database
 
-The workflow application and job service uses a postgreSQL instance as the persistence backend to store information about the workflow instances and jobs, respectively.
+The workflow application and job service uses PostgreSQL as the persistence backend to store information about the workflow instances and jobs, respectively.
+In the example you can deploy a single database instance to be used on both, in a production environment is recommended to have independent database instances.
 
-To run PostgreSQL you need to apply the following on the cluster
+To run PostgreSQL you need to apply the following on the cluster:
 
-.Callback state example with timeout
+.Deploying the database
 [source, shell]
 ----
 kubectl apply -f kubernetes/timeouts-showcase-database.yml
@@ -246,7 +216,7 @@ service/timeouts-showcase-database created
 ----
 
 ==== Job Service
-.Callback state example with timeout
+.Deploying Job Service
 [source, shell]
 ----
 kubectl apply -f kubernetes/jobs-service-postgresql.yml
@@ -264,7 +234,15 @@ sinkbinding.sources.knative.dev/jobs-service-postgresql-sb created
 
 ==== Timeout showcase workflow
 
-.Callback state example with timeout
+You need to build the workflow with the `knative` maven profile, then the descriptor files are generated under the `target/kubernetes` folder, and the image is pushed in the container registry.
+
+.Building the timeout workflow showcase for knative
+[source, shell]
+----
+mvn clean install -Pknative
+----
+
+.Deploying the timeout workflow showcase in knative
 [source, shell]
 ----
 kubectl apply -f target/kubernetes/knative.yml
@@ -282,27 +260,42 @@ trigger.eventing.knative.dev/callback-event-type-trigger-timeouts-showcase creat
 sinkbinding.sources.knative.dev/sb-timeouts-showcase created
 ----
 
-==== Creating a workflow
+==== Creating a workflow instance
 
-Getting the service URL
+To create a workflow you can interact with the workflow using the provided REST APIs, in the example provide a test Web UI to make it easy to test.
 
-.Callback state example with timeout
+First, you need to get the service URL on the cluster.
+
+.Getting the workflow service URL on the cluster
 [source, shell]
 ----
 kn service list | grep timeouts-showcase
 ----
 
-==== Creating a workflow instance
-
+.Service URL in the response, similar to this.
+[source, shell]
+----
+NAME                      URL                                                             LATEST                          AGE     CONDITIONS   READY   REASON
+timeouts-showcase         http://timeouts-showcase.default.10.105.86.217.sslip.io         timeouts-showcase-00001         3m50s   3 OK / 3     True
+----
 
 === Using the show UI
 
+The example Web UI is handy to interact with the workflow, you just need to open in the browser the URL you got from the previous step.
+
+.Timeout workflow showcase UI
+image::core/timeout-switch-wokflow-ui.png[]
+
+You can create new workflow instances and interact with them to complete, or simply wait the timeout to be triggered to check it working.
+More details on the link:{kogito_sw_examples_url}/serverless-workflow-timeouts-showcase#timeouts-showcase-ui[readme].
 
 === Using REST APIs
 
+You can test the workflows using the REST APIs, in fact they are the same used by the Web UI in both workflows.
+
 * Callback
 
-.Callback state example with timeout
+.Creating a callback workflow with timeout
 [source, shell]
 ----
 curl -X 'POST' \
@@ -316,7 +309,7 @@ curl -X 'POST' \
 
 * Switch
 
-.Callback state example with timeout
+.Creating a Switch workflow with timeout
 [source, shell]
 ----
 curl -X 'POST' \
@@ -328,9 +321,9 @@ curl -X 'POST' \
 }'
 ----
 
-* Checking whether the instance was created
+* Checking whether the workflow instance was created
 
-.Callback state example with timeout
+.Getting the created workflow instance
 [source, shell]
 ----
 curl -X 'GET' 'http://timeouts-showcase.default.10.105.86.217.sslip.io/switch_state_timeouts'
@@ -338,7 +331,7 @@ curl -X 'GET' 'http://timeouts-showcase.default.10.105.86.217.sslip.io/switch_st
 
 The command will produce an output like this, which indicates that the process is waiting for an event to arrive.
 
-.Callback state example with timeout
+.Response with the created instance
 [source, shell]
 ----
 [{"id":"2e8e1930-9bae-4d60-b364-6fbd61128f51","workflowdata":{}}]
@@ -346,9 +339,11 @@ The command will produce an output like this, which indicates that the process i
 
 * Checking the timeout was executed after 30 seconds:
 
-.Callback state example with timeout
+.Getting the created workflow instance after 30 seconds
 [source, shell]
 ----
 curl -X 'GET' 'http://timeouts-showcase.default.10.105.86.217.sslip.io/switch_state_timeouts'
 []
 ----
+
+As you can see there are no active workflow instances, indicating the timout was executed and the created instance was completed.
