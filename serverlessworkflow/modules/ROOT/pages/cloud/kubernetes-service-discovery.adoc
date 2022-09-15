@@ -8,7 +8,9 @@
 
 The Kubernetes service discovery allows you to have a static URI, defining a Kubernetes resource, which is used to perform HTTP requests. The Kubernetes resource defined in the URI is queried in the current Kubernetes cluster and translated in a valid URL. 
 
-The Kubernetes service discovery feature works during the workflow application startup, in which this feature scans all the Quarkus configuration in search of the following URI pattern:
+The Kubernetes service discovery feature works during the workflow application startup, in which this feature scans all the Quarkus configuration in search of the URI pattern. Therefore, you must keep in mind that if application startup time matters, then consider to use a static URL instead.
+
+Following is the URI pattern in Kubernetes service discovery:
 
 .URI pattern in Kubernetes service discovery
 [source,shell]
@@ -21,8 +23,6 @@ kubernetes:<group>/<version>/<kind>/<namespace>/<resourceName>?<attributeName>=<
                                                                    - port-name={PORT_NAME}
                                                                    - labels=label-name=label-value;other-label=other-value
 ----
-
-Therefore, you must keep in mind that if application startup time matters, then consider to use a static URL instead. 
 
 The following scheme values are supported in the URI pattern:
 
@@ -51,7 +51,7 @@ The `namespace` in the URI is optional, however, if `namespace` contains an empt
 Query parameters in URI::
 +
 --
-The query parameters are also known as query string. The query parameters are defined the similar way with URLs to assign value to specific attributes.
+Also known as query string. The query parameters are defined the similar way with URLs to assign value to specific attributes.
 
 The following query parameters help the engine to be more precise when querying for a given Kubernetes resource:
 
@@ -74,24 +74,30 @@ Using the previous URI example, if there are more than one service exposing the 
 `port-name=<PORT_NAME>`
 --
 
-Based on the resource to be discovered, the Kubernetes service discovery follows specific paths as shown in the following figure:
-
-image::cloud/sw-discovery-flow.jpg[]
+[[con-kubernetes-service-doscovery-configuration]]
+== Configuration in Kubernetes service discovery
 
 There is no specific configuration required for the Kubernetes service discovery except by using the expected URI pattern. However, the `okhttp` communication interceptor, which logs the communication between the application and the Kubernetes API is disabled by default.
 
-You can enable the `okhttp` communication interceptor if there is a need to debug it by setting the following application property:
+You can enable the `okhttp` communication interceptor if there is a need to debug the communication between the client and the Kubernetes API by setting the following application property:
 
-.Property to enable `okhttp` communication interceptor
+.Application property to enable `okhttp` communication interceptor
 [source,shell]
 ----
 quarkus.log.category."okhttp3.OkHttpClient".level=INFO
 ----
 
+[[con-precedence-kubernetes-service-discovery]]
+== Precedence in Kubernetes service discovery
+
+Based on the resource to be discovered, the Kubernetes service discovery follows specific paths as shown in the following figure:
+
+image::cloud/sw-discovery-flow.jpg[]
+
 [[ref-example-kubernetes-service-discovery]]
 == Example of Kubernetes service discovery in {context}
 
-The Kubernetes service discovery is performed at the _STATIC_INIT_ time of Quarkus during the workflow application startup. First, the service discovery scans the Quarkus configuration values and searches for the Kubernetes URI pattern. If the URI pattern is found, the engine parses the URI, queries the Kubernetes API for the given resource, and overrides the given property.
+The Kubernetes service discovery is performed at the _STATIC_INIT_ time of Quarkus during the workflow application startup. First, the service discovery scans the Quarkus configuration values and searches for the Kubernetes URI pattern. If the URI pattern is found, the engine parses the URI, queries the Kubernetes API searching for the given resource, and overrides the given application property.
 
 For example, consider an application that consumes a resource running on Kubernetes. This resource is a Knative service that exposes a function, which can be discovered using the following URI:
 
