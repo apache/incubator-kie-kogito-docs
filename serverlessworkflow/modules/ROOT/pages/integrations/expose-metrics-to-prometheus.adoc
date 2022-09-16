@@ -1,1 +1,125 @@
-//= Exposing the workflow base metrics to Prometheus
+Exposing the workflow base metrics to Prometheus
+================================================
+11-03-2022
+:compat-mode!:
+// Metadata:
+:description: Exposing the workflow base metrics to Prometheus
+:keywords: kogito, workflow, quarkus, metrics, prometheus
+// links
+:openshift_micrometer_url: https://quarkus.io/blog/micrometer-prometheus-openshift
+:dashbuilder_url: https://www.dashbuilder.org/
+:grafana_url: https://grafana.com/
+:quarkus_micrometer_url: https://quarkus.io/guides/micrometer
+:openshift_monitoring_url: https://docs.openshift.com/container-platform/4.11/monitoring/enabling-monitoring-for-user-defined-projects.html
+:prometheus_operator_url: https://prometheus-operator.dev/
+:prometheus_operator_getting_started_guide: https://prometheus.io/docs/prometheus/latest/getting_started/#configure-prometheus-to-monitor-the-sample-targets
+
+Kogito Serverless Workflow generate metrics that can be consumed by Prometheus and visualized by dashboard tools such as link:{openshift_micrometer_url}[Openshift], link:{dashbuilder_url}[Dashbuilder] and link:{grafana_url}[Grafana].
+
+This document describes how to enable and expose metrics to Prometheus.
+
+== Enabling metrics
+
+For adding metrics to your Serverless Workflow application just add the dependency `org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus` to your Maven POM file and, after rebuild, the metrics will be available at `/q/metrics` endpoint.
+
+.Dependency to be added to the `pom.xml` file to enable metrics
+[source,xml]
+----
+<dependency>
+    <groupId>org.kie.kogito</groupId>
+    <artifactId>kogito-addons-quarkus-monitoring-prometheus</artifactId>
+</dependency>
+----
+
+== Consuming metrics from Openshift
+
+If your Serverless Workflow server is running on Openshift you can use it to monitor your application.
+
+To consume metrics from Openshift you must first link:{openshift_monitoring_url}[enable monitoring for user-defined projects]. It will install the Prometheus operator automatically for you. Then you need to create a service monitor. Here's a sample configuration:
+
+
+.service-monitor.yaml:
+[source,yaml]
+----
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: prometheus-app-monitor
+  name: prometheus-app-monitor
+  namespace: my-project
+spec:
+  endpoints:
+  - interval: 30s
+    targetPort: 8080
+    path: /q/metrics
+    scheme: http
+  selector:
+    matchLabels:
+      app-with-metrics: 'serverless-workflow-app'
+----
+
+Then apply it:
+
+[source,shell]
+----
+oc apply -f service-monitor.yaml
+----
+
+What we have just done is to create a Service Monitor named `prometheus-app-monitor` that will select apps with the label selector `app-with-metrics: serverless-workflow-app`, make sure that your Serverless Workflow application has this label. Then, Prometheus will call the endpoint `/q/metrics` for all the services labeled with  `app-with-metrics: serverless-workflow-app` every 30 seconds. For more details check the link:{openshift_micrometer_url}[Monitoring Quarkus apps using Micrometer and Prometheus into OpenShift] guide.
+
+== Consuming metrics from Kubernetes
+
+Kubernetes is similar to Openshift but you will need to install manually the link:{prometheus_operator_url}[Prometheus Operator project].
+
+
+== Consuming metrics from Prometheus
+
+Prometheus can also scrap directly metrics from a Kogito Serverless Workflow application using the following configuration:
+
+.Prometheus Configuration
+[source,yaml]
+----
+- job_name: 'Serverless Workflow App'
+    scrape_interval: 2s
+    metrics_path: /q/metrics
+    static_configs:
+        - targets: ['localhost:8080']
+----
+
+You can edit `job_name` and `scrap_interval` with your own values. Make sure that `targets` under `static_configs` match your Serverless Workflow application location.
+
+For more information check the {prometheus_operator_getting_started_guide}[Prometheus Getting Started] guide.
+
+== Understanding Kogito Serverless Workflow Metrics
+
+For Serverless Workflow we will be looking into the following metrics:
+
+* *kogito_process_instance_completed_total*: Completed Workflows
+* *kogito_process_instance_started_total*: Started Workflows
+* *kogito_process_instance_running_total*: Running Workflows
+* *kogito_process_instance_duration_seconds_sum*: Workflows Total Duration 
+
+[NOTE]
+====
+Internally, Workflows are referenced as process hence the fields `processId` and `processName` are actually the workflow id and name.
+====
+
+
+Each of these metrics will have a label for the specific workflow id. See how the metric `kogito_process_instance_completed_total` for workflows `jsongreet`, `yamlgreet` and `foreach` looks like:
+
+[source,yaml]
+----
+# HELP kogito_process_instance_completed_total Completed Process Instances
+# TYPE kogito_process_instance_completed_total counter
+kogito_process_instance_completed_total{app_id="default-process-monitoring-listener",artifactId="kogito-serverless-workflow-demo",node_name="2",process_id="jsongreet",version="1.0.0-SNAPSHOT",} 154.0
+kogito_process_instance_completed_total{app_id="default-process-monitoring-listener",artifactId="kogito-serverless-workflow-demo",node_name="2",process_id="yamlgreet",version="1.0.0-SNAPSHOT",} 218.0
+kogito_process_instance_completed_total{app_id="default-process-monitoring-listener",artifactId="kogito-serverless-workflow-demo",node_name="2",process_id="foreach",version="1.0.0-SNAPSHOT",} 162.0
+----
+
+[NOTE]
+====
+Kogito internally uses Quarkus Micrometer extension, which means that it also expose some built-in metrics. You can disable Micrometer metrics as described in link:{quarkus_micrometer_url}[Quarkus Micrometer Guide].
+====
+
+include::../../pages/_common-content/report-issue.adoc[]
