@@ -1,0 +1,48 @@
+:_content-type: PROCEDURE
+:description: Building your workflow application
+:keywords: build, serverless, workflow, application
+:navtitle: Building your workflow application
+// :page-aliases:
+
+[id="proc-building-application_{context}"]
+= Building your workflow application
+
+ifeval::["{kogito_version_redhat}" != ""]
+include::../../pages/_common-content/downstream-post-create-project.adoc[]
+endif::[]
+
+. To verify that project is created, compile the project using the following command:
++
+[tabs]
+====
+Quarkus CLI::
++
+--
+.Compile your project using Quarkus CLI
+[source,shell]
+----
+quarkus build
+----
+--
+Apache Maven::
++
+--
+.Compile your project using Apache Maven
+[source,shell]
+----
+mvn clean package
+----
+--
+Knative workflow CLI::
++
+--
+.Build your project and generate a local image called `dev.local/serverless-workflow-hello-world:latest`
+[source,shell]
+----
+kn workflow build --image dev.local/serverless-workflow-hello-world --verbose
+----
+The `--verbose` flag is used to display the output of the build command. This flag is optional.
+
+For more information about Knative workflow CLI, see xref:tooling/kn-plugin-workflow-overview.adoc[{context} plug-in for Knative CLI].
+--
+====
