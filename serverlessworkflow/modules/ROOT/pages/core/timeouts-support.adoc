@@ -4,9 +4,13 @@
 :description: Using timeouts in {context}
 :keywords: kogito, workflow, serverless, timeout, timer, expiration
 
-When defining a state in a workflow you can set a timeout which is a property used to control the maximum time this state should take to be complete. In case of the time is elapsed and overdue, this state is considered timed-out, and the workflow moves to the next stated defined in the transition. The properties that you can use when defining a state timeout are described in the link:{spec_doc_url}#event-timeout-definition[Serverless Workflow specification].
+When you define a state in a serverless workflow, you can use the `timeouts` property to configure the maximum time to complete this state.
+When that time is overdue, the state is considered timed-out, and the engine continues the execution from this state. The execution flow depends on the state type, for instance,
+a transition to a next state.
+All the properties you can use to configure state timeouts are described in the link:{spec_doc_url}#event-timeout-definition[Serverless Workflow specification].
 
-The event-based states can define a property `eventTimeout` which uses ISO 8601 data and time format to specify a duration of time, for instance, you can if you can represent 15 minutes like `PT15M`,  to represent 15 minutes or 2 days, 3 hours and 4 minutes `P2DT3H4M`.
+Event-based states can use the sub-property `eventTimeout` to configure the maximum time to wait for an event to arrive.
+This property uses ISO 8601 data and time format to specify a duration of time, for instance, you can if you can represent 15 minutes like `PT15M`,  to represent 15 minutes or 2 days, 3 hours and 4 minutes `P2DT3H4M`.
 
 [NOTE]
 ====
@@ -15,13 +19,15 @@ Event timeouts can not be defined as a specific point in time, but it should be 
 
 [IMPORTANT]
 ====
-{product_name} currently, supports timeout only for *Callback* and *Switch* states with events, other states are going to support timeouts in the future releases.
+{product_name} currently, has timeouts support only for *Callback* and *Switch* states with events. Other states will be included in the future releases.
 ====
 
 === Callback state timeout
-Callback state can be used when you need to publish an event to trigger an external service and waits an asynchronous response as an event, the callback. Once this event is consumed, the workflow continues the execution to the next state defined in the transition property. See more on xref:eventing/working-with-callbacks.adoc[Callback state in {context}].
+Callback state can be used when you need to execute an action, in general to call an external service, and wait for an asynchronous response in form of an event, the callback.
 
-Since the callback event halts the execution util the event is consumed, you can define an `eventTimeout` for it, and in case the event does not arrive in the defined duration time, the workflow continues the execution moving to the next state defined in the transition, see the <<callback-state, example>>.
+Once the response event is consumed, the workflow continues the execution, in general moving to the next state defined in the `transition property. See more on xref:eventing/working-with-callbacks.adoc[Callback state in {context}].
+
+Since the callback state halts the execution util the event is consumed, you can define an `eventTimeout` for it, and in case the event does not arrive in the defined duration time, the workflow continues the execution moving to the next state defined in the transition, see the <<callback-state, example>>.
 
 [#callback-state]
 .Example of callback state with timeout
@@ -55,9 +61,10 @@ Since the callback event halts the execution util the event is consumed, you can
 
 === Switch state timeout
 
-Switch states can be defined with link:{spec_doc_url}#switch-state-event-conditions[eventConditions] property, where the workflow execution waits to make a decision depending on the events to be consumed and matched, defined through link:{spec_doc_url}#event-definition[event definition].
 
-In this situation, you can define an event timeout, that controls the maximum time to wait for an event to match the conditions, if this time is expired, the workflow moves to the state defined in the `defaultCondition` property in the switch state, as showed in the <<switch-state, example>>.
+The switch state can be used when you need to take an action based on conditions, defined with the link:{spec_doc_url}#switch-state-event-conditions[eventConditions] property, where the workflow execution waits to make a decision depending on the events to be consumed and matched, defined through link:{spec_doc_url}#event-definition[event definition].
+
+In this situation, you can define an event timeout, that controls the maximum time to wait for an event to match the conditions, if this time is expired, the workflow moves to the state defined in the `defaultCondition` property of the switch state, as tou can see in the <<switch-state, example>>.
 
 See more details about this state on the link:{spec_doc_url}#switch-date[Serverless Workflow specification].
 
@@ -89,8 +96,8 @@ See more details about this state on the link:{spec_doc_url}#switch-date[Serverl
 
 === Deploying a timed-based workflow
 
-n order to deploy a work that contains timeouts or any other timer-based action, it is necessary to have Job Service running in your environment, which is an external service responsible for workflows timers, see the <<job-service, section>> for more information.
-In the <<timeout-example, timeout example>> you can see in details how to set up a knative infrastructure with the workflow and job service running.
+in order to deploy a workflow that contains timeouts or any other timer-based action, it is necessary to have Job Service running in your environment, which is an external service responsible to control the workflows timers, see the <<job-service, section>> for more information.
+In the <<timeout-example, timeout example>> you can see in details of how to set up a knative infrastructure with the workflow and job service running.
 
 [#job-service]
 === Job Service configuration
@@ -99,7 +106,8 @@ All timer-related actions that might be declared in a workflow, are handled by a
 
 Suppose the workflow service is not configured to use job service or there is no such service running. In that case, all timer-related actions use an embedded in-memory implementation of job service, which should not be used in production, since when the application shutdown, all timers are lost, which in a serverless architecture is a very common behavior with the scale to zero approach. That said, the no job service configuration can only be used for testing or development, but not for production.
 
-The main goal of the Job Service is to work with only active jobs. The Job Service tracks only the jobs that are scheduled and that need to be executed. When a job reaches a final state, the job is removed from the Job Service. All job information and transition states are sent to the Kogito Data Index Service where they can be indexed and made available for GraphQL queries.
+The main goal of the Job Service is to work with only active jobs. The Job Service tracks only the jobs that are scheduled and that need to be executed. When a job reaches a final state, the job is removed from the Job Service.
+When configured, all the jobs information and status changes are sent to the Kogito Data Index Service, where they can be indexed and made available by GraphQL queries.
 
 ==== Job Service persistence
 
@@ -107,12 +115,16 @@ An important configuration aspect of job service is the persistence mechanism, w
 
 ==== PostgreSQL
 
-Using PostgreSQL is the recommended database to be used with job service where it is already configured with Flyway for the schema creation, in this way all tables are created by the service, in case you need to externally control the database schema, you can check the SQL scripts in (link) and apply them.
-You need to set the proper configuration parameters when starting job service. The example covers running PostgreSQL as a Kubernetes deployment but you can run it the way it fits in your environment, the important part is to set all the configuration parameters points to your running instance of PostgreSQL.
-Job Service configuration
+PostgreSQL is the recommended database to use with job service**.**
+Additionally, it provides an initialization procedure that integrates link:https://flywaydb.org[Flyway] for the database initialization. It automatically controls the database schema, in this way all tables are created by the service.
+
+In case you need to externally control the database schema, you can check the Flyway SQL scripts in link:{kogito_apps_url}/jobs-service/jobs-service-postgresql/src/main/resources/db/migration[migration] and apply them.
+
+You need to set the proper configuration parameters when starting job service.
+The example shows how to run PostgreSQL as a Kubernetes deployment, but you can run it the way it fits in your environment, the important part is to set all the configuration parameters points to your running instance of PostgreSQL.
 
 ==== Ephemeral
-Alternatively, there is an in-memory database implementation that does not require any external database configuration, similar to the workflow runtime embedded in-memory job service (link), it can be used for testing and development purposes, but it is not recommended for production, since all jobs are lost in case of a service restart or failure.
+Alternatively, there is an in-memory database support that does not require any external database configuration, it can be used for testing and development purposes, but it is not recommended for production, since all jobs are lost upon a service restart or failure.
 
 === Job Service communication
 
@@ -123,11 +135,16 @@ The Job Service does not execute a job but triggers a callback that might be an 
 
 ==== Knative Eventing
 
-You can configure job service to consume and publish events through knative setting some configuration parameters in your environment.
-Addon configuration
+You can configure job service to consume and publish events through knative alongside the workflow runtime configuration to enable this communication with job service.
+
+Job Service configuration is done through the deployment descriptor in your cluster as you can see in the <<job-service-deploy, example>>.
+
+==== Addon configuration in the workflow runtime
+
 The communication from the workflow application with Job Service is done through an addon which is responsible for publishing and consuming events related to timers. When running the workflow as a knative service, the kogito-addons-quarkus-jobs-knative-eventing should be added to the project as a dependency alongside the proper configuration.
 
-Dependency:
+* Dependency in the `pom.xml`:
+
 .Callback state example with timeout
 [source, xml]
 ----
@@ -137,7 +154,7 @@ Dependency:
 </dependency>
 ----
 
-Configuration parameters:
+* Configuration parameters:
 
 .Callback state example with timeout
 [source, properties]
@@ -151,13 +168,13 @@ mp.messaging.outgoing.kogito-job-service-job-request-events.method=POST
 [#timeout-example]
 == Timeout showcase example
 
-In the link:{kogito_sw_examples_url}/serverless-workflow-timeouts-showcase[serverless-workflow-timeouts-showcase] you can see a complete architecture, containing a serverless workflow application with timeouts configured alongside Job service running on Knative.
+In the link:{kogito_sw_examples_url}/serverless-workflow-timeouts-showcase[serverless-workflow-timeouts-showcase] you can see an end-to-end example that contains a serverless workflow application with timeouts configured alongside Job service running on Knative.
 
-There are two workflows to showcase timeouts usage: `Callback` and `Switch` states.
+There are two workflows that showcase the timeouts usage in the `Callback` and `Switch` states.
 
 === Callback workflow
 
-It is a simple workflow where once the execution reaches the callback state it waits for the event `callbackEvent`to be received and continue the execution.
+It is a simple workflow, where once the execution reaches the callback state it waits for the event `callbackEvent`to arrive and continue the execution.
 
 .Callback timeout workflow
 image::core/callback-state-timeouts.svg[]
@@ -172,28 +189,37 @@ image::core/callback-state-timeouts.svg[]
 }
 ----
 
-A timeout is configured with a maximum time 30 seconds to be waited by the workflow to receive the callbackEvent, in case it does not arrive in time, the execution moves, and the eventData variable remains null.
+The timeout is configured with a maximum time 30 seconds to be waited by the workflow to receive the callbackEvent, in case it does not arrive in time, the execution moves, and the eventData variable remains null.
 See the <<callback-state, callback state definition>>.
 
 
 === Switch workflow
 
-The switch example is similar to the callback but once the execution reaches the state, it waits for once of the two configured events, `visaDeniedEvent` or `visaApprovedEvent`, to be consumed, see the <<switch-state, switch state definition>>.
+The switch example is similar to the callback but once the execution reaches the state, it waits for one of the two configured events, `visaDeniedEvent` or `visaApprovedEvent`, to arrive, see the <<switch-state, switch state definition>>.
 
-Whenever one of the events is consumed, before the configured timeout, the workflow execution moves to the next state defined in the `transition`.
+If any of the configured events arrives before the timeout is overdue, the workflow execution moves to the next state defined in the corresponding `transition`.
 
-If none of the events arrive before 30 seconds of timeout, the workflow then moves to the state defined in `defaultCondition' transition.
+If none of the events arrive before the timeout is overdue, the workflow then moves to the state defined in `defaultCondition' transition.
 
 .Switch timeout workflow
 image::core/switch-state-timeouts.svg[]
 
 === Running the example
 
-In order to run the example you need to have a kubernetes or Openshift cluster running with Knative configured. In the example minikube is being used you can follow the steps described in the example's link:{kogito_sw_examples_url}/serverless-workflow-timeouts-showcase[readme].
+To run the example you must have access to a kubernetes cluster running with Knative configured.
 
-All the descriptor files used to deploy the example infrastructure are present in the kubernetes folder, and for the workflow application, the descriptors are placed on the target/kubernetes, generated after the build.
+For simplicity, the example uses minikube, you can follow the steps described in the example's link:{kogito_sw_examples_url}/serverless-workflow-timeouts-showcase[readme].
 
-The diagram below describes how is the architecture of the example to be deployed on kubernetes and Knative.
+[NOTE]
+----
+All the descriptor files used to deploy the example infrastructure are present in the example.
+----
+
+The database and job service deployment files are located under `/kubernetes` folder.
+
+The descriptors related to the workflow application are generated after the build under `/target/kubernetes`.
+
+The following diagram shows the example's architecture when it is deployed in the Kubernetes + Knative infrastructure.
 
 .Knative Workflow with Job service architecture
 image::core/jobs-service-knative-architecture.png[]
@@ -219,6 +245,7 @@ deployment.apps/timeouts-showcase-database created
 service/timeouts-showcase-database created
 ----
 
+[#job-service-deploy]
 ==== Deploying job Service
 .Deploying Job Service
 [source, shell]
