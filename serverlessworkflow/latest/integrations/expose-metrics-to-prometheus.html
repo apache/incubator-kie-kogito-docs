@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>Exposing the workflow base metrics to Prometheus :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Exposing the workflow base metrics to Prometheus">
+    <meta name="keywords" content="kogito, workflow, quarkus, metrics, prometheus">
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -247,6 +249,9 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="expose-metrics-to-prometheus.html">Exposing the workflow base metrics to Prometheus</a>
+  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
@@ -302,6 +307,11 @@
 <button class="nav-toggle"></button>
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Integrations</li>
+    <li><a href="expose-metrics-to-prometheus.html">Exposing the workflow base metrics to Prometheus</a></li>
+  </ul>
 </nav>
 <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">1.27</button>
@@ -320,7 +330,182 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-
+<h1 class="page">Exposing the workflow base metrics to Prometheus</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito Serverless Workflow generate metrics that can be consumed by Prometheus and visualized by dashboard tools such as <a href="https://quarkus.io/blog/micrometer-prometheus-openshift">Openshift</a>, <a href="https://www.dashbuilder.org/">Dashbuilder</a> and <a href="https://grafana.com/">Grafana</a>.</p>
+</div>
+<div class="paragraph">
+<p>This document describes how to enable and expose metrics to Prometheus.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_enabling_metrics"><a class="anchor" href="#_enabling_metrics"></a>Enabling metrics</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For adding metrics to your Serverless Workflow application just add the dependency <code>org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus</code> to your Maven POM file and, after rebuild, the metrics will be available at <code>/q/metrics</code> endpoint.</p>
+</div>
+<div class="listingblock">
+<div class="title">Dependency to be added to the <code>pom.xml</code> file to enable metrics</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+    &lt;artifactId&gt;kogito-addons-quarkus-monitoring-prometheus&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_consuming_metrics_from_openshift"><a class="anchor" href="#_consuming_metrics_from_openshift"></a>Consuming metrics from Openshift</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If your Serverless Workflow server is running on Openshift you can use it to monitor your application.</p>
+</div>
+<div class="paragraph">
+<p>To consume metrics from Openshift you must first <a href="https://docs.openshift.com/container-platform/4.11/monitoring/enabling-monitoring-for-user-defined-projects.html">enable monitoring for user-defined projects</a>. It will install the Prometheus operator automatically for you. Then you need to create a service monitor. Here&#8217;s a sample configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">service-monitor.yaml:</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: prometheus-app-monitor
+  name: prometheus-app-monitor
+  namespace: my-project
+spec:
+  endpoints:
+  - interval: 30s
+    targetPort: 8080
+    path: /q/metrics
+    scheme: http
+  selector:
+    matchLabels:
+      app-with-metrics: 'serverless-workflow-app'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then apply it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">oc apply -f service-monitor.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>What we have just done is to create a Service Monitor named <code>prometheus-app-monitor</code> that will select apps with the label selector <code>app-with-metrics: serverless-workflow-app</code>, make sure that your Serverless Workflow application has this label. Then, Prometheus will call the endpoint <code>/q/metrics</code> for all the services labeled with  <code>app-with-metrics: serverless-workflow-app</code> every 30 seconds. For more details check the <a href="https://quarkus.io/blog/micrometer-prometheus-openshift">Monitoring Quarkus apps using Micrometer and Prometheus into OpenShift</a> guide.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_consuming_metrics_from_kubernetes"><a class="anchor" href="#_consuming_metrics_from_kubernetes"></a>Consuming metrics from Kubernetes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kubernetes is similar to Openshift but you will need to install manually the <a href="https://prometheus-operator.dev/">Prometheus Operator project</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_consuming_metrics_from_prometheus"><a class="anchor" href="#_consuming_metrics_from_prometheus"></a>Consuming metrics from Prometheus</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Prometheus can also scrap directly metrics from a Kogito Serverless Workflow application using the following configuration:</p>
+</div>
+<div class="listingblock">
+<div class="title">Prometheus Configuration</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">- job_name: 'Serverless Workflow App'
+    scrape_interval: 2s
+    metrics_path: /q/metrics
+    static_configs:
+        - targets: ['localhost:8080']</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can edit <code>job_name</code> and <code>scrap_interval</code> with your own values. Make sure that <code>targets</code> under <code>static_configs</code> match your Serverless Workflow application location.</p>
+</div>
+<div class="paragraph">
+<p>For more information check the <a href="https://prometheus.io/docs/prometheus/latest/getting_started/#configure-prometheus-to-monitor-the-sample-targets">Prometheus Getting Started</a> guide.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_understanding_kogito_serverless_workflow_metrics"><a class="anchor" href="#_understanding_kogito_serverless_workflow_metrics"></a>Understanding Kogito Serverless Workflow Metrics</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For Serverless Workflow we will be looking into the following metrics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>kogito_process_instance_completed_total</strong>: Completed Workflows</p>
+</li>
+<li>
+<p><strong>kogito_process_instance_started_total</strong>: Started Workflows</p>
+</li>
+<li>
+<p><strong>kogito_process_instance_running_total</strong>: Running Workflows</p>
+</li>
+<li>
+<p><strong>kogito_process_instance_duration_seconds_sum</strong>: Workflows Total Duration</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Internally, Workflows are referenced as process hence the fields <code>processId</code> and <code>processName</code> are actually the workflow id and name.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Each of these metrics will have a label for the specific workflow id. See how the metric <code>kogito_process_instance_completed_total</code> for workflows <code>jsongreet</code>, <code>yamlgreet</code> and <code>foreach</code> looks like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># HELP kogito_process_instance_completed_total Completed Process Instances
+# TYPE kogito_process_instance_completed_total counter
+kogito_process_instance_completed_total{app_id="default-process-monitoring-listener",artifactId="kogito-serverless-workflow-demo",node_name="2",process_id="jsongreet",version="1.0.0-SNAPSHOT",} 154.0
+kogito_process_instance_completed_total{app_id="default-process-monitoring-listener",artifactId="kogito-serverless-workflow-demo",node_name="2",process_id="yamlgreet",version="1.0.0-SNAPSHOT",} 218.0
+kogito_process_instance_completed_total{app_id="default-process-monitoring-listener",artifactId="kogito-serverless-workflow-demo",node_name="2",process_id="foreach",version="1.0.0-SNAPSHOT",} 162.0</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Kogito internally uses Quarkus Micrometer extension, which means that it also expose some built-in metrics. You can disable Micrometer metrics as described in <a href="https://quarkus.io/guides/micrometer">Quarkus Micrometer Guide</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
