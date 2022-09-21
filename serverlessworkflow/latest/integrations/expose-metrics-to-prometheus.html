@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Exposing the workflow base metrics to Prometheus :: Kogito Serverless Workflow Guides</title>
+    <title>Exposing workflow base metrics to Prometheus :: Kogito Serverless Workflow Guides</title>
     <meta name="description" content="Exposing the workflow base metrics to Prometheus">
     <meta name="keywords" content="kogito, workflow, quarkus, metrics, prometheus">
     <meta name="generator" content="Antora 3.0.3">
@@ -250,7 +250,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="expose-metrics-to-prometheus.html">Exposing the workflow base metrics to Prometheus</a>
+    <a class="nav-link" href="expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
@@ -310,7 +310,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Integrations</li>
-    <li><a href="expose-metrics-to-prometheus.html">Exposing the workflow base metrics to Prometheus</a></li>
+    <li><a href="expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a></li>
   </ul>
 </nav>
 <div class="page-versions">
@@ -330,23 +330,41 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Exposing the workflow base metrics to Prometheus</h1>
+<h1 class="page">Exposing workflow base metrics to Prometheus</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Kogito Serverless Workflow generate metrics that can be consumed by Prometheus and visualized by dashboard tools such as <a href="https://quarkus.io/blog/micrometer-prometheus-openshift">Openshift</a>, <a href="https://www.dashbuilder.org/">Dashbuilder</a> and <a href="https://grafana.com/">Grafana</a>.</p>
+<p>Serverless Workflow generates metrics that can be consumed by Prometheus and visualized by dashboard tools, such as <a href="https://quarkus.io/blog/micrometer-prometheus-openshift">OpenShift</a>, <a href="https://www.dashbuilder.org/">Dashbuilder</a>, and <a href="https://grafana.com/">Grafana</a>.</p>
 </div>
 <div class="paragraph">
-<p>This document describes how to enable and expose metrics to Prometheus.</p>
+<p>This document describes how you can enable and expose the generated metrics to Prometheus.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_enabling_metrics"><a class="anchor" href="#_enabling_metrics"></a>Enabling metrics</h2>
+<h2 id="proc-enable-metrics-sw"><a class="anchor" href="#proc-enable-metrics-sw"></a>Enabling metrics in Serverless Workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For adding metrics to your Serverless Workflow application just add the dependency <code>org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus</code> to your Maven POM file and, after rebuild, the metrics will be available at <code>/q/metrics</code> endpoint.</p>
+<p>You can enable the metrics in your workflow application.</p>
 </div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A workflow application is created.</p>
+<div class="paragraph">
+<p>For more information about creating a workflow, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>To add the metrics to your workflow application, add the <code>org.kie.kogito:kogito-addons-quarkus-monitoring-prometheus</code> dependency to the <code>pom.xml</code> file of your project:</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
 <div class="title">Dependency to be added to the <code>pom.xml</code> file to enable metrics</div>
 <div class="content">
@@ -358,17 +376,61 @@
 </div>
 </div>
 </div>
+</li>
+<li>
+<p>Rebuild your workflow application.</p>
+<div class="paragraph">
+<p>The metrics is available at <code>/q/metrics</code> endpoint.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
 <div class="sect1">
-<h2 id="_consuming_metrics_from_openshift"><a class="anchor" href="#_consuming_metrics_from_openshift"></a>Consuming metrics from Openshift</h2>
+<h2 id="con-consume-metrics-sw"><a class="anchor" href="#con-consume-metrics-sw"></a>Metrics consumption in Serverless Workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If your Serverless Workflow server is running on Openshift you can use it to monitor your application.</p>
+<p>After enabling the metrics in Serverless Workflow, the generated metrics can be consumed from OpenShift, Kubernetes, and Prometheus to visualize on different dashboard tools.</p>
+</div>
+<div class="sect2">
+<h3 id="proc-consume-metrics-openshift"><a class="anchor" href="#proc-consume-metrics-openshift"></a>Consuming metrics from OpenShift</h3>
+<div class="paragraph">
+<p>If your workflow server is running on OpenShift, then you can use the server to monitor your workflow application. Also, you can perform the task of consuming metrics from OpenShift.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Metrics is enabled in Serverless Workflow.</p>
+<div class="paragraph">
+<p>For more information, see <a href="#proc-enable-metrics-sw">Enabling metrics in Serverless Workflow</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>To consume metrics from OpenShift, enable monitoring for user-defined projects.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>For more information, see <a href="https://docs.openshift.com/container-platform/4.11/monitoring/enabling-monitoring-for-user-defined-projects.html">Enabling monitoring for user-defined projects</a> in OpenShift documentation.</p>
 </div>
 <div class="paragraph">
-<p>To consume metrics from Openshift you must first <a href="https://docs.openshift.com/container-platform/4.11/monitoring/enabling-monitoring-for-user-defined-projects.html">enable monitoring for user-defined projects</a>. It will install the Prometheus operator automatically for you. Then you need to create a service monitor. Here&#8217;s a sample configuration:</p>
+<p>When you enable monitoring for user-defined projects, the Prometheus Operator is installed automatically.</p>
 </div>
+</div>
+</div>
+</li>
+<li>
+<p>Create a service monitor as shown in the following configuration:</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
-<div class="title">service-monitor.yaml:</div>
+<div class="title">Example configuration in <code>service-monitor.yaml</code></div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -388,35 +450,73 @@ spec:
       app-with-metrics: 'serverless-workflow-app'</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Then apply it:</p>
 </div>
+</div>
+</li>
+<li>
+<p>Run the following command to apply the service monitor:</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
+<div class="title">Apply service monitor</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">oc apply -f service-monitor.yaml</code></pre>
 </div>
 </div>
+</div>
+</div>
+</li>
+</ol>
+</div>
 <div class="paragraph">
-<p>What we have just done is to create a Service Monitor named <code>prometheus-app-monitor</code> that will select apps with the label selector <code>app-with-metrics: serverless-workflow-app</code>, make sure that your Serverless Workflow application has this label. Then, Prometheus will call the endpoint <code>/q/metrics</code> for all the services labeled with  <code>app-with-metrics: serverless-workflow-app</code> every 30 seconds. For more details check the <a href="https://quarkus.io/blog/micrometer-prometheus-openshift">Monitoring Quarkus apps using Micrometer and Prometheus into OpenShift</a> guide.</p>
+<p>In the previous procedure, a service monitor named <code>prometheus-app-monitor</code> is created, which selects applications containing the label as <code>app-with-metrics: serverless-workflow-app</code>. Ensure that your workflow application contains the same label.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_consuming_metrics_from_kubernetes"><a class="anchor" href="#_consuming_metrics_from_kubernetes"></a>Consuming metrics from Kubernetes</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Kubernetes is similar to Openshift but you will need to install manually the <a href="https://prometheus-operator.dev/">Prometheus Operator project</a>.</p>
+<p>After that, Prometheus sends request to the <code>/q/metrics</code> endpoint for all the services that are labeled with <code>app-with-metrics: serverless-workflow-app</code> every 30 seconds. For more information about monitoring Quarkus application using Micrometer and Prometheus into OpenShift, see <a href="https://quarkus.io/blog/micrometer-prometheus-openshift">Quarkus - Micrometer Metrics</a>.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_consuming_metrics_from_prometheus"><a class="anchor" href="#_consuming_metrics_from_prometheus"></a>Consuming metrics from Prometheus</h2>
-<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>Prometheus can also scrap directly metrics from a Kogito Serverless Workflow application using the following configuration:</p>
+<p>Consuming metrics from Kubernetes is similar to OpenShift. However, you need to install the Prometheus Operator project manually.</p>
 </div>
+<div class="paragraph">
+<p>For more information about installing Prometheus Operator, see <a href="https://prometheus-operator.dev/">Prometheus Operator</a> website.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="proc-consume-metrics-prometheus"><a class="anchor" href="#proc-consume-metrics-prometheus"></a>Consuming metrics from Prometheus</h3>
+<div class="paragraph">
+<p>If your workflow server is running on Prometheus, then you can perform the task of consuming metrics from Prometheus and visualize the workflow on different dashboard tools.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Metrics is enabled in Serverless Workflow.</p>
+<div class="paragraph">
+<p>For more information, see <a href="#proc-enable-metrics-sw">Enabling metrics in Serverless Workflow</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Use the following configuration to enable Prometheus to remove metrics directly from the workflow application:</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
-<div class="title">Prometheus Configuration</div>
+<div class="title">Example Prometheus configuration</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">- job_name: 'Serverless Workflow App'
     scrape_interval: 2s
@@ -425,33 +525,42 @@ spec:
         - targets: ['localhost:8080']</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>You can edit <code>job_name</code> and <code>scrap_interval</code> with your own values. Make sure that <code>targets</code> under <code>static_configs</code> match your Serverless Workflow application location.</p>
 </div>
+</div>
+</li>
+<li>
+<p>Replace the values of <code>job_name</code> and <code>scrap_interval</code> in the previous configuration with your own values.</p>
+</li>
+<li>
+<p>Ensure that <code>target</code> under <code>static_configs</code> parameter in Prometheus configuration matches with your workflow application location.</p>
 <div class="paragraph">
-<p>For more information check the <a href="https://prometheus.io/docs/prometheus/latest/getting_started/#configure-prometheus-to-monitor-the-sample-targets">Prometheus Getting Started</a> guide.</p>
+<p>For more information about configuring Prometheus, see <a href="https://prometheus.io/docs/prometheus/latest/getting_started/#configure-prometheus-to-monitor-the-sample-targets">Configure Prometheus to monitor the sample targets</a> in Prometheus Getting Started document.</p>
+</div>
+</li>
+</ol>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_understanding_kogito_serverless_workflow_metrics"><a class="anchor" href="#_understanding_kogito_serverless_workflow_metrics"></a>Understanding Kogito Serverless Workflow Metrics</h2>
+<h2 id="ref-sw-example-metrics"><a class="anchor" href="#ref-sw-example-metrics"></a>Example metrics in Serverless Workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For Serverless Workflow we will be looking into the following metrics:</p>
+<p>In Serverless Workflow, you can check the following example metrics:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>kogito_process_instance_completed_total</strong>: Completed Workflows</p>
+<p><code>kogito_process_instance_completed_total</code>: Completed workflows</p>
 </li>
 <li>
-<p><strong>kogito_process_instance_started_total</strong>: Started Workflows</p>
+<p><code>kogito_process_instance_started_total</code>: Started workflows</p>
 </li>
 <li>
-<p><strong>kogito_process_instance_running_total</strong>: Running Workflows</p>
+<p><code>kogito_process_instance_running_total</code>: Running workflows</p>
 </li>
 <li>
-<p><strong>kogito_process_instance_duration_seconds_sum</strong>: Workflows Total Duration</p>
+<p><code>kogito_process_instance_duration_seconds_sum</code>: Workflows total duration</p>
 </li>
 </ul>
 </div>
@@ -463,16 +572,17 @@ spec:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Internally, Workflows are referenced as process hence the fields <code>processId</code> and <code>processName</code> are actually the workflow id and name.</p>
+<p>Internally, workflows are referred as processes. Therefore, the <code>processId</code> and <code>processName</code> is workflow ID and name respectively.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Each of these metrics will have a label for the specific workflow id. See how the metric <code>kogito_process_instance_completed_total</code> for workflows <code>jsongreet</code>, <code>yamlgreet</code> and <code>foreach</code> looks like:</p>
+<p>Each of the metrics mentioned previously contains a label for a specific workflow ID. For example, the <code>kogito_process_instance_completed_total</code> metric contains labels for <code>jsongreet</code>, <code>yamlgreet</code>, and <code>foreach</code> workflows:</p>
 </div>
 <div class="listingblock">
+<div class="title">Example <code>kogito_process_instance_completed_total</code> metric</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># HELP kogito_process_instance_completed_total Completed Process Instances
 # TYPE kogito_process_instance_completed_total counter
@@ -489,7 +599,7 @@ kogito_process_instance_completed_total{app_id="default-process-monitoring-liste
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Kogito internally uses Quarkus Micrometer extension, which means that it also expose some built-in metrics. You can disable Micrometer metrics as described in <a href="https://quarkus.io/guides/micrometer">Quarkus Micrometer Guide</a>.</p>
+<p>Internally, Kogito uses Quarkus Micrometer extension, which also exposes built-in metrics. You can disable the Micrometer metrics in Serverless Workflow. For more information, see <a href="https://quarkus.io/guides/micrometer">Quarkus - Micrometer Metrics</a>.</p>
 </div>
 </td>
 </tr>

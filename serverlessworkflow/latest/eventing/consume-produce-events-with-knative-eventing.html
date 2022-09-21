@@ -250,7 +250,7 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing the workflow base metrics to Prometheus</a>
+    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
@@ -334,10 +334,10 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can configure a workflow to interact with <a href="https://knative.dev/docs/eventing/">Knative Eventing</a>.</p>
+<p>This document describes how you can configure a workflow to interact with <a href="https://knative.dev/docs/eventing">Knative Eventing</a>.</p>
 </div>
 <div class="paragraph">
-<p>Knative Eventing abstracts the events consumption through <a href="https://knative.dev/docs/eventing//sources">event source</a> and <a href="https://knative.dev/docs/eventing//sinks">sink</a> components. An event source is a Kubernetes object that produces the event, and a sink is another Kubernetes object that receives the event. The workflow application can act as a source, a sink, or both in Knative Eventing platform.</p>
+<p>Knative Eventing abstracts the events consumption through <a href="https://knative.dev/docs/eventing/sources">event source</a> and <a href="https://knative.dev/docs/eventing/sinks">sink</a> components. An event source is a Kubernetes object that produces the event, and a sink is another Kubernetes object that receives the event. The workflow application can act as a source, a sink, or both in Knative Eventing platform.</p>
 </div>
 <div class="paragraph">
 <p>You need to add the Kogito Knative Eventing add-on dependency to indicate that you are using Knative Eventing. To enable a workflow to use Knative Eventing, add the following dependency to the <code>pom.xml</code> file of your project:</p>
@@ -418,7 +418,7 @@
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Knative injects the <code>K_SINK</code> environment variable in the workflow application when you deploy the application in the cluster. Kogito uses the <code>K_SINK</code> environment variable to address the produced events to the correct Knative sink. For more information, see <a href="https://knative.dev/docs/eventing//custom-event-source/sinkbinding/">SinkBinding</a> in Knative Eventing documentation.</p>
+<p>Knative injects the <code>K_SINK</code> environment variable in the workflow application when you deploy the application in the cluster. Kogito uses the <code>K_SINK</code> environment variable to address the produced events to the correct Knative sink. For more information, see <a href="https://knative.dev/docs/eventing/custom-event-source/sinkbinding/">SinkBinding</a> in Knative Eventing documentation.</p>
 </div>
 <div class="paragraph">
 <p>The following table lists the HTTP transport configuration properties:</p>
@@ -507,7 +507,7 @@
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The Kogito Knative Eventing add-on generates a few Knative objects during build time. By default, the add-on generates a <a href="https://knative.dev/docs/eventing//broker">Knative Broker</a> named <code>default</code> if the workflow application is acting as an event source.</p>
+<p>The Kogito Knative Eventing add-on generates a few Knative objects during build time. By default, the add-on generates a <a href="https://knative.dev/docs/eventing/broker">Knative Broker</a> named <code>default</code> if the workflow application is acting as an event source.</p>
 </div>
 <div class="paragraph">
 <p>The following table lists the configuration properties related to Knative sink generation:</p>
@@ -568,7 +568,7 @@
 <p>The configuration described in this section is useful if your workflow consists of at least one <code>consumed</code> type <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-Definition">event definition</a>. In this scenario, the workflow application consumes events, acting as a Knative sink.</p>
 </div>
 <div class="paragraph">
-<p>When the workflow application needs to consume events, the Knative Eventing add-on generates <a href="https://knative.dev/docs/eventing//broker/triggers">Knative triggers</a>. The Knative triggers are configured to listen to a broker with the required event type, which is defined in your workflow definition.</p>
+<p>When the workflow application needs to consume events, the Knative Eventing add-on generates <a href="https://knative.dev/docs/eventing/triggers">Knative triggers</a>. The Knative triggers are configured to listen to a broker with the required event type, which is defined in your workflow definition.</p>
 </div>
 <div class="paragraph">
 <p>The following table lists the configuration property related to Knative sink generation:</p>
