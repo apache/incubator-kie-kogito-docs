@@ -48,9 +48,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Perform cherry-pick
-        # Should be set back once https://github.com/carloscastrojumo/github-cherry-pick-action/pull/10 is merged and released
-        # uses: carloscastrojumo/github-cherry-pick-action@v1.0.2
-        uses: radtriste/github-cherry-pick-action@issue_9
+        uses: carloscastrojumo/github-cherry-pick-action@v1.0.3
         with:
           branch: "${{ env.RELEASE_BRANCH }}"
           title: "[${{ env.RELEASE_BRANCH }}] ${{ github.event.pull_request.title }}"
