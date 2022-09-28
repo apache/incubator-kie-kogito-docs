@@ -10,8 +10,10 @@ a transition to a next state.
 All the properties you can use to configure state timeouts are described in the link:{spec_doc_url}#event-timeout-definition[Serverless Workflow specification].
 
 Event-based states can use the sub-property `eventTimeout` to configure the maximum time to wait for an event to arrive.
-This property uses `ISO 8601` data and time standard to specify a duration of time. It follows the format `PnDTnHnMn.nS` with days considered to be exactly 24 hours. For instance,
-`PT15M` configures 15 minutes, and `P2DT3H4M` defines 2 days, 3 hours and 4 minutes.
+
+This property uses link:https://en.wikipedia.org/wiki/ISO_8601[`ISO 8601` data and time standard] to specify a duration of time.
+It follows the format `PnDTnHnMn.nS` with days considered to be exactly 24 hours.
+For instance, `PT15M` configures 15 minutes, and `P2DT3H4M` defines 2 days, 3 hours and 4 minutes.
 
 [NOTE]
 ====
@@ -108,7 +110,14 @@ All timer-related actions that might be declared in a workflow, are handled by a
 Suppose the workflow service is not configured to use job service or there is no such service running. In that case, all timer-related actions use an embedded in-memory implementation of job service, which should not be used in production, since when the application shutdown, all timers are lost, which in a serverless architecture is a very common behavior with the scale to zero approach. That said, the no job service configuration can only be used for testing or development, but not for production.
 
 The main goal of the Job Service is to work with only active jobs. The Job Service tracks only the jobs that are scheduled and that need to be executed. When a job reaches a final state, the job is removed from the Job Service.
-When configured, all the jobs information and status changes are sent to the Kogito Data Index Service, where they can be indexed and made available by GraphQL queries.
+
+When configured in your environment, all the jobs information and status changes are sent to the {product_name} `Data
+Index Service`, where they can be indexed and made available by GraphQL queries.
+
+[NOTE]
+====
+Data index service and the support for jobs information will be available in future releases.
+====
 
 ==== Job Service persistence
 
@@ -116,7 +125,7 @@ An important configuration aspect of job service is the persistence mechanism, w
 
 ==== PostgreSQL
 
-PostgreSQL is the recommended database to use with job service**.**
+PostgreSQL is the recommended database to use with job service.
 Additionally, it provides an initialization procedure that integrates link:https://flywaydb.org[Flyway] for the database initialization. It automatically controls the database schema, in this way all tables are created by the service.
 
 In case you need to externally control the database schema, you can check the Flyway SQL scripts in link:{kogito_apps_url}/jobs-service/jobs-service-postgresql/src/main/resources/db/migration[migration] and apply them.
@@ -131,7 +140,8 @@ Alternatively, there is an in-memory database support that does not require any 
 
 [NOTE]
 ====
-The Job Service does not execute a job but triggers a callback that might be an HTTP request or a Cloud Event that is managed by the configured jobs addon see(link addons config) in the workflow application.
+The Job Service does not execute a job but triggers a callback that might be an HTTP request or a Cloud Event that is
+managed by the configured <<job-addon-configuration, jobs addon>> in the workflow application.
 ====
 
 ==== Knative Eventing
@@ -140,6 +150,7 @@ To configure the communication between the Job Service and the workflow runtime 
 
 The Job Service configuration is done through the deployment descriptor shown in the <<job-service-deploy, example>>.
 
+[[job-addon-configuration]]
 ==== Addon configuration in the workflow runtime
 
 The communication from the workflow application with Job Service is done through an addon, which is responsible for publishing and consuming events related to timers.
@@ -158,6 +169,7 @@ When you run the workflow as a knative service, you must add the `kogito-addons-
 
 * Configuration parameters:
 
+[[workflow-application-configuration-parameters]]
 .Callback state example with timeout
 [source, properties]
 ----
@@ -166,6 +178,13 @@ mp.messaging.outgoing.kogito-job-service-job-request-events.connector=quarkus-ht
 mp.messaging.outgoing.kogito-job-service-job-request-events.url=${K_SINK:http://localhost:8280/jobs/events}
 mp.messaging.outgoing.kogito-job-service-job-request-events.method=POST
 ----
+
+[NOTE]
+====
+The `K_SINK` variable used in the URL configuration for the outgoing channel in the
+<<workflow-application-configuration-parameters, configuration>>, is injected by Knative Eventing, more information on
+xref:eventing/consume-produce-events-with-knative-eventing.adoc[Consuming and producing events on Knative Eventing].
+====
 
 [#timeout-example]
 == Timeout showcase example
