@@ -52,7 +52,7 @@ quarkus create app \
     -x=quarkus-resteasy-jackson \
     -x=quarkus-smallrye-openapi \
     --no-code \
-    org.kie.kogito.examples:serverless-workflow-hello-world:1.0
+    org.acme:serverless-workflow-hello-world:1.0.0-SNAPSHOT
 ----
 
 The previous command creates a Maven Quarkus project in the `serverless-workflow-hello-world` directory containing the required dependencies, including:
@@ -72,14 +72,14 @@ Apache Maven::
 [source,shell,subs="attributes"]
 ----
 mvn {quarkus_platform}:quarkus-maven-plugin:{quarkus_version}:create \
-    -DprojectGroupId=org.kie.kogito.examples \
+    -DprojectGroupId=org.acme \
     -DprojectArtifactId=serverless-workflow-hello-world \
     -Dextensions="{kogito_sw_ga},quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi" \
     -DnoCode
 cd serverless-workflow-hello-world
 ----
 
-In the previous command, `org.kie.kogito.examples`, `serverless-workflow-hello-world`, and `1.0` is group ID, artifact ID, and version of your project respectively. `-DnoCode` prevents the generation of workflow example code.
+In the previous command, `org.acme`, `serverless-workflow-hello-world`, and `1.0.0-SNAPSHOT` is group ID, artifact ID, and version of your project respectively. `-DnoCode` prevents the generation of workflow example code.
 --
 Knative workflow CLI::
 +
@@ -270,8 +270,8 @@ Also, to deploy and run your workflow application, see xref:cloud/deploying-on-m
 .Example response
 [source,shell,subs="attributes"]
 ----
-[INFO] ------< org.kie.kogito.examples:serverless-workflow-hello-world >-------
-[INFO] Building serverless-workflow-hello-world 1.0
+[INFO] ------< org.acme:serverless-workflow-hello-world >-------
+[INFO] Building serverless-workflow-hello-world 1.0.0-SNAPSHOT
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO]
 [INFO] --- quarkus-maven-plugin:{quarkus_version}:dev (default-cli) @ serverless-workflow-hello-world ---
@@ -284,7 +284,7 @@ __  ____  __  _____   ___  __ ____  ______
  -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
 --\___\_\____/_/ |_/_/|_/_/|_|\____/___/
 2022-05-25 14:38:09,741 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (Quarkus Main Thread) Registered Kogito CloudEvent extension
-2022-05-25 14:38:09,840 INFO  [io.quarkus] (Quarkus Main Thread) serverless-workflow-hello-world 1.0 on JVM (powered by Quarkus {quarkus_version}) started in 6.470s. Listening on: http://localhost:8080
+2022-05-25 14:38:09,840 INFO  [io.quarkus] (Quarkus Main Thread) serverless-workflow-hello-world 1.0.0-SNAPSHOT on JVM (powered by Quarkus {quarkus_version}) started in 6.470s. Listening on: http://localhost:8080
 2022-05-25 14:38:09,843 INFO  [io.quarkus] (Quarkus Main Thread) Profile dev activated. Live Coding activated.
 2022-05-25 14:38:09,843 INFO  [io.quarkus] (Quarkus Main Thread) Installed features: [cache, cdi, jackson-jq, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-openapi, smallrye-reactive-messaging, smallrye-reactive-messaging-http, swagger-ui, vertx]
 2022-05-25 14:38:12,877 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: __  ____  __  _____   ___  __ ____  ______
