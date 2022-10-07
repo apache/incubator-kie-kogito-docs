@@ -44,6 +44,9 @@ pipeline {
         }
 
         stage('Update Kogito Docs release branch') {
+            when {
+                expression { !isMainBranch() }
+            }
             steps {
                 script {
                     dir("kogito-docs-${getBuildBranch()}") {
@@ -78,6 +81,9 @@ pipeline {
         }
 
         stage('Update Kogito Docs main branch') {
+            when {
+                expression { isMainBranch() }
+            }
             steps {
                 script {
                     dir('kogito-docs') {
@@ -120,7 +126,7 @@ pipeline {
 }
 
 void sendNotification() {
-    mailer.sendMarkdownTestSummaryNotification('Post-release', "[${getBuildBranch()}] Kogito Docs", [env.CI_EMAIL_TO])
+    mailer.sendMarkdownTestSummaryNotification('Setup branch', "[${getBuildBranch()}] Kogito Docs", [env.CI_EMAIL_TO])
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -147,4 +153,8 @@ void updateYaml(String filePath, Closure updateClosure) {
     def yamlData = readYaml(file: filePath)
     updateClosure(yamlData)
     writeYaml(file: filePath, data: yamlData, overwrite: true)
+}
+
+boolean isMainBranch() {
+    return env.IS_MAIN_BRANCH ? env.IS_MAIN_BRANCH.toBoolean() : false
 }
