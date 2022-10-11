@@ -35,10 +35,6 @@ pipeline {
                     if (params.DISPLAY_NAME) {
                         currentBuild.displayName = params.DISPLAY_NAME
                     }
-
-                    if (getBuildBranch().split("\\.").length != 3) {
-                        error "Build branch name '${getBuildBranch()}' is in the wrong format. It should be X.Y.x"
-                    }
                 }
             }
         }
@@ -49,6 +45,10 @@ pipeline {
             }
             steps {
                 script {
+                    if (getBuildBranch().split("\\.").length != 3) {
+                        error "Build branch name '${getBuildBranch()}' is in the wrong format. It should be X.Y.x"
+                    }
+                    
                     dir("kogito-docs-${getBuildBranch()}") {
                         deleteDir()
                         checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
