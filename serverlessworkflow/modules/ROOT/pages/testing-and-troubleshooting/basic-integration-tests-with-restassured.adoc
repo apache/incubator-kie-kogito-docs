@@ -6,9 +6,9 @@
 
 This document describes how to test your workflow application using REST Assured. 
 
-Rest Assured enables you to test REST APIs using Java libraries and integrates with Apache Maven. For more information about REST Assured, see link:https://rest-assured.io/[REST Assured page].
+REST Assured enables you to test REST APIs using Java libraries and integrates with Apache Maven. For more information about REST Assured, see link:https://rest-assured.io/[REST Assured page].
 
-The testing procedure in this document is based on the `serverless-workflow-examples/serverless-workflow-testing-with-rest-assured` example application. You can access this example application in link:{kogito_sw_examples_url}[Kogito Examples] GitHub repository.
+The testing procedure in this document is based on the `serverless-workflow-examples/serverless-workflow-testing-with-rest-assured` example application. You can access this example application in link:{kogito_sw_examples_url}/serverless-workflow-testing-with-rest-assured[Kogito Examples] GitHub repository.
 
 The following procedure describes how to test a workflow application that exposes the `hello` endpoint, which expects a `name` as a request parameter and returns `greeting` value:
 
@@ -42,6 +42,21 @@ This document is based on the `serverless-workflow-testing-with-rest-assured` ex
 ====
 
 .Procedure
+
+. Check if your project has the REST Assured dependency in your `pom.xml` file. If it doesn't, add it like the following:
+
++
+--
+[source,xml]
+----
+<dependency>
+    <groupId>io.rest-assured</groupId>
+    <artifactId>rest-assured</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+--
+
 . Create a test class named `HelloTest` in the `src/test/java/org/kie/kogito/examples/` directory, containing the following content:
 +
 --
