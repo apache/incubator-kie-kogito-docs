@@ -23,28 +23,32 @@ To clear the applied filters, you can click the *Reset to default* button. Also,
 image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-definitions-filter.png[]
 
 [[con-trigger-cloud-event-page]]
-== Trigger cloud event page
+== Start New Workflow page
 
-The Trigger cloud event page is used to trigger the cloud events related to a workflow definition. To navigate to the *Trigger cloud event* page, click on the play button in the *Actions* column of workflow definitions table.
+The Start New Workflow page is used start a workflow instance through a cloud event or a custom form depending on the workflow configuration. To navigate to the *Start New Workflow* page, click on the play button in the *Actions* column of workflow definitions table.
 
-.Trigger cloud event page
+If there is no json schema for the workflow, then the workflow will be started by triggering a cloud event.
+To trigger a cloud event, you can use the *Cloud Event Type* and *Cloud Event Data* input fields to set the type of a cloud event and event payload in JSON format respectively, and click the *Start* button to start a workflow. The *Reset* button on the page resets the values entered in the given fields.
+
+.Starting a workflow using cloud event
 image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-trigger-cloud-events.png[]
 
-The *Trigger cloud event* page consists of the two fields, including *Type* and *Data*. To trigger a cloud event, you can use the *Type* and *Data* input fields to set the type of a cloud event and event payload in JSON format respectively, and click the *Send* button to start a workflow. The *Reset* button on the page resets the values entered in the given fields.
+If the workflow has a json schema configured in the `dataInputSchema` property, then a form is displayed in-order to start a new workflow instance. You can fill-in the required form details and click on the *Start* button to trigger the workflow.
+The *Reset* button is used to clear the form data.
 
-.Example values to trigger a workflow
-image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-trigger-cloud-event-values.png[]
+.Starting a workflow using form
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-trigger-cloud-events-custom-form.png[]
 
 You can also use the *Business key* text box to define a custom business key value to the workflow instance. If the *Business Key* field is blank, then an auto-generated business key is defined to the workflow instance.
 
 When a workflow instance starts successfully, a success alert appears on the top of the screen, which contains a *Go to workflow list* option. The *Go to workflow list* option enables you to navigate to the xref:tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.adoc[Workflow Instances page].
 
 .Example of trigger workflow success alert
-image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-trigger-cloud-event-success-alert.png[]
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-start-workflow-success-alert.png[]
 
-If incorrect values are entered in the *Type* and *Data* fields, then a failure alert appears on the top of the screen, containing *View Details* and *Go to workflow list* options. The *View Details* enables you to view the error message.
+If there is an issue while starting a workflow, then a failure alert appears on the top of the screen, containing *View Details* and *Go to workflow list* options. The *View Details* enables you to view the error message.
 
 .Example of trigger workflow failure alert
-image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-trigger-cloud-event-fail-alert.png[]
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-start-workflow-fail-alert.png[]
 
 include::../../../pages/_common-content/report-issue.adoc[]
