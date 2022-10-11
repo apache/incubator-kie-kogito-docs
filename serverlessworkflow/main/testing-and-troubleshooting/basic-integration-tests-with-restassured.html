@@ -348,10 +348,10 @@
 <p>This document describes how to test your workflow application using REST Assured.</p>
 </div>
 <div class="paragraph">
-<p>Rest Assured enables you to test REST APIs using Java libraries and integrates with Apache Maven. For more information about REST Assured, see <a href="https://rest-assured.io/">REST Assured page</a>.</p>
+<p>REST Assured enables you to test REST APIs using Java libraries and integrates with Apache Maven. For more information about REST Assured, see <a href="https://rest-assured.io/">REST Assured page</a>.</p>
 </div>
 <div class="paragraph">
-<p>The testing procedure in this document is based on the <code>serverless-workflow-examples/serverless-workflow-testing-with-rest-assured</code> example application. You can access this example application in <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples">Kogito Examples</a> GitHub repository.</p>
+<p>The testing procedure in this document is based on the <code>serverless-workflow-examples/serverless-workflow-testing-with-rest-assured</code> example application. You can access this example application in <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-testing-with-rest-assured">Kogito Examples</a> GitHub repository.</p>
 </div>
 <div class="paragraph">
 <p>The following procedure describes how to test a workflow application that exposes the <code>hello</code> endpoint, which expects a <code>name</code> as a request parameter and returns <code>greeting</code> value:</p>
@@ -405,6 +405,22 @@
 <div class="olist arabic">
 <div class="title">Procedure</div>
 <ol class="arabic">
+<li>
+<p>Check if your project has the REST Assured dependency in your <code>pom.xml</code> file. If it doesn&#8217;t, add it like the following:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+    &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
 <li>
 <p>Create a test class named <code>HelloTest</code> in the <code>src/test/java/org/kie/kogito/examples/</code> directory, containing the following content:</p>
 <div class="openblock">
