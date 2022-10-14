@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Configuring the OpenAPI services endpoints :: Kogito Serverless Workflow Guides</title>
+    <meta name="generator" content="Antora 3.0.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.28.0.Final">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../release_notes.html">Release notes for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/getting-familiar-with-our-tooling.html">Getting familiar with Serverless Workflow tooling</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-jq-expressions.html">jq expressions in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/working-with-parallelism.html">Parallelism in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/configuration-properties.html">Configuration properties in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/defining-an-input-schema-for-workflows.html">Input schema definition for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-overview.html">Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome GitHub extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Kogito Serverless Workflow Tools extension in Quarkus Dev UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances in Kogito Serverless Workflow Tools extension</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions in Kogito Serverless Workflow Tools extension</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/kn-plugin-workflow-overview.html">Serverless Workflow plug-in for Knative CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">Integrating your Serverless Workflow project in GitHub using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">Integrating your Serverless Workflow project with OpenShift using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Integrating with Red Hat OpenShift Application and Data Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deploying your Serverless Workflow projects using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-enable-kogito-swf-visualization.html">Enabling Kogito Serverless Workflow Visualization in Serverless Logic Web Tools</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="orchestration-of-openapi-based-services.html">Orchestrating the OpenAPI services</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="configuring-openapi-services-endpoints.html">Configuring the OpenAPI services endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Eventing</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/handling-events-on-workflows.html">Event state in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event correlation in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/working-with-callbacks.html">Callback state in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">Authentication for OpenAPI services in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">Orchestration of third-party services using OAuth 2.0 authentication in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cloud</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/kubernetes-service-discovery.html">Kubernetes service discovery in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga orchestration example in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.28</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../latest/index.html">1.29</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Service Orchestration</li>
+    <li><a href="configuring-openapi-services-endpoints.html">Configuring the OpenAPI services endpoints</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.28</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/service-orchestration/configuring-openapi-services-endpoints.html">snapshot</a>
+    <a class="version" href="../../latest/service-orchestration/configuring-openapi-services-endpoints.html">1.29</a>
+    <a class="version is-current" href="configuring-openapi-services-endpoints.html">1.28</a>
+    <a class="version" href="../../1.27.0.Final/service-orchestration/configuring-openapi-services-endpoints.html">1.27</a>
+    <a class="version" href="../../1.26.0.Final/service-orchestration/configuring-openapi-services-endpoints.html">1.26</a>
+    <a class="version" href="../../1.25.0.Final/service-orchestration/configuring-openapi-services-endpoints.html">1.25</a>
+    <a class="version" href="../../1.24.1.Final/service-orchestration/configuring-openapi-services-endpoints.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.28.x/serverlessworkflow/modules/ROOT/pages/service-orchestration/configuring-openapi-services-endpoints.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Configuring the OpenAPI services endpoints</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes how you can configure OpenAPI service endpoints in Serverless Workflow.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="con-config-openapi-services-endpoints"><a class="anchor" href="#con-config-openapi-services-endpoints"></a>Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito leverages MicroProfile REST Client to invoke OpenAPI services. Therefore, you can configure the OpenAPI services by following the MicroProfile Config specification. For the list of properties to configure in the MicroProfile REST Client specification, see <a href="https://download.eclipse.org/microprofile/microprofile-rest-client-2.0/microprofile-rest-client-spec-2.0.html#mpconfig">Support for MicroProfile Config</a> in MicroProfile REST Client documentation.</p>
+</div>
+<div class="paragraph">
+<p>Kogito follows the strategy defined in the <code>kogito.sw.operationIdStrategy</code> property to generate the REST Client. The possible values of the <code>kogito.sw.operationIdStrategy</code> property include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>FILE_NAME</code>(Default value): Kogito uses the configuration key based on the OpenAPI document file name as shown in the following example:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example property</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.rest-client.stock_portfolio_svc_yaml.url=http://localhost:8282/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example, Kogito uses <code>stock_portfolio_svc_yaml</code> as configuration key as the OpenAPI document is available at <code>src/main/resources/openapi/stock-portfolio-svc.yaml</code>.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code>FULL_URI</code>: Kogito uses the full URI path as configuration key as shown in the following example:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example Serverless Workflow</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "id": "myworkflow",
+    "functions": [
+        {
+          "name": "myfunction",
+          "operation": "https://my.remote.host/apicatalog/apis/123/document" <i class="conum" data-value="1"></i><b>(1)</b>
+        }
+    ]
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>URI path of the OpenAPI document</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example property</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.rest-client.apicatalog_apis_123_document.url=http://localhost:8282/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example, Kogito uses <code>apicatalog_apis_123_document</code> as configuration key.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code>FUNCTION_NAME</code>: Kogito uses the workflow ID and the function name that references the OpenAPI document as shown in the following examples:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example Serverless Workflow</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "id": "myworkflow",
+    "functions": [
+        {
+          "name": "myfunction",
+          "operation": "https://my.remote.host/apicatalog/apis/123/document"
+        }
+    ]
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example property</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.rest-client.myworkflow_myfunction.url=http://localhost:8282/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example, Kogito uses <code>"myworkflow_myfunction"</code> as configuration key.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code>SPEC_TITLE</code>: Kogito uses the value of <code>info.title</code> in the OpenAPI document as shown in the following examples:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example OpenAPI document</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
+openapi: 3.0.3
+info:
+  title: stock-service API
+  version: 2.0.0-SNAPSHOT
+paths:
+  /stock-price/{symbol}:
+...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example property</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.rest-client.stock-service_API.url=http://localhost:8282/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example, Kogito uses <code>stock-service_API</code> as configuration key.</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>A Kubernetes service endpoint can be used as a service URL if the target service is within the same cluster, such as <code><a href="http://myservice.mynamespace.cluster.svc.local" class="bare">http://myservice.mynamespace.cluster.svc.local</a></code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_using_uri_alias"><a class="anchor" href="#_using_uri_alias"></a>Using URI alias</h3>
+<div class="paragraph">
+<p>As an alternative to <code>kogito.sw.operationIdStrategy</code>, you can assign an alias name to an URI by using <code>workflow-uri-definitions</code> custom <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#extensions">extension</a>. Then you can use that alias as configuration key and in function definitions.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example workflow</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"extensions" : [ {
+      "extensionid": "workflow-uri-definitions",
+      "definitions": {
+        "remoteCatalog": "https://my.remote.host/apicatalog/apis/123/document",
+       }
+     }
+  ],
+  "functions": [
+        {
+          "name": "operation1",
+          "operation": "remoteCatalog#operation1"
+        },
+        {
+          "name": "operation2",
+          "operation": "remoteCatalog#operation2"
+        }
+    ]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example property</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.rest-client.remoteCatalog.url=http://localhost:8282/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example, Kogito uses <code>remoteCatalog</code> as configuration key.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-configure-openapi-services-endpoints-different-environments"><a class="anchor" href="#proc-configure-openapi-services-endpoints-different-environments"></a>Configuring the OpenAPI services endpoints in different environments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can use different MicroProfile ConfigSources, such as environment variables and Kubernetes ConfigMaps, and MicroProfile Config profiles to configure the OpenAPI services in different environments. For more information about MicoProfile ConfigSources, see <a href="https://download.eclipse.org/microprofile/microprofile-config-2.0/microprofile-config-spec-2.0.html#configsource">ConfigSources</a>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Some operating systems allow only alphabetic characters or an underscore (_), in environment variables. Other characters such as <code>.</code> and <code>/</code> are not allowed. You must use the <a href="https://download.eclipse.org/microprofile/microprofile-config-2.0/microprofile-config-spec-2.0.html#default_configsources.env.mapping">Environment Variables Mapping Rules</a>, to set the value of a configuration property that contains a name with such characters.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The testing procedure described in this document is based on the <code>serverless-workflow-stock-profit</code> example application in <a href="https://github.com/kiegroup/kogito-examples/tree/1.28.x/serverless-workflow-examples/serverless-workflow-stock-profit">GitHub repository</a>. The <code>serverless-workflow-stock-profit</code> example application is a workflow that computes the profit for a given stock based on an existing stock portfolio.</p>
+</div>
+<div class="paragraph">
+<p>The <code>serverless-workflow-stock-profit</code> example application sends request to the following services:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>stock-portfolio-service</code>: Calculates the stock portfolio profit for a given stock based on the current stock price.</p>
+</li>
+<li>
+<p><code>stock-service</code>: Retrieves the current stock price.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Developing an application using a service that returns different results every time can be difficult, therefore the <code>stock-service</code> uses the following implementations depending on the environment.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>real-stock-service</code> (default implementation): Returns the real stock price. This service returns a random price every time to simulate a real stock service. This implementation is used in normal or production environment.</p>
+</li>
+<li>
+<p><code>fake-stock-service</code>: Returns the same price every time. This implementation is used in the development environment.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The <code>stock-profit</code> service contains the following workflow definition:</p>
+</div>
+<div class="listingblock">
+<div class="title">Workflow definition in <code>stock-profit</code> service</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "stockprofit",
+  "specVersion": "0.8",
+  "version": "2.0.0-SNAPSHOT",
+  "name": "Stock profit Workflow",
+  "start": "GetStockPrice",
+  "functions": [
+    {
+      "name": "getStockPriceFunction",
+      "operation": "openapi/stock-svc.yaml#getStockPrice" <i class="conum" data-value="1"></i><b>(1)</b>
+    },
+    {
+      "name": "getProfitFunction",
+      "operation": "openapi/stock-portfolio-svc.yaml#getStockProfit" <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+  ],
+  "states": [
+    {
+      "name": "GetStockPrice",
+      "type": "operation",
+      "actionMode": "sequential",
+      "actions": [
+        {
+          "name": "getStockPrice",
+          "functionRef": {
+            "refName": "getStockPriceFunction",
+            "arguments": {
+              "symbol": ".symbol"
+            }
+          }
+        }
+      ],
+      "transition": "ComputeProfit"
+    },
+    {
+      "name": "ComputeProfit",
+      "type": "operation",
+      "actionMode": "sequential",
+      "actions": [
+        {
+          "name": "getStockProfit",
+          "functionRef": {
+            "refName": "getProfitFunction",
+            "arguments": {
+              "symbol": ".symbol",
+              "currentPrice": ".currentPrice"
+            }
+          }
+        }
+      ],
+      "end": true
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Defines the <code>stock-service</code> service operation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Defines the <code>stock-portfolio-service</code> service operation</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Kogito leverages Quarkus profiles to configure the workflow application depending on the target environment.</p>
+</div>
+<div class="paragraph">
+<p>To set properties for different profiles, each property needs to be prefixed with a percentage (%) followed by the profile name and a period (.) in the syntax as <code>%&lt;profile-name&gt;.config.name</code>. By default, Quarkus provides the following profiles that activate automatically in certain conditions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>dev</code>: Activates in development mode, such as <code>quarkus:dev</code></p>
+</li>
+<li>
+<p><code>test</code>: Activates when tests are running</p>
+</li>
+<li>
+<p><code>prod</code> (default profile): Activates when not running in development or test mode</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can also create additional profiles and activate them using the <code>quarkus.profile</code> configuration property. For more information about Quarkus profiles, see <a href="https://quarkus.io/guides/config-reference#profiles">Profiles</a> in the Quarkus Configuration reference guide.</p>
+</div>
+<div class="sect2">
+<h3 id="proc-config-openapi-services-defining-urls"><a class="anchor" href="#proc-config-openapi-services-defining-urls"></a>Defining URLs of the services in different environments</h3>
+<div class="paragraph">
+<p>You can define the URLs of the services in different environments by using profiles.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Create a file named <code>application.properties</code> in the <code>src/main/resources</code> directory of the workflow project, if the file does not exist.</p>
+</li>
+<li>
+<p>In the <code>application.properties</code> file, add the OpenAPI configuration for the default environment:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example properties in <code>application.properties</code> file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/ <i class="conum" data-value="1"></i><b>(1)</b>
+quarkus.rest-client.stock_portfolio_svc_yaml.url=http://localhost:8282/</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>URL of the <code>real-stock-service</code> service</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>In the <code>application.properties</code> file, add the OpenAPI configuration for the <code>dev</code> environment:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example properties for development environment</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/ <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>URL of the <code>fake-stock-service</code> service</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <code>%dev.</code> prefix indicates the <code>dev</code> profile configuration, which is used when you run <code>mvn quarkus:dev</code> or <code>quarkus dev</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="proc-config-openapi-services-running-the-services"><a class="anchor" href="#proc-config-openapi-services-running-the-services"></a>Running the services</h3>
+<div class="paragraph">
+<p>After defining the URLs of the services, you can run the services that the workflow sends request to.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>URLs of the services in the different environments are defined.</p>
+<div class="paragraph">
+<p>For more information, see <a href="#proc-config-openapi-services-defining-urls">Defining the URLs of the services in different environments</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In a separate command terminal window, run the <code>stock-portfolio-service</code> service:</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Run the <code>stock-portfolio-service</code> service</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd stock-portfolio-service
+mvn quarkus:dev -Ddebug=false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can access the <code>stock-portfolio-service</code> service at <code><a href="http://localhost:8282/" class="bare">http://localhost:8282/</a></code>.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>In a separate command terminal window, run the <code>real-stock-service</code> service:</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Run <code>real-stock-service</code> service</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd real-stock-service
+mvn quarkus:dev -Ddebug=false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can access the <code>real-stock-service</code> service at <code><a href="http://localhost:8383/" class="bare">http://localhost:8383/</a></code>.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>In a separate command terminal window, run the <code>fake-stock-service</code> service:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Run <code>fake-stock-service</code> service</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd fake-stock-service
+mvn quarkus:dev -Ddebug=false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can access the`fake-stock-service` service at <code><a href="http://localhost:8181/" class="bare">http://localhost:8181/</a></code>.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="proc-config-openapi-services-running-sw-application-in-development-mode"><a class="anchor" href="#proc-config-openapi-services-running-sw-application-in-development-mode"></a>Running workflow application in development mode</h3>
+<div class="paragraph">
+<p>When you define <code>%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/</code>, the <code>fake-stock-service</code> service is used in the development mode and you get the same result every time you run the workflow. Using this example, you can run the workflow application in development mode.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Services that the workflow application sends requests to are started.</p>
+<div class="paragraph">
+<p>For more information, see <a href="#proc-config-openapi-services-running-the-services">Running the services</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In a separate command terminal window, run the workflow application in development mode:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Run workflow application in development mode</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd stock-profit
+mvn quarkus:dev -Ddebug=false</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>In a separate command terminal window, send a request to the workflow application:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
+  'http://localhost:8080/stockprofit' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{ "workflowdata": {"symbol": "KGTO" } }'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"5ab5dcb8-5952-4730-b526-cace363774bb","workflowdata":{"symbol":"KGTO","currentPrice":75,"profit":"50%"}}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that, in the previous example <code>fake-stock-service</code> is used, therefore, the computed <code>profit</code> property is same no matter how many times you run the workflow.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="proc-config-openapi-services-running-sw-application-in-production-mode"><a class="anchor" href="#proc-config-openapi-services-running-sw-application-in-production-mode"></a>Running workflow application in production mode</h3>
+<div class="paragraph">
+<p>When you define <code>quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/</code>, the <code>real-stock-service</code> service is used in the normal or production mode and you get different results every time you run the workflow. Using this example, you can run the workflow application in normal or production mode.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Services that the workflow application sends requests to are started.</p>
+<div class="paragraph">
+<p>For more information, see <a href="#proc-config-openapi-services-running-the-services">Running the services</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In a separate command terminal window, package the workflow application to be run as fat JAR:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Package workflow application</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd stock-profit
+mvn package</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>In a separate command terminal window, run the workflow application in normal or production mode:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Run workflow application in normal or production mode</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">java -jar target/quarkus-app/quarkus-run.jar</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>In a separate command terminal window, send a request to the workflow application:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
+  'http://localhost:8080/stockprofit' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{ "workflowdata": {"symbol": "KGTO" } }'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"a80c95d6-51fd-4ca9-b689-f779929c9937","workflowdata":{"symbol":"KGTO","currentPrice":59.36,"profit":"19%"}}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that, in the previous example, the <code>real-stock-service</code> is used, therefore, the computed <code>profit</code> property is different every time you run the workflow.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="proc-define-urls-using-environment-variables"><a class="anchor" href="#proc-define-urls-using-environment-variables"></a>Defining URLs of services in different environments using environment variables</h3>
+<div class="paragraph">
+<p>You can define the URLs of the services in different environments using profiles and environment variables.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Services that the workflow application sends requests to are started.</p>
+<div class="paragraph">
+<p>For more information, see <a href="#proc-config-openapi-services-running-the-services">Running the services</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In a separate command terminal window, run the workflow application in development mode, overwriting the property defined in the <code>application.properties</code> file using an environment variable:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Run the workflow application in development mode</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd stock-profit
+export _DEV_QUARKUS_REST_CLIENT_STOCK_SVC_YAML_URL=http://localhost:8383/ <i class="conum" data-value="1"></i><b>(1)</b>
+mvn quarkus:dev -Ddebug=false</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Overwrite the <code>%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/</code> defined in the <code>application.properties</code> file using an environment variable, which is pointing to <code>real-stock-service</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>In a separate command terminal window, send a request to the workflow application:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
+  'http://localhost:8080/stockprofit' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{ "workflowdata": {"symbol": "KGTO" } }'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"5ab5dcb8-5952-4730-b526-cace363774bb","workflowdata":{"symbol":"KGTO","currentPrice":56.35,"profit":"13%"}}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that, in the previous example, you overwrote the property defined in the <code>application.properties</code> file to point to <code>real-stock-service</code>, therefore, the computed <code>profit</code> property is different every time you run the workflow.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="orchestration-of-openapi-based-services.html" class="xref page">Orchestrating the OpenAPI services</a></p>
+</li>
+<li>
+<p><a href="https://quarkus.io/guides/config-reference#profiles">Quarkus configuration guide</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Callback state in Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <meta name="generator" content="Antora 3.0.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.28.0.Final">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../release_notes.html">Release notes for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/getting-familiar-with-our-tooling.html">Getting familiar with Serverless Workflow tooling</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-jq-expressions.html">jq expressions in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/working-with-parallelism.html">Parallelism in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/configuration-properties.html">Configuration properties in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/defining-an-input-schema-for-workflows.html">Input schema definition for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-overview.html">Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome GitHub extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Kogito Serverless Workflow Tools extension in Quarkus Dev UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances in Kogito Serverless Workflow Tools extension</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions in Kogito Serverless Workflow Tools extension</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/kn-plugin-workflow-overview.html">Serverless Workflow plug-in for Knative CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">Integrating your Serverless Workflow project in GitHub using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">Integrating your Serverless Workflow project with OpenShift using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Integrating with Red Hat OpenShift Application and Data Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deploying your Serverless Workflow projects using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-enable-kogito-swf-visualization.html">Enabling Kogito Serverless Workflow Visualization in Serverless Logic Web Tools</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">Orchestrating the OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Configuring the OpenAPI services endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Eventing</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="handling-events-on-workflows.html">Event state in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="event-correlation-with-workflows.html">Event correlation in Serverless Workflow</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="working-with-callbacks.html">Callback state in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">Authentication for OpenAPI services in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">Orchestration of third-party services using OAuth 2.0 authentication in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cloud</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/kubernetes-service-discovery.html">Kubernetes service discovery in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga orchestration example in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.28</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../latest/index.html">1.29</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Eventing</li>
+    <li><a href="working-with-callbacks.html">Callback state in Serverless Workflow</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.28</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/eventing/working-with-callbacks.html">snapshot</a>
+    <a class="version" href="../../latest/eventing/working-with-callbacks.html">1.29</a>
+    <a class="version is-current" href="working-with-callbacks.html">1.28</a>
+    <a class="version" href="../../1.27.0.Final/eventing/working-with-callbacks.html">1.27</a>
+    <a class="version" href="../../1.26.0.Final/eventing/working-with-callbacks.html">1.26</a>
+    <a class="version" href="../../1.25.0.Final/eventing/working-with-callbacks.html">1.25</a>
+    <a class="version" href="../../1.24.1.Final/eventing/working-with-callbacks.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.28.x/serverlessworkflow/modules/ROOT/pages/eventing/working-with-callbacks.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Callback state in Serverless Workflow</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Callback-State">Callback state</a> and related examples. The Callback state performs an action and waits for an event, to be produced as a result of the action, to resume the workflow. The action peformed by a Callback state is an asynchronous external service invocation. Therefore, the Callback state is suitable to perform  <em>fire&amp;wait-for-result</em> operations.</p>
+</div>
+<div class="paragraph">
+<p>From a workflow perspective, asynchronous service indicates that the control is returned to the caller immediately without waiting for the action to be completed. Once the action is completed, a <a href="https://cloudevents.io/">CloudEvent</a> is published to resume the workflow.</p>
+</div>
+<div class="paragraph">
+<p>For the workflow to identify the published CloudEvent it is waiting for, the external service developer includes the workflow instance ID in the CloudEvent header or uses the <a href="event-correlation-with-workflows.html" class="xref page">Event correlation</a>. The following figure displays the process:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/eventing/callbacks-explained.png" alt="callbacks explained">
+</div>
+</div>
+<div class="paragraph">
+<p>The workflow correlation described in this document focuses on the former mechanism that is based on the fact that each workflow instance contains a unique identifier, which is generated automatically.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ref-example-callback"><a class="anchor" href="#ref-example-callback"></a>Example of Callback state</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To understand the Callback state, see the <a href="https://github.com/kiegroup/kogito-examples/tree/1.28.x/serverless-workflow-examples/serverless-workflow-callback-quarkus"><code>serverless-workflow-callback-quarkus</code></a> example application in GitHub repository.</p>
+</div>
+<div class="paragraph">
+<p>The initial model of the <code>serverless-workflow-callback-quarkus</code> example application is empty. Once the workflow is started, it publishes a CloudEvent of the <code>resume</code> type and waits for a CloudEvent, which contains the type <code>wait</code>.</p>
+</div>
+<div class="paragraph">
+<p>A listener consumes the CloudEvent with the <code>resume</code> type and simulates the behavior of an external service. Consequently, on the external service side, when the actions associated with the <code>resume</code> type CloudEvent are completed, the listener publishes a <code>wait</code> type CloudEvent. Once the <code>wait</code> type CloudEvent is received, the workflow moves to the next state and ends successfully.</p>
+</div>
+<div class="paragraph">
+<p>To use the Callback state in a workflow, first CloudEvent types such as <code>resume</code> and <code>wait</code> are declared that the workflow uses. Following is an example of CloudEvents declaration in a workflow definition:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of CloudEvents declaration in a workflow definition</div>
+<div class="content">
+<pre>"events": [
+    {
+      "name": "resumeEvent",
+      "source": "",
+      "type": "resume"
+    },
+    {
+      "name": "waitEvent",
+      "source": "",
+      "type": "wait"
+    }
+  ]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After that, a Callback state is declared. The Callback state publishes a <code>resume</code> type CloudEvent and waits for a CloudEvent with <code>wait</code> type. The published CloudEvent contains a <code>move</code> data field, and the CloudEvent that is received is expected to contain a <code>result</code> data field. According to the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#event-data-filters">eventDataFilter</a>, the <code>result</code> data field is added to the workflow model as a <code>move</code> field.</p>
+</div>
+<div class="paragraph">
+<p>Following is an example of declaring a Callback state that handles the <code>wait</code> type CloudEvent:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a Callback State declaration handling the <code>wait</code> CloudEvent</div>
+<div class="content">
+<pre>{
+      "name": "waitForEvent",
+      "type": "callback",
+      "action": {
+        "name": "publishAction",
+        "eventRef": {
+          "triggerEventRef": "resumeEvent",
+          "data": "{move: \"This is the initial data in the model\"}"
+        }
+      },
+      "eventRef": "waitEvent",
+      "eventDataFilter": {
+        "data": ".result",
+        "toStateData": ".move"
+      },
+      "transition": "finish"
+    }</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>An <a href="https://github.com/kiegroup/kogito-examples/tree/1.28.x/serverless-workflow-examples/serverless-workflow-callback-quarkus/src/main/java/org/kie/kogito/examples/PrintService.java">event listener</a> consumes the <code>resume</code> type CloudEvent and publishes a new <code>wait</code> type CloudEvent. Following is an example of a Java method that publishes the <code>wait</code> type CloudEvent:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a Java method that publishes the <code>wait</code> CloudEvent</div>
+<div class="content">
+<pre>    private String generateCloudEvent(String id, String input) {
+        Map&lt;String, Object&gt; eventBody = new HashMap&lt;&gt;();
+        eventBody.put("result", input + " and has been modified by the event publisher");
+        eventBody.put("dummyEventVariable", "This will be discarded by the process");
+        try {
+            return objectMapper.writeValueAsString(CloudEventBuilder.v1()
+                    .withId(UUID.randomUUID().toString())
+                    .withSource(URI.create(""))
+                    .withType("wait")
+                    .withTime(OffsetDateTime.now())
+                    .withExtension(CloudEventExtensionConstants.PROCESS_REFERENCE_ID, id)
+                    .withData(objectMapper.writeValueAsBytes(eventBody))
+                    .build());
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException(e);
+        }
+
+    }</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After that, the workflow application consumes the event published by the listener and sets the result field. The consumed CloudEvent contains an attribute named <code>kogitoprocrefid</code>, which holds the workflow instance ID of the workflow.</p>
+</div>
+<div class="paragraph">
+<p>The <code>kogitoprocrefid</code> attribute is crucial because when the correlation is not used, then this attribute is the only way for the Callback state to identify that the related CloudEvent needs to be used to resume the workflow. For more information about correlation, see <a href="event-correlation-with-workflows.html" class="xref page">Event correlation in Serverless Workflow</a>.</p>
+</div>
+<div class="paragraph">
+<p>Note that each workflow is identified by a unique instance ID, which is automatically included in any published CloudEvent, as <code>kogitoprocinstanceid</code> CloudEvent extension.</p>
+</div>
+<div class="paragraph">
+<p>The following example shows that the event listener takes the workflow instance ID of a workflow from a CloudEvent attribute named <code>kogitoprocinstanceid</code>, which is associated with the CloudEvent that is consumed.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a Java method that consumes the <code>resume</code> CloudEvent</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">    @Incoming("in-resume")
+    @Outgoing("out-wait")
+    @Acknowledgment(Strategy.POST_PROCESSING)
+    public String onEvent(Message&lt;String&gt; message) {
+        Optional&lt;CloudEvent&gt; ce = CloudEventUtils.decode(message.getPayload());
+        JsonCloudEventData cloudEventData = (JsonCloudEventData) ce.get().getData();
+        return generateCloudEvent(ce.get().getExtension(CloudEventExtensionConstants.PROCESS_INSTANCE_ID).toString(), cloudEventData.getNode().get("move").asText());
+    }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Apache Kafka configuration in <code>serverless-workflow-callback-quarkus</code></dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The <code>serverless-workflow-callback-quarkus</code> example application requires an external broker to manage the associated CloudEvents. The default setup in the <code>serverless-workflow-callback-quarkus</code> example application uses <a href="https://kafka.apache.org/documentation/">Apache Kafka</a>. However, you can also use <a href="consume-produce-events-with-knative-eventing.html" class="xref page">Knative Eventing</a>.</p>
+</div>
+<div class="paragraph">
+<p>Apache Kafka uses topics to publish or consume messages. In the <code>serverless-workflow-callback-quarkus</code> example application, two topics are used, matching the name of the CloudEvent types that are defined in the workflow, such as <code>resume</code> and <code>wait</code>. The <code>resume</code> and <code>wait</code> CloudEvent types are configured in the <a href="https://github.com/kiegroup/kogito-examples/tree/1.28.x/serverless-workflow-examples/serverless-workflow-callback-quarkus/src/main/resources/application.properties"><code>application.properties</code></a> file.</p>
+</div>
+<div class="paragraph">
+<p>For more information about using Apache Kafka with events, see <a href="xref:consume-producing-events-with-kafka.adoc">Consuming and producing events using Apache Kafka</a>.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a></p>
+</li>
+<li>
+<p><a href="event-correlation-with-workflows.html" class="xref page">Event correlation in Serverless Workflow</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

@@ -53,7 +53,7 @@
     </nav>
 </header>
 <div class="body">
-<div class="nav-container" data-component="serverlessworkflow" data-version="1.28.0.Final">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.29.0.Final">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -101,6 +101,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../core/custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/timeouts-support.html">Timeouts in Serverless Workflow</a>
   </li>
 </ul>
   </li>
@@ -274,7 +277,7 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">Kogito Serverless Workflow Guides</span>
-    <span class="version">1.28</span>
+    <span class="version">1.29</span>
   </div>
   <ul class="components">
     <li class="component is-current">
@@ -283,11 +286,11 @@
         <li class="version">
           <a href="../../main/index.html">snapshot</a>
         </li>
-        <li class="version">
-          <a href="../../1.29.0-SNAPSHOT/index.html">1.29-RC</a>
-        </li>
         <li class="version is-current is-latest">
-          <a href="../index.html">1.28</a>
+          <a href="../index.html">1.29</a>
+        </li>
+        <li class="version">
+          <a href="../../1.28.0.Final/index.html">1.28</a>
         </li>
         <li class="version">
           <a href="../../1.27.0.Final/index.html">1.27</a>
@@ -320,18 +323,18 @@
   </ul>
 </nav>
 <div class="page-versions">
-  <button class="version-menu-toggle" title="Show other versions of page">1.28</button>
+  <button class="version-menu-toggle" title="Show other versions of page">1.29</button>
   <div class="version-menu">
     <a class="version" href="../../main/eventing/event-correlation-with-workflows.html">snapshot</a>
-    <a class="version" href="../../1.29.0-SNAPSHOT/eventing/event-correlation-with-workflows.html">1.29-RC</a>
-    <a class="version is-current" href="event-correlation-with-workflows.html">1.28</a>
+    <a class="version is-current" href="event-correlation-with-workflows.html">1.29</a>
+    <a class="version" href="../../1.28.0.Final/eventing/event-correlation-with-workflows.html">1.28</a>
     <a class="version" href="../../1.27.0.Final/eventing/event-correlation-with-workflows.html">1.27</a>
     <a class="version" href="../../1.26.0.Final/eventing/event-correlation-with-workflows.html">1.26</a>
     <a class="version" href="../../1.25.0.Final/eventing/event-correlation-with-workflows.html">1.25</a>
     <a class="version" href="../../1.24.1.Final/eventing/event-correlation-with-workflows.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.28.x/serverlessworkflow/modules/ROOT/pages/eventing/event-correlation-with-workflows.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.29.x/serverlessworkflow/modules/ROOT/pages/eventing/event-correlation-with-workflows.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -385,7 +388,7 @@
 <h2 id="ref-example-event-correlation"><a class="anchor" href="#ref-example-event-correlation"></a>Example of event correlation in a workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can see the correlation configuration in the <a href="https://github.com/kiegroup/kogito-examples/tree/1.28.x/serverless-workflow-examples/serverless-workflow-correlation-quarkus"><code>serverless-workflow-correlation-quarkus</code></a> example application, describing the setup and usage of event correlation in a workflow.</p>
+<p>You can see the correlation configuration in the <a href="https://github.com/kiegroup/kogito-examples/tree/1.29.x/serverless-workflow-examples/serverless-workflow-correlation-quarkus"><code>serverless-workflow-correlation-quarkus</code></a> example application, describing the setup and usage of event correlation in a workflow.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -394,7 +397,7 @@
 <div class="title">Figure 2. Event correlation evaluation process</div>
 </div>
 <div class="paragraph">
-<p>The <a href="https://github.com/kiegroup/kogito-examples/tree/1.28.x/serverless-workflow-examples/serverless-workflow-correlation-quarkus/src/main/resources/correlation.sw.json">workflow definition file</a> contains the correlation information, in which the events section is defined as follows:</p>
+<p>The <a href="https://github.com/kiegroup/kogito-examples/tree/1.29.x/serverless-workflow-examples/serverless-workflow-correlation-quarkus/src/main/resources/correlation.sw.json">workflow definition file</a> contains the correlation information, in which the events section is defined as follows:</p>
 </div>
 <div id="ref-correlation-event-definition" class="listingblock">
 <div class="title">Example event correlation in a workflow</div>
@@ -498,7 +501,7 @@
 </table>
 </div>
 <div class="paragraph">
-<p>Using the <a href="https://github.com/kiegroup/kogito-examples/tree/1.28.x/serverless-workflow-examples/serverless-workflow-correlation-quarkus/src/main/resources/correlation.sw.json">workflow definition</a> in <code>serverless-workflow-correlation-quarkus</code> example application, you can define other events that are published and consumed by the workflow.</p>
+<p>Using the <a href="https://github.com/kiegroup/kogito-examples/tree/1.29.x/serverless-workflow-examples/serverless-workflow-correlation-quarkus/src/main/resources/correlation.sw.json">workflow definition</a> in <code>serverless-workflow-correlation-quarkus</code> example application, you can define other events that are published and consumed by the workflow.</p>
 </div>
 <div class="paragraph">
 <p>The <code>serverless-workflow-correlation-quarkus</code> example application uses Callback states, such as <a href="#ref-validade-user-email-state"><code>Validate User Email</code></a>. This means that once the workflow execution reaches the Callback state, the workflow publishes an event of <a href="#ref-correlation-event-definition"><code>validateAccountEmailEvent</code></a> type and waits to receive an event of <a href="#ref-correlation-event-definition"><code>validatedAccountEmailEvent</code></a> type. For more information about callback state, see <a href="working-with-callbacks.html" class="xref page">Callback state in Serverless Workflow</a>.</p>
