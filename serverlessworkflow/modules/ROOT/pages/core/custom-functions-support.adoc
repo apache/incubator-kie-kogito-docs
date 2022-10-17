@@ -214,7 +214,7 @@ Kogito add-ons relies on link:{quarkus_guides_base_url}/writing-extensions[Quark
 - the deployment module, which is responsible for generating code required for the extension to work.
 - the runtime module, which include the non generated classes that are required for the extension to work. 
 
-In the case of a serverless workflow custom type:
+In the case of a serverless workflow custom type, here are the roles of the modules:
 
 - The deployment project is expected to configure the work item handler used during runtime to perform the logic associated with the custom type. It must contain a Java class that inherits from `WorkItemTypeHandler`. Its responsibilities are to indicate the custom type identifier (the operation prefix, as indicated earlier) and to set up the `WorkItemNodeFactory` instance passed as a parameter of the `fillWorkItemHandler` method. That instance is included in the Kogito process definition for that Workflow. As part of this setup, you must indicate the name of the  `WorkItemNodeFactory`. You might also provide any relevant metadata for that handler if needed. 
 - Runtime project consists of a `WorkflowWorkItemHandler` implementation, which name must match the one provided to `WorkItemNodeFactory` during the deployment phase and a `WorkItemHandlerConfig` bean that register that handler with that name. 
