@@ -175,7 +175,7 @@ mvn clean quarkus:dev
 .Example request
 [source,shell]
 ----
-curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John", "language": "English"}}' http://localhost:8080/jsongreet
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://localhost:8080/jsongreet
 ----
 
 .Example response
@@ -188,7 +188,7 @@ You can also try greeting in a different language.
 
 [source,shell]
 ----
-curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "Javi", "language": "Spanish"}}' http://localhost:8080/jsongreet
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "Javi", "language": "Spanish"}' http://localhost:8080/jsongreet
 ----
 
 In response, you will see the greeting in Spanish language.
@@ -198,7 +198,7 @@ In response, you will see the greeting in Spanish language.
 .Example request
 [source,shell]
 ----
-curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {"name": "John"}}' http://localhost:8080/jsongreetserverstream
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John"}' http://localhost:8080/jsongreetserverstream
 ----
 
 .Example response
@@ -212,12 +212,7 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 .Example request
 [source,shell]
 ----
-curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {
-                                                                                                    "helloRequests" : [
-                                                                                                                        {"name" : "Javierito", "language":"Spanish"},
-                                                                                                                        {"name" : "John", "language":"English"},
-                                                                                                                        {"name" : "Jan", "language":"Czech"}
-                                                                                                                      ]}}' http://localhost:8080/jsongreetclientstream
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"helloRequests" : [{"name" : "Javierito", "language":"Spanish"}, {"name" : "John", "language":"English"}, {"name" : "Jan", "language":"Czech"}]}' http://localhost:8080/jsongreetclientstream
 ----
 
 .Example response
@@ -241,12 +236,7 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 .Example request
 [source,shell]
 ----
-curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"workflowdata" : {
-                                                                                                    "helloRequests" : [
-                                                                                                                        {"name" : "Javierito", "language":"Spanish"},
-                                                                                                                        {"name" : "John", "language":"English"},
-                                                                                                                        {"name" : "Jan", "language":"Czech"}
-                                                                                                                      ]}}' http://localhost:8080/jsongreetbidistream
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"helloRequests" : [{"name" : "Javierito", "language":"Spanish"},{"name" : "John", "language":"English"},{"name" : "Jan", "language":"Czech"}]}' http://localhost:8080/jsongreetbidistream
 ----
 
 .Example response

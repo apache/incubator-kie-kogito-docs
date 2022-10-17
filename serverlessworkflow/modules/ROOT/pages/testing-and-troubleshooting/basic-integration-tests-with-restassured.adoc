@@ -16,9 +16,7 @@ The following procedure describes how to test a workflow application that expose
 [source,json]
 ----
 {
-  "workflowdata": {
-    "name": "John Doe"
-  }
+  "name": "John Doe"
 }
 ----
 
@@ -87,7 +85,7 @@ class HelloTest {
         given()
                 .contentType(ContentType.JSON) <2>
                 .accept(ContentType.JSON) <3>
-                .body("{\"workflowdata\": {\"name\": \"John Doe\"}}") <4>
+                .body("{\"name\": \"John Doe\"}") <4>
                 .when()
                 .post("/hello") <5>
                 .then()
@@ -100,7 +98,7 @@ class HelloTest {
 <1> Enables logging of the request and response when the test fails.
 <2> Defines JSON as the content type of the request.
 <3> Specifies the `accept` header of the request. This is an alternative for `header("Accept", "application/json")`.
-<4> Defines the request body as `{"workflowdata": {"name": "John Doe"}}`.
+<4> Defines the request body as `{"name": "John Doe"}`.
 <5> Specifies the request as a POST method to the `/hello` URL.
 <6> Defines `201` as the expected response status code.
 <7> Defines that `Hello, John Doe` is expected in the `workflowdata.greeting` JSON path.
