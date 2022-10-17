@@ -45,7 +45,7 @@ The following shows the example of security scheme definitions:
 }
 ----
 
-If the OpenAPI specification file contains `securitySchemes` definitions, but not link:{open_api_spec_url}[Security Requirement Object] definitions, the generator can be configured to create the security requirement objects by default. In this case, for all operations without a security requirement, the default one is created. Note that the property value needs to match the name of a security scheme object definition, such as `http-basic-example` or `api-key-example` in the previous `securitySchemes` list.
+If the OpenAPI specification file contains `securitySchemes` definitions, but not the link:{open_api_spec_url}#security-requirement-object[Security Requirement Object] definitions, the generator is configured to create the security requirement objects by default. In this case, for all the operations without a security requirement, the default one is created. Note that the property value must match the name of a security scheme object definition, such as `http-basic-example` or `api-key-example` in the previous `securitySchemes` list.
 
 [cols="20%,40%,40%", options="header"]
 |===
@@ -328,7 +328,7 @@ The following example shows `security-example.json` file, defining a `sayHelloOa
 }
 ----
 
-Unlike the `http basic`, `http bearer`, and `apiKey` security schemes, the OAuth 2.0 authentication relies on the link:https://quarkus.io/guides/security-openid-connect-client[Quarkus OpenId Connect (OIDC) and OAuth 2.0 Clients and Filters]. Therefore, you must add link:https://quarkus.io/guides/security-openid-connect-client#oidc-client-filter[Quarkus OIDC Client Filter Extension] to your project as shown in the following example:
+Unlike the `http basic`, `http bearer`, and `apiKey` security schemes, the OAuth 2.0 authentication relies on the link:https://quarkus.io/guides/security-openid-connect-client[Quarkus OpenId Connect (OIDC) and OAuth 2.0 Clients and Filters]. Therefore, you must add the link:https://quarkus.io/guides/security-openid-connect-client-reference#oidc-client-filter[Quarkus OIDC Client Filter Extension] to your project as shown in the following example:
 
 .Example of adding Quarkus OIDC client filter extension
 [source, xml]
