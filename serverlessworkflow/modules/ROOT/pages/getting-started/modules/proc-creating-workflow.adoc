@@ -1,0 +1,78 @@
+:_content-type: PROCEDURE
+:description: Creating a workflow
+:keywords: create, serverless, workflow
+:navtitle: Creating a workflow
+// :page-aliases:
+
+[id="proc-creating-workflow_{context}"]
+= Creating a workflow
+
+After bootstrapping a project, you need to create a workflow. In the following procedure, a workflow named *Hello World Workflow* is created.
+
+.Procedure
+. Create a file named `hello.sw.json` in the `src/main/resources` directory with the following content:
++
+--
+.Example content for `hello.sw.json` file
+[source,json]
+----
+{
+  "id": "hello_world", <1>
+  "version": "1.0",
+  "specVersion": "0.8",
+  "name": "Hello World Workflow",
+  "description": "JSON based hello world workflow",
+  "start": "Inject Hello World", <3>
+  "states": [ <2>
+    {
+      "name": "Inject Hello World",
+      "type": "inject", <4>
+      "data": { <5>
+        "greeting": "Hello World"
+      },
+      "transition": "Inject Mantra" <6>
+    },
+    {
+      "name": "Inject Mantra",
+      "type": "inject",
+      "data": {
+        "mantra": "Serverless Workflow is awesome!" <7>
+      },
+      "end": true <8>
+    }
+  ]
+}
+----
+In the previous example:
+
+<1> `id` field is the unique identifier of the workflow. {product_name} generates the REST endpoints based on this unique identifier.
+
+<2> `states` defines the states of the workflow. In the Hello World example, the workflow contains two states, such as `Inject Hello World` and `Inject Mantra`.
+
+<3> `start` field defines the state in which the workflow starts.
+
+<4> `type` defines the type of the state. In the previous example, the state is `inject`. The `inject` state can be used to inject static data into state data input.
+
+<5> `data` defines the data that is injected into the state. In the previous example, `greeting` is injected with the `Hello World` value.
+
+<6> `transition` field defines the next state that is reached after the current state is completed.
+
+<7> Injects a `mantra` with the value `Serverless Workflow is awesome!` into the workflow data.
+
+<8> `end` field defines that the current state is the end of the workflow. When the workflow reaches the end state, the workflow stops and the REST endpoint returns the workflow data, such as:
+
+.Example workflow data
+[source,json]
+----
+{
+  "greeting": "Hello World",
+  "mantra": "Serverless Workflow is awesome!"
+}
+----
+
+[NOTE]
+====
+The workflow definition follows the CNCF Serverless Workflow specification. For more information, see
+xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow specification].
+====
+--
