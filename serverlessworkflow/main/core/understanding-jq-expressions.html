@@ -345,7 +345,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Each workflow instance is associated with a data model. A data model consists of a JSON object regardless of whether the workflow file contains YAML or JSON. The initial content of the JSON object depends on how the workflow is started. If the workflow is created using <a href="https://cloudevents.io/">Cloud Event</a>, then the workflow content is taken from the <code>data</code> property. However, if the workflow is started through an HTTP POST invocation, then the workflow content is taken from the <code>workflowdata</code> property.</p>
+<p>Each workflow instance is associated with a data model. A data model consists of a JSON object regardless of whether the workflow file contains YAML or JSON. The initial content of the JSON object depends on how the workflow is started. If the workflow is created using the <a href="https://cloudevents.io/">Cloud Event</a>, then the workflow content is taken from the <code>data</code> property. However, if the workflow is started through an HTTP POST request, then the workflow content is taken from the request body.</p>
 </div>
 <div class="paragraph">
 <p>The workflow expressions in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-expressions">Serverless Workflow specification</a> are used to interact with the data model. The supported expression languages include <a href="https://github.com/json-path/JsonPath/">JsonPath</a> and <a href="https://stedolan.github.io/jq/manual/">jq</a>. jq expression language is the default language. However, you can change the expression language to JsonPath using the <code>expressionLang</code> property.</p>
