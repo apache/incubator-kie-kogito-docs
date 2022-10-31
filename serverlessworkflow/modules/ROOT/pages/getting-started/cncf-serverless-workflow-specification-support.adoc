@@ -88,6 +88,8 @@ specification.
 
 The link:{spec_doc_url}#parallel-state[Parallel State] of the workflow states feature works in a single thread. This means that a Parallel State does not create one thread per branch, simulating an actual parallel behavior.
 
+ If an exclusive property is set to `false`, you should not use the link:{spec_doc_url}#event-state[Event State] of the workflow states feature as the starting state. In case, if it is specified that way, then it will behave as if an exclusive property was set to `true`. 
+
 [NOTE]
 ====
 {product_name} does not support the link:{spec_doc_url}#sleep-state[Sleep State] feature. However, this feature will be supported in a future release.
@@ -101,7 +103,7 @@ The following table shows all the workflow states that {product_name} supports i
 | State | Status | Reference
 
 | Event
-| emoji:full_moon[]
+| emoji:last_quarter_moon[]
 | link:{spec_doc_url}#Event-State[Event State]
 
 | Operation
