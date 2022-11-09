@@ -292,6 +292,17 @@ If none of the events arrive before the timeout is overdue, the workflow then mo
 .Switch timeout workflow
 image::core/switch-state-timeouts.svg[]
 
+=== Event workflow
+
+The event example is similar to the switch one but once the execution reaches the state, it waits for one of the configured events, `event1` or `event2`, to arrive, see the <<event-state, event state definition>>.
+
+If none of the configured events arrive before the timeout is overdue, the workflow execution moves to the next state defined in the corresponding `transition` property, skipping the events that were not received in time.
+
+If one of the events arrives before the timeout is overdue, the workflow then moves to the state defined in `transition`, executing the corresponding event that has arrived in the state definition.
+
+.Event timeout workflow
+image::core/event-state-timeouts.svg[]
+
 === Running the example
 
 To run the example you must have access to a kubernetes cluster running with Knative configured.
