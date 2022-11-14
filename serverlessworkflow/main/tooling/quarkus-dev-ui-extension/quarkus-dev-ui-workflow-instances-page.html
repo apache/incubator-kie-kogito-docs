@@ -419,7 +419,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Diagram panel</p>
+<p>Serverless Workflow Diagram panel</p>
 </li>
 <li>
 <p>Timeline panel</p>
@@ -431,33 +431,69 @@
 <p>Variables panel</p>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Diagram panel</dt>
+<dt class="hdlist1">Serverless Workflow Diagram panel</dt>
 <dd>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The Diagram panel enables you to explore the workflow diagram and execution path of the workflow instance. The workflow diagram and execution path are displayed when the Kogito process SVG configuration is added in your project.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-diagram-panel.png" alt="kogito swf tools workflow diagram panel">
-</div>
-<div class="title">Figure 5. Diagram panel</div>
+<p>The Serverless Workflow Diagram panel enables you to explore the workflow diagram and execution path of the workflow instance. The workflow diagram and execution path are displayed by consuming the source which is exposed through the <code>kogito-addons-quarkus-source-files</code>.</p>
 </div>
 <div class="paragraph">
-<p>To add the Kogito SVG process add-on configuration, add the following dependency to <code>pom.xml</code> file of your project:</p>
+<p>To add the source files add-on configuration, add the following dependency to <code>pom.xml</code> file of your project:</p>
 </div>
 <div class="listingblock">
-<div class="title">Process-SVG dependency in <code>pom.xml</code> file</div>
+<div class="title">source-files add-on dependency in <code>pom.xml</code> file</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
   &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
-  &lt;artifactId&gt;kogito-addons-quarkus-process-svg&lt;/artifactId&gt;
+  &lt;artifactId&gt;kogito-addons-quarkus-source-files&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You can also generate SVG file using the VS Code extension for Serverless Workflow editor and then place the generated SVG in the <code>src/main/resources/META-INF/processSVG</code> folder of your project. The Kogito SVG process add-on exposes the SVG diagram to Quarkus Dev UI, and Dev UI reads the diagram and provides the workflow <strong>Diagram</strong> panel.</p>
+<p>There are two ways to display the diagram.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Stunner Diagram</p>
+</li>
+<li>
+<p>Mermaid Diagram</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>By default, the Stunner diagram is displayed. To toggle between the two diagrams you can use the <code>kogito.swf.stunner.enabled</code>(defaulted to true) environment variable in your application properties.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For yaml-based workflow files, the mermaid diagram is displayed instead of the stunner diagram.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>There is a slider available in the diagram panel, which when dragged to the right displays the source code in read-only mode.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-stunner-diagram-panel.png" alt="kogito swf tools workflow stunner diagram panel">
+</div>
+<div class="title">Figure 5. Stunner based Diagram panel</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-mermaid-diagram-panel.png" alt="kogito swf tools workflow mermaid diagram panel">
+</div>
+<div class="title">Figure 6. Mermaid based Diagram panel</div>
 </div>
 </div>
 </div>
@@ -473,7 +509,7 @@
 <div class="content">
 <img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-timeline-panel.png" alt="kogito swf tools workflow timeline panel">
 </div>
-<div class="title">Figure 6. Timeline panel</div>
+<div class="title">Figure 7. Timeline panel</div>
 </div>
 </div>
 </div>
@@ -514,7 +550,7 @@
 <div class="content">
 <img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-details-panel.png" alt="kogito swf tools workflow details panel">
 </div>
-<div class="title">Figure 7. Details panel</div>
+<div class="title">Figure 8. Details panel</div>
 </div>
 </div>
 </div>
@@ -530,7 +566,7 @@
 <div class="content">
 <img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-variables-panel.png" alt="kogito swf tools workflow variables panel">
 </div>
-<div class="title">Figure 8. Variables panel</div>
+<div class="title">Figure 9. Variables panel</div>
 </div>
 </div>
 </div>
