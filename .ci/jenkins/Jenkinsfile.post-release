@@ -53,9 +53,9 @@ pipeline {
 
                         String antoraFile = 'serverlessworkflow/antora.yml'
                         sh """
-                            sed -i 's|^version:.*|version: ${getKogitoVersion()}|g' ${antoraFile}
-                            sed -i 's|^display_version:.*|display_version: ${getKogitoMajorMinorVersion()}|g' ${antoraFile}
-                            sed -i 's|^prerelease:.*||g' ${antoraFile}
+                            sed -i "s|^version:.*|version: '${getKogitoVersion()}'|g" ${antoraFile}
+                            sed -i "s|^display_version:.*|display_version: '${getKogitoMajorMinorVersion()}'|g" ${antoraFile}
+                            sed -i "s|^prerelease:.*||g" ${antoraFile}
                         """
 
                         // Add changed files, commit, open and merge PR
