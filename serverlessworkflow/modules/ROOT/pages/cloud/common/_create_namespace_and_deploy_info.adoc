@@ -1,0 +1,45 @@
+:env1: tyer
+
+--
+.Create namespace
+[source,shell]
+----
+kubectl create namespace serverless-workflow-greeting-quarkus
+----
+--
+
+. Set the context to the newly created namespace using the following command:
++
+--
+.Set context to a namespace
+[source,shell]
+----
+kubectl config set-context --current --namespace=serverless-workflow-greeting-quarkus
+----
+
+After setting the context, all Minikube commands use the created namespace. You can use the following command to verify the current namespace:
+
+.Verify the current namespace
+[source,shell]
+----
+kubectl config view --minify -o jsonpath='{..namespace}'
+----
+--
+
+. Deploy your workflow application {deploy_application}.
++
+--
+The next step is to deploy your workflow application and execute it.
+You can see the further sections for different procedures to deploy your workflow application.
+
+[NOTE]
+====
+You can use the native image due to the faster startup. +
+For more information about installing the workflow application, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building workflow images using Quarkus CLI] document.
+====
+--
+
+In the following procedures, you can find two examples of deploying your workflow application, including:
+
+* Using Knative CLI (`kn`)
+* Using `kubectl` command-line tool
