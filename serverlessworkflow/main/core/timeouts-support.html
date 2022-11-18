@@ -471,6 +471,94 @@ For instance, <code>PT15M</code> configures 15 minutes, and <code>P2DT3H4M</code
 </div>
 </div>
 <div class="sect2">
+<h3 id="_event_state_timeout"><a class="anchor" href="#_event_state_timeout"></a>Event state timeout</h3>
+<div class="paragraph">
+<p>The <code>event</code> state is used to wait for one or more events to be received by the workflow and then continue the execution.
+If the event state is a starting state, a new workflow instance is created.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The event state is not supported as a starting state if the <code>exclusive</code> flag is set to <code>false</code>, therefore timeout is not supported in this case.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>timeouts</code> property is used for this state to configure the maximum time the workflow should wait for the defined events to arrive.</p>
+</div>
+<div class="paragraph">
+<p>If this time is exceeded and the events are not received, the workflow moves to the state defined in the transition property or ends the workflow instance without performing any actions in case of an end state.</p>
+</div>
+<div class="paragraph">
+<p>You can see this in the <a href="#event-state">example</a>.</p>
+</div>
+<div class="paragraph">
+<p>For more information about event state timeout, see <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#event-timeout-definition">Serverless Workflow specification</a>.</p>
+</div>
+<div id="event-state" class="listingblock">
+<div class="title">Example of event state with timeout</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "name": "WaitForEvent",
+  "type": "event",
+  "onEvents": [
+    {
+      "eventRefs": [
+        "event1"
+      ],
+      "eventDataFilter": {
+        "data": "${ \"The event1 was received.\" }",
+        "toStateData": "${ .exitMessage }"
+      },
+      "actions": [
+        {
+          "name": "printAfterEvent1",
+          "functionRef": {
+            "refName": "systemOut",
+            "arguments": {
+              "message": "${\"event-state-timeouts: \" + $WORKFLOW.instanceId + \" executing actions for event1.\"}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "eventRefs": [
+        "event2"
+      ],
+      "eventDataFilter": {
+        "data": "${ \"The event2 was received.\" }",
+        "toStateData": "${ .exitMessage }"
+      },
+      "actions": [
+        {
+          "name": "printAfterEvent2",
+          "functionRef": {
+            "refName": "systemOut",
+            "arguments": {
+              "message": "${\"event-state-timeouts: \" + $WORKFLOW.instanceId + \" executing actions for event2.\"}"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "timeouts": {
+    "eventTimeout": "PT30S"
+  },
+  "transition": "PrintExitMessage"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_deploying_a_timed_based_workflow"><a class="anchor" href="#_deploying_a_timed_based_workflow"></a>Deploying a timed-based workflow</h3>
 <div class="paragraph">
 <p>In order to deploy a workflow that contains timeouts or any other timer-based action, it is necessary to have Job Service running in your environment, which is an external service responsible to control the workflows timers, see the <a href="#job-service">section</a> for more information.
@@ -669,6 +757,24 @@ See the <a href="#callback-state">callback state definition</a>.</p>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_event_workflow"><a class="anchor" href="#_event_workflow"></a>Event workflow</h3>
+<div class="paragraph">
+<p>The event example is similar to the switch one but once the execution reaches the state, it waits for one of the configured events, <code>event1</code> or <code>event2</code>, to arrive, see the <a href="#event-state">event state definition</a>.</p>
+</div>
+<div class="paragraph">
+<p>If none of the configured events arrive before the timeout is overdue, the workflow execution moves to the next state defined in the corresponding <code>transition</code> property, skipping the events that were not received in time together with actions configured for them.</p>
+</div>
+<div class="paragraph">
+<p>If one of the events arrives before the timeout is overdue, the workflow then moves to the state defined in <code>transition</code>, executing the corresponding event that has arrived in the state definition together with actions defined for it.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/core/event-state-timeouts.svg" alt="event state timeouts">
+</div>
+<div class="title">Figure 3. Event timeout workflow</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_running_the_example"><a class="anchor" href="#_running_the_example"></a>Running the example</h3>
 <div class="paragraph">
 <p>To run the example you must have access to a kubernetes cluster running with Knative configured.</p>
@@ -703,7 +809,7 @@ See the <a href="#callback-state">callback state definition</a>.</p>
 <div class="content">
 <img src="../_images/core/jobs-service-knative-architecture.png" alt="jobs service knative architecture">
 </div>
-<div class="title">Figure 3. Knative Workflow with Job Service architecture</div>
+<div class="title">Figure 4. Knative Workflow with Job Service architecture</div>
 </div>
 <div class="sect3">
 <h4 id="_deploying_the_database"><a class="anchor" href="#_deploying_the_database"></a>Deploying the database</h4>
@@ -810,7 +916,7 @@ timeouts-showcase         http://timeouts-showcase.default.10.105.86.217.sslip.i
 <div class="content">
 <img src="../_images/core/timeout-switch-wokflow-ui.png" alt="timeout switch wokflow ui">
 </div>
-<div class="title">Figure 4. Timeout workflow showcase UI</div>
+<div class="title">Figure 5. Timeout workflow showcase UI</div>
 </div>
 <div class="paragraph">
 <p>You can create new workflow instances and interact with them to complete, or simply wait for the timeout to be triggered to check it&#8217;s working.
@@ -851,6 +957,23 @@ More details on the <a href="https://github.com/kiegroup/kogito-examples/tree/ma
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
 'http://timeouts-showcase.default.10.105.86.217.sslip.io/callback_state_timeouts' \
+-H 'accept: */*' \
+-H 'Content-Type: application/json' \
+-d '{}'</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Event</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">Creating an event workflow with timeout</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
+'http://timeouts-showcase.default.10.105.86.217.sslip.io/event_state_timeouts' \
 -H 'accept: */*' \
 -H 'Content-Type: application/json' \
 -d '{}'</code></pre>
