@@ -39,31 +39,46 @@ image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-details-page.p
 
 The Workflow Details page consists of the following panels:
 
-* Diagram panel
+* Serverless Workflow Diagram panel
 * Timeline panel
 * Details panel
 * Variables panel
 
-Diagram panel::
+Serverless Workflow Diagram panel::
 +
 --
-The Diagram panel enables you to explore the workflow diagram and execution path of the workflow instance. The workflow diagram and execution path are displayed when the Kogito process SVG configuration is added in your project.
+The Serverless Workflow Diagram panel enables you to explore the workflow diagram and execution path of the workflow instance. The workflow diagram and execution path are displayed by consuming the source which is exposed through the `kogito-addons-quarkus-source-files`.
 
-.Diagram panel
-image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-diagram-panel.png[]
+To add the source files add-on configuration, add the following dependency to `pom.xml` file of your project:
 
-To add the Kogito SVG process add-on configuration, add the following dependency to `pom.xml` file of your project:
-
-.Process-SVG dependency in `pom.xml` file
+.source-files add-on dependency in `pom.xml` file
 [source,xml]
 ----
 <dependency>
   <groupId>org.kie.kogito</groupId>
-  <artifactId>kogito-addons-quarkus-process-svg</artifactId>
+  <artifactId>kogito-addons-quarkus-source-files</artifactId>
 </dependency>
 ----
 
-You can also generate SVG file using the VS Code extension for Serverless Workflow editor and then place the generated SVG in the `src/main/resources/META-INF/processSVG` folder of your project. The Kogito SVG process add-on exposes the SVG diagram to Quarkus Dev UI, and Dev UI reads the diagram and provides the workflow *Diagram* panel.
+There are two ways to display the diagram. 
+
+1. Stunner Diagram
+2. Mermaid Diagram
+
+By default, the Stunner diagram is displayed. To toggle between the two diagrams you can use the `kogito.swf.stunner.enabled`(defaulted to true) environment variable in your application properties.
+
+[NOTE]
+====
+For yaml-based workflow files, the mermaid diagram is displayed instead of the stunner diagram.
+====
+
+There is a slider available in the diagram panel, which when dragged to the right displays the source code in read-only mode.
+
+.Stunner based Diagram panel
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-stunner-diagram-panel.png[]
+
+.Mermaid based Diagram panel
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-mermaid-diagram-panel.png[]
 --
 
 Timeline panel::
