@@ -97,6 +97,80 @@ See more details about this state on the link:{spec_doc_url}#switch-date[Serverl
 }
 ----
 
+=== Event state timeout
+
+The `event` state is used to wait for one or more events to be received by the workflow and then continue the execution.
+If the event state is a starting state, a new workflow instance is created.
+
+[NOTE]
+====
+The event state is not supported as a starting state if the `exclusive` flag is set to `false`, therefore timeout is not supported in this case.
+====
+
+The `timeouts` property is used for this state to configure the maximum time the workflow should wait for the defined events to arrive.
+
+If this time is exceeded and the events are not received, the workflow moves to the state defined in the transition property or ends the workflow instance without performing any actions in case of an end state.
+
+You can see this in the <<event-state, example>>.
+
+For more information about event state timeout, see link:{spec_doc_url}#event-timeout-definition[Serverless Workflow specification].
+
+[#event-state]
+.Example of event state with timeout
+[source,json]
+----
+{
+  "name": "WaitForEvent",
+  "type": "event",
+  "onEvents": [
+    {
+      "eventRefs": [
+        "event1"
+      ],
+      "eventDataFilter": {
+        "data": "${ \"The event1 was received.\" }",
+        "toStateData": "${ .exitMessage }"
+      },
+      "actions": [
+        {
+          "name": "printAfterEvent1",
+          "functionRef": {
+            "refName": "systemOut",
+            "arguments": {
+              "message": "${\"event-state-timeouts: \" + $WORKFLOW.instanceId + \" executing actions for event1.\"}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "eventRefs": [
+        "event2"
+      ],
+      "eventDataFilter": {
+        "data": "${ \"The event2 was received.\" }",
+        "toStateData": "${ .exitMessage }"
+      },
+      "actions": [
+        {
+          "name": "printAfterEvent2",
+          "functionRef": {
+            "refName": "systemOut",
+            "arguments": {
+              "message": "${\"event-state-timeouts: \" + $WORKFLOW.instanceId + \" executing actions for event2.\"}"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "timeouts": {
+    "eventTimeout": "PT30S"
+  },
+  "transition": "PrintExitMessage"
+}
+----
+
 === Deploying a timed-based workflow
 
 In order to deploy a workflow that contains timeouts or any other timer-based action, it is necessary to have Job Service running in your environment, which is an external service responsible to control the workflows timers, see the <<job-service, section>> for more information.
@@ -224,6 +298,17 @@ If none of the events arrive before the timeout is overdue, the workflow then mo
 
 .Switch timeout workflow
 image::core/switch-state-timeouts.svg[]
+
+=== Event workflow
+
+The event example is similar to the switch one but once the execution reaches the state, it waits for one of the configured events, `event1` or `event2`, to arrive, see the <<event-state, event state definition>>.
+
+If none of the configured events arrive before the timeout is overdue, the workflow execution moves to the next state defined in the corresponding `transition` property, skipping the events that were not received in time together with actions configured for them.
+
+If one of the events arrives before the timeout is overdue, the workflow then moves to the state defined in `transition`, executing the corresponding event that has arrived in the state definition together with actions defined for it.
+
+.Event timeout workflow
+image::core/event-state-timeouts.svg[]
 
 === Running the example
 
@@ -364,6 +449,18 @@ curl -X 'POST' \
 ----
 curl -X 'POST' \
 'http://timeouts-showcase.default.10.105.86.217.sslip.io/callback_state_timeouts' \
+-H 'accept: */*' \
+-H 'Content-Type: application/json' \
+-d '{}'
+----
+
+* Event
+
+.Creating an event workflow with timeout
+[source, shell]
+----
+curl -X 'POST' \
+'http://timeouts-showcase.default.10.105.86.217.sslip.io/event_state_timeouts' \
 -H 'accept: */*' \
 -H 'Content-Type: application/json' \
 -d '{}'
