@@ -286,6 +286,9 @@
         <li class="version">
           <a href="../../../main/index.html">snapshot</a>
         </li>
+        <li class="version">
+          <a href="../../../1.31.0-SNAPSHOT/index.html">1.31-RC</a>
+        </li>
         <li class="version is-current is-latest">
           <a href="../../index.html">1.30</a>
         </li>
@@ -330,6 +333,7 @@
   <button class="version-menu-toggle" title="Show other versions of page">1.30</button>
   <div class="version-menu">
     <a class="version" href="../../../main/tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">snapshot</a>
+    <a class="version" href="../../../1.31.0-SNAPSHOT/tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">1.31-RC</a>
     <a class="version is-current" href="quarkus-dev-ui-workflow-definition-page.html">1.30</a>
     <a class="version" href="../../../1.29.0.Final/tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">1.29</a>
     <a class="version" href="../../../1.28.0.Final/tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">1.28</a>
@@ -389,44 +393,49 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="con-trigger-cloud-event-page"><a class="anchor" href="#con-trigger-cloud-event-page"></a>Trigger cloud event page</h2>
+<h2 id="con-trigger-cloud-event-page"><a class="anchor" href="#con-trigger-cloud-event-page"></a>Start New Workflow page</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Trigger cloud event page is used to trigger the cloud events related to a workflow definition. To navigate to the <strong>Trigger cloud event</strong> page, click on the play button in the <strong>Actions</strong> column of workflow definitions table.</p>
+<p>The <strong>Start New Workflow</strong> page is used to start a workflow instance through a cloud event or a custom form, depending on the workflow configuration. To navigate to the <strong>Start New Workflow</strong> page, click the play button in the <strong>Actions</strong> column of the workflow definitions table.</p>
+</div>
+<div class="paragraph">
+<p><strong>If there is no JSON schema for the workflow, then the workflow is started by triggering a cloud event.
+To trigger a cloud event, you can use the *Cloud Event Type</strong> and <strong>Cloud Event Data</strong> input fields to set the type of a cloud event and event payload in JSON format respectively and click the <strong>Start</strong> button to start a workflow. The <strong>Reset</strong> button on the page resets the values entered in the given fields.</p>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-trigger-cloud-events.png" alt="kogito swf tools trigger cloud events">
 </div>
-<div class="title">Figure 3. Trigger cloud event page</div>
+<div class="title">Figure 3. Starting a workflow using a cloud event</div>
 </div>
 <div class="paragraph">
-<p>The <strong>Trigger cloud event</strong> page consists of the two fields, including <strong>Type</strong> and <strong>Data</strong>. To trigger a cloud event, you can use the <strong>Type</strong> and <strong>Data</strong> input fields to set the type of a cloud event and event payload in JSON format respectively, and click the <strong>Send</strong> button to start a workflow. The <strong>Reset</strong> button on the page resets the values entered in the given fields.</p>
+<p>If there is a JSON schema for the workflow configured in the <code>dataInputSchema</code> property, then a form is displayed to start a new workflow instance. You can fill in the required form details and click the <strong>Start</strong> button to trigger the workflow.
+The <strong>Reset</strong> button is used to clear the form data.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-trigger-cloud-event-values.png" alt="kogito swf tools trigger cloud event values">
+<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-trigger-cloud-events-custom-form.png" alt="kogito swf tools trigger cloud events custom form">
 </div>
-<div class="title">Figure 4. Example values to trigger a workflow</div>
+<div class="title">Figure 4. Starting a workflow using the form</div>
 </div>
 <div class="paragraph">
-<p>You can also use the <strong>Business key</strong> text box to define a custom business key value to the workflow instance. If the <strong>Business Key</strong> field is blank, then an auto-generated business key is defined to the workflow instance.</p>
+<p>You can also use the <strong>Business key</strong> text box to define a custom business key value to the workflow instance. If the <strong>Business Key</strong> field is blank, then an auto-generated business key is defined for the workflow instance.</p>
 </div>
 <div class="paragraph">
 <p>When a workflow instance starts successfully, a success alert appears on the top of the screen, which contains a <strong>Go to workflow list</strong> option. The <strong>Go to workflow list</strong> option enables you to navigate to the <a href="quarkus-dev-ui-workflow-instances-page.html" class="xref page">Workflow Instances page</a>.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-trigger-cloud-event-success-alert.png" alt="kogito swf tools trigger cloud event success alert">
+<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-start-workflow-success-alert.png" alt="kogito swf tools start workflow success alert">
 </div>
 <div class="title">Figure 5. Example of trigger workflow success alert</div>
 </div>
 <div class="paragraph">
-<p>If incorrect values are entered in the <strong>Type</strong> and <strong>Data</strong> fields, then a failure alert appears on the top of the screen, containing <strong>View Details</strong> and <strong>Go to workflow list</strong> options. The <strong>View Details</strong> enables you to view the error message.</p>
+<p>If there is an issue while starting a workflow, then a failure alert appears on the top of the screen, containing <strong>View Details</strong> and <strong>Go to workflow list</strong> options. The <strong>View Details</strong> enables you to view the error message.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-trigger-cloud-event-fail-alert.png" alt="kogito swf tools trigger cloud event fail alert">
+<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-start-workflow-fail-alert.png" alt="kogito swf tools start workflow fail alert">
 </div>
 <div class="title">Figure 6. Example of trigger workflow failure alert</div>
 </div>
