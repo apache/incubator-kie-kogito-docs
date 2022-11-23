@@ -136,39 +136,6 @@ kubectl apply -f target/kubernetes/knative.yml
 ----
 --
 
-. Verify if the workflow application is deployed correctly using the following command:
-+
---
-[tabs]
-====
-On kubectl::
-+
-[source,shell]
-----
-kubectl get services.serving.knative.dev greeting-quarkus-kubectl
-----
-On Knative CLI::
-+
-[source,shell]
-----
-kn service list
-----
-====
+// verify deployed swf
+include::_verify_if_swf_is_deployed.adoc[]
 
-.Example output
-[source,shell]
-----
-NAME                       URL                                                                                          LATESTCREATED                    LATESTREADY                      READY   REASON
-greeting-quarkus-kubectl   http://greeting-quarkus-kubectl.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   greeting-quarkus-kubectl-00001   greeting-quarkus-kubectl-00001   True
-----
---
-
-. Access the workflow application using the listed URL in the output.
-+
---
-.Access workflow application
-[source,shell]
-----
-curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://greeting-quarkus-kubectl.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet
-----
---

@@ -19,6 +19,7 @@
 :kn_cli_quickstart_plugin_url: https://knative.dev/docs/install/quickstart-install/#install-the-knative-cli
 :knative_on_minikube_step_by_step_url: https://redhat-developer-demos.github.io/knative-tutorial/knative-tutorial/setup/minikube.html
 :knative_issue_url: https://github.com/knative/serving/issues/6101
+:quarkus_k8s_deploy_url: https://github.com/quarkusio/quarkus/issues/26385
 
 This document describes how to deploy your workflow application using a local Kubernetes cluster, such as link:{minikube_url}[Minikube], along with a procedure to run the Knative platform.
 
@@ -206,8 +207,54 @@ include::common/_proc_deploy_sw_kn_cli.adoc[]
 // deploy with kubectl
 include::common/_proc_deploy_sw_kubectl.adoc[]
 
-// deploy with quarkus-cli
-include::common/_proc_deploy_sw_quarkus_cli.adoc[]
+[[proc-deploy-sw-application-quarkus-cli]]
+=== Deploying your workflow application using Quarkus CLI
+
+.Prerequisites
+* Workflow application is installed.
+* Quarkus CLI is installed. +
+For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
+* You have completed the steps in link:#proc-deploy-sw-application-kubectl[Deploying your workflow application using `kubectl`]
+
+.Procedure
+. Add the Quarkus extensions to deploy the `knative` service
++
+--
+You can simply add the kubernetes and the Kogito knative extension to your project with the Quarkus CLI:
+
+.Add kubernetes and Kogito knative extensions to the project with Quarkus CLI
+[source,shell]
+----
+quarkus extension add kubernetes
+quarkus extension add kogito-addons-quarkus-knative-eventing
+----
+--
+. To deploy your workflow application using Quarkus CLI, set the following system properties in `application.properties` file:
++
+--
+.Required system properties
+[source,properties]
+----
+quarkus.knative.name=greeting-quarkus-cli <1>
+quarkus.kubernetes.deployment-target=knative <2>
+quarkus.kubernetes.deploy=true <3>
+quarkus.container-image.push=false <4>
+----
+
+<1> Property to set the Knative service name
+<2> Property to set the target deployment type
+<3> Property to set whether or not deploy on an active Kubernetes cluster
+<4> {container_push}
+
+[IMPORTANT]
+====
+This functionality works with Quarkus 2.10.2.Final or later. For more information, see
+link:{quarkus_k8s_deploy_url}[link].
+====
+--
+
+// verify deployed swf
+include::common/_verify_if_swf_is_deployed.adoc[]
 
 
 include::../../pages/_common-content/report-issue.adoc[]

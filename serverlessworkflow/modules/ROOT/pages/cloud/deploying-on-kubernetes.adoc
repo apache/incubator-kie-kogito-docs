@@ -11,13 +11,13 @@
 :k8s_registry: quay.io/mynamespace
 :registry: target
 :container_push: Property to whether or not push images
-
 // links
 :knative_kubernetes_url: https://knative.dev/docs/install/
 :verify_knative_url: https://knative.dev/docs/serving/knative-kubernetes-services/#before-you-begin
 :quay_io_url: https://quay.io/
 :k8s_pull_secret_url: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 :knative_domain_dns_url: https://knative.dev/docs/install/operator/knative-with-operators/#configure-dns
+:quarkus_k8s_deploy_url: https://github.com/quarkusio/quarkus/issues/26385
 
 
 This document describes how to deploy a {context} application using a Kubernetes cluster, along with a procedure to run the Knative platform.
@@ -86,8 +86,74 @@ include::common/_proc_deploy_sw_kn_cli.adoc[]
 // deploy with kubectl
 include::common/_proc_deploy_sw_kubectl.adoc[]
 
-// deploy with quarkus-cli
-include::common/_proc_deploy_sw_quarkus_cli.adoc[]
+[[proc-deploy-sw-application-quarkus-cli]]
+=== Deploying your workflow application using Quarkus CLI
 
+
+.Prerequisites
+* Workflow application is installed.
+* Quarkus CLI is installed. +
+For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
+
+
+.Procedure
+. Add the Quarkus extensions to deploy the `knative` service
++
+--
+You can add the Kubernetes and the Kogito Knative extensions to your project with the Quarkus CLI:
+
+.Add kubernetes and Kogito knative extensions to the project with Quarkus CLI
+[source,shell]
+----
+quarkus extension add kubernetes
+quarkus extension add kogito-addons-quarkus-knative-eventing
+----
+--
+. To deploy your workflow application using Quarkus CLI, set the following system properties in `application.properties` file:
++
+--
+.Required system properties
+[source,properties]
+----
+quarkus.knative.name=greeting-quarkus-cli <1>
+quarkus.kubernetes.deployment-target=knative <2>
+quarkus.kubernetes.deploy=true <3>
+quarkus.container-image.push=true <4>
+quarkus.container-image.group=spolti <5>
+quarkus.container-image.registry=quay.io <6>
+quarkus.container-image.tag=1.0-SNAPSHOT <7>
+
+----
+
+<1> Property to set the Knative service name
+<2> Property to set the target deployment type
+<3> Property to set whether or not deploy on an active Kubernetes cluster
+<4> {container_push}
+<5> Property to define which registry group/namespace the built image belongs to
+<6> Property to define to which registry the built image will be pushed to
+<7> Sets the built Container image tag
+
+[IMPORTANT]
+====
+This feature works with Quarkus 2.10.2.Final or later. For more information, see
+link:{quarkus_k8s_deploy_url}[link].
+====
+--
+
+.Build and Deploy your workflow application
+[source,shell]
+----
+quarkus build -- -Pcontainer -DskipTests \
+  -Dquarkus.container-image.push \
+  -Dquarkus.container-image.registry=quay.io \
+  -Dquarkus.container-image.group=spolti \
+  -Dquarkus.container-image.tag=1.0-SNAPSHOT
+----
+
+Note that the maven profile activated is named as `container`, which provide the needed system properties to build the
+target container image.
+
+// verify deployed swf
+include::common/_verify_if_swf_is_deployed.adoc[]
 
 include::../../pages/_common-content/report-issue.adoc[]
