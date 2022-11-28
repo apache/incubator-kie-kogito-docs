@@ -6,7 +6,7 @@
 :table-caption: Data Set
 // envs for common content
 :environment_prereq: Minikube is installed
-:kubectl_prereq: `kubectl` command-line tool is installed. Otherwise, Minikube handles it.
+:kubectl_prereq: command-line tool is installed. Otherwise, Minikube handles it.
 :cluster_kind: Minikube is installed
 :knative_procedure: <<proc-install-knative-minikube, Installing Knative on Minikube>>
 :deploy_application: using the Minikube registry
@@ -201,6 +201,13 @@ Status:
 +
 include::common/_create_namespace_and_deploy_info.adoc[]
 
+In the following procedures, you can find two examples of deploying your workflow application, including:
+
+* <<proc-deploy-sw-application-knative-cli,Using Knative CLI (kn)>>
+* <<proc-deploy-sw-application-kubectl,Using kubectl command-line tool>>
+* <<proc-deploy-sw-application-quarkus-cli,Using Quarkus CLI>>
+
+
 // deploy with kn-cli
 include::common/_proc_deploy_sw_kn_cli.adoc[]
 
@@ -214,7 +221,6 @@ include::common/_proc_deploy_sw_kubectl.adoc[]
 * Workflow application is installed.
 * Quarkus CLI is installed. +
 For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
-* You have completed the steps in link:#proc-deploy-sw-application-kubectl[Deploying your workflow application using `kubectl`]
 
 .Procedure
 . Add the Quarkus extensions to deploy the `knative` service
@@ -252,6 +258,19 @@ This functionality works with Quarkus 2.10.2.Final or later. For more informatio
 link:{quarkus_k8s_deploy_url}[link].
 ====
 --
+
+.Build and Deploy your workflow application
+[source,shell]
+----
+quarkus build -- -Pcontainer -DskipTests \
+  -Dquarkus.container-image.push=false \
+  -Dquarkus.container-image.registry=quay.io \
+  -Dquarkus.container-image.group=kiegroup \
+  -Dquarkus.container-image.tag=1.0-SNAPSHOT
+----
+
+Note that the maven profile activated is named as `container`, which provides the needed system properties to build the
+target container image.
 
 // verify deployed swf
 include::common/_verify_if_swf_is_deployed.adoc[]
