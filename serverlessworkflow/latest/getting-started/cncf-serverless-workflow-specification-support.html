@@ -53,7 +53,7 @@
     </nav>
 </header>
 <div class="body">
-<div class="nav-container" data-component="serverlessworkflow" data-version="1.30.0.Final">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.31.0.Final">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -277,7 +277,7 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">Kogito Serverless Workflow Guides</span>
-    <span class="version">1.30</span>
+    <span class="version">1.31</span>
   </div>
   <ul class="components">
     <li class="component is-current">
@@ -286,11 +286,11 @@
         <li class="version">
           <a href="../../main/index.html">snapshot</a>
         </li>
-        <li class="version">
-          <a href="../../1.31.0-SNAPSHOT/index.html">1.31-RC</a>
-        </li>
         <li class="version is-current is-latest">
-          <a href="../index.html">1.30</a>
+          <a href="../index.html">1.31</a>
+        </li>
+        <li class="version">
+          <a href="../../1.30.0.Final/index.html">1.30</a>
         </li>
         <li class="version">
           <a href="../../1.29.0.Final/index.html">1.29</a>
@@ -329,11 +329,11 @@
   </ul>
 </nav>
 <div class="page-versions">
-  <button class="version-menu-toggle" title="Show other versions of page">1.30</button>
+  <button class="version-menu-toggle" title="Show other versions of page">1.31</button>
   <div class="version-menu">
     <a class="version" href="../../main/getting-started/cncf-serverless-workflow-specification-support.html">snapshot</a>
-    <a class="version" href="../../1.31.0-SNAPSHOT/getting-started/cncf-serverless-workflow-specification-support.html">1.31-RC</a>
-    <a class="version is-current" href="cncf-serverless-workflow-specification-support.html">1.30</a>
+    <a class="version is-current" href="cncf-serverless-workflow-specification-support.html">1.31</a>
+    <a class="version" href="../../1.30.0.Final/getting-started/cncf-serverless-workflow-specification-support.html">1.30</a>
     <a class="version" href="../../1.29.0.Final/getting-started/cncf-serverless-workflow-specification-support.html">1.29</a>
     <a class="version" href="../../1.28.0.Final/getting-started/cncf-serverless-workflow-specification-support.html">1.28</a>
     <a class="version" href="../../1.27.0.Final/getting-started/cncf-serverless-workflow-specification-support.html">1.27</a>
@@ -342,7 +342,7 @@
     <a class="version" href="../../1.24.1.Final/getting-started/cncf-serverless-workflow-specification-support.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.30.x/serverlessworkflow/modules/ROOT/pages/getting-started/cncf-serverless-workflow-specification-support.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.31.x/serverlessworkflow/modules/ROOT/pages/getting-started/cncf-serverless-workflow-specification-support.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -481,6 +481,11 @@ specification.</p>
 <div class="paragraph">
 <p>The <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#parallel-state">Parallel State</a> of the workflow states feature works in a single thread. This means that a Parallel State does not create one thread per branch, simulating an actual parallel behavior.</p>
 </div>
+<div class="literalblock">
+<div class="content">
+<pre>If an exclusive property is set to `false`, you should not use the link:{spec_doc_url}#event-state[Event State] of the workflow states feature as the starting state. In case, if it is specified that way, then it will behave as if an exclusive property was set to `true`.</pre>
+</div>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -515,7 +520,7 @@ specification.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Event</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f317.svg" /></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-State">Event State</a></p></td>
 </tr>
 <tr>
@@ -712,8 +717,13 @@ specification.</p>
 <h2 id="timeouts"><a class="anchor" href="#timeouts"></a>Timeouts</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Kogito has limited support for the Timeouts feature, which covers only <strong>Callback</strong> and <strong>Switch</strong> states with events.
-Other states will be included in future releases.</p>
+<p>Kogito has limited support for the timeouts feature, which covers only <strong>Callback</strong>, <strong>Switch</strong>, and <strong>Event</strong> states.</p>
+</div>
+<div class="paragraph">
+<p>For start event state the <code>exclusive</code> property is not supported if set to <code>false</code>, therefore the timeout is not supported for the event state when starting a workflow.</p>
+</div>
+<div class="paragraph">
+<p>Other states will be included in future releases.</p>
 </div>
 <div class="paragraph">
 <p>For more information about timeouts, see <a href="../core/timeouts-support.html" class="xref page">Timeouts on events for Serverless Workflow</a>.</p>
