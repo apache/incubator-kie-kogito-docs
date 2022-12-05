@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+      - 1.*
   workflow_dispatch:
 
 permissions:
@@ -23,13 +24,20 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout main branch
+      uses: actions/checkout@v3
+      with:
+        ref: main
+    
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
 #        cache: 'npm'
-    - run: npm run install-build
+
+    - name: Build the pages
+      run: npm run install-build
+    
     - name: Publish to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
