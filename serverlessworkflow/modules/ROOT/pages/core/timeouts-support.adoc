@@ -3,6 +3,9 @@
 // Metadata:
 :description: Using timeouts in {context}
 :keywords: kogito, workflow, serverless, timeout, timer, expiration
+// links
+:jobs_service_image_url: https://quay.io/repository/kiegroup/kogito-jobs-service-allinone
+:jobs_service_image_usage_url: https://github.com/kiegroup/kogito-images#jobs-services-all-in-one
 
 When you define a state in a serverless workflow, you can use the `timeouts` property to configure the maximum time to complete this state.
 When that time is overdue, the state is considered timed-out, and the engine continues the execution from this state. The execution flow depends on the state type, for instance,
@@ -210,6 +213,11 @@ The example shows how to run PostgreSQL as a Kubernetes deployment, but you can 
 ==== Ephemeral
 Alternatively, there is an in-memory database support that does not require any external database configuration, it can be used for testing and development purposes, but it is not recommended for production, since all jobs are lost upon a service restart or failure.
 
+====
+[NOTE]
+====
+The job service link:{jobs_service_image_url}[image] is equipped with the PostgreSQL and Ephemeral (InMemory) options that can be switched using the `JOBS_SERVICE_PERSISTENCE`. If not set, it defaults to the `ephemeral` option. For more information about the job service, the container image can be found link:{jobs_service_image_usage_url}(here).
+====
 === Job Service communication
 
 [NOTE]
