@@ -154,7 +154,53 @@ The following table lists the configuration property related to Knative sink gen
 |`default`
 |This property indicates the name of the default Knative broker that is deployed in the Kubernetes namespace. This broker is used as the reference to create the Knative triggers, which are responsible to delegate the events that the workflow service consumes.
 
+| `mp.messaging.incoming.kogito_incoming_stream.path`
+| `/` (root path)
+|This property indicates the HTTP path where the workflow application will listen for the CloudEvents in the default incoming channel.
+
+| `mp.messaging.incoming.<event type name>.path`
+| `/` (root path)
+| This property indicates the HTTP path where the workflow application will listen for the CloudEvents in the specific given channel name. The channel name is the event `type` as defined in the Serverless Workflow events definition.
+
 |===
+
+[[proc-manually-sending-events-to-an-http-endpoint]]
+== Manually sending events to an HTTP endpoint
+
+You can send HTTP CloudEvents to the workflow application endpoint by using any tool that's capable to produce HTTP requests. The only requirement is that the request conforms to the link:{cloud_events_git_url}/spec.md#message[CloudEvents specification].
+
+For example, with the help of  `curl`, you can send an event to the workflow using the following command:
+
+.Sending a CloudEvent over HTTP using the structured format.
+[source,shell]
+----
+curl -X POST \
+     -H 'Content-Type: application/cloudevents+json'  \
+     -d '{"datacontenttype": "application/json", "specversion":"1.0","id":"41495513-a9ef-4a81-8479-21bb14db61f0","source":"/local/curl","type":"kogito.serverless.loanbroker.aggregated.quotes.response","data": { "amount": 300000, "term": 30, "credit": { "score": 700, "history": 15 }, "quotes": [{ "bankId": "Bank1", "rate": 12.2  }, {"bankId": "Bank2", "rate": 10}]  } } ' \
+http://localhost:8080
+----
+
+In this example we are using the link:{cloud_events_git_url}/bindings/http-protocol-binding.md#32-structured-content-mode[CloudEvents structured format], which includes every event information within the request payload. Note the header `Content-Type` being `application/cloudevents+json`.
+
+Alternatively, you can use the link:{cloud_events_git_url}/bindings/http-protocol-binding.md#31-binary-content-mode[CloudEvents binary format], which includes the event metadata in the HTTP header. For example, using the same event as before:
+
+.Sending a CloudEvent over HTTP using the binary format.
+[source,shell]
+----
+curl -X POST -i \
+     -H 'Content-Type: application/json'  \
+     -H 'ce-specversion: 1.0' \
+     -H 'ce-id: 41495513-a9ef-4a81-8479-21bb14db61f0' \
+     -H 'ce-source: /local/curl' \
+     -H 'ce-type: kogito.serverless.loanbroker.aggregated.quotes.response' \
+     -d '{ "amount": 300000, "term": 30, "credit": { "score": 700, "history": 15 }, "quotes": [{ "bankId": "Bank1", "rate": 12.2  }, {"bankId": "Bank2", "rate": 10}]  }' \
+http://localhost:8080/
+----
+
+You can use this tool to test your {product_name} application locally and verify if the events are being consumed correctly by the workflow.
+
+For more information about testing incoming and outgoing CloudEvents over HTTP, see xref:testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc[Mocking HTTP CloudEvents sink using WireMock].
+
 
 [[proc-generating-kn-objects-build-time]]
 == Generating Knative objects during build time
