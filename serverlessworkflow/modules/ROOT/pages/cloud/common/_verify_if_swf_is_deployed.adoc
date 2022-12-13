@@ -1,0 +1,42 @@
+Verify if the workflow application is deployed correctly:
+--
+[tabs]
+====
+On kubectl::
++
+[source,shell]
+----
+kubectl get services.serving.knative.dev greeting-quarkus-cli
+----
+On Knative CLI::
++
+[source,shell]
+----
+kn service list greeting-quarkus-cli
+----
+====
+--
+
+--
+.Example output
+[source,shell]
+----
+NAME                   URL                                                                                      LATEST                       AGE    CONDITIONS   READY   REASON
+greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   greeting-quarkus-cli-00001   7m6s   3 OK / 3     True
+----
+--
+
+.Use the URL in the output to send request to your workflow application.
+--
+.Example request
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet
+----
+
+.Example response
+[source,json]
+----
+{"id":"0f77abce-837e-4bd2-b4f1-a0e5e0265fcb","workflowdata":{"name":"John","language":"English","greeting":"Hello from JSON Workflow, "}}
+----
+--

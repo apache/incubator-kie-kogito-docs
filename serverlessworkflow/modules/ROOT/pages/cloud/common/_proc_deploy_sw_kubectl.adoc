@@ -1,0 +1,141 @@
+[[proc-deploy-sw-application-kubectl]]
+=== Deploying your workflow application using `kubectl`
+
+You can also use `kubectl` command-line interface and plain Kubernetes objects to deploy your workflow application. +
+And, instead of creating `knative` `yaml|json` descriptors, you can leverage the Quarkus Kubernetes extension and
+Kogito Knative add-on to generate the descriptors.
+
+.Prerequisites
+* Kogito Workflow application ready to use.
+* `kubectl` command-line tool is installed.
+* (Optional) Quarkus CLI is installed +
+For more information about installing the Quarkus CLI, see link:{quarkus_cli_url}#installing-the-cli[Installing the Quarkus CLI].
+
+.Procedure
+. Add the Quarkus extensions to generate `knative` `yaml|json` descriptors.
++
+--
+To use the Quarkus Kubernetes extension and Kogito Knative add-on, ensure that the following dependencies are available in the `pom.xml` file and Gradle:
+
+[tabs]
+====
+pom.xml::
++
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-addons-quarkus-knative-eventing</artifactId>
+</dependency>
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-kubernetes</artifactId>
+</dependency>
+----
+Gradle::
++
+[source,shell,subs="attributes+"]
+----
+quarkus-kubernetes 'io.quarkus:quarkus-kubernetes:{quarkus_version}'
+quarkus-kubernetes 'org.kie.kogito:kogito-addons-quarkus-knative-eventing:{page-component-version}'
+----
+====
+--
+
+. To generate the `knative` `yaml|json` descriptors, set the following properties in the `application.properties`
+file of your workflow application:
++
+--
+.System properties to generate knative descriptors
+[source,shell,subs="attributes+"]
+----
+quarkus.kubernetes.deployment-target=knative
+quarkus.knative.name=greeting-quarkus-kubectl
+----
+--
+
+. Build your workflow application.
++
+--
+Once you have built your application, you can find the generated descriptors files in the `target/kubernetes` directory:
+
+* `knative.json`
+* `knative.yml`
+
+Following is an example of the generated files:
+
+.Knative descriptor example for a workflow application
+[source,yaml,subs="attributes+"]
+----
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    app.quarkus.io/commit-id: 06c3fe8e2dfc42e2211cbcc41224f5a3d6bd1f26
+    app.quarkus.io/build-timestamp: 2022-06-23 - 23:53:38 +0000
+  labels:
+    app.kubernetes.io/name: greeting-quarkus-kubectl
+  name: greeting-quarkus-kubectl
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: greeting-quarkus-kubectl
+    spec:
+      containerConcurrency: 0
+      containers:
+        - image: {k8s_registry}/serverless-workflow-greeting-quarkus:1.0-native
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/live
+              port: null
+              scheme: HTTP
+            initialDelaySeconds: 0
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+          name: greeting-quarkus-kubectl
+          ports:
+            - containerPort: 8080
+              name: http1
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/ready
+              port: null
+              scheme: HTTP
+            initialDelaySeconds: 0
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+----
+
+[NOTE]
+====
+Once the files are generated, you might be required to add the `imagePullPolicy` manually before deploying the workflow application.
+====
+
+[WARNING]
+====
+Some system properties are not working properly due to a bug in the `Decorate API`. For more information about the bug, see the link:https://github.com/quarkusio/quarkus/issues/23832[Quarkus issue].
+
+There is a small bug on the `Decorate API` where some system properties are not taking effect, for more information take a look at this link:https://github.com/quarkusio/quarkus/issues/23832[Quarkus issue]. After the file generation, you might be required to add the `imagePullPolicy` manually before deploying it.
+====
+--
+
+. Enter the following command to deploy the workflow application using `kubectl`:
++
+--
+.Deploy the workflow application using `kubectl`
+[source,shell]
+----
+kubectl apply -f target/kubernetes/knative.yml
+----
+--
+
+// verify deployed swf
+include::_verify_if_swf_is_deployed.adoc[]
+
