@@ -1,0 +1,40 @@
+
+--
+.Create namespace
+[source,shell]
+----
+kubectl create namespace serverless-workflow-greeting-quarkus
+----
+--
+
+. Set the Kubernetes context to the newly created namespace using the following command:
++
+--
+.Set Kubernetes context to a namespace
+[source,shell]
+----
+kubectl config set-context --current --namespace=serverless-workflow-greeting-quarkus
+----
+
+After setting the context, all kubectl commands will use the selected namespace. +
+You can use the following command to verify the current namespace:
+
+.Verify the current namespace
+[source,shell]
+----
+kubectl config view --minify -o jsonpath='{..namespace}'
+----
+--
+
+. Deploy your {context} application {deploy_application}.
++
+--
+The next step is to deploy your workflow application and execute it.
+You can read the further sections on the different procedures to deploy your {context} application.
+
+[NOTE]
+====
+You can use the native image due to the faster startup. +
+For more information about installing the workflow application, see xref:cloud/build-workflow-image-with-quarkus-cli.adoc[Building workflow images using Quarkus CLI] document.
+====
+--

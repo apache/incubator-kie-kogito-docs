@@ -1,0 +1,44 @@
+[[proc-deploy-sw-application-knative-cli]]
+=== Deploying your workflow application using Knative CLI
+
+Once you have pushed your workflow application into the {registry} registry, you can use the command-line tools, such
+as Knative CLI or `kubectl` to initiate the deployment process.
+
+.Prerequisites
+* Workflow application is installed.
+* Knative CLI is installed. +
+For more information, see link:{kn_cli_url}[Install the Knative CLI].
+
+.Procedure
+. In a command terminal, execute the following command to deploy your workflow application using Knative CLI:
++
+--
+.Example of deploying workflow application using Knative CLI
+[source,shell,subs="attributes+"]
+----
+kn service create hello \
+    --image={k8s_registry}/serverless-workflow-greeting-quarkus:1.0 \
+    --pull-policy=IfNotPresent \
+    --port 8080
+----
+
+.Example output
+[source,shell]
+----
+Creating service 'hello' in namespace 'serverless-workflow-greeting-quarkus':
+
+  0.066s The Route is still working to reflect the latest desired specification.
+  0.099s ...
+  0.322s Configuration "hello" is waiting for a Revision to become ready.
+  4.885s ...
+  5.061s Ingress has not yet been reconciled.
+  5.322s Waiting for load balancer to be ready
+  5.460s Ready to serve.
+
+Service 'hello' created to latest revision 'hello-00001' is available at URL:
+http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io
+----
+--
+
+// verify deployed swf
+include::_verify_if_swf_is_deployed.adoc[]
