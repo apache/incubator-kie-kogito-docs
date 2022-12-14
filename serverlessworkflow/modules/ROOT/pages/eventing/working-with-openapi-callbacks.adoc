@@ -5,7 +5,9 @@
 :description: Working with openapi callbacks
 :keywords: kogito, workflow, serverless, openapi, callback, event
 
-This document describes the link:{open_api_spec_url}#callback-object[Openapi Callback] and related examples. Also it covers the difference between Openapi Callback and the Callback state. Both openapi callback and the Callback state performs an action and waits for an event, to be produced as a result of the action, to resume the workflow. Therefore, both openapi callback and the Callback state are suitable to perform  _fire&wait-for-result_ operations. The openapi callback is an asynchronous, out-of-band requests that your service will send to some other service in response to certain events whereas the action peformed by a Callback state is an asynchronous external service invocation. The goal of both the ways is to send an event to workflow to resume the flow.
+This document describes the link:{open_api_spec_url}#callback-object[Openapi Callback] and related examples. Also, it covers the difference between OpenAPI Callback and the Serverless Workflow Callback state. Both the OpenAPI callback and the Callback state perform an action and wait for an event to be produced as a result of the action to resume the workflow. Therefore, both OpenAPI callback and the Callback state are suitable to perform  _fire & wait-for-result_ operations. 
+
+The OpenAPI callback is an asynchronous, out-of-band request that your service will send to some other service in response to specific events. In contrast, the action performed by a Callback state is an asynchronous external service invocation. Both ways aim to send an event to the workflow to resume the flow.
 
 As mentioned in the Openapi Callback document, while the workflow performs an asynchronous service invocation callback URL must be provided in the request body. The callback which sends the event to the workflow is defined using the URL provided by the user during service invocation.
 
