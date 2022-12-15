@@ -8,7 +8,8 @@
 * https://github.com/kiegroup/kogito-pipelines/tree/main/dsl/seed/src/main/groovy/org/kie/jenkins/jobdsl.
 */
 
-import org.kie.jenkins.jobdsl.model.Folder
+import org.kie.jenkins.jobdsl.model.JobType
+import org.kie.jenkins.jobdsl.utils.JobParamsUtils
 import org.kie.jenkins.jobdsl.KogitoJobTemplate
 import org.kie.jenkins.jobdsl.KogitoJobUtils
 import org.kie.jenkins.jobdsl.Utils
@@ -28,7 +29,7 @@ KogitoJobUtils.createQuarkusUpdateToolsJob(this, 'kogito-docs', [:], [:], [[
 /////////////////////////////////////////////////////////////////
 
 void createSetupBranchJob() {
-    def jobParams = KogitoJobUtils.getBasicJobParams(this, 'kogito-docs', Folder.SETUP_BRANCH, "${jenkins_path}/Jenkinsfile.setup-branch", 'Kogito Docs Setup Branch job')
+    def jobParams = JobParamsUtils.getBasicJobParams(this, 'kogito-docs', JobType.SETUP_BRANCH, "${jenkins_path}/Jenkinsfile.setup-branch", 'Kogito Docs Setup Branch job')
     jobParams.env.putAll([
         JENKINS_EMAIL_CREDS_ID: "${JENKINS_EMAIL_CREDS_ID}",
 
@@ -50,7 +51,7 @@ void createSetupBranchJob() {
 }
 
 void setupPostReleaseJob() {
-    def jobParams = KogitoJobUtils.getBasicJobParams(this, 'kogito-docs-post-release', Folder.RELEASE, "${jenkins_path}/Jenkinsfile.post-release", 'Kogito Docs Post Release')
+    def jobParams = JobParamsUtils.getBasicJobParams(this, 'kogito-docs-post-release', JobType.RELEASE, "${jenkins_path}/Jenkinsfile.post-release", 'Kogito Docs Post Release')
     jobParams.env.putAll([
         JENKINS_EMAIL_CREDS_ID: "${JENKINS_EMAIL_CREDS_ID}",
 
