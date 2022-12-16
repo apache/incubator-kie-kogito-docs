@@ -209,7 +209,7 @@ Kogito supports the link:{camel_url}[Camel Routes] functions within an Apache Ma
 
 [TIP]
 ====
-This section brefly exemplify how to define and use Camel Routes within your workflow application. For a more in-depth guide, please see the xref:integration/camel-routes-integration.adoc[Integrating with Camel Routes].
+This section brefly exemplify how to define and use Camel Routes within your workflow application. For a more in-depth guide, please see the xref:integrations/camel-routes-integration.adoc[Integrating with Camel Routes].
 ====
 
 === Function Definition
@@ -288,7 +288,7 @@ Following the examples of valid arguments structures for Camel function argument
 {
   "functionRef": {
     "refName": "myCamelEndpoint",
-    "arguments": "${ .my.body,data }"
+    "arguments": "${ .my.body.data }"
   }
 }
 ----
@@ -296,6 +296,10 @@ Following the examples of valid arguments structures for Camel function argument
 In this last example, the `jq` expression result is used as the `body` argument in a way to simplify the definition.
 
 === Function return values
+
+The Camel route is reponsible to produce the return value in a way that the workflow can understand. That following are considered valid objects:
+
+include::../../pages/_common-content/camel-valid-responses.adoc[]
 
 == Custom Function Types
 
