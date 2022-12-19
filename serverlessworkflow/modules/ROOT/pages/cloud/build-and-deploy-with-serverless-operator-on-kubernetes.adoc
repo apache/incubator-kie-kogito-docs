@@ -4,18 +4,17 @@
 :description: Build and deploy using the Kogito Serverless Workflow Operator a serverless workflow application
 :keywords: kogito, workflow, serverless, operator, kubernetes, minikube
 // links
-:minikube_url: https://minikube.sigs.k8s.io
-:kogitoserverlessoperator_url: https://github.com/kiegroup/kogito-serverless-operator/
-:kogitogreetinexample_url: https://github.com/kiegroup/kogito-examples/tree/stable/serverless-workflow-examples/serverless-workflow-greeting-quarkus
-:kanikoissue_url: https://github.com/GoogleContainerTools/kaniko/issues/2201
+:kogito_serverless_operator_url: https://github.com/kiegroup/kogito-serverless-operator/
+:kogito_greeting_example_url: https://github.com/kiegroup/kogito-examples/tree/stable/serverless-workflow-examples/serverless-workflow-greeting-quarkus
+:kaniko_issue_url: https://github.com/GoogleContainerTools/kaniko/issues/2201
 
 This document describes how to build and deploy your workflow application using a local Kubernetes cluster, such as link:{minikube_url}[Minikube], along with the link:{kogitoserverlesosperator_url}[{product_name} Serverless Operator].
 
-Using the {product_name} Serverless Operator, you will be able both to build and deploy a {product_name} {context} application so that you only need the workflow definition.
+Using the {product_name} Serverless Operator, you will be able to build and deploy a {product_name} {context} application only by having a workflow definition.
 
 Suppose you already have a container built and pushed on a container registry and you want to deploy it on the Kubernetes cluster. In that case, you can do it without the operator following the guide xref:cloud/deploying-on-kubernetes.adoc[Deploying your {context} application on Kubernetes].
 
-The link:{kogitoserverlesosperator_url}[{product_name} Serverless Operator] is currently in an alpha version and under active development and, at the moment, is supporting {context} definitions that are using:
+The link:{kogito_serverless_operator_url}[{product_name} Serverless Operator] is currently in an alpha version and under active development and, at the moment, is supporting {context} definitions that are using:
 
 * Functions
 * States
@@ -56,10 +55,10 @@ minikube start [...] --driver podman
 
 [IMPORTANT]
 ====
-There are some issues with the `crio` container runtime and Kaniko that the operator is using. Reference: link:{kanikoissue_url}[ISSUE-2201]
+There are some issues with the `crio` container runtime and Kaniko that the operator is using. Reference: link:{kaniko_issue_url}[ISSUE-2201]
 ====
 
-.Setup {product_name} Serverless operator 
+.Setup {product_name} Serverless operator
 
 In order to have an up-and-running instance of the {product_name} Serverless Operator you can use the following command:
 
