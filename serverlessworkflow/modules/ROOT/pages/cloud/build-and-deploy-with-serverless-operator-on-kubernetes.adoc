@@ -59,9 +59,9 @@ minikube start [...] --driver podman
 There are some issues with the `crio` container runtime and Kaniko that the operator is using. Reference: link:{kanikoissue_url}[ISSUE-2201]
 ====
 
-.Setup {product_name} Serverless Operator
+.Setup {product_name} Serverless operator 
 
-In order to have an up and running instance of the {product_name} Serverless Operator you can use the following command:
+In order to have an up-and-running instance of the {product_name} Serverless Operator you can use the following command:
 
 [source,shell,subs="attributes+"]
 ----
@@ -90,13 +90,13 @@ kubectl logs deployment/kogito-serverless-operator-controller-manager -n kogito-
 
 Once the operator is running, it will watch for new custom resources so that you can prepare your environment to be ready to build new {context} based on the definitions you will send to the operator.
 
-.Prepare for the build
+.Preparing for the build
 
-Follow these steps to create a container that you can than deploy as a Service on Kubernetes or KNative.
+Follow these steps to create a container that you can deploy as a service on Kubernetes or KNative.
 
 * Create a namespace for the building phase
 
-Let's create a new namespace that will hold all the resources that we (or the operator) will create (pods, deployments, services, secretes, config map and custom resources) in this guide.
+Let's create a new namespace that will hold all the resources that we (or the operator) will create (pods, deployments, services, secretes, config map, and custom resources) in this guide.
 
 [source,bash,subs="attributes+"]
 ----
@@ -112,9 +112,9 @@ or you directly import your local docker config into your kubernetes cluster:
 ----
 kubectl create secret generic regcred --from-file=.dockerconfigjson=${HOME}/.docker/config.json --type=kubernetes.io/dockerconfigjson -n kogito-workflows
 ----
-* Create a Platform containing the configuration (i.e. registry address, secret) for building your workflows
+* Create a platform containing the configuration (i.e. registry address, secret) for building your workflows
 
-You can find a basic Platform CR example in the config folder that you can simply apply to configure your operator.
+You can find a basic platform CR example in the config folder that you can simply apply to configure your operator.
 
 [source,bash,subs="attributes+"]
 ----
@@ -144,9 +144,9 @@ kubectl get svc registry -n kube-system -ojsonpath='{.spec.clusterIP}'
 
 .Build and deploy your {context} application
 
-Now we can send to the Operator our Custom Resource that includes the {context} definition.
+You can now send your custom resource to the operator which includes the {context} definition.
 
-If you would like to deploy a simple {context} application you can use custom resource you can find in the samples folder that is defining the link:{kogitogreetinexample_url}[{product_name} {context} Greeting example].
+If you want to deploy a simple {context} application, you can use a custom resource. You can find it in the samples folder that is defining the link:{kogitogreetinexample_url}[{product_name} {context} Greeting example].
 
 [source,bash,subs="attributes+"]
 ----
@@ -157,9 +157,9 @@ TIP: You can check the logs of the build of your workflow via:
 ----
 kubectl logs kogito-greeting-builder -n kogito-workflows
 ----
-The final pushed image should be printed into the logs at the end of the build.
+The final pushed image must be printed into the logs at the end of the build.
 
-In order to check that the {product_name} {context} Greeting is up and running let's try to perform a test HTTP call.
+In order to check that the {product_name} {context} Greeting is up and running you can try to perform a test HTTP call.
 [source,bash,subs="attributes+"]
 ----
 POD=$(kubectl get pod -n kogito-workflows -l app=greeting -o jsonpath="{.items[0].metadata.name}")
