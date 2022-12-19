@@ -15,7 +15,7 @@ The CNCF specification does not support `java` and `sysout` functions. Therefore
 ====
 
 [[con-func-sysout]]
-== Sysout Custom Function
+== Sysout custom function
 
 You can use the `sysout` function for debugging or for quick demonstrations as shown in the following example:
 
@@ -65,7 +65,7 @@ You must avoid using the `sysout` function in a production environment since it 
 ====
 
 [[con-func-java]]
-== Java Custom Function
+== Java custom function
 
 {product_name} supports the `java` functions within an Apache Maven project, in which you define your workflow service.
 
@@ -203,16 +203,16 @@ public class MyInterfaceOrClass {
 Avoid using `java` functions to call the external services, instead, you can use the xref:service-orchestration/orchestration-of-openapi-based-services.adoc[services orchestration features].
 ====
 
-== Camel Custom Function
+== Camel custom function
 
 Kogito supports the link:{camel_url}[Camel Routes] functions within an Apache Maven project, in which you define your workflow service.
 
 [TIP]
 ====
-This section brefly exemplify how to define and use Camel Routes within your workflow application. For a more in-depth guide, please see the xref:integrations/camel-routes-integration.adoc[Integrating with Camel Routes].
+NOTE: This section briefly exemplifies how to define and use Camel Routes within your workflow application. For more information, see the xref:integrations/camel-routes-integration.adoc[Integrating with Camel Routes].
 ====
 
-=== Function Definition
+=== Function definition
 
 The following example shows the declaration of a Camel function:
 
@@ -233,11 +233,11 @@ The following example shows the declaration of a Camel function:
 <2> `custom` is the function type
 <3> `camel:direct:myendpoint` is the custom operation definition. In this definition, `camel` is the reserved keyword followed by the `direct` endpoint. link:{camel_extensions_url}/direct.html[Camel Direct] is the only supported consumer by {context}. Finally, `myendpoint` is the endpoint URI name found in the route within your project's context.
 
-=== Function Arguments
+=== Function arguments
 
-The Camel function arguments must follow a specific structure when passing data from the workflow state to the route. The only attributes supported in the function arguments are `body` and `headers`. Both are optional if you need to call the Camel routes without arguments. The only constraint is that you can't call a Camel route with only `headers`.
+The Camel function arguments must follow a specific structure when passing data from the workflow state to the route. The `body` and `headers` are the only attributes supported in the function arguments. Both are optional if you need to call the Camel routes without arguments. The only constraint is that you can not call a Camel route with only `headers`.
 
-Following the examples of valid arguments structures for Camel function arguments.
+The following examples display valid argument structures for Camel function arguments:
 
 .Example calling a Camel route using `body` and `headers`
 [source,json]
@@ -297,11 +297,11 @@ In this last example, the `jq` expression result is used as the `body` argument 
 
 === Function return values
 
-The Camel route is reponsible to produce the return value in a way that the workflow can understand. That following are considered valid objects:
+The Camel route is responsible to produce the return value in a way that the workflow can understand. The following are considered valid objects:
 
 include::../../pages/_common-content/camel-valid-responses.adoc[]
 
-== Custom Function Types
+== Custom function types
 
 You can add your custom types by using the Kogito add-on mechanism. As predefined custom types like xref:core/custom-functions-support.adoc#con-func-sysout[`sysout`] or xref:core/custom-functions-support.adoc#con-func-java[`java`], the custom type identifier is the prefix of the operation field of the function definition.
 
