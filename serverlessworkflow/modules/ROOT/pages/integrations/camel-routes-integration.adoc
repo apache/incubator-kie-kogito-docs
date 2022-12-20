@@ -37,20 +37,25 @@ You can add YAML or XML Camel routes to your workflow project.
 . The route response must be in a valid format that the workflow context can understand:
 +
 include::../../pages/_common-content/camel-valid-responses.adoc[]
-+
+
 The response will be merged into the workflow state context. If it is an array or a complex object, the response will be added to the special attribute `response`.
 
 .Example of a Camel route with the `direct` endpoint returning a valid JSON string representation
 [source,yaml]
 ----
 - from:
-    uri: direct:logRouteReplaceHeader
-    steps:
+    uri: direct:logRouteReplaceHeader <1>
+    steps: <2>
       - setBody:
-          simple: '{ "id": "${header.WorkflowID}", "arg1": { "arg2": "value1" } }'
+          simple: '{ "id": "${header.WorkflowID}", "arg1": { "arg2": "value1" } }' <3>
       - log:
-          message: We received the ${body}
+          message: We received the ${body} <4>
 ----
+
+<1> Camel route producer definition using the `direct` component
+<2> Definition of the Camel route steps
+<3> Replace the Camel message body with a valid JSON object containing the header `WorkflowID` from the workflow context
+<4> Log the Camel message body in the console for debugging purposes.
 
 [[con-importing-camel-routes]]
 == Defining and referencing Camel functions in the Workflow DSL
@@ -80,12 +85,12 @@ You can define and reference your Camel functions in the workflow definition.
 The operation description must have the prefix `camel:direct:`, indicating that you want to produce a message to this route via the link:{camel_extensions_url}/direct.html[Camel Direct Component]. Direct is the only component supported by {context} at the moment.
 +
 The `operation` suffix contains the name of the route endpoint. In the case of this example, `logRouteReplaceHeader`.
-
++
 [WARNING]
 ====
 The Camel route defined in the workflow must be available in your project during runtime, otherwise, an `IllegalArgumentException` will be thrown.
 ====
-
++
 . To use the Camel function definition in a workflow action, you can simply reference it as you normally would with any other {context} function definitions. For example:
 +
 .Example of a workflow state action referencing
@@ -118,8 +123,14 @@ The Camel route defined in the workflow must be available in your project during
 <1> The function reference name, as defined in the function attribute.
 <2> The body definition. A `jq` expression to be evaluated in runtime resulting in the body payload.
 <3> The `headers` definition that must be a key/value pair or a valid `jq` expression evaluated in runtime.
-
-Once a message is received back from the Camel route, the data is merged into the workflow payload.
++
+Once a message is received back from the Camel route, the data is merged into the workflow payload:
++
+.Message payload example returned by the Camel route
+[source,json]
+----
+{ "id": "777adb97-d297-45fd-9969-efafe4dfb3e7", "arg1": { "arg2": "value1" } }
+----
 
 == Example project
 
@@ -127,7 +138,7 @@ There is an link:{kogito_sw_examples_url}/serverless-workflow-camel-routes[examp
 
 == Additional resources
 
-* xref:core/custom-functions-support[Custom functions for your {context} service]
+* xref:core/custom-functions-support.adoc[Custom functions for your {context} service]
 * xref:core/understanding-jq-expressions.adoc[jq expressions in {context}]
 
 include::../../pages/_common-content/report-issue.adoc[]
