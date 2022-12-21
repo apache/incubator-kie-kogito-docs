@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Testing your workflow application using REST Assured :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Basic Integration Test with REST Assured">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, quarkus-cli, test, restassured">
+    <meta name="generator" content="Antora 3.0.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.31.1.Final">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../release_notes.html">Release notes for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/getting-familiar-with-our-tooling.html">Getting familiar with Serverless Workflow tooling</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-jq-expressions.html">jq expressions in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/working-with-parallelism.html">Parallelism in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/configuration-properties.html">Configuration properties in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/defining-an-input-schema-for-workflows.html">Input schema definition for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/timeouts-support.html">Timeouts in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-overview.html">Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome GitHub extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Kogito Serverless Workflow Tools extension in Quarkus Dev UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances in Kogito Serverless Workflow Tools extension</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions in Kogito Serverless Workflow Tools extension</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/kn-plugin-workflow-overview.html">Serverless Workflow plug-in for Knative CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">Integrating your Serverless Workflow project in GitHub using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">Integrating your Serverless Workflow project with OpenShift using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Integrating with Red Hat OpenShift Application and Data Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deploying your Serverless Workflow projects using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-enable-kogito-swf-visualization.html">Enabling Kogito Serverless Workflow Visualization in Serverless Logic Web Tools</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">Orchestrating the OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Configuring the OpenAPI services endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Eventing</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/handling-events-on-workflows.html">Event state in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event correlation in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/working-with-callbacks.html">Callback state in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">Authentication for OpenAPI services in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">Orchestration of third-party services using OAuth 2.0 authentication in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cloud</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/kubernetes-service-discovery.html">Kubernetes service discovery in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga orchestration example in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.31</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../latest/index.html">1.32</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">1.31</a>
+        </li>
+        <li class="version">
+          <a href="../../1.30.0.Final/index.html">1.30</a>
+        </li>
+        <li class="version">
+          <a href="../../1.29.0.Final/index.html">1.29</a>
+        </li>
+        <li class="version">
+          <a href="../../1.28.0.Final/index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Testing and Troubleshooting</li>
+    <li><a href="basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.31</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/testing-and-troubleshooting/basic-integration-tests-with-restassured.html">snapshot</a>
+    <a class="version" href="../../latest/testing-and-troubleshooting/basic-integration-tests-with-restassured.html">1.32</a>
+    <a class="version is-current" href="basic-integration-tests-with-restassured.html">1.31</a>
+    <a class="version" href="../../1.30.0.Final/testing-and-troubleshooting/basic-integration-tests-with-restassured.html">1.30</a>
+    <a class="version" href="../../1.29.0.Final/testing-and-troubleshooting/basic-integration-tests-with-restassured.html">1.29</a>
+    <a class="version" href="../../1.28.0.Final/testing-and-troubleshooting/basic-integration-tests-with-restassured.html">1.28</a>
+    <a class="version" href="../../1.27.0.Final/testing-and-troubleshooting/basic-integration-tests-with-restassured.html">1.27</a>
+    <a class="version" href="../../1.26.0.Final/testing-and-troubleshooting/basic-integration-tests-with-restassured.html">1.26</a>
+    <a class="version" href="../../1.25.0.Final/testing-and-troubleshooting/basic-integration-tests-with-restassured.html">1.25</a>
+    <a class="version" href="../../1.24.1.Final/testing-and-troubleshooting/basic-integration-tests-with-restassured.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.31.x/serverlessworkflow/modules/ROOT/pages/testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Testing your workflow application using REST Assured</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes how to test your workflow application using REST Assured.</p>
+</div>
+<div class="paragraph">
+<p>REST Assured enables you to test REST APIs using Java libraries and integrates with Apache Maven. For more information about REST Assured, see <a href="https://rest-assured.io/">REST Assured page</a>.</p>
+</div>
+<div class="paragraph">
+<p>The testing procedure in this document is based on the <code>serverless-workflow-examples/serverless-workflow-testing-with-rest-assured</code> example application. You can access this example application in <a href="https://github.com/kiegroup/kogito-examples/tree/1.31.x/serverless-workflow-examples/serverless-workflow-testing-with-rest-assured">Kogito Examples</a> GitHub repository.</p>
+</div>
+<div class="paragraph">
+<p>The following procedure describes how to test a workflow application that exposes the <code>hello</code> endpoint, which expects a <code>name</code> as a request parameter and returns <code>greeting</code> value:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example request body</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "name": "John Doe"
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "00ce5c1d-4936-4e18-998c-f5c5d5d784ad",
+  "workflowdata": {
+    "greeting": "Hello, John Doe"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A workflow project is created.</p>
+<div class="paragraph">
+<p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This document is based on the <code>serverless-workflow-testing-with-rest-assured</code> example application from the <a href="https://github.com/kiegroup/kogito-examples/tree/1.31.x/serverless-workflow-examples">GitHub repository</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Check if your project has the REST Assured dependency in your <code>pom.xml</code> file. If it doesn&#8217;t, add it like the following:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.rest-assured&lt;/groupId&gt;
+    &lt;artifactId&gt;rest-assured&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Create a test class named <code>HelloTest</code> in the <code>src/test/java/org/kie/kogito/examples/</code> directory, containing the following content:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example <code>HelloTest.java</code> file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package org.kie.kogito.examples;
+
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+
+@QuarkusTest
+class HelloTest {
+
+    @BeforeAll
+    static void init() {
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails(); <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+
+    @Test
+    void testHello() {
+        given()
+                .contentType(ContentType.JSON) <i class="conum" data-value="2"></i><b>(2)</b>
+                .accept(ContentType.JSON) <i class="conum" data-value="3"></i><b>(3)</b>
+                .body("{\"name\": \"John Doe\"}") <i class="conum" data-value="4"></i><b>(4)</b>
+                .when()
+                .post("/hello") <i class="conum" data-value="5"></i><b>(5)</b>
+                .then()
+                .statusCode(201) <i class="conum" data-value="6"></i><b>(6)</b>
+                .body("workflowdata.greeting", equalTo("Hello, John Doe")); <i class="conum" data-value="7"></i><b>(7)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enables logging of the request and response when the test fails.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Defines JSON as the content type of the request.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Specifies the <code>accept</code> header of the request. This is an alternative for <code>header("Accept", "application/json")</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Defines the request body as <code>{"name": "John Doe"}</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Specifies the request as a POST method to the <code>/hello</code> URL.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Defines <code>201</code> as the expected response status code.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Defines that <code>Hello, John Doe</code> is expected in the <code>workflowdata.greeting</code> JSON path.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>To run your test, execute the following command:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Command to run a test</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean verify</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running org.kie.kogito.examples.HelloTest
+2022-06-03 16:36:11,461 INFO  [org.jbo.threads] (main) JBoss Threads version 3.4.2.Final
+2022-06-03 16:36:11,708 INFO  [org.kie.kog.cod.api.uti.AddonsConfigDiscovery] (build-1) Performed addonsConfig discovery, found: AddonsConfig{usePersistence=false, useTracing=false, useMonitoring=false, usePrometheusMonitoring=false, useCloudEvents=true, useExplainability=false, useProcessSVG=false, useEventDrivenDecisions=false, useEventDrivenRules=false}
+2022-06-03 16:36:12,004 INFO  [org.kie.kog.cod.cor.uti.ApplicationGeneratorDiscovery] (build-9) Generator discovery performed, found [processes]
+2022-06-03 16:36:14,486 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (main) Registered Kogito CloudEvent extension
+2022-06-03 16:36:14,612 INFO  [io.quarkus] (main) serverless-workflow-testing-with-rest-assured 1.0 on JVM (powered by Quarkus 2.9.2.Final) started in 3.635s. Listening on: http://localhost:8081
+2022-06-03 16:36:14,613 INFO  [io.quarkus] (main) Profile test activated.
+2022-06-03 16:36:14,613 INFO  [io.quarkus] (main) Installed features: [cache, cdi, jackson-jq, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.819 s - in org.kie.kogito.examples.HelloTest
+2022-06-03 16:36:16,559 INFO  [io.quarkus] (main) serverless-workflow-testing-with-rest-assured stopped in 0.028s
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO]
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ serverless-workflow-testing-with-rest-assured ---
+[INFO] Building jar: /home/user/dev/kiegroup/kogito-examples/serverless-workflow-examples/serverless-workflow-testing-with-rest-assured/target/serverless-workflow-testing-with-rest-assured-1.0.jar
+[INFO]
+[INFO] --- quarkus-maven-plugin:2.9.2.Final:build (default) @ serverless-workflow-testing-with-rest-assured ---
+[INFO] Performed addonsConfig discovery, found: AddonsConfig{usePersistence=false, useTracing=false, useMonitoring=false, usePrometheusMonitoring=false, useCloudEvents=true, useExplainability=false, useProcessSVG=false, useEventDrivenDecisions=false, useEventDrivenRules=false}
+[INFO] Generator discovery performed, found [processes]
+[INFO] [io.quarkus.deployment.QuarkusAugmentor] Quarkus augmentation completed in 2669ms
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  15.558 s
+[INFO] Finished at: 2022-06-03T16:36:19-03:00
+[INFO] ------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you see a similar output, this means your test is executed successfully.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="mocking-openapi-services-with-wiremock.html" class="xref page">Mocking OpenAPI services using WireMock</a></p>
+</li>
+<li>
+<p><a href="mocking-http-cloudevents-with-wiremock.html" class="xref page">Mocking HTTP CloudEvents sink using WireMock</a></p>
+</li>
+<li>
+<p><a href="integration-tests-with-postgresql.html" class="xref page">Serverless Workflow integration test using PostgreSQL</a></p>
+</li>
+<li>
+<p><a href="https://quarkus.io/guides/getting-started-testing">Testing a Quarkus application</a></p>
+</li>
+<li>
+<p><a href="https://rest-assured.io/#docs">REST Assured Documentation</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

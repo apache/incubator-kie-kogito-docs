@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Input schema definition for Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Defining input schema for Serverless Workflow">
+    <meta name="keywords" content="kogito, workflow, serverless, dataInputSchema">
+    <meta name="generator" content="Antora 3.0.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.31.1.Final">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../release_notes.html">Release notes for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/getting-familiar-with-our-tooling.html">Getting familiar with Serverless Workflow tooling</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="understanding-jq-expressions.html">jq expressions in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="working-with-parallelism.html">Parallelism in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="configuration-properties.html">Configuration properties in Serverless Workflow</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="defining-an-input-schema-for-workflows.html">Input schema definition for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timeouts-support.html">Timeouts in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-overview.html">Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome GitHub extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Kogito Serverless Workflow Tools extension in Quarkus Dev UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances in Kogito Serverless Workflow Tools extension</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions in Kogito Serverless Workflow Tools extension</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/kn-plugin-workflow-overview.html">Serverless Workflow plug-in for Knative CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">Integrating your Serverless Workflow project in GitHub using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">Integrating your Serverless Workflow project with OpenShift using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Integrating with Red Hat OpenShift Application and Data Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deploying your Serverless Workflow projects using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-enable-kogito-swf-visualization.html">Enabling Kogito Serverless Workflow Visualization in Serverless Logic Web Tools</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">Orchestrating the OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Configuring the OpenAPI services endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Eventing</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/handling-events-on-workflows.html">Event state in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event correlation in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/working-with-callbacks.html">Callback state in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">Authentication for OpenAPI services in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">Orchestration of third-party services using OAuth 2.0 authentication in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cloud</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../cloud/kubernetes-service-discovery.html">Kubernetes service discovery in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga orchestration example in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.31</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../latest/index.html">1.32</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">1.31</a>
+        </li>
+        <li class="version">
+          <a href="../../1.30.0.Final/index.html">1.30</a>
+        </li>
+        <li class="version">
+          <a href="../../1.29.0.Final/index.html">1.29</a>
+        </li>
+        <li class="version">
+          <a href="../../1.28.0.Final/index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Core</li>
+    <li><a href="defining-an-input-schema-for-workflows.html">Input schema definition for Serverless Workflow</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.31</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/core/defining-an-input-schema-for-workflows.html">snapshot</a>
+    <a class="version" href="../../latest/core/defining-an-input-schema-for-workflows.html">1.32</a>
+    <a class="version is-current" href="defining-an-input-schema-for-workflows.html">1.31</a>
+    <a class="version" href="../../1.30.0.Final/core/defining-an-input-schema-for-workflows.html">1.30</a>
+    <a class="version" href="../../1.29.0.Final/core/defining-an-input-schema-for-workflows.html">1.29</a>
+    <a class="version" href="../../1.28.0.Final/core/defining-an-input-schema-for-workflows.html">1.28</a>
+    <a class="version" href="../../1.27.0.Final/core/defining-an-input-schema-for-workflows.html">1.27</a>
+    <a class="version" href="../../1.26.0.Final/core/defining-an-input-schema-for-workflows.html">1.26</a>
+    <a class="version" href="../../1.25.0.Final/core/defining-an-input-schema-for-workflows.html">1.25</a>
+    <a class="version" href="../../1.24.1.Final/core/defining-an-input-schema-for-workflows.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.31.x/serverlessworkflow/modules/ROOT/pages/core/defining-an-input-schema-for-workflows.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Input schema definition for Serverless Workflow</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>dataInputSchema</code> in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-definition-structure">Serverless Workflow specification</a> is a parameter used in the workflow definition. The <code>dataInputSchema</code> parameter validates the workflow data input against a defined JSON Schema. It is important to provide <code>dataInputSchema</code>, as it is used to verify if the provided workflow data input is correct before any workflow states are executed.</p>
+</div>
+<div class="paragraph">
+<p>You can define a <code>dataInputSchema</code> as follows:</p>
+</div>
+<div class="listingblock">
+<div class="title"><code>dataInputSchema</code> definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"dataInputSchema": {
+   "schema": "URL_to_json_schema",
+   "failOnValidationErrors": false
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous definition, the <code>schema</code> property is a URI, which holds the path to the JSON schema used to validate the workflow data input. The URI can be a classpath URI, a file, or an HTTP URL. If a classpath URI is specified, then the JSON schema file must be placed in the resources section of the project.</p>
+</div>
+<div class="paragraph">
+<p>You can see the <a href="https://github.com/kiegroup/kogito-examples/tree/1.31.x/serverless-workflow-examples/serverless-workflow-expression-quarkus"><code>serverless-workflow-expression-quarkus</code></a> example application of a workflow definition with <code>dataInputSchema</code>. See the <a href="https://github.com/kiegroup/kogito-examples/tree/1.31.x/serverless-workflow-examples/serverless-workflow-expression-quarkus/src/main/resources/expression.sw.json">Serverless Workflow JSON file</a> for more details.</p>
+</div>
+<div class="paragraph">
+<p>When a workflow definition contains a <code>dataInputSchema</code> attribute, the workflow application generates an OpenAPI file, such as <code><a href="http://localhost/q/openapi" class="bare">http://localhost/q/openapi</a></code>. The generated OpenAPI file references the schema file, which helps in defining the input data for the workflows. For more information about the OpenAPI file, see <a href="https://spec.openapis.org/oas/v3.1.0.html">OpenAPI specification</a>.</p>
+</div>
+<div class="paragraph">
+<p>If you want to generate an OpenAPI file for a workflow, then you must add the <a href="https://quarkus.io/guides/openapi-swaggerui#expose-openapi-specifications">Quarkus dependency</a> in the project.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example component section with schema in an OpenAPI file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">components:
+  schemas:
+    GeneralError:
+      type: object
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../service-orchestration/orchestration-of-openapi-based-services.html" class="xref page">Orchestrating the OpenAPI services</a></p>
+</li>
+<li>
+<p><a href="../service-orchestration/configuring-openapi-services-endpoints.html" class="xref page">Configuring the OpenAPI services endpoints</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

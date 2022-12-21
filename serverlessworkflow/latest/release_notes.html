@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>New features on 1.31 :: Kogito Serverless Workflow Guides</title>
+    <title>New features on 1.32 :: Kogito Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../_/css/site.css">
 <link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
@@ -51,7 +51,7 @@
     </nav>
 </header>
 <div class="body">
-<div class="nav-container" data-component="serverlessworkflow" data-version="1.31.1.Final">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.32.0.Final">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -242,6 +242,9 @@
     <a class="nav-link" href="cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="cloud/deploying-on-kubernetes.html">Deploying your Serverless Workflow application on Kubernetes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="cloud/kubernetes-service-discovery.html">Kubernetes service discovery in Serverless Workflow</a>
   </li>
 </ul>
@@ -275,7 +278,7 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">Kogito Serverless Workflow Guides</span>
-    <span class="version">1.31</span>
+    <span class="version">1.32</span>
   </div>
   <ul class="components">
     <li class="component is-current">
@@ -284,11 +287,11 @@
         <li class="version">
           <a href="../main/index.html">snapshot</a>
         </li>
-        <li class="version">
-          <a href="../1.32.0-SNAPSHOT/index.html">1.32-RC</a>
-        </li>
         <li class="version is-current is-latest">
-          <a href="index.html">1.31</a>
+          <a href="index.html">1.32</a>
+        </li>
+        <li class="version">
+          <a href="../1.31.1.Final/index.html">1.31</a>
         </li>
         <li class="version">
           <a href="../1.30.0.Final/index.html">1.30</a>
@@ -329,11 +332,11 @@
   </ul>
 </nav>
 <div class="page-versions">
-  <button class="version-menu-toggle" title="Show other versions of page">1.31</button>
+  <button class="version-menu-toggle" title="Show other versions of page">1.32</button>
   <div class="version-menu">
     <a class="version" href="../main/release_notes.html">snapshot</a>
-    <a class="version" href="../1.32.0-SNAPSHOT/release_notes.html">1.32-RC</a>
-    <a class="version is-current" href="release_notes.html">1.31</a>
+    <a class="version is-current" href="release_notes.html">1.32</a>
+    <a class="version" href="../1.31.1.Final/release_notes.html">1.31</a>
     <a class="version" href="../1.30.0.Final/release_notes.html">1.30</a>
     <a class="version" href="../1.29.0.Final/release_notes.html">1.29</a>
     <a class="version" href="../1.28.0.Final/release_notes.html">1.28</a>
@@ -343,27 +346,24 @@
     <a class="version is-missing" href="../1.24.1.Final/index.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.31.x/serverlessworkflow/modules/ROOT/pages/release_notes.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.32.x/serverlessworkflow/modules/ROOT/pages/release_notes.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">New features on 1.31</h1>
+<h1 class="page">New features on 1.32</h1>
 <div class="sect1">
 <h2 id="_notable_changes"><a class="anchor" href="#_notable_changes"></a>Notable changes</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-6804">KOGITO-6804</a> - [SW]: Implementing OpenAPI Callback Support within Serverless Workflows</p>
+<p><a href="https://issues.redhat.com/browse/KOGITO-7209">KOGITO-7209</a> - Jobs service re-executes completed (executed) jobs</p>
 </li>
 <li>
-<p>(1.31.1+) Quarkus 2.15 upgrade</p>
-</li>
-<li>
-<p>(1.31.1+) <a href="https://issues.redhat.com/browse/DROOLS-7105">DROOLS-7105</a> - DMN upgrade to Antlr 4.10 (specifically 4.10.1)</p>
+<p><a href="https://issues.redhat.com/browse/KOGITO-7208">KOGITO-7208</a> - A lot of unworked (stuck) jobs in simple load test</p>
 </li>
 </ul>
 </div>
@@ -375,10 +375,52 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8207">KOGITO-8207</a> - GHA failing randomly with duplicate id</p>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8342">KOGITO-8342</a> - Remove Camel Quarkus platform BOM from Serverless Loan Example to avoid dependency conflicts when upgrading Quarkus</p>
 </li>
 <li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8203">KOGITO-8203</a> - Incorrect channel mapping if same event type is used in different states</p>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8340">KOGITO-8340</a> - Serverless Workflow Funqy example fires 400 when tries to run the application</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8309">KOGITO-8309</a> - Improve Knative Eventing doc by adding an example how to send and consume HTTP events</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8308">KOGITO-8308</a> - Remove dependency from Quarkus Process extension</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8304">KOGITO-8304</a> - Document the usage of all-in-one jobs-service image</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8290">KOGITO-8290</a> - Setup GHA checks for files check</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8177">KOGITO-8177</a> - Serverless Operator: Setup GHA for e2e tests</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8167">KOGITO-8167</a> - [KSW Guides] Incorporate Event State timeout and example in the guides</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8141">KOGITO-8141</a> - Update Knative Eventing Serverless Workflow Guide to add Incoming HTTP configuration</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8140">KOGITO-8140</a> - Migrate Serverless Loan Broker example to KIE</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-7985">KOGITO-7985</a> - Jobs Service Integration Tests improvements</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-7282">KOGITO-7282</a> - [KSW-Guides] Deploying on Kubernetes Clusters</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_known_issues"><a class="anchor" href="#_known_issues"></a>Known issues</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8389">KOGITO-8389</a> Regression: <code>process-postgresql</code> examples are no more working due to flyway migration</p>
 </li>
 </ul>
 </div>
