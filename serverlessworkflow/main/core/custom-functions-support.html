@@ -254,6 +254,9 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/camel-routes-integration.html">Integrating with Camel Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -380,7 +383,7 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="con-func-sysout"><a class="anchor" href="#con-func-sysout"></a><code>sysout</code> custom function</h2>
+<h2 id="con-func-sysout"><a class="anchor" href="#con-func-sysout"></a>Sysout custom function</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You can use the <code>sysout</code> function for debugging or for quick demonstrations as shown in the following example:</p>
@@ -443,7 +446,7 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="con-func-java"><a class="anchor" href="#con-func-java"></a><code>java</code> custom function</h2>
+<h2 id="con-func-java"><a class="anchor" href="#con-func-java"></a>Java custom function</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Kogito supports the <code>java</code> functions within an Apache Maven project, in which you define your workflow service.</p>
@@ -501,7 +504,8 @@
    "arguments": {
      "number": "${.number}"
    }
- }</code></pre>
+ }
+}</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -537,7 +541,6 @@
 <div class="title">Example of a <code>java</code> function implementation</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class MyInterfaceOrClass {
-
 
     public JsonNode myMethod(JsonNode workflowData) {
         // do whatever I want with the Workflow model
@@ -612,6 +615,160 @@ public JsonNode myMethod(JsonNode workflowData, KogitoProcessContext context ) {
 </td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_camel_custom_function"><a class="anchor" href="#_camel_custom_function"></a>Camel custom function</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito supports the <a href="https://camel.apache.org/">Camel Routes</a> functions within an Apache Maven project, in which you define your workflow service.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This section briefly exemplifies how to define and use Camel Routes within your workflow application. For more information, see the <a href="../integrations/camel-routes-integration.html" class="xref page">Integrating with Camel Routes</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_function_definition_2"><a class="anchor" href="#_function_definition_2"></a>Function definition</h3>
+<div class="paragraph">
+<p>The following example shows the declaration of a Camel function:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "functions": [
+    {
+      "name": "myCamelEndpoint", <i class="conum" data-value="1"></i><b>(1)</b>
+      "type": "custom",  <i class="conum" data-value="2"></i><b>(2)</b>
+      "operation": "camel:direct:myendpoint" <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>myCamelEndpoint</code> is the function name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>custom</code> is the function type</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>camel:direct:myendpoint</code> is the custom operation definition. In this definition, <code>camel</code> is the reserved keyword followed by the <code>direct</code> endpoint. <a href="https://camel.apache.org/camel-quarkus/2.14.x/reference/extensions/direct.html">Camel Direct</a> is the only supported consumer by Serverless Workflow. Finally, <code>myendpoint</code> is the endpoint URI name found in the route within your project&#8217;s context.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_function_arguments_2"><a class="anchor" href="#_function_arguments_2"></a>Function arguments</h3>
+<div class="paragraph">
+<p>The Camel function arguments must follow a specific structure when passing data from the workflow state to the route. The <code>body</code> and <code>headers</code> are the only attributes supported in the function arguments. Both are optional if you need to call the Camel routes without arguments. The only constraint is that you can not call a Camel route with only <code>headers</code>.</p>
+</div>
+<div class="paragraph">
+<p>The following examples display valid argument structures for Camel function arguments:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example calling a Camel route using <code>body</code> and <code>headers</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "functionRef": {
+    "refName": "myCamelEndpoint",
+    "arguments": {
+      "body": "${ .my.body.data }", <i class="conum" data-value="1"></i><b>(1)</b>
+      "headers": { <i class="conum" data-value="2"></i><b>(2)</b>
+        "key1": "${ .my.value }",
+        "key2": "${ .my.other.value }"
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>jq</code> expression filtering the state data for the <code>body</code> argument.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>JSON key/value pair for the <code>headers</code> argument. A <code>jq</code> expression returning the same JSON object is also valid.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example calling a Camel route using <code>body</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "functionRef": {
+    "refName": "myCamelEndpoint",
+    "arguments": {
+      "body": "${ .my.body.data }"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example calling a Camel route without arguments</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "functionRef": {
+    "refName": "myCamelEndpoint"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example calling a Camel route with only one argument</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "functionRef": {
+    "refName": "myCamelEndpoint",
+    "arguments": "${ .my.body.data }"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this last example, the <code>jq</code> expression result is used as the <code>body</code> argument in a way to simplify the definition.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_function_return_values_2"><a class="anchor" href="#_function_return_values_2"></a>Function return values</h3>
+<div class="paragraph">
+<p>The Camel route is responsible to produce the return value in a way that the workflow can understand. The following are considered valid objects:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A string that contains a valid JSON object</p>
+</li>
+<li>
+<p>A valid Java bean that can be serialized to JSON</p>
+</li>
+<li>
+<p>A Jackson&#8217;s <code>JsonNode</code> object</p>
+</li>
+<li>
+<p>Any primitive type (Integer, Float, Decimal, String, etc)</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -749,17 +906,19 @@ protected Object internalExecute(KogitoWorkItem workItem, Map&lt;String, Object&
 <div class="listingblock">
 <div class="title">Example of the custom function call from the workflow definition</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"actions": [
-       {
-          "functionRef": {
-             "refName": "division",
-             "arguments": {
-                 "dividend": ".dividend",
-                 "divisor" : ".divisor"
-             }
-           }
-
-       }</code></pre>
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "actions":[
+    {
+      "functionRef":{
+        "refName":"division",
+        "arguments":{
+          "dividend":".dividend",
+          "divisor":".divisor"
+        }
+      }
+    }
+  ]
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
