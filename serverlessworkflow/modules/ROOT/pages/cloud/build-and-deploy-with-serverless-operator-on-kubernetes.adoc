@@ -46,12 +46,13 @@ To speed up, you can increase cpus and memory options. For example, use `--cpus 
 [TIP]
 ====
 If it does work with the default driver, aka `docker`, you can try to start with the `podman` driver:
-====
+
 
 [source,shell,subs="attributes+"]
 ----
 minikube start [...] --driver podman
 ----
+====
 
 [IMPORTANT]
 ====
@@ -70,22 +71,21 @@ kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-o
 [NOTE]
 ====
 Follow the deployment of the {product_name} Serverless Operator:
-====
+
 +
 [source,shell,subs="attributes+"]
 ----
 kubectl get pod -n kogito-serverless-operator-system --watch
 ----
 
-[TIP]
-====
 You can also follow the operator’s log:
-====
+
 +
 [source,shell,subs="attributes+"]
 ----
 kubectl logs deployment/kogito-serverless-operator-controller-manager -n kogito-serverless-operator-system -f
 ----
+====
 
 Once the operator is running, it will watch for new custom resources so that you can prepare your environment to be ready to build new {context} based on the definitions you will send to the operator.
 
@@ -113,7 +113,13 @@ kubectl create secret generic regcred --from-file=.dockerconfigjson=${HOME}/.doc
 ----
 * Create a platform containing the configuration (i.e. registry address, secret) for building your workflows
 
-You can find a basic platform CR example in the config folder that you can simply apply to configure your operator.
+The Platform CR is the resource used to control the behavior of the {product_name} {context} operator.
+
+It defines the behavior of all Custom Resources (Workflow and Build) in the given namespace.
+
+Since the {product_name} {context} operator is installed in global mode, you will need to specify a Platform CR in each namespace where you want the operator to be executed.
+
+You can find a basic Platform CR example in the config folder that you can simply apply to configure your operator.
 
 [source,bash,subs="attributes+"]
 ----
@@ -124,30 +130,19 @@ Note: In this Custom Resource, spec.platform.registry.secret is the name of the 
 [TIP]
 ====
 You can also update "on-the-fly" the platform CR registry field with this command (change <YOUR_REGISTRY>)
-====
 
 [source,bash,subs="attributes+"]
 ----
 cat config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml | sed "s|address: .*|address: <YOUR_REGISTRY>"
 ----
 
-[NOTE]
-====
-You can easily retrieve the Cluster IP address of Minikube's internal registry using the following command:
+In order to retrieve the Cluster IP address of Minikube's internal registry use the following command:
 
 [source,bash,subs="attributes+"]
 ----
 kubectl get svc registry -n kube-system -ojsonpath='{.spec.clusterIP}'
 ----
 ====
-====
-You can retrieve easily the Cluster IP address of the Minikube's internal registry using this command:
-====
-
-[source,bash,subs="attributes+"]
-----
-kubectl get svc registry -n kube-system -ojsonpath='{.spec.clusterIP}'
-----
 
 .Build and deploy your {context} application
 
@@ -159,7 +154,8 @@ If you want to deploy a simple {context} application, you can use a custom resou
 ----
 kubectl apply -f config/samples/sw.kogito_v1alpha08_kogitoserverlessworkflow.yaml -n kogito-workflows
 ----
-TIP: You can check the logs of the build of your workflow via:
+You can check the logs of the build of your workflow via:
+
 [source,bash,subs="attributes+"]
 ----
 kubectl logs kogito-greeting-builder -n kogito-workflows
