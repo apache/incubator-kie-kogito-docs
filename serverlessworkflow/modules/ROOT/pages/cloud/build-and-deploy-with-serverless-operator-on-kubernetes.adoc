@@ -133,6 +133,14 @@ cat config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml | sed "s|ad
 
 [NOTE]
 ====
+You can easily retrieve the Cluster IP address of Minikube's internal registry using the following command:
+
+[source,bash,subs="attributes+"]
+----
+kubectl get svc registry -n kube-system -ojsonpath='{.spec.clusterIP}'
+----
+====
+====
 You can retrieve easily the Cluster IP address of the Minikube's internal registry using this command:
 ====
 
