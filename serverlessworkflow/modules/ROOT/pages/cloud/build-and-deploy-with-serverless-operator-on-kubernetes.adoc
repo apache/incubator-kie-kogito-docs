@@ -30,7 +30,7 @@ The link:{kogito_serverless_operator_url}[{product_name} Serverless Operator] is
 * A Kubernetes cluster with admin privileges (if you haven't got one prepare, you can use a local Minikube instance).
 * `kubectl` command-line tool is installed. Otherwise, Minikube handles it.
 
-.Prepare a Minikube instance
+== Prepare a Minikube instance
 
 [source,shell,subs="attributes+"]
 ----
@@ -100,7 +100,8 @@ Let's create a new namespace that will hold all the resources that we (or the op
 ----
 kubectl create namespace kogito-workflows
 ----
-* Create a secret for the container registry authentication
+
+=== Create a secret for the container registry authentication
 .Create a secret for the container registry authentication
 [source,bash,subs="attributes+"]
 ----
@@ -169,6 +170,7 @@ kubectl logs kogito-greeting-builder -n kogito-workflows
 
 The final pushed image must be printed into the logs at the end of the build.
 
+== Check the {product_name} {context} application is running
 In order to check that the {product_name} {context} Greeting application is up and running, you can try to perform a test HTTP call.
 
 .Check the greeting application is running
