@@ -39,20 +39,20 @@ minikube start --cpus 4 --memory 4096 --addons registry --addons metrics-server 
 
 [NOTE]
 ====
-To speed up, you can increase CPUs and memory options. For example, use `--cpus 12 --memory 16384`.
+To speed up the build time, you can increase CPUs and memory options so that you minikube instance will have more resources. For example, use `--cpus 12 --memory 16384`.
 ====
 
 [TIP]
 ====
-NOTE: If it does work with the default driver, as known as `docker`, you can try to start with the `podman` driver as follows:
-
+If it does work with the default driver, as known as `docker`, you can try to start with the `podman` driver as follows:
+====
 
 .Start minikube with podman driver
 [source,shell,subs="attributes+"]
 ----
 minikube start [...] --driver podman
 ----
-====
+
 
 [IMPORTANT]
 ====
@@ -128,8 +128,9 @@ You can find a basic {product_name} Serverless Platform CR example in the `confi
 [source,bash,subs="attributes+"]
 ----
 kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml -n kogito-workflows
-Note: In this Custom Resource, spec.platform.registry.secret is the name of the secret you created just before.
 ----
+
+Note: In this Custom Resource, spec.platform.registry.secret is the name of the secret you created just before.
 
 [TIP]
 ====
