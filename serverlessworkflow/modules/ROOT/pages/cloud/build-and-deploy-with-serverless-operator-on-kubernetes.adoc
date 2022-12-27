@@ -68,7 +68,7 @@ In order to have an up-and-running instance of the {product_name} Serverless Ope
 .Install {product_name} Serverless Operator on Kubernetes
 [source,shell,subs="attributes+"]
 ----
-kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/operator.yaml
+kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}F/operator.yaml
 ----
 
 You can follow, then, the deployment of the {product_name} Serverless Operator:
@@ -129,7 +129,7 @@ You can find a basic {product_name} Serverless Platform CR example in the `confi
 .Create a {product_name} Serverless Platform CR
 [source,bash,subs="attributes+"]
 ----
-kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml -n kogito-workflows
+kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml -n kogito-workflows
 ----
 
 Note: In this Custom Resource, spec.platform.registry.secret is the name of the secret you created just before.
@@ -141,7 +141,7 @@ You can also update "on-the-fly" the {product_name} Serverless Platform CR regis
 .Create a {product_name} Serverless Platform CR with a specific registry
 [source,bash,subs="attributes+"]
 ----
-curl https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml | sed "s|address: .*|address: <YOUR_REGISTRY>" | kubectl apply -f -
+curl https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml | sed "s|address: .*|address: <YOUR_REGISTRY>" | kubectl apply -f -
 ----
 
 In order to retrieve the Cluster IP address of Minikube's internal registry to configure your platform, you can use the following command:
@@ -161,7 +161,7 @@ You can find a basic {product_name} {context} Custom Resource in the `config/sam
 
 [source,bash,subs="attributes+"]
 ----
-kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/config/samples/sw.kogito_v1alpha08_kogitoserverlessworkflow.yaml -n kogito-workflows
+kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessworkflow.yaml -n kogito-workflows
 ----
 You can check the logs of the build of your workflow via:
 
