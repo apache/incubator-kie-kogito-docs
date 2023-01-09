@@ -1,7 +1,7 @@
 = Migrating Your PostgreSQL Database with a Kogito upgrade
 :flyway_install_url: https://flywaydb.org/download/community
 :flyway_migrate_existing_url: https://flywaydb.org/documentation/learnmore/existing
-:kogito_ddl_script_url: https://repository.jboss.org/org/kie/kogito/kogito-ddl
+:kogito_ddl_script_url: https://repo1.maven.org/maven2/org/kie/kogito/kogito-ddl
 :flyway_url: https://flywaydb.org/
 :flyway_baseline_migration_url: https://documentation.red-gate.com/fd/baseline-migrations-184127465.html
 
@@ -9,7 +9,7 @@ Kogito provides an out-of-the-box way to manage your database schema changes wit
 
 When you upgrade your Kogito version, by default it will pick up the latest changes available from Kogito and apply them automatically.
 
-NOTE: This feature is currently available for only `kogito-addons-quarkus-persistence-postgresql` extension.
+NOTE: This feature is currently available only for `kogito-addons-quarkus-persistence-postgresql` extension.
 
 == How to migrate
 
@@ -26,10 +26,10 @@ quarkus.flyway.migrate-at-start=true
 This will create a schema history table `flyway_schema_history` in your database to track the version of each database, recording in it every versioned migration file applied to build that version.
 
 === Migrate using Flyway CLI
-* If you want to migrate manually you can use the Flyway migration CLI tool.
+If you want to migrate manually you can use the Flyway migration CLI tool.
 
-** Download Flyway migration command-line tool from the link:{flyway_install_url}[Download Flyway Community Edition] link.
-** Add the following properties in the `/conf/flyway.conf` file:
+* Download Flyway migration command-line tool from the link:{flyway_install_url}[Download Flyway Community Edition] website.
+* Add the following properties in the `/conf/flyway.conf` file:
 +
 --
 [source,console]
@@ -39,7 +39,7 @@ flyway.user=foo
 flyway.password=bar
 ----
 --
-** You can specify these options with commands as well. The Flyway CLI will prompt for the username and password if they are missing in the configuration.
+* You can specify these options with commands as well. The Flyway CLI will prompt for the username and password if they are missing in the configuration.
 +
 --
 [source,console]
@@ -47,8 +47,8 @@ flyway.password=bar
 $ flyway migrate -url=jdbc:postgresql://localhost:5432/foobardb -user=foo -password=bar
 ----
 --
-** Download the Kogito DDL zip from link:{kogito_ddl_script_url}[this link here] and extract it and use scripts from `postgresql` folder.
-** You can specify the location of the SQL files that need to be migrated using the `flyway.locations` option. For example,
+* Download the Kogito DDL zip from link:{kogito_ddl_script_url}[this link], choose the correct version,  extract the files and use the scripts from the `postgresql` folder.
+* You can specify the location of the SQL files that need to be migrated using the `flyway.locations` option. For example,
 +
 --
 [source,console]
@@ -58,13 +58,13 @@ flyway.locations=classpath:com.mycomp.migration,database/migrations,filesystem:/
 --
 
 === Manually executing scripts
-You can use the provided SQL scripts in zip to migrate the database by executing them one by one.
+You can use the provided SQL scripts in the zip file to migrate the database by executing them one by one.
 
-* You can find all Kogito DDL scripts by visiting link:{kogito_ddl_script_url}[this link here].
-* Download the zip file of the scripts from version same as your Kogito upgrade.
-* Extract the zip file.
+* You can find the Kogito DDL scripts by visiting link:{kogito_ddl_script_url}[this link].
+* Download the zip file of the scripts from the needed version for the Kogito upgrade.
+* Extract the files.
 * Execute the `sql` files from `postgresql` folder.
-
++
 --
 [source,console]
 ----
@@ -73,13 +73,10 @@ You can use the provided SQL scripts in zip to migrate the database by executing
 --
 
 == Baseline migration
-In order to apply migrations to an existing schema. It's necessary to establish the baseline from where Flyway should start executing new migrations. That means, in case your schema already contains a structure and from now on, new changes provided by Kogito should be applied via Flyway integration. In Flyway terms, only migrations above `baselineVersion` will then be applied.
+In order to apply migrations to an existing schema. It is necessary to establish the baseline from where Flyway should start executing new migrations. That means, in case your schema already contains a structure and from now on, new changes provided by Kogito should be applied via Flyway integration. In Flyway terms, only migrations above `baselineVersion` will then be applied.
 Using below properties you can initialize flyway schema table.
 
-[tabs]
-====
-Quarkus::
-+
+=== Baseline using Quarkus Configuration:
 --
 [source,console]
 ----
@@ -87,20 +84,18 @@ quarkus.flyway.baseline-on-migrate=true
 quarkus.flyway.baseline-version=1.32.0
 ----
 --
-Flyway CLI::
-+
+=== Baseline using Flyway CLI:
 --
 [source,console]
 ----
 $ flyway -baselineOnMigrate="true" -baselineVersion="1.32.0" migrate
 ----
 --
-====
-
-For more details regarding Baseline migration, please visit link:{flyway_baseline_migration_url}[Flyway Documentation].
 
 NOTE: Be careful when enabling this feature as it removes the safety net which ensures that Flyway does not migrate the wrong database in case of a configuration mistake.
 
-For more details regarding existing Database setup, visit link:{flyway_migrate_existing_url}[Flyway Documentation].
+=== More details on Flyway migrations
+* link:{flyway_baseline_migration_url}[Baseline Migrations Documentation].
+* link:{flyway_migrate_existing_url}[Existing Database Setup Documentation].
 
 include::../../pages/_common-content/report-issue.adoc[]
