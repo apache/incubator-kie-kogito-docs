@@ -38,11 +38,12 @@ jobs:
     - name: Build the pages
       run: npm run install-build
 
-    - name: Copy latest to numbered version
+    - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-    - run: python scripts/copy-latest.py
+    - name: Copy latest to numbered version
+      run: python scripts/copy-latest.py
     
     - name: Publish to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
