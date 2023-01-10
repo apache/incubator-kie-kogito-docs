@@ -3,9 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Running a workflow service using PostgreSQL :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Running Serverless Workflow service using PostgresSQL">
-    <meta name="keywords" content="kogito, workflow, quarkus, serverless, quarkus-cli, persistence, postgresql">
+    <title>Migrating Your PostgreSQL Database with a Kogito upgrade :: Kogito Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -228,8 +226,11 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="2">
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="postgresql-flyway-migration.html">Migrate your PostgreSQL database</a>
   </li>
 </ul>
   </li>
@@ -331,77 +332,39 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Persistence</li>
-    <li><a href="persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a></li>
+    <li><a href="postgresql-flyway-migration.html">Migrate your PostgreSQL database</a></li>
   </ul>
 </nav>
 <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">1.32</button>
   <div class="version-menu">
-    <a class="version" href="../../main/persistence/persistence-with-postgresql.html">snapshot</a>
-    <a class="version is-current" href="persistence-with-postgresql.html">1.32</a>
-    <a class="version" href="../../1.31.1.Final/persistence/persistence-with-postgresql.html">1.31</a>
-    <a class="version" href="../../1.30.0.Final/persistence/persistence-with-postgresql.html">1.30</a>
-    <a class="version" href="../../1.29.0.Final/persistence/persistence-with-postgresql.html">1.29</a>
-    <a class="version" href="../../1.28.0.Final/persistence/persistence-with-postgresql.html">1.28</a>
-    <a class="version" href="../../1.27.0.Final/persistence/persistence-with-postgresql.html">1.27</a>
-    <a class="version" href="../../1.26.0.Final/persistence/persistence-with-postgresql.html">1.26</a>
-    <a class="version" href="../../1.25.0.Final/persistence/persistence-with-postgresql.html">1.25</a>
-    <a class="version" href="../../1.24.1.Final/persistence/persistence-with-postgresql.html">1.24</a>
+    <a class="version" href="../../main/persistence/postgresql-flyway-migration.html">snapshot</a>
+    <a class="version is-current" href="postgresql-flyway-migration.html">1.32</a>
+    <a class="version is-missing" href="../../1.31.1.Final/index.html">1.31</a>
+    <a class="version is-missing" href="../../1.30.0.Final/index.html">1.30</a>
+    <a class="version is-missing" href="../../1.29.0.Final/index.html">1.29</a>
+    <a class="version is-missing" href="../../1.28.0.Final/index.html">1.28</a>
+    <a class="version is-missing" href="../../1.27.0.Final/index.html">1.27</a>
+    <a class="version is-missing" href="../../1.26.0.Final/index.html">1.26</a>
+    <a class="version is-missing" href="../../1.25.0.Final/index.html">1.25</a>
+    <a class="version is-missing" href="../../1.24.1.Final/index.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.32.x/serverlessworkflow/modules/ROOT/pages/persistence/persistence-with-postgresql.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.32.x/serverlessworkflow/modules/ROOT/pages/persistence/postgresql-flyway-migration.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Running a workflow service using PostgreSQL</h1>
+<h1 class="page">Migrating Your PostgreSQL Database with a Kogito upgrade</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can run your workflow application using PostgreSQL persistence.</p>
+<p>Kogito provides an out-of-the-box way to manage your database schema changes with each upgrade. It uses <a href="https://flywaydb.org/">Flyway</a> to achieve this functionality.</p>
 </div>
 <div class="paragraph">
-<p>When your workflow execution requires <code>wait</code> states, then running your workflow application with persistence enabled is a recommended approach.</p>
-</div>
-<div class="paragraph">
-<p>For example, when a process reaches a <code>callback</code> or needs to wait for an event, then the execution of the process is paused and the engine takes a snapshot of the workflow data. The snapshot is persisted in the database as a binary format along with process metadata information. The process metadata information includes process ID, process instance ID, and process version.</p>
-</div>
-<div class="paragraph">
-<p>Runtime persistence is used for storing data, which is required to resume the workflow execution of a process instance. Once a process is completed, the related data is removed from the database. This means that only required data to resume the execution is persisted.</p>
-</div>
-<div class="paragraph">
-<p>In Kogito, you can enable persistence using add-ons. This document describes the use of the <code>kogito-addons-quarkus-persistence-jdbc</code> add-on, which is based on Java Database Connectivity (JDBC) along with PostgreSQL.</p>
-</div>
-<div class="paragraph">
-<p>The <code>kogito-addons-quarkus-persistence-jdbc</code> add-on also extends on the Quarkus capabilities and you can use the available features directly from Quarkus JDBC support. For more information about Quarkus and JDBC, see <a href="https://quarkus.io/guides/datasource">Quarkus Datasources</a>.</p>
-</div>
-<div class="paragraph">
-<p>You can also see the <code>serverless-workflow-callback-quarkus</code> example application in GitHub repository. To execute the <code>serverless-workflow-callback-quarkus</code> example application, you can follow the instructions mentioned in the <code>README</code> file. To clone the <code>kogito-example</code> repository, use the following command:</p>
-</div>
-<div class="listingblock">
-<div class="title">Clone <code>kogito-examples</code> repository</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">git clone git@github.com:kiegroup/kogito-examples.git</code></pre>
-</div>
-</div>
-<div class="ulist">
-<div class="title">Prerequisites</div>
-<ul>
-<li>
-<p>A workflow project is created.</p>
-<div class="paragraph">
-<p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
-</div>
-</li>
-<li>
-<p>Docker is installed.</p>
-</li>
-<li>
-<p><a href="https://www.postgresql.org/">PostgreSQL</a> is installed. For information about PostgreSQL installation and configuration, see <a href="https://www.postgresql.org/docs/current/">PostgreSQL documentation</a>.</p>
-</li>
-</ul>
+<p>When you upgrade your Kogito version, by default it will pick up the latest changes available from Kogito and apply them automatically.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -410,184 +373,181 @@
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>This document relies on running PostgreSQL as a Docker service, even though PostgreSQL installation is mentioned as a prerequisite.</p>
-</div>
+This feature is currently available only for <code>kogito-addons-quarkus-persistence-postgresql</code> extension.
 </td>
 </tr>
 </table>
 </div>
-<div class="olist arabic">
-<div class="title">Procedure</div>
-<ol class="arabic">
-<li>
-<p>Add required dependencies to the <code>pom.xml</code> file of your project to use the persistence add-on:</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">JDBC persistence add-on</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-  &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
-  &lt;artifactId&gt;kogito-addons-quarkus-persistence-jdbc&lt;/artifactId&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Quarkus JDBC PostgreSQL</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-  &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
-  &lt;artifactId&gt;quarkus-jdbc-postgresql&lt;/artifactId&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Quarkus Agroal data source</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-  &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
-  &lt;artifactId&gt;quarkus-agroal&lt;/artifactId&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div>
-</div>
-</div>
-</li>
-<li>
-<p>Add the following properties to the <code>application.properties</code> file of your project:</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Persistence property</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">kogito.persistence.type=jdbc</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Quarkus properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.datasource.db-kind=postgresql
-quarkus.datasource.username=postgres
-quarkus.datasource.password=pass
-quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/postgres</code></pre>
-</div>
-</div>
-</div>
-</div>
-</li>
-<li>
-<p>Create PostgreSQL database schema.</p>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Note that, the persistence add-on creates the required database schema structure by default. To disable the creation of database schema by default, you can set the <code>kogito.persistence.auto.ddl</code> property to <code>false</code> in <code>application.properties</code> file.</p>
-</div>
-<div class="paragraph">
-<p>If you want to manually create the database schema, you can use the DDL scripts. The DDL scripts are included in the <a href="https://repository.jboss.org/org/kie/kogito/kogito-ddl/1.32.0.Final/kogito-ddl-1.32.0.Final-db-scripts.zip">kogito-ddl-1.32.0.Final-db-scripts.zip</a> artifact.</p>
-</div>
-</div>
-</div>
-</li>
-<li>
-<p>Optional: To handle the concurrent requests to shared workflow instances, enable the persistence-enabled optimistic locking for concurrency control using the version field in the database.</p>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Add <code>kogito.persistence.optimistic.lock=true</code> property in the <code>application.properties</code> file of your project to enable the optimistic locking.</p>
-</div>
-</div>
-</div>
-</li>
-<li>
-<p>Change the version in the workflow file.</p>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">Example workflow file</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "id": "applicantworkflow",
-  "name": "Applicant Workflow",
-  "version": "1.0"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The versioning strategy is used to allow different workflow applications to run different versions of a process at the same time. The different versions of a process share the same database. This is useful when you migrate a process from one version to another. When allowing workflow instances to finish executing, a new version can be deployed using a new workflow application setup.</p>
-</div>
-<div class="paragraph">
-<p>By default, the engine considers the <code>version</code> specified in the workflow file as the current version of the asset. Therefore, you need to manually change the <code>version</code> in the workflow file, making the engine consider the specified version as a new version.</p>
-</div>
-<div class="paragraph">
-<p>As an alternative, you can set the <code>kogito.workflow.version-strategy=project</code> property in the <code>application.properties</code> file of your project. This enables the engine to consider the Maven or Gradle project version as the version of all workflows in the project. For instance, when you release a new version of your Maven project, the version in the workflow file is automatically updated.</p>
-</div>
-</div>
-</div>
-</li>
-</ol>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="ref-postgresql-persistence-configuration"><a class="anchor" href="#ref-postgresql-persistence-configuration"></a>Persistence configuration quick reference</h2>
+<h2 id="_how_to_migrate"><a class="anchor" href="#_how_to_migrate"></a>How to migrate</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The following table serves as a quick reference of commonly used persistence configuration properties supported in Serverless Workflow. You can define these properties in the <code>application.properties</code> file of your project.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Persistence properties</caption>
-<colgroup>
-<col style="width: 40%;">
-<col style="width: 30%;">
-<col style="width: 30%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Configuration property</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Default value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.persistence.type</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.persistence.query.timeout.millis</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>10000</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.persistence.optimistic.lock</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.persistence.auto.ddl</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.workflow.version-strategy</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>workflow</code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect1">
-<h2 id="postgresql-persistence-additional-resources"><a class="anchor" href="#postgresql-persistence-additional-resources"></a>Additional resources</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_migrate_using_flyway_config"><a class="anchor" href="#_migrate_using_flyway_config"></a>Migrate using Flyway Config</h3>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../testing-and-troubleshooting/integration-tests-with-postgresql.html" class="xref page">Serverless Workflow integration test using PostgreSQL</a></p>
+<p>Kogito provides a default mechanism for migrating your database while updating the Kogito version using the following <code>Flyway</code> properties (default value is <code>false</code>):</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">quarkus.flyway.migrate-at-start=true</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>This will create a schema history table <code>flyway_schema_history</code> in your database to track the version of each database, recording in it every versioned migration file applied to build that version.</p>
+</div>
 </li>
 </ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_migrate_using_flyway_cli"><a class="anchor" href="#_migrate_using_flyway_cli"></a>Migrate using Flyway CLI</h3>
+<div class="paragraph">
+<p>If you want to migrate manually you can use the Flyway migration CLI tool.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Download Flyway migration command-line tool from the <a href="https://flywaydb.org/download/community">Download Flyway Community Edition</a> website.</p>
+</li>
+<li>
+<p>Add the following properties in the <code>/conf/flyway.conf</code> file:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">flyway.url=jdbc:postgresql://localhost:5432/foobardb
+flyway.user=foo
+flyway.password=bar</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>You can specify these options with commands as well. The Flyway CLI will prompt for the username and password if they are missing in the configuration.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ flyway migrate -url=jdbc:postgresql://localhost:5432/foobardb -user=foo -password=bar</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Download the Kogito DDL zip from <a href="https://repo1.maven.org/maven2/org/kie/kogito/kogito-ddl">this link</a>, choose the correct version,  extract the files and use the scripts from the <code>postgresql</code> folder.</p>
+</li>
+<li>
+<p>You can specify the location of the SQL files that need to be migrated using the <code>flyway.locations</code> option. For example,</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">flyway.locations=classpath:com.mycomp.migration,database/migrations,filesystem:/sql-migrations,s3:migrationsBucket,gcs:migrationsBucket</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_manually_executing_scripts"><a class="anchor" href="#_manually_executing_scripts"></a>Manually executing scripts</h3>
+<div class="paragraph">
+<p>You can use the provided SQL scripts in the zip file to migrate the database by executing them one by one.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You can find the Kogito DDL scripts by visiting <a href="https://repo1.maven.org/maven2/org/kie/kogito/kogito-ddl">this link</a>.</p>
+</li>
+<li>
+<p>Download the zip file of the scripts from the needed version for the Kogito upgrade.</p>
+</li>
+<li>
+<p>Extract the files.</p>
+</li>
+<li>
+<p>Execute the <code>sql</code> files from <code>postgresql</code> folder.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">&gt; psql -H host -U username -d database_name -a -f create_table.sql</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_baseline_migration"><a class="anchor" href="#_baseline_migration"></a>Baseline migration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to apply migrations to an existing schema. It is necessary to establish the baseline from where Flyway should start executing new migrations. That means, in case your schema already contains a structure and from now on, new changes provided by Kogito should be applied via Flyway integration. In Flyway terms, only migrations above <code>baselineVersion</code> will then be applied.
+Using below properties you can initialize flyway schema table.</p>
+</div>
+<div class="sect2">
+<h3 id="_baseline_using_quarkus_configuration"><a class="anchor" href="#_baseline_using_quarkus_configuration"></a>Baseline using Quarkus Configuration:</h3>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">quarkus.flyway.baseline-on-migrate=true
+quarkus.flyway.baseline-version=1.32.0</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_baseline_using_flyway_cli"><a class="anchor" href="#_baseline_using_flyway_cli"></a>Baseline using Flyway CLI:</h3>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ flyway -baselineOnMigrate="true" -baselineVersion="1.32.0" migrate</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Be careful when enabling this feature as it removes the safety net which ensures that Flyway does not migrate the wrong database in case of a configuration mistake.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_more_details_on_flyway_migrations"><a class="anchor" href="#_more_details_on_flyway_migrations"></a>More details on Flyway migrations</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://documentation.red-gate.com/fd/baseline-migrations-184127465.html">Baseline Migrations Documentation</a>.</p>
+</li>
+<li>
+<p><a href="https://flywaydb.org/documentation/learnmore/existing">Existing Database Setup Documentation</a>.</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
