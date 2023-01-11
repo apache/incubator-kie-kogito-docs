@@ -179,9 +179,9 @@ In order to check that the {product_name} {context} Greeting application is up a
 .Check the greeting application is running
 [source,bash,subs="attributes+"]
 ----
-POD=$(kubectl get pod -n kogito-workflows -l app=greeting -o jsonpath="{.items[0].metadata.name}")
-kubectl exec -n kogito-workflows --stdin --tty $POD -- /bin/bash
-curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://localhost:8080/jsongreet
+kubectl patch svc greeting -n kogito-workflows -p '{"spec": {"type": "NodePort"}}'
+GREETING_SVC=$(minikube service greeting -n kogito-workflows --url)
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' $GREETING_SVC/greeting
 ----
 
 If everything is working well you should receive a response like this:
