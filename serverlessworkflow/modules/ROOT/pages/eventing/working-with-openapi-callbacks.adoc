@@ -5,7 +5,7 @@
 :description: Working with openapi callbacks
 :keywords: kogito, workflow, serverless, openapi, callback, event
 
-This document describes the link:{open_api_spec_url}#callback-object[Openapi Callback] and related examples. Also, it covers the difference between OpenAPI Callback and the Serverless Workflow Callback state. Both the OpenAPI callback and the Callback state perform an action and wait for an event to be produced as a result of the action to resume the workflow. Therefore, both OpenAPI callback and the Callback state are suitable to perform  _fire & wait-for-result_ operations. 
+This document describes the link:{open_api_spec_url}#callback-object[OpenAPI Callback] and related examples. Also, it covers the difference between OpenAPI Callback and the Serverless Workflow Callback state. The Serverless Workflow callback state can be implemented using both the OpenAPI callback and the Callback state functionalities. Both the functionalities perform an action and wait for an event to be produced as a result of the action to resume the workflow, but each of them follows a different approach in achieving it. Therefore, both OpenAPI callback and the Callback state approaches are suitable to perform  _fire & wait-for-result_ operations.
 
 The OpenAPI callback is an asynchronous, out-of-band request that your service will send to some other service in response to specific events. In contrast, the action performed by a Callback state is an asynchronous external service invocation. Both ways aim to send an event to the workflow to resume the flow.
 
@@ -24,20 +24,22 @@ The workflow correlation described in this document focuses on the former mechan
 
 To understand the OpenAPI Callback, see the link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus[`serverless-workflow-callback-events-over-http-quarkus`] example application in GitHub repository.
 
-The `serverless-workflow-callback-events-over-http-quarkus` application is initiated with the following request:
+This example contains a simple link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus/callback-workflow[workflow-service] that illustrates callback state using OpenAPI callbacks functionality. A callback is a state that invokes an action and wait for an event (event that will be eventually fired by the external service notified by the action). This example consists of a callback state that waits for an event to arrive at the wait channel. Its action calls an external service named link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus/callback-event-service[callback-event-service] that publishes the wait event over HTTP. After consuming the wait event, the workflow prints the message received in the wait event and ends the workflow.
+
+The `serverless-workflow-callback-events-over-http-quarkus` application is initiated with the following request to `http://localhost:8080/callback`:
 [code,json]
 ----
 {
   "message": "Hello"
 }
 ----
-Once the workflow is started, it makes an external service call with the callback URL and the workflow instance ID in the request body. Then, as configured in the link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/specs/callback.yaml[OpenAPI] file, the callback URL is invoked to send a CloudEvent to the workflow.
+Once the workflow is started, it makes an external service call with the callback URL and the workflow instance ID in the request body to link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus/callback-event-service[callback-event-service]. Then, as configured in the link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/specs/callback.yaml[OpenAPI] file, the callback URL is invoked to send a CloudEvent to the workflow.
 
-Once the `wait` type CloudEvent is received, the workflow moves to the next state and ends successfully. The following figure shows the link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus[`serverless-workflow-callback-events-over-http-quarkus`] image:
+Once the `wait` type CloudEvent is received by the callback-workflow-service, the workflow moves to the next state and ends successfully. The following figure shows the link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus[`serverless-workflow-callback-events-over-http-quarkus`] image:
 
 image::eventing/openapi-callback.png[]
 
-To use the OpenAPI callback in a workflow, the OpenAPI YAML file is configured with the callback as specified in the link:{open_api_spec_url}#callback-object-examples[OpenAPI callback object example].
+To use the OpenAPI callback in a workflow, the OpenAPI YAML file is configured with the callback as specified in the link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/specs/callback.yaml[OpenAPI] file.
 
 To use the Callback state in a workflow, first CloudEvent type `wait` is declared that the workflow uses. Following is an example of CloudEvents declaration in a workflow definition:
 
@@ -74,6 +76,7 @@ After that, a Callback state is declared, and it waits for a CloudEvent with the
       "transition": "finish"
     }
 ----
+*TIP:* Please refer xref:service-orchestration/configuring-openapi-services-endpoints.adoc[configure openapi service endpoints] document to set the URL dynamically using an environment variable.
 
 An link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus/callback-event-service/src/main/java/org/kie/kogito/examples/CallbackResource.java[event listener] publishes a new `wait` type CloudEvent. Following is an example of a Java method that publishes the `wait` type CloudEvent:
 
@@ -96,14 +99,14 @@ An link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-q
     }
 ----
 
-After that, the workflow application consumes the CloudEvent, it contains an attribute named `kogitoprocrefid`, which holds the workflow instance ID of the workflow.
+The callback-workflow-service consumes the CloudEvent, it contains an attribute named `kogitoprocrefid`, which holds the instance ID of the workflow.
 
 The `kogitoprocrefid` attribute is crucial because when the correlation is not used, then this attribute is the only way for the Callback state to identify that the related CloudEvent needs to be used to resume the workflow. For more information about correlation, see xref:eventing/event-correlation-with-workflows.adoc[Event correlation in {context}].
 
 Note that each workflow is identified by a unique instance ID, which is automatically included in any published CloudEvent, as `kogitoprocinstanceid` CloudEvent extension.
 
-HTTP configuration in `serverless-workflow-callback-events-over-http-quarkus`::
-+
+=== HTTP transport configuration
+
 --
 The `serverless-workflow-callback-events-over-http-quarkus` example application consumes the Cloudevents using Knative Eventing. For more information about incoming and outgoing CloudEvents over HTTP, see xref:eventing/consume-produce-events-with-knative-eventing.adoc[Consuming and Producing CloudEvents over HTTP].
 
@@ -114,7 +117,7 @@ The HTTP path where the workflow application will listen for the CloudEvents in 
 
 * xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
 * xref:eventing/event-correlation-with-workflows.adoc[Event correlation in {context}]
-* link:{open_api_swagger_spec_url}#callbacks[Openapi Callback Example]
+* link:{open_api_swagger_spec_url}#callbacks[OpenAPI Callback Example]
 
 include::../../pages/_common-content/report-issue.adoc[]
 
