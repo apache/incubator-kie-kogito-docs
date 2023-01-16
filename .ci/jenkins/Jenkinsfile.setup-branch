@@ -67,7 +67,7 @@ pipeline {
                             sed -i "s|^display_version:.*|display_version: '${displayVersion}'|g" ${antoraFile}
                             sed -i "s|^prerelease:.*|prerelease: ${prereleaseStr}|g" ${antoraFile}
                             sed -i "s|kogito_sw_examples_url:.*|kogito_sw_examples_url: ${swExamplesURL}|g" ${antoraFile}
-                            sed -i "s|operator_version:.*|operator_version: ${operatorVersion}|g" ${antoraFile}
+                            sed -i "s|^operator_version:.*|operator_version: ${operatorVersion}|g" ${antoraFile}
                         """
 
                         // Add changed files, commit, open and merge PR
