@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>New features on 1.33-RC :: Kogito Serverless Workflow Guides</title>
+    <title>New features on 1.32 :: Kogito Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../_/css/site.css">
 <link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
@@ -51,7 +51,7 @@
     </nav>
 </header>
 <div class="body">
-<div class="nav-container" data-component="serverlessworkflow" data-version="1.33.0-SNAPSHOT">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.32.0.Final">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -250,15 +250,15 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="cloud/kubernetes-service-discovery.html">Kubernetes service discovery in Serverless Workflow</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="cloud/build-and-deploy-with-serverless-operator-on-kubernetes.html">Buiding and deploying a  Serverless Workflow application on Kubernetes using the Kogito Serverless Operator</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="integrations/camel-routes-integration.html">Integrating with Camel Routes</a>
-  </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="integrations/expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a>
   </li>
@@ -284,20 +284,20 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">Kogito Serverless Workflow Guides</span>
-    <span class="version">1.33-RC</span>
+    <span class="version">1.32</span>
   </div>
   <ul class="components">
     <li class="component is-current">
-      <a class="title" href="../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <a class="title" href="index.html">Kogito Serverless Workflow Guides</a>
       <ul class="versions">
         <li class="version">
           <a href="../main/index.html">snapshot</a>
         </li>
-        <li class="version is-current">
-          <a href="index.html">1.33-RC</a>
+        <li class="version">
+          <a href="../1.33.0-SNAPSHOT/index.html">1.33-RC</a>
         </li>
-        <li class="version is-latest">
-          <a href="../latest/index.html">1.32</a>
+        <li class="version is-current is-latest">
+          <a href="index.html">1.32</a>
         </li>
         <li class="version">
           <a href="../1.31.1.Final/index.html">1.31</a>
@@ -333,7 +333,7 @@
 <main class="article">
 <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
-  <a href="../latest/index.html" class="home-link"></a>
+  <a href="index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Kogito Serverless Workflow Guides</a></li>
@@ -341,11 +341,11 @@
   </ul>
 </nav>
 <div class="page-versions">
-  <button class="version-menu-toggle" title="Show other versions of page">1.33-RC</button>
+  <button class="version-menu-toggle" title="Show other versions of page">1.32</button>
   <div class="version-menu">
     <a class="version" href="../main/release_notes.html">snapshot</a>
-    <a class="version is-current" href="release_notes.html">1.33-RC</a>
-    <a class="version" href="../latest/release_notes.html">1.32</a>
+    <a class="version" href="../1.33.0-SNAPSHOT/release_notes.html">1.33-RC</a>
+    <a class="version is-current" href="release_notes.html">1.32</a>
     <a class="version" href="../1.31.1.Final/release_notes.html">1.31</a>
     <a class="version" href="../1.30.0.Final/release_notes.html">1.30</a>
     <a class="version" href="../1.29.0.Final/release_notes.html">1.29</a>
@@ -356,30 +356,27 @@
     <a class="version is-missing" href="../1.24.1.Final/index.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.33.x/serverlessworkflow/modules/ROOT/pages/release_notes.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.32.x/serverlessworkflow/modules/ROOT/pages/release_notes.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">New features on 1.33-RC</h1>
+<h1 class="page">New features on 1.32</h1>
 <div class="sect1">
 <h2 id="_notable_changes"><a class="anchor" href="#_notable_changes"></a>Notable changes</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8495">KOGITO-8495</a> - Bump to Quarkus 2.16.0.Final</p>
+<p><a href="https://issues.redhat.com/browse/KOGITO-7209">KOGITO-7209</a> - Jobs service re-executes completed (executed) jobs</p>
 </li>
 <li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8361">KOGITO-8361</a> - Kubernetes Discovery Add-on throwing ArrayIndexOutOfBoundsException without an apparent reason</p>
+<p><a href="https://issues.redhat.com/browse/KOGITO-7208">KOGITO-7208</a> - A lot of unworked (stuck) jobs in simple load test</p>
 </li>
 <li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8354">KOGITO-8354</a> - Make a string which has a valid JSON format to be parsed by the workflow engine</p>
-</li>
-<li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8351">KOGITO-8351</a> - Add Camel Routes integration to Serverless Workflow</p>
+<p><a href="https://issues.redhat.com/browse/KOGITO-7676">KOGITO-7676</a> - Flyway added to help PostgreSQL based Database migration</p>
 </li>
 </ul>
 </div>
@@ -391,43 +388,52 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8429">KOGITO-8429</a> - [SW] Copy only the supported files into the builder context</p>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8342">KOGITO-8342</a> - Remove Camel Quarkus platform BOM from Serverless Loan Example to avoid dependency conflicts when upgrading Quarkus</p>
 </li>
 <li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8425">KOGITO-8425</a> - PMML API dependency fails to resolve path when in Quarkus mutable-jar context</p>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8340">KOGITO-8340</a> - Serverless Workflow Funqy example fires 400 when tries to run the application</p>
 </li>
 <li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8421">KOGITO-8421</a> - [SW] Ensure that the Kogito SW builder image has the correct Quarkus version</p>
-</li>
-<li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8421">KOGITO-8420</a> - [SW] Enable the JVM dynamic-resources configuration in the swf builder image</p>
-</li>
-<li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8418">KOGITO-8418</a> - SW rest API enum parameter would be changed to uppercase</p>
-</li>
-<li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8421">KOGITO-8408</a> - Create a copy of the latest version in the SW guides to have a numbered URL</p>
-</li>
-<li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8386">KOGITO-8386</a> - Failed to send message to Data Index</p>
-</li>
-<li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8360">KOGITO-8360</a> - toStateData is misbehaving for nested paths</p>
-</li>
-<li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8358">KOGITO-8358</a> - Event Date missing on Serverless Workflow + Data Index integration</p>
-</li>
-<li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8353">KOGITO-8353</a> - [KSW Guides] Add a new "Integration" section with Camel Routes add-on details and update custom functions</p>
-</li>
-<li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8337">KOGITO-8337</a> - Serverless Operator: Check e2e in nightlies</p>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8309">KOGITO-8309</a> - Improve Knative Eventing doc by adding an example how to send and consume HTTP events</p>
 </li>
 <li>
 <p><a href="https://issues.redhat.com/browse/KOGITO-8308">KOGITO-8308</a> - Remove dependency from Quarkus Process extension</p>
 </li>
 <li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8094">KOGITO-8094</a> - Creation of Deepcopy in go-sdk</p>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8304">KOGITO-8304</a> - Document the usage of all-in-one jobs-service image</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8290">KOGITO-8290</a> - Setup GHA checks for files check</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8177">KOGITO-8177</a> - Serverless Operator: Setup GHA for e2e tests</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8167">KOGITO-8167</a> - [KSW Guides] Incorporate Event State timeout and example in the guides</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8141">KOGITO-8141</a> - Update Knative Eventing Serverless Workflow Guide to add Incoming HTTP configuration</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8140">KOGITO-8140</a> - Migrate Serverless Loan Broker example to KIE</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-7985">KOGITO-7985</a> - Jobs Service Integration Tests improvements</p>
+</li>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-7282">KOGITO-7282</a> - [KSW-Guides] Deploying on Kubernetes Clusters</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_known_issues"><a class="anchor" href="#_known_issues"></a>Known issues</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://issues.redhat.com/browse/KOGITO-8389">KOGITO-8389</a> Regression: <code>process-postgresql</code> examples are no more working due to flyway migration</p>
 </li>
 </ul>
 </div>
