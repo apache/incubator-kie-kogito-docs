@@ -56,6 +56,7 @@ pipeline {
                             sed -i "s|^version:.*|version: '${getKogitoVersion()}'|g" ${antoraFile}
                             sed -i "s|^display_version:.*|display_version: '${getKogitoMajorMinorVersion()}'|g" ${antoraFile}
                             sed -i "s|^prerelease:.*||g" ${antoraFile}
+                            sed -i "s|^operator_version:.*|operator_version: '${getKogitoSWOperatorVersion()}'|g" ${antoraFile}
                         """
 
                         // Add changed files, commit, open and merge PR
@@ -96,6 +97,11 @@ void sendNotification() {
 
 String getKogitoVersion() {
     return params.KOGITO_VERSION
+}
+
+String getKogitoSWOperatorVersion() {
+    String[] kogitoVersionSplit = params.KOGITO_VERSION.split("\\.Final")
+    return "v${kogitoVersionSplit[0]}"
 }
 
 String getKogitoMajorMinorVersion() {

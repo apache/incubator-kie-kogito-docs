@@ -60,12 +60,14 @@ pipeline {
                         String prereleaseStr = 'rc'
                         String swExamplesURL = "https://github.com/kiegroup/kogito-examples/tree/${getBuildBranch()}/serverless-workflow-examples"
                         String antoraFile = 'serverlessworkflow/antora.yml'
+                        String operatorVersion = "${getBuildBranch()}"
 
                         sh """
                             sed -i "s|^version:.*|version: '${version}'|g" ${antoraFile}
                             sed -i "s|^display_version:.*|display_version: '${displayVersion}'|g" ${antoraFile}
                             sed -i "s|^prerelease:.*|prerelease: ${prereleaseStr}|g" ${antoraFile}
                             sed -i "s|kogito_sw_examples_url:.*|kogito_sw_examples_url: ${swExamplesURL}|g" ${antoraFile}
+                            sed -i "s|^operator_version:.*|operator_version: ${operatorVersion}|g" ${antoraFile}
                         """
 
                         // Add changed files, commit, open and merge PR
