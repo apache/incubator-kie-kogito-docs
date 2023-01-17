@@ -1,0 +1,193 @@
+= Building and deploying a {context} application on Kubenetes using the {product_name} Serverless Operator
+:compat-mode!:
+// Metadata:
+:description: Build and deploy using the Kogito Serverless Workflow Operator a serverless workflow application
+:keywords: kogito, workflow, serverless, operator, kubernetes, minikube, openshift
+// links
+:kogito_serverless_operator_url: https://github.com/kiegroup/kogito-serverless-operator/
+:kogito_greeting_example_url: https://github.com/kiegroup/kogito-examples/tree/stable/serverless-workflow-examples/serverless-workflow-greeting-quarkus
+:kaniko_issue_url: https://github.com/GoogleContainerTools/kaniko/issues/2201
+
+This document describes how to build and deploy your workflow application using a Kubernetes cluster with the link:{kogito_serverless_operator_url}[{product_name} Serverless Operator]. If you don't have any cluster operational, link:{minikube_url}[Minikube] commands are given throughout the guide.
+
+Using the {product_name} Serverless Operator, you will be able to build and deploy a {product_name} {context} application only by having a workflow definition.
+
+If you already have a container built and pushed to a container registry and you want to deploy it on the Kubernetes cluster, then you can do it without the operator following the guide xref:cloud/deploying-on-kubernetes.adoc[Deploying your {context} application on Kubernetes].
+
+The link:{kogito_serverless_operator_url}[{product_name} Serverless Operator] is currently in Alpha version, is under active development and is at the moment supporting {context} definitions that are using:
+
+* Functions
+* States
+    - Switch including dataConditions
+    - Inject including data with a transition
+* Operations including Actions containing functionRef with arguments
+* KeepActive
+* AutoRetries
+* ExpressionsLang (jq or jsonpath)
+
+.Prerequisites
+* A workflow definition.
+* A Kubernetes cluster with admin privileges 
++If you haven't got one prepare, you can use a local link:{minikube_url}[Minikube] instance.
+* `kubectl` command-line tool is installed. 
++Otherwise, Minikube provides it.
+
+== Prepare a Minikube instance
+
+[source,shell,subs="attributes+"]
+----
+minikube start --cpus 4 --memory 4096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"
+----
+
+[NOTE]
+====
+To speed up the build time, you can increase CPUs and memory options so that you minikube instance will have more resources. For example, use `--cpus 12 --memory 16384`.
+====
+
+[TIP]
+====
+If it does not work with the default driver, as known as `docker`, you can try to start with the `podman` driver as follows:
+====
+
+.Start minikube with podman driver
+[source,shell,subs="attributes+"]
+----
+minikube start [...] --driver podman
+----
+
+
+[IMPORTANT]
+====
+There are some issues with the `crio` container runtime and Kaniko that the operator is using. Reference: link:{kaniko_issue_url}[ISSUE-2201]
+====
+
+== Setup {product_name} Serverless Operator
+
+In order to have an up-and-running instance of the {product_name} Serverless Operator you can use the following command:
+
+.Install {product_name} Serverless Operator on Kubernetes
+[source,shell,subs="attributes+"]
+----
+kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}F/operator.yaml
+----
+
+You can follow, then, the deployment of the {product_name} Serverless Operator:
+
+.Watch the {product_name} Serverless Operator pod
+[source,shell,subs="attributes+"]
+----
+kubectl get pod -n kogito-serverless-operator-system --watch
+----
+
+You can also follow the operator’s log:
+
+.Watch the {product_name} Serverless Operator pod logs
+[source,shell,subs="attributes+"]
+----
+kubectl logs deployment/kogito-serverless-operator-controller-manager -n kogito-serverless-operator-system -f
+----
+
+Once the operator is running, it will watch for new custom resources (CR) so that you can prepare your environment to be ready to build a new {context} application based on the definitions you will send to the operator.
+
+== Preparing for the build
+
+You should follow these steps to create a container that you can deploy as a service on Kubernetes.
+
+=== Create a namespace for the building phase
+
+Let's create a new namespace that will hold all the resources that we (or the operator) will create (pods, deployments, services, secretes, config map, and Custom Resources) in this guide.
+
+.Create a namespace for the application to build & run in
+[source,bash,subs="attributes+"]
+----
+kubectl create namespace kogito-workflows
+----
+
+=== Create a secret for the container registry authentication
+.Create a secret for the container registry authentication
+[source,bash,subs="attributes+"]
+----
+kubectl create secret docker-registry regcred --docker-server=<registry_url> --docker-username=<registry_username> --docker-password=<registry_password> --docker-email=<registry_email> -n kogito-workflows
+----
+
+or you can directly import your local docker config into your the Kubernetes cluster:
+
+.Create a secret for the container registry authentication based on local docker config
+[source,bash,subs="attributes+"]
+----
+kubectl create secret generic regcred --from-file=.dockerconfigjson=${HOME}/.docker/config.json --type=kubernetes.io/dockerconfigjson -n kogito-workflows
+----
+
+=== Create a {product_name} Serverless Platform containing the configuration (i.e. registry address, secret) for building your workflows
+
+The {product_name} Serverless Platform CR is the resource used to control the behavior of the {product_name} Serverless Operator.
+It defines the behavior of all Custom Resources (Workflow and Build) in the given namespace.
+
+Since the {product_name} Serverless Operator is installed in global mode, you will need to specify a {product_name} Serverless Platform CR in each namespace where you want the operator to be executed.
+You can find a basic {product_name} Serverless Platform CR example in the `config/samples` folder that you can simply apply to configure your operator.
+
+.Create a {product_name} Serverless Platform CR
+[source,bash,subs="attributes+"]
+----
+kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml -n kogito-workflows
+----
+
+Note: In this Custom Resource, spec.platform.registry.secret is the name of the secret you created just before.
+
+[TIP]
+====
+You can also update "on-the-fly" the {product_name} Serverless Platform CR registry field with this command (change <YOUR_REGISTRY>)
+
+.Create a {product_name} Serverless Platform CR with a specific registry
+[source,bash,subs="attributes+"]
+----
+curl https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml | sed "s|address: .*|address: <YOUR_REGISTRY>" | kubectl apply -f -
+----
+
+In order to retrieve the Cluster IP address of Minikube's internal registry to configure your platform, you can use the following command:
+
+.Retrieve Minikube registry internal IP
+[source,bash,subs="attributes+"]
+----
+kubectl get svc registry -n kube-system -ojsonpath='{.spec.clusterIP}'
+----
+====
+
+== Build and deploy your {context} application
+
+You can now send your {product_name} {context} Custom Resource to the operator which includes the {context} definition.
+
+You can find a basic {product_name} {context} Custom Resource in the `config/samples` folder that is defining the link:{kogito_greeting_example_url}[{product_name} {context} Greeting example].
+
+[source,bash,subs="attributes+"]
+----
+kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessworkflow.yaml -n kogito-workflows
+----
+You can check the logs of the build of your workflow via:
+
+.Get the {product_name} {context} application pod logs
+[source,bash,subs="attributes+"]
+----
+kubectl logs kogito-greeting-builder -n kogito-workflows
+----
+
+The final pushed image must be printed into the logs at the end of the build.
+
+== Check the {product_name} {context} application is running
+In order to check that the {product_name} {context} Greeting application is up and running, you can try to perform a test HTTP call, from the greeting pod.
+
+.Check the greeting application is running
+[source,bash,subs="attributes+"]
+----
+kubectl patch svc greeting -n kogito-workflows -p '{"spec": {"type": "NodePort"}}'
+GREETING_SVC=$(minikube service greeting -n kogito-workflows --url)
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' $GREETING_SVC/greeting
+----
+
+If everything is working well you should receive a response like this:
+
+.Response from the greeting application
+[source,json,subs="attributes+"]
+----
+{"id":"b5fbfaa3-b125-4e6c-9311-fe5a3577efdd","workflowdata":{"name":"John","language":"English","greeting":"Hello from JSON Workflow, "}}
+----
