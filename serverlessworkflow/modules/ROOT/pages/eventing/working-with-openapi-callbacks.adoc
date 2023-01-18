@@ -7,7 +7,7 @@
 
 This document describes the link:{open_api_spec_url}#callback-object[OpenAPI Callback] and related examples. Also, it covers the difference between OpenAPI Callback and the Serverless Workflow Callback state. The Serverless Workflow callback state can be implemented using both the OpenAPI callback and the Callback state functionalities. Both the functionalities perform an action and wait for an event to be produced as a result of the action to resume the workflow, but each of them follows a different approach in achieving it. Therefore, both OpenAPI callback and the Callback state approaches are suitable to perform  _fire & wait-for-result_ operations.
 
-The OpenAPI callback is an asynchronous, out-of-band request that your service will send to some other service in response to specific events. In contrast, the action performed by a Callback state is an asynchronous external service invocation. Both ways aim to send an event to the workflow to resume the flow.
+The OpenAPI callback is an asynchronous, out-of-band request that your service will send to some other service in response to specific events. In contrast, the Callback state performs an action that triggers an external activity/service which is responsible for sending a cloud event to the workflow. Both ways aim to send an event to the workflow to resume the flow.
 
 As mentioned in the link:{open_api_spec_url}#callback-object[OpenAPI Callback document], when the workflow makes an asynchronous service call, you must provide the callback URL in the request body. The external service invokes the callback URL and sends a link:{cloud_events_url}[CloudEvent] to the workflow.
 
@@ -54,7 +54,7 @@ To use the Callback state in a workflow, first CloudEvent type `wait` is declare
     }
 ----
 
-After that, a Callback state is declared, and it waits for a CloudEvent with the `wait` type. Following is an example of declaring a Callback state that handles the `wait` type CloudEvent:
+After that, a Callback state is declared, which waits for a CloudEvent with the `wait` type. Following is an example of declaring a Callback state that handles the `wait` type CloudEvent:
 
 .Example of a Callback State declaration handling the `wait` CloudEvent
 [code,json]
@@ -76,8 +76,10 @@ After that, a Callback state is declared, and it waits for a CloudEvent with the
       "transition": "finish"
     }
 ----
-*TIP:* Please refer xref:service-orchestration/configuring-openapi-services-endpoints.adoc[configure openapi service endpoints] document to set the URL dynamically using an environment variable.
-
+[TIP]
+====
+Please refer xref:service-orchestration/configuring-openapi-services-endpoints.adoc[configure openapi service endpoints] document to set the URL dynamically using an environment variable.
+====
 An link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus/callback-event-service/src/main/java/org/kie/kogito/examples/CallbackResource.java[event listener] publishes a new `wait` type CloudEvent. Following is an example of a Java method that publishes the `wait` type CloudEvent:
 
 .Example of a Java method that makes a call to Callback URL and publishes the `wait` CloudEvent
@@ -106,12 +108,14 @@ The `kogitoprocrefid` attribute is crucial because when the correlation is not u
 Note that each workflow is identified by a unique instance ID, which is automatically included in any published CloudEvent, as `kogitoprocinstanceid` CloudEvent extension.
 
 === HTTP transport configuration
+The `serverless-workflow-callback-events-over-http-quarkus` example application consumes the Cloudevents using Knative Eventing. For more information about incoming and outgoing CloudEvents oer HTTP, see xref:eventing/consume-produce-events-with-knative-eventing.adoc[Consuming and Producing CloudEvents over HTTP].
 
---
-The `serverless-workflow-callback-events-over-http-quarkus` example application consumes the Cloudevents using Knative Eventing. For more information about incoming and outgoing CloudEvents over HTTP, see xref:eventing/consume-produce-events-with-knative-eventing.adoc[Consuming and Producing CloudEvents over HTTP].
-
-The HTTP path where the workflow application will listen for the CloudEvents in the `serverless-workflow-callback-events-over-http-quarkus` example application, is configured in the link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/application.properties[`application.properties`] file.
---
+The HTTP path where the workflow application will listen for the CloudEvents in the `serverless-workflow-callback-events-over-http-quarkus` example application, is configured in the link:{kogito_sw_examples_url}/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/application.properties[`application.properties`] file as shown below:
+[source,properties]
+----
+mp.messaging.incoming.wait.connector=quarkus-http
+mp.messaging.incoming.wait.path=/wait
+----
 
 == Additional resources
 
