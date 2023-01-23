@@ -1,0 +1,166 @@
+= Orchestrating the AsyncAPI services
+:compat-mode!:
+// Metadata:
+:description: Orchestration of AsyncAPI based services
+:keywords: kogito, workflow, serverless, AsyncApi, quarkiverse
+// links:
+:async_api_spec_url: https://www.asyncapi.com/docs/reference/specification/v2.0.0
+:async_quarkiverse_url: https://github.com/quarkiverse/quarkus-asyncapi
+// Referenced documentation pages.
+:kafka_config: xref:eventing/consume-producing-events-with-kafka.adoc
+:http_config: xref:eventing/consume-produce-events-with-knative-eventing.adoc
+:event_states: xref:eventing/handling-events-on-workflows.adoc
+
+This document describes how to trigger and publish events using an link:{async_api_spec_url}[AsyncAPI] specification file.
+Underneath, {product_name} uses link:{async_quarkiverse_url}[AsyncAPI Quarkiverse extension]. 
+This extension automatically generates all the required link:{smallrye_messaging_url}[Smallrye] properties to make {product_name} work with the servers declared in the AsyncAPI file. Therefore, you do not need to add any property specific to your event broker to make AsyncAPI work. This is a huge advantage over regular link:{event_states}[event states], where whether using link:{kafka_config}[Kafka] or link:{knative_config}[Knative], you have to provide additional configuration 
+
+[NOTE]
+====
+AsyncAPI Quarkiverse extension only support `kafka` and `http` protocols at the moment. 
+====
+
+
+== Consuming an event
+
+Lets assume there is an AsyncAPI specification file called `asyncAPI.yaml`, located in the classpath of your project 
+
+This files contains a `server` definition which `protocol` is Kafka 
+
+.Example of an AsyncAPI kafka server definition
+[source,yaml]
+----
+servers:
+  development:
+    url: localhost:9092
+    description: Development server
+    protocol: kafka
+    protocolVersion: '1.0.0'
+----
+
+and a subscription channel named `wait`. 
+
+.Example of an AsynyAPI subscribing channel definition
+[source,yaml]
+----
+channels:
+  wait:
+    description: A message channel
+    subscribe:
+      operationId: consumeWait
+      summary: Get messages
+      message:
+        $ref: '#/components/messages/message'
+----
+
+You can define a function in your workflow, of type asyncapi, that points to `consumerWait` operationId.
+
+.Example of an AsynyAPI subscribing function definition
+[source,json]
+----
+{
+   "functions":[
+      {
+          "name": "consumeEvent",
+          "type": "asyncapi",
+          "operation": "asyncAPI.yaml#consumeWait" 
+       }
+   ]
+}
+----
+
+Once the function is defined, you can invoke it within an `operation` state 
+
+.Example of an AsynyAPI subscribing function invocation
+[source,json]
+----
+   {
+      "name": "waitForEvent",
+      "type": "operation",
+      "actions": [
+          { 
+           "functionRef": "consumeEvent"
+          }
+       ]      
+    }
+----
+
+When your flow reach `waitForEvent` state, it will stop till it receives a CloudEvent published over Kafka topic `wait`. 
+
+[NOTE]
+====
+The URI part of `operation` property supports `http`, `https` and `file` schemas. If no schema is present, it assumes the specification file is on project classpath
+====
+
+== Publishing an event
+
+Lets assume there is an AsyncAPI specification file called `asyncAPI.yaml`, located in the classpath of your project. 
+
+This files contains a server definition which protocol is HTTP 
+
+.Example of an AsyncAPI http server definition
+[source,yaml]
+----
+servers:
+  development:
+    url: localhost:8080
+    description: Development server
+    protocol: http
+    protocolVersion: '1.0.0'
+----
+
+and a publishing channel named `resume`
+
+.Example of an AsynyAPI publishing channel definition
+[source,yaml]
+----
+channels:
+  resume:
+    description: A message channel
+    publish:
+      operationId: sendResume
+      summary: Get messages
+      message:
+        $ref: '#/components/messages/message'
+----
+
+You can define a function in your workflow, of type asyncapi, that point to `sendResume` operationId.
+
+.Example of an AsynyAPI publishing function definition
+[source,json]
+----
+{
+   "functions":[
+      {
+          "name": "sendResume",
+          "type": "asyncapi",
+          "operation": "asyncAPI.yaml#sendResume" 
+       }
+   ]
+}
+----
+
+Once the function is defined, you can invoke it within an `operation` state 
+
+.Example of an AsynyAPI publishing function invocation
+[source,json]
+----
+   {
+      "name": "sendEvent",
+      "type": "operation",
+      "actions": [
+          { 
+           "functionRef": "sendResume",
+           "arguments" : {
+              "name" : "Javierito"
+            }
+          }
+       ]      
+    }
+----
+
+When your flow reach `sendEvent` state, it will send an event to endpoint `http://localhost:8080/resume`, with payload `{"name":"Javierito"}`
+
+== Additional resources
+
+include::../../pages/_common-content/report-issue.adoc[]
