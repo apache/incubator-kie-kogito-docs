@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Kogito Serverless Workflow Guides</title>
+    <title>OpenAPI Callback in Serverless Workflow :: Kogito Serverless Workflow Guides</title>
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -176,22 +176,22 @@
     <span class="nav-text">Eventing</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../eventing/handling-events-on-workflows.html">Event state in Serverless Workflow</a>
+    <a class="nav-link" href="handling-events-on-workflows.html">Event state in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
+    <a class="nav-link" href="consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+    <a class="nav-link" href="consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event correlation in Serverless Workflow</a>
+    <a class="nav-link" href="event-correlation-with-workflows.html">Event correlation in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../eventing/working-with-callbacks.html">Callback state in Serverless Workflow</a>
+    <a class="nav-link" href="working-with-callbacks.html">Callback state in Serverless Workflow</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../eventing/working-with-openapi-callbacks.html">OpenAPI Callback in Serverless Workflow</a>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="working-with-openapi-callbacks.html">OpenAPI Callback in Serverless Workflow</a>
   </li>
 </ul>
   </li>
@@ -212,16 +212,16 @@
     <span class="nav-text">Testing and Troubleshooting</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink using WireMock</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
+    <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
   </li>
 </ul>
   </li>
@@ -341,31 +341,223 @@
 <button class="nav-toggle"></button>
   <a href="../../latest/index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Eventing</li>
+    <li><a href="working-with-openapi-callbacks.html">OpenAPI Callback in Serverless Workflow</a></li>
+  </ul>
 </nav>
 <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">snapshot</button>
   <div class="version-menu">
-    <a class="version is-current" href="development-tools-for-troubleshooting.html">snapshot</a>
-    <a class="version" href="../../1.33.0-SNAPSHOT/testing-and-troubleshooting/development-tools-for-troubleshooting.html">1.33-RC</a>
-    <a class="version" href="../../latest/testing-and-troubleshooting/development-tools-for-troubleshooting.html">1.32</a>
-    <a class="version" href="../../1.31.1.Final/testing-and-troubleshooting/development-tools-for-troubleshooting.html">1.31</a>
-    <a class="version" href="../../1.30.0.Final/testing-and-troubleshooting/development-tools-for-troubleshooting.html">1.30</a>
-    <a class="version" href="../../1.29.0.Final/testing-and-troubleshooting/development-tools-for-troubleshooting.html">1.29</a>
-    <a class="version" href="../../1.28.0.Final/testing-and-troubleshooting/development-tools-for-troubleshooting.html">1.28</a>
-    <a class="version" href="../../1.27.0.Final/testing-and-troubleshooting/development-tools-for-troubleshooting.html">1.27</a>
-    <a class="version" href="../../1.26.0.Final/testing-and-troubleshooting/development-tools-for-troubleshooting.html">1.26</a>
-    <a class="version" href="../../1.25.0.Final/testing-and-troubleshooting/development-tools-for-troubleshooting.html">1.25</a>
-    <a class="version" href="../../1.24.1.Final/testing-and-troubleshooting/development-tools-for-troubleshooting.html">1.24</a>
+    <a class="version is-current" href="working-with-openapi-callbacks.html">snapshot</a>
+    <a class="version is-missing" href="../../1.33.0-SNAPSHOT/index.html">1.33-RC</a>
+    <a class="version is-missing" href="../../latest/index.html">1.32</a>
+    <a class="version is-missing" href="../../1.31.1.Final/index.html">1.31</a>
+    <a class="version is-missing" href="../../1.30.0.Final/index.html">1.30</a>
+    <a class="version is-missing" href="../../1.29.0.Final/index.html">1.29</a>
+    <a class="version is-missing" href="../../1.28.0.Final/index.html">1.28</a>
+    <a class="version is-missing" href="../../1.27.0.Final/index.html">1.27</a>
+    <a class="version is-missing" href="../../1.26.0.Final/index.html">1.26</a>
+    <a class="version is-missing" href="../../1.25.0.Final/index.html">1.25</a>
+    <a class="version is-missing" href="../../1.24.1.Final/index.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/testing-and-troubleshooting/development-tools-for-troubleshooting.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/eventing/working-with-openapi-callbacks.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
+<h1 class="page">OpenAPI Callback in Serverless Workflow</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes the <a href="https://spec.openapis.org/oas/v3.1.0.html#callback-object">OpenAPI Callback</a> and related examples. Also, it covers the difference between OpenAPI Callback and the Serverless Workflow Callback state. The Serverless Workflow callback state can be implemented using both the OpenAPI callback and the Callback state functionalities. Both the functionalities perform an action and wait for an event to be produced as a result of the action to resume the workflow, but each of them follows a different approach in achieving it. Therefore, both OpenAPI callback and the Callback state approaches are suitable to perform  <em>fire &amp; wait-for-result</em> operations.</p>
+</div>
+<div class="paragraph">
+<p>The OpenAPI callback is an asynchronous, out-of-band request that your service will send to some other service in response to specific events. In contrast, the Callback state performs an action that triggers an external activity/service which is responsible for sending a cloud event to the workflow. Both ways aim to send an event to the workflow to resume the flow.</p>
+</div>
+<div class="paragraph">
+<p>As mentioned in the <a href="https://spec.openapis.org/oas/v3.1.0.html#callback-object">OpenAPI Callback document</a>, when the workflow makes an asynchronous service call, you must provide the callback URL in the request body. The external service invokes the callback URL and sends a <a href="https://cloudevents.io/">CloudEvent</a> to the workflow.</p>
+</div>
+<div class="paragraph">
+<p>From a workflow perspective, asynchronous service indicates that the control is returned to the caller immediately without waiting for the action to be completed. Once the action is completed, a <a href="https://cloudevents.io/">CloudEvent</a> needs to be published to resume the workflow.</p>
+</div>
+<div class="paragraph">
+<p>For the workflow to identify the published CloudEvent it is waiting for, the external service developer includes the workflow instance ID in the CloudEvent header or uses the <a href="event-correlation-with-workflows.html" class="xref page">Event correlation</a>. The following figure displays the process:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/eventing/callbacks-explained.png" alt="callbacks explained">
+</div>
+</div>
+<div class="paragraph">
+<p>The workflow correlation described in this document focuses on the former mechanism that is based on the fact that each workflow instance contains a unique identifier, which is generated automatically.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ref-example-callback"><a class="anchor" href="#ref-example-callback"></a>Example of the OpenAPI Callback</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To understand the OpenAPI Callback, see the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus"><code>serverless-workflow-callback-events-over-http-quarkus</code></a> example application in GitHub repository.</p>
+</div>
+<div class="paragraph">
+<p>This example contains a simple <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-workflow">workflow-service</a> that illustrates callback state using OpenAPI callbacks functionality. A callback is a state that invokes an action and wait for an event (event that will be eventually fired by the external service notified by the action). This example consists of a callback state that waits for an event to arrive at the wait channel. Its action calls an external service named <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-event-service">callback-event-service</a> that publishes the wait event over HTTP. After consuming the wait event, the workflow prints the message received in the wait event and ends the workflow.</p>
+</div>
+<div class="paragraph">
+<p>The <code>serverless-workflow-callback-events-over-http-quarkus</code> application is initiated with the following request to <code><a href="http://localhost:8080/callback" class="bare">http://localhost:8080/callback</a></code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+  "message": "Hello"
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once the workflow is started, it makes an external service call with the callback URL and the workflow instance ID in the request body to <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-event-service">callback-event-service</a>. Then, as configured in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/specs/callback.yaml">OpenAPI</a> file, the callback URL is invoked to send a CloudEvent to the workflow.</p>
+</div>
+<div class="paragraph">
+<p>Once the <code>wait</code> type CloudEvent is received by the callback-workflow-service, the workflow moves to the next state and ends successfully. The following figure shows the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus"><code>serverless-workflow-callback-events-over-http-quarkus</code></a> image:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/eventing/openapi-callback.png" alt="openapi callback">
+</div>
+</div>
+<div class="paragraph">
+<p>To use the OpenAPI callback in a workflow, the OpenAPI YAML file is configured with the callback as specified in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/specs/callback.yaml">OpenAPI</a> file.</p>
+</div>
+<div class="paragraph">
+<p>To use the Callback state in a workflow, first CloudEvent type <code>wait</code> is declared that the workflow uses. Following is an example of CloudEvents declaration in a workflow definition:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of CloudEvent declaration in a workflow definition</div>
+<div class="content">
+<pre> "events": [
+    {
+      "name": "waitEvent",
+      "source": "",
+      "type": "wait"
+    }</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After that, a Callback state is declared, which waits for a CloudEvent with the <code>wait</code> type. Following is an example of declaring a Callback state that handles the <code>wait</code> type CloudEvent:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a Callback State declaration handling the <code>wait</code> CloudEvent</div>
+<div class="content">
+<pre> {
+      "name": "waitForEvent",
+      "type": "callback",
+      "action":
+        {
+        "functionRef": {
+          "refName": "callBack",
+          "arguments": {
+            "uri": "http://localhost:8080/wait",
+            "processInstanceId": "$WORKFLOW.instanceId"
+          }
+        }
+      },
+      "eventRef": "waitEvent",
+      "transition": "finish"
+    }</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Please refer <a href="../service-orchestration/configuring-openapi-services-endpoints.html" class="xref page">configure openapi service endpoints</a> document to set the URL dynamically using an environment variable.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>An <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-event-service/src/main/java/org/kie/kogito/examples/CallbackResource.java">event listener</a> publishes a new <code>wait</code> type CloudEvent. Following is an example of a Java method that publishes the <code>wait</code> type CloudEvent:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a Java method that makes a call to Callback URL and publishes the <code>wait</code> CloudEvent</div>
+<div class="content">
+<pre>    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void wait(EventInput eventInput) throws JsonProcessingException {
+        logger.info("About to generate event for {}",eventInput);
+        CloudEventBuilder builder = CloudEventBuilder.v1()
+                .withId(UUID.randomUUID().toString())
+                .withSource(URI.create(""))
+                .withType("wait")
+                .withTime(OffsetDateTime.now())
+                .withExtension(CloudEventExtensionConstants.PROCESS_REFERENCE_ID, eventInput.getProcessInstanceId())
+                .withData(objectMapper.writeValueAsBytes(Collections.singletonMap("message", "New Event")));
 
+        webClient.postAbs(eventInput.getUri()).sendJson(builder.build()).toCompletionStage();
+    }</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The callback-workflow-service consumes the CloudEvent, it contains an attribute named <code>kogitoprocrefid</code>, which holds the instance ID of the workflow.</p>
+</div>
+<div class="paragraph">
+<p>The <code>kogitoprocrefid</code> attribute is crucial because when the correlation is not used, then this attribute is the only way for the Callback state to identify that the related CloudEvent needs to be used to resume the workflow. For more information about correlation, see <a href="event-correlation-with-workflows.html" class="xref page">Event correlation in Serverless Workflow</a>.</p>
+</div>
+<div class="paragraph">
+<p>Note that each workflow is identified by a unique instance ID, which is automatically included in any published CloudEvent, as <code>kogitoprocinstanceid</code> CloudEvent extension.</p>
+</div>
+<div class="sect2">
+<h3 id="_http_transport_configuration"><a class="anchor" href="#_http_transport_configuration"></a>HTTP transport configuration</h3>
+<div class="paragraph">
+<p>The <code>serverless-workflow-callback-events-over-http-quarkus</code> example application consumes the Cloudevents using Knative Eventing. For more information about incoming and outgoing CloudEvents oer HTTP, see <a href="consume-produce-events-with-knative-eventing.html" class="xref page">Consuming and Producing CloudEvents over HTTP</a>.</p>
+</div>
+<div class="paragraph">
+<p>The HTTP path where the workflow application will listen for the CloudEvents in the <code>serverless-workflow-callback-events-over-http-quarkus</code> example application, is configured in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/application.properties"><code>application.properties</code></a> file as shown below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">mp.messaging.incoming.wait.connector=quarkus-http
+mp.messaging.incoming.wait.path=/wait</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a></p>
+</li>
+<li>
+<p><a href="event-correlation-with-workflows.html" class="xref page">Event correlation in Serverless Workflow</a></p>
+</li>
+<li>
+<p><a href="https://swagger.io/docs/specification#callbacks">OpenAPI Callback Example</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
