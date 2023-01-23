@@ -469,7 +469,6 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus create app \
     -x=kogito-quarkus-serverless-workflow \
-    -x=quarkus-container-image-jib \
     -x=quarkus-resteasy-jackson \
     -x=quarkus-smallrye-openapi \
     --no-code \
@@ -483,9 +482,6 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
 <ul>
 <li>
 <p><code>kogito-quarkus-serverless-workflow</code>: Adds support for workflows.</p>
-</li>
-<li>
-<p><code>quarkus-container-image-jib</code>: Adds support for Container Image Builds.</p>
 </li>
 <li>
 <p><code>quarkus-resteasy-jackson</code>: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request.</p>
@@ -509,7 +505,7 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn io.quarkus.platform:quarkus-maven-plugin:2.16.0.Final:create \
     -DprojectGroupId=org.acme \
     -DprojectArtifactId=serverless-workflow-hello-world \
-    -Dextensions="kogito-quarkus-serverless-workflow,quarkus-container-image-jib,quarkus-resteasy-jackson,quarkus-smallrye-openapi" \
+    -Dextensions="kogito-quarkus-serverless-workflow,quarkus-resteasy-jackson,quarkus-smallrye-openapi" \
     -DnoCode
 cd serverless-workflow-hello-world</code></pre>
 </div>
@@ -817,7 +813,6 @@ __  ____  __  _____   ___  __ ____  ______
 2022-05-25 14:38:12,890 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,405 INFO  [io.zon.tes.db.pos.emb.EmbeddedPostgres] (main) 5df1ed6e-7a15-4091-bcfb-e293aa293bfe postmaster startup finished in 00:00:00.180
 2022-05-25 14:38:12,890 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,405 INFO  [org.kie.kog.per.inm.pos.run.InmemoryPostgreSQLRecorder] (main) Embedded Postgres started at port "44729" with database "postgres", user "postgres" and password "postgres"
 2022-05-25 14:38:12,890 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:12,636 WARN  [io.qua.run.con.ConfigRecorder] (main) Build time property cannot be changed at runtime:
-2022-05-25 14:38:12,891 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT:  - quarkus.jib.base-jvm-image is set to 'ba-docker-registry.usersys.redhat.com:5000/fabric8/java-alpine-openjdk11-jre' but it is build time fixed to 'fabric8/java-alpine-openjdk11-jre'. Did you change the property quarkus.jib.base-jvm-image after building the application?
 2022-05-25 14:38:13,375 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,105 INFO  [org.kie.kog.per.pro.ProtobufService] (main) Registering Kogito ProtoBuffer file: kogito-index.proto
 2022-05-25 14:38:13,377 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,132 INFO  [org.kie.kog.per.pro.ProtobufService] (main) Registering Kogito ProtoBuffer file: kogito-types.proto
 2022-05-25 14:38:13,378 INFO  [org.kie.kog.qua.pro.dev.DataIndexInMemoryContainer] (docker-java-stream--938264210) STDOUT: 2022-05-25 17:38:13,181 INFO  [io.quarkus] (main) data-index-service-inmemory 1.22.0.Final on JVM (powered by Quarkus 2.9.0.Final) started in 4.691s. Listening on: http://0.0.0.0:8080
