@@ -1,4 +1,4 @@
-= Timeouts on events for {context}
+= Timeouts for {context}
 :compat-mode!:
 // Metadata:
 :description: Using timeouts in {context}
@@ -7,6 +7,30 @@
 :jobs_service_image_url: https://quay.io/repository/kiegroup/kogito-jobs-service-allinone
 :jobs_service_image_usage_url: https://github.com/kiegroup/kogito-images#jobs-services-all-in-one
 
+
+Serverless Workflow specification defines a wide amount of possible link:{spec_doc_url}#workflow-timeout-definition[timeout configurations]. 
+Among them, {{product_name}} currently supports workflow and event timeouts. 
+
+Regardless its application scope, timeouts can not be defined as a specific point in time, but it should be an amount of time, a duration, which is considered to start when the referred state becomes active in the workflow. Timeouts uses link:https://en.wikipedia.org/wiki/ISO_8601[`ISO 8601` data and time standard] to specify a duration of time.
+It follows the format `PnDTnHnMn.nS` with days considered to be exactly 24 hours.
+For instance, `PT15M` configures 15 minutes, and `P2DT3H4M` defines 2 days, 3 hours and 4 minutes.
+
+== Workflow timeout 
+
+You can set up the maximum amount of time a workflow might be running before being cancelled. This is configured in the header section of the flow, by using link:{spec_doc_url}#workflowexectimeout-definition[WorkflowExecTimeout definition]. Only `duration` property is currently implemented. 
+Once cancelled, the workflow is considered finished and won't be accessible though a GET request anymore. So it behaves as interrupt was `true` by default. 
+
+For example, in order to cancel the workflow after an hour of execution, you might add the following snippet. 
+.Example of workflow timeout
+[source,json]
+----
+"timeouts": {
+    "workflowExecTimeout": "PT1H"
+  }
+----
+
+== Event timeout
+
 When you define a state in a serverless workflow, you can use the `timeouts` property to configure the maximum time to complete this state.
 When that time is overdue, the state is considered timed-out, and the engine continues the execution from this state. The execution flow depends on the state type, for instance,
 a transition to a next state.
@@ -14,19 +38,6 @@ All the properties you can use to configure state timeouts are described in the 
 
 Event-based states can use the sub-property `eventTimeout` to configure the maximum time to wait for an event to arrive.
 
-This property uses link:https://en.wikipedia.org/wiki/ISO_8601[`ISO 8601` data and time standard] to specify a duration of time.
-It follows the format `PnDTnHnMn.nS` with days considered to be exactly 24 hours.
-For instance, `PT15M` configures 15 minutes, and `P2DT3H4M` defines 2 days, 3 hours and 4 minutes.
-
-[NOTE]
-====
-Event timeouts can not be defined as a specific point in time, but it should be an amount of time, a duration, which is considered to start when the referred state becomes active in the workflow.
-====
-
-[IMPORTANT]
-====
-{product_name} currently, has timeouts support only for *Callback* and *Switch* states with events. Other states will be included in the future releases.
-====
 
 === Callback state timeout
 Callback state can be used when you need to execute an action, in general to call an external service, and wait for an asynchronous response in form of an event, the callback.
