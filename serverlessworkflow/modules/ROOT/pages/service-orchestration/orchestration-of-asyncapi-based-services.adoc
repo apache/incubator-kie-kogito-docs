@@ -69,6 +69,11 @@ You can define a function in your workflow, of type `asyncapi`, that points to `
 }
 ----
 
+[NOTE]
+====
+Remember that, as happens with `REST` and `RPC` types, the URI part of `operation` property supports `http`, `https` and `file` schemas. If no schema is present, it assumes the specification file is on project classpath.
+====
+
 Once the function is defined, you can invoke it within an `operation` state: 
 
 .Example of an AsyncAPI subscribing function invocation
@@ -86,11 +91,6 @@ Once the function is defined, you can invoke it within an `operation` state:
 ----
 
 When your flow reach the `waitForEvent` state, it will stop until it receives a CloudEvent published over the Kafka topic `wait`. 
-
-[NOTE]
-====
-The URI part of `operation` property supports `http`, `https` and `file` schemas. If no schema is present, it assumes the specification file is on project classpath
-====
 
 == Publishing an event
 
