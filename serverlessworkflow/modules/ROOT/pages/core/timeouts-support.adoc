@@ -200,6 +200,7 @@ Data index service and the support for jobs information will be available in fut
 
 An important configuration aspect of job service is the persistence mechanism, where all job information is stored in a database that makes this information durable upon service restarts and guarantees no information is lost.
 
+[#job-service-postgresql]
 ==== PostgreSQL
 
 PostgreSQL is the recommended database to use with job service.
@@ -218,6 +219,33 @@ Alternatively, there is an in-memory database support that does not require any 
 ====
 The job service link:{jobs_service_image_url}[image] is equipped with the PostgreSQL and Ephemeral (InMemory) options that can be switched using the `JOBS_SERVICE_PERSISTENCE`. If not set, it defaults to the `ephemeral` option. For more information about the job service, the container image can be found link:{jobs_service_image_usage_url}(here).
 ====
+
+=== Job Service Leader election feature
+
+Currently, job service works in a single instance manner where there should be just one running and active instance of the service.
+
+To avoid issues when deploying the service into the cloud where it is common to eventually have more than one instance deployed, job service supports a leader instance election process, where an instance once became the leader, activates the external communication to receive and schedule jobs internally.
+
+In all instances who are not leaders, stay inactive in a kind of wait state and try to become the leader continuously.
+
+When a new instance of the service is started it is not set as a leader at startup time but instead, it starts the process to become one.
+
+When an instance that is the leader for any issue stays irresponsive or is shut down, one of the other running instances becomes the leader.
+
+.Job Service leader election
+image::core/job-service-leader.png[]
+
+====
+[NOTE]
+This leader election mechanism uses the underlying persistence backend, which currently is only supported in the PostgreSQL implementation.
+====
+
+There is no need for any configuration to support this feature, the only requirement is to have the supported database with the data schema
+up-to-date as described in <<job-service-postgresql>>.
+
+In case the underlying persistence does not support this feature, you should guarantee
+that just one single instance of job service is running at the same time.
+
 === Job Service communication
 
 [NOTE]
