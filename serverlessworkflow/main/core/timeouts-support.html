@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Timeouts on events for Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <title>Timeouts for Serverless Workflow :: Kogito Serverless Workflow Guides</title>
     <meta name="description" content="Using timeouts in Serverless Workflow">
     <meta name="keywords" content="kogito, workflow, serverless, timeout, timer, expiration">
     <meta name="generator" content="Antora 3.0.3">
@@ -164,6 +164,9 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">Orchestrating the OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-asyncapi-based-services.html">Orchestrating the AsyncAPI services</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Configuring the OpenAPI services endpoints</a>
@@ -372,8 +375,42 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Timeouts on events for Serverless Workflow</h1>
+<h1 class="page">Timeouts for Serverless Workflow</h1>
 <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Serverless Workflow specification defines a wide amount of possible <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-timeout-definition">timeout configurations</a>.
+Among them, Kogito currently supports workflow and event timeouts.</p>
+</div>
+<div class="paragraph">
+<p>Regardless of its application scope (workflow or state), you can not define the timeouts as a specific point in time, but they should be an amount of time, a duration, which is considered to start when the referred scope becomes active. Timeouts use the <a href="https://en.wikipedia.org/wiki/ISO_8601"><code>ISO 8601</code> data and time standard</a> to specify a duration of time.
+It follows the format <code>PnDTnHnMn.nS</code> with days considered to be exactly 24 hours.
+For instance, <code>PT15M</code> configures 15 minutes, and <code>P2DT3H4M</code> defines 2 days, 3 hours and 4 minutes.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_workflow_timeout"><a class="anchor" href="#_workflow_timeout"></a>Workflow timeout</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can set up the maximum amount of time a workflow might be running before being canceled. This is configured in the header section of the flow, by using the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflowexectimeout-definition">WorkflowExecTimeout definition</a>. Only the <code>duration</code> property is currently implemented.
+Once canceled, the workflow is considered to be finished and will not be accessible through a GET request anymore. So it behaves as if the interrupt was <code>true</code> by default.</p>
+</div>
+<div class="paragraph">
+<p>For example, in order to cancel the workflow after an hour of execution, you might add the following snippet.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of workflow timeout</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"timeouts": {
+    "workflowExecTimeout": "PT1H"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_event_timeout"><a class="anchor" href="#_event_timeout"></a>Event timeout</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>When you define a state in a serverless workflow, you can use the <code>timeouts</code> property to configure the maximum time to complete this state.
@@ -383,41 +420,6 @@ All the properties you can use to configure state timeouts are described in the 
 </div>
 <div class="paragraph">
 <p>Event-based states can use the sub-property <code>eventTimeout</code> to configure the maximum time to wait for an event to arrive.</p>
-</div>
-<div class="paragraph">
-<p>This property uses <a href="https://en.wikipedia.org/wiki/ISO_8601"><code>ISO 8601</code> data and time standard</a> to specify a duration of time.
-It follows the format <code>PnDTnHnMn.nS</code> with days considered to be exactly 24 hours.
-For instance, <code>PT15M</code> configures 15 minutes, and <code>P2DT3H4M</code> defines 2 days, 3 hours and 4 minutes.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Event timeouts can not be defined as a specific point in time, but it should be an amount of time, a duration, which is considered to start when the referred state becomes active in the workflow.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Kogito currently, has timeouts support only for <strong>Callback</strong> and <strong>Switch</strong> states with events. Other states will be included in the future releases.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
 </div>
 <div class="sect2">
 <h3 id="_callback_state_timeout"><a class="anchor" href="#_callback_state_timeout"></a>Callback state timeout</h3>
@@ -1050,6 +1052,8 @@ More details on the <a href="https://github.com/kiegroup/kogito-examples/tree/ma
 <div class="paragraph">
 <p>If you find an issue or any misleading information, please feel free to report it {new_issue}[here].
 We really appreciate it!</p>
+</div>
+</div>
 </div>
 </div>
 </div>
