@@ -223,13 +223,15 @@ The job service link:{jobs_service_image_url}[image] is equipped with the Postgr
 
 Currently, job service works in a single instance manner where there should be just one active instance of the service.
 
-To avoid issues when deploying the service into the cloud where it is common to eventually have more than one instance deployed, job service supports a leader instance election process, where an instance once became the leader, activates the external communication to receive and schedule jobs internally.
+To avoid issues when deploying the service in the cloud, where it is common to eventually have more than one instance deployed, the job service supports a leader instance election process. Only the instance that become the leader activates the external communication to receive and schedule jobs.
 
 All instances who are not leaders, stay inactive in a kind of wait state and try to become the leader continuously.
 
+Non leader instances stays inactive, in a kind of wait state where they try to become the leader continuously.
+
 When a new instance of the service is started it is not set as a leader at startup time but instead, it starts the process to become one.
 
-When an instance that is the leader for any issue stays irresponsive or is shut down, one of the other running instances becomes the leader.
+When an instance that is the leader for any issue stays irresponsive or it is shut down, one of the other running instances becomes the leader.
 
 .Job Service leader election
 image::core/job-service-leader.png[]
