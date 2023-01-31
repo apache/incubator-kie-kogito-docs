@@ -216,10 +216,10 @@ Alternatively, there is an in-memory database support that does not require any 
 
 [NOTE]
 ====
-The job service link:{jobs_service_image_url}[image] is equipped with the PostgreSQL and Ephemeral (InMemory) options that can be switched using the `JOBS_SERVICE_PERSISTENCE`. If not set, it defaults to the `ephemeral` option. For more information about the job service, the container image can be found link:{jobs_service_image_usage_url}(here).
+The job service link:{jobs_service_image_url}[image] is equipped with the PostgreSQL and Ephemeral (InMemory) options that can be switched using the `JOBS_SERVICE_PERSISTENCE`. If not set, it defaults to the `ephemeral` option. For more information about the job service, the container image can be found link:{jobs_service_image_usage_url}[here].
 ====
 
-=== Job Service Leader election feature
+=== Job service leader election
 
 Currently, job service works in a single instance manner where there should be just one active instance of the service.
 
@@ -241,7 +241,7 @@ image::core/job-service-leader.png[]
 This leader election mechanism uses the underlying persistence backend, which currently is only supported in the PostgreSQL implementation.
 ====
 
-There is no need for any configuration to support this feature, the only requirement is to have the supported database with the data schema
+There is no need for any configuration to support this feature, the only requirement is to have the supported database with the data schema up-to-date as described in <<job-service-postgresql>>.
 up-to-date as described in <<job-service-postgresql>>.
 
 In case the underlying persistence does not support this feature, you should guarantee
