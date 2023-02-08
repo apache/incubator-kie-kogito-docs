@@ -1,4 +1,4 @@
-= Building and deploying a {context} application on Kubenetes using the {product_name} Serverless Operator
+= Building and deploying a {context} application on Kubernetes using the {product_name} Serverless Operator
 :compat-mode!:
 // Metadata:
 :description: Build and deploy using the Kogito Serverless Workflow Operator a serverless workflow application
@@ -27,10 +27,8 @@ The link:{kogito_serverless_operator_url}[{product_name} Serverless Operator] is
 
 .Prerequisites
 * A workflow definition.
-* A Kubernetes cluster with admin privileges 
-+If you haven't got one prepare, you can use a local link:{minikube_url}[Minikube] instance.
-* `kubectl` command-line tool is installed. 
-+Otherwise, Minikube provides it.
+* A Kubernetes cluster with admin privileges. If you haven't got one prepared, you can use a local link:{minikube_url}[Minikube] instance.
+* `kubectl` command-line tool is installed. Otherwise, Minikube provides it.
 
 == Prepare a Minikube instance
 
@@ -110,7 +108,7 @@ kubectl create namespace kogito-workflows
 kubectl create secret docker-registry regcred --docker-server=<registry_url> --docker-username=<registry_username> --docker-password=<registry_password> --docker-email=<registry_email> -n kogito-workflows
 ----
 
-or you can directly import your local docker config into your the Kubernetes cluster:
+or you can directly import your local docker config into your Kubernetes cluster:
 
 .Create a secret for the container registry authentication based on local docker config
 [source,bash,subs="attributes+"]
