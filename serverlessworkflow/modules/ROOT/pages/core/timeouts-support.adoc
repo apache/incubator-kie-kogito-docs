@@ -44,7 +44,7 @@ Event-based states can use the sub-property `eventTimeout` to configure the maxi
 === Callback state timeout
 Callback state can be used when you need to execute an action, in general to call an external service, and wait for an asynchronous response in form of an event, the callback.
 
-Once the response event is consumed, the workflow continues the execution, in general moving to the next state defined in the `transition property. See more on xref:eventing/working-with-callbacks.adoc[Callback state in {context}].
+Once the response event is consumed, the workflow continues the execution, in general moving to the next state defined in the `transition` property. See more on xref:eventing/working-with-callbacks.adoc[Callback state in {context}].
 
 Since the callback state halts the execution util the event is consumed, you can define an `eventTimeout` for it, and in case the event does not arrive in the defined duration time, the workflow continues the execution moving to the next state defined in the transition, see the <<callback-state, example>>.
 
@@ -125,7 +125,7 @@ The event state is not supported as a starting state if the `exclusive` flag is 
 
 The `timeouts` property is used for this state to configure the maximum time the workflow should wait for the defined events to arrive.
 
-If this time is exceeded and the events are not received, the workflow moves to the state defined in the transition property or ends the workflow instance without performing any actions in case of an end state.
+If this time is exceeded and the events are not received, the workflow moves to the state defined in the `transition` property or ends the workflow instance without performing any actions in case of an end state.
 
 You can see this in the <<event-state, example>>.
 
@@ -240,8 +240,6 @@ To avoid issues when deploying the service in the cloud, where it is common to e
 
 All instances who are not leaders, stay inactive in a kind of wait state and try to become the leader continuously.
 
-Non leader instances stays inactive, in a kind of wait state where they try to become the leader continuously.
-
 When a new instance of the service is started it is not set as a leader at startup time but instead, it starts the process to become one.
 
 When an instance that is the leader for any issue stays irresponsive or it is shut down, one of the other running instances becomes the leader.
@@ -255,7 +253,6 @@ This leader election mechanism uses the underlying persistence backend, which cu
 ====
 
 There is no need for any configuration to support this feature, the only requirement is to have the supported database with the data schema up-to-date as described in <<job-service-postgresql>>.
-up-to-date as described in <<job-service-postgresql>>.
 
 In case the underlying persistence does not support this feature, you should guarantee
 that just one single instance of job service is running at the same time.
