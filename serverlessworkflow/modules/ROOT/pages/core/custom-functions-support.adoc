@@ -297,9 +297,178 @@ In this last example, the `jq` expression result is used as the `body` argument 
 
 === Function return values
 
-The Camel route is responsible to produce the return value in a way that the workflow can understand. The following are considered valid objects:
+The Camel route is responsible to produce the return value in a way that the workflow can understand.The following are considered valid objects:
 
 include::../../pages/_common-content/camel-valid-responses.adoc[]
+
+[#knative-custom-function]
+== Knative custom function
+
+{product_name} provides an implementation of custom function through the `knative-serving` add-on to invoke Knative services.It allows you to have a static URI, defining a Knative service, which is used to perform HTTP requests.The Knative service defined in the URI is queried in the current Knative cluster and translated to a valid URL.
+
+[NOTE]
+====
+This section briefly exemplifies how to define and use Knative custom functions within your workflow application.For more information, see xref:integrations/custom-functions-knative.adoc[Invoking Knative services from Serverless Workflow custom functions].
+====
+
+=== Function definition
+
+Given the following deployed Knative service:
+
+[source,bash]
+----
+$ kn service list
+NAME                              URL                                                                      LATEST                                  AGE     CONDITIONS   READY   REASON
+custom-function-knative-service   http://custom-function-knative-service.default.10.109.169.193.sslip.io   custom-function-knative-service-00001   3h16m   3 OK / 3     True
+----
+
+You can declare a {context} custom function using the Knative service name, like the following:
+
+[source,json]
+----
+  "functions": [
+    {
+      "name": "greet", <1>
+      "type": "custom", <2>
+      "operation": "knative:custom-function-knative-service" <3>
+    }
+  ]
+----
+
+<1> `greet` is the function name
+<2> `custom` is the function type
+<3> `knative:custom-function-knative-service` is the custom operation definition. In this definition, `knative` is the reserved keyword followed by the `custom-function-knative-service` Knative service.
+
+The above function will send a `POST` request to the http://custom-function-knative-service.default.10.109.169.193.sslip.io URL.
+
+[NOTE]
+====
+`GET` requests are not yet supported.
+====
+
+[[about-namespaces]]
+==== About namespaces
+
+Note that in the above example, you declared only the name of the service you wanted to call, but not a namespace. In this case, {product_name} will look for a Knative service in the same namespace the workflow service is running.
+
+In case you need to call a Knative service in a different namespace, you can declare the function as:
+
+[source,json]
+----
+  "functions": [
+    {
+      "name": "greet",
+      "type": "custom",
+      "operation": "knative:my_different_namespace/custom-function-knative-service"
+    }
+  ]
+----
+
+In the above example, {product_name} will look for the `custom-function-knative-service` in the `my_different_namespace` namespace.
+
+=== Function metadata
+
+==== HTTP resource path
+
+You can specify the HTTP resource path by adding the `path` property to the function's metadata.
+
+For instance, given the `/path/to/my/resource` HTTP resource path, you can define your function as:
+
+[source,json]
+----
+  "functions": [
+    {
+      "name": "greet",
+      "type": "custom",
+      "operation": "knative:custom-function-knative-service",
+      "metadata": {
+        "path": "/path/to/my/resource"
+      }
+    }
+  ]
+----
+
+In case you don't specify any path, the root path will be used. For instance, the following function:
+
+[source,json]
+----
+  "functions": [
+    {
+      "name": "greet",
+      "type": "custom",
+      "operation": "knative:custom-function-knative-service"
+    }
+  ]
+----
+
+Is exactly the same as:
+
+[source,json]
+----
+  "functions": [
+    {
+      "name": "greet",
+      "type": "custom",
+      "operation": "knative:custom-function-knative-service",
+      "metadata": {
+        "path": "/"
+      }
+    }
+  ]
+----
+
+=== Function arguments
+
+In case you need to send a payload in the request, you can add it to `arguments` in `functionRef`.
+
+For instance, given you want to send the following JSON object as the payload:
+
+[source,json]
+----
+{
+  "product_id": ".product_id",
+  "customer_name": ".customer_name"
+}
+----
+
+You must declare a `functionRef` like the following.
+
+[source,json]
+----
+  "states": [
+    {
+      "name": "invokeFunction",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "greet",
+            "arguments": { <1>
+              "product_id": ".product_id",
+              "customer_name": ".customer_name"
+            }
+          }
+        }
+      ],
+      "end": true
+    }
+  ]
+----
+<1> The request payload is set in `arguments`.
+
+=== Configurations
+
+==== Request timeout
+
+By default, the Knative service must respond within 10 seconds. You can use the `kogito.addon.knative-serving.request-timeout` property to configure this value.
+
+For instance, if you want to reduce the request timeout to 5 seconds, you must add the following to your `application.properties` file:
+
+[source,properties]
+----
+kogito.addon.knative-serving.request-timeout=5000 <1>
+----
+<1> Time in milliseconds
 
 == Custom function types
 

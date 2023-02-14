@@ -3,207 +3,13 @@
 // Metadata:
 :description: Explain what is and how the Knative service discovery works
 :keywords: kogito, workflow, quarkus, serverless, service-discovery, knative
+// envs for common content
+:environment_prereq: Minikube is installed
+:kubectl_prereq: command-line tool is installed. Otherwise, Minikube handles it.
 
 This document describes how to call Knative services using {context} custom functions. The procedure described in this document is based on the link:{kogito_sw_examples_url}/serverless-workflow-custom-function-knative[`serverless-workflow-custom-function-knative`] example application.
 
-[[enabling-knative-custom-functions]]
-== Enabling Knative {context} custom functions
-
-You can enable Knative {context} custom functions in your project.
-
-.Procedure
-
-. Add the org.kie.kogito:kogito-addons-quarkus-knative-serving dependency to the `pom.xml` file of your project as follows:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.kie.kogito</groupId>
-    <artifactId>kogito-addons-quarkus-knative-serving</artifactId>
-</dependency>
-----
-
-[[declaring-custom-functions-for-knative]]
-== Declaring {context} custom functions for Knative in the Workflow DSL
-
-{product_name} provides an implementation of xref:core/custom-functions-support.adoc[{context} custom function] through the `knative-serving` add-on to invoke Knative services. It allows you to have a static URI, defining a Knative service, which is used to perform HTTP requests. The Knative service defined in the URI is queried in the current Knative cluster and translated to a valid URL.
-
-For instance, given the following deployed Knative service:
-
-[source,bash]
-----
-$ kn service list
-NAME                              URL                                                                      LATEST                                  AGE     CONDITIONS   READY   REASON
-custom-function-knative-service   http://custom-function-knative-service.default.10.109.169.193.sslip.io   custom-function-knative-service-00001   3h16m   3 OK / 3     True
-----
-
-You can declare a {context} custom function using the Knative service name, like the following:
-
-[source,json]
-----
-  "functions": [
-    {
-      "name": "greet",
-      "type": "custom",
-      "operation": "knative:custom-function-knative-service"
-    }
-  ]
-----
-
-The above function will send a `POST` request to the http://custom-function-knative-service.default.10.109.169.193.sslip.io URL.
-
-[NOTE]
-====
-`GET` requests are not yet supported.
-====
-
-[[about-namespaces]]
-=== About namespaces
-
-Note that in the above example, you declared only the name of the service you wanted to call, but not a namespace. In this case, {product_name} will look for a Knative service in the same namespace the workflow service is running.
-
-In case you need to call a Knative service in a different namespace, you can declare the function as:
-
-[source,json]
-----
-  "functions": [
-    {
-      "name": "greet",
-      "type": "custom",
-      "operation": "knative:my_different_namespace/custom-function-knative-service"
-    }
-  ]
-----
-
-In the above example, {product_name} will look for the `custom-function-knative-service` in the `my_different_namespace` namespace.
-
-=== Function Metadata
-
-==== HTTP resource paths
-
-You can specify the HTTP resource path by adding the `path` property to the function's metadata.
-
-For instance, given the `/path/to/my/resource` HTTP resource path, you can define your function as:
-
-[source,json]
-----
-  "functions": [
-    {
-      "name": "greet",
-      "type": "custom",
-      "operation": "knative:custom-function-knative-service",
-      "metadata": {
-        "path": "/path/to/my/resource"
-      }
-    }
-  ]
-----
-
-In case you don't specify any path, the root path will be used. For instance, the following function:
-
-[source,json]
-----
-  "functions": [
-    {
-      "name": "greet",
-      "type": "custom",
-      "operation": "knative:custom-function-knative-service"
-    }
-  ]
-----
-
-Is exactly the same as:
-
-[source,json]
-----
-  "functions": [
-    {
-      "name": "greet",
-      "type": "custom",
-      "operation": "knative:custom-function-knative-service",
-      "metadata": {
-        "path": "/"
-      }
-    }
-  ]
-----
-
-[[referencing-custom-functions-for-knative]]
-== Referencing {context} custom functions for Knative in the Workflow DSL
-
-To reference a {context} custom functions for Knative in the Workflow DSL, you must declare a `functionRef` like the following:
-
-[source,json]
-----
-  "states": [
-    {
-      "name": "invokeFunction",
-      "type": "operation",
-      "actions": [
-        {
-          "functionRef": { <1>
-            "refName": "greet"
-          }
-        }
-      ],
-      "end": true
-    }
-  ]
-----
-<1> The `functionRef`.
-
-=== Arguments
-
-In case you need to send a payload in the request, you can add it to `arguments` in `functionRef`.
-
-For instance, given you want to send the following JSON object as the payload:
-
-[source,json]
-----
-{
-  "product_id": ".product_id",
-  "customer_name": ".customer_name"
-}
-----
-
-You must declare a `functionRef` like the following.
-
-[source,json]
-----
-  "states": [
-    {
-      "name": "invokeFunction",
-      "type": "operation",
-      "actions": [
-        {
-          "functionRef": {
-            "refName": "greet",
-            "arguments": { <1>
-              "product_id": ".product_id",
-              "customer_name": ".customer_name"
-            }
-          }
-        }
-      ],
-      "end": true
-    }
-  ]
-----
-<1> The request payload is set in `arguments`.
-
-=== Configuring the request timeout
-
-By default, the Knative service must respond within 10 seconds. You can use the `kogito.addon.knative-serving.request-timeout` property to configure this value.
-
-For instance, if you want to reduce the request timeout to 5 seconds, you must add the following to your `application.properties` file:
-
-[source,properties]
-----
-kogito.addon.knative-serving.request-timeout=5000 <1>
-----
-<1> Time in milliseconds
-
-== Example
+For more details about the Knative custom function, see xref:core/custom-functions-support.adoc#knative-custom-function[Custom functions for your {context} service].
 
 .Prerequisites
 
@@ -323,6 +129,7 @@ You should see an output like (`id` will change):
 
 == Additional resources
 
+* xref:core/custom-functions-support.adoc[Custom functions for your {context} service]
 * xref:cloud/deploying-on-minikube.adoc[Deploying your Serverless Workflow application on Minikube]
 * xref:cloud/deploying-on-kubernetes.adoc[Deploying your Serverless Workflow application on Kubernetes]
 
