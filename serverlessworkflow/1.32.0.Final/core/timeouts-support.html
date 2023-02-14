@@ -647,39 +647,50 @@ The example shows how to run PostgreSQL as a Kubernetes deployment, but you can 
 <div class="paragraph">
 <p>Alternatively, there is an in-memory database support that does not require any external database configuration, it can be used for testing and development purposes, but it is not recommended for production, since all jobs are lost upon a service restart or failure.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
-
-</div>
-</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
 <p>The job service <a href="https://quay.io/repository/kiegroup/kogito-jobs-service-allinone">image</a> is equipped with the PostgreSQL and Ephemeral (InMemory) options that can be switched using the <code>JOBS_SERVICE_PERSISTENCE</code>. If not set, it defaults to the <code>ephemeral</code> option. For more information about the job service, the container image can be found link:https://github.com/kiegroup/kogito-images#jobs-services-all-in-one(here).</p>
 </div>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p>=== Job Service communication</p>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_job_service_communication"><a class="anchor" href="#_job_service_communication"></a>Job Service communication</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
 <p>The Job Service does not execute a job but triggers a callback that might be an HTTP request or a Cloud Event that is
 managed by the configured <a href="#job-addon-configuration">jobs addon</a> in the workflow application.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p>==== Knative Eventing</p>
+</td>
+</tr>
+</table>
 </div>
+<div class="sect3">
+<h4 id="_knative_eventing"><a class="anchor" href="#_knative_eventing"></a>Knative Eventing</h4>
 <div class="paragraph">
 <p>To configure the communication between the Job Service and the workflow runtime through the knative eventing system, you must provide a set of configurations.</p>
 </div>
 <div class="paragraph">
 <p>The Job Service configuration is done through the deployment descriptor shown in the <a href="#job-service-deploy">example</a>.</p>
 </div>
-<div id="job-addon-configuration" class="paragraph">
-<p>==== Addon configuration in the workflow runtime</p>
 </div>
+<div class="sect3">
+<h4 id="job-addon-configuration"><a class="anchor" href="#job-addon-configuration"></a>Addon configuration in the workflow runtime</h4>
 <div class="paragraph">
 <p>The communication from the workflow application with Job Service is done through an addon, which is responsible for publishing and consuming events related to timers.
 When you run the workflow as a knative service, you must add the <code>kogito-addons-quarkus-jobs-knative-eventing</code> to your project and provide the proper configuration.</p>
@@ -716,27 +727,35 @@ mp.messaging.outgoing.kogito-job-service-job-request-events.url=${K_SINK:http://
 mp.messaging.outgoing.kogito-job-service-job-request-events.method=POST</code></pre>
 </div>
 </div>
-</div>
-</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
 <p>The <code>K_SINK</code> variable used in the URL configuration for the outgoing channel in the
 <a href="#workflow-application-configuration-parameters">configuration</a>, is injected by Knative Eventing, more information on
 <a href="../eventing/consume-produce-events-with-knative-eventing.html" class="xref page">Consuming and producing events on Knative Eventing</a>.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
-<div id="timeout-example" class="paragraph">
-<p>== Timeout showcase example</p>
+</td>
+</tr>
+</table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="timeout-example"><a class="anchor" href="#timeout-example"></a>Timeout showcase example</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>In the <a href="https://github.com/kiegroup/kogito-examples/tree/1.32.x/serverless-workflow-examples/serverless-workflow-timeouts-showcase">serverless-workflow-timeouts-showcase</a> you can see an end-to-end example that contains a serverless workflow application with timeouts configured alongside Job Service running on Knative.</p>
 </div>
 <div class="paragraph">
 <p>There are two workflows that showcase the timeouts usage in the <code>Callback</code> and <code>Switch</code> states.</p>
 </div>
-<div class="paragraph">
-<p>=== Callback workflow</p>
-</div>
+<div class="sect2">
+<h3 id="_callback_workflow"><a class="anchor" href="#_callback_workflow"></a>Callback workflow</h3>
 <div class="paragraph">
 <p>It is a simple workflow, where once the execution reaches the callback state it waits for the event <code>callbackEvent</code> to arrive and continue the execution.</p>
 </div>
@@ -760,9 +779,9 @@ mp.messaging.outgoing.kogito-job-service-job-request-events.method=POST</code></
 <p>The timeout is configured with a maximum time 30 seconds to be waited by the workflow to receive the callbackEvent, in case it does not arrive in time, the execution moves, and the eventData variable remains null.
 See the <a href="#callback-state">callback state definition</a>.</p>
 </div>
-<div class="paragraph">
-<p>=== Switch workflow</p>
 </div>
+<div class="sect2">
+<h3 id="_switch_workflow"><a class="anchor" href="#_switch_workflow"></a>Switch workflow</h3>
 <div class="paragraph">
 <p>The switch example is similar to the callback but once the execution reaches the state, it waits for one of the two configured events, <code>visaDeniedEvent</code> or <code>visaApprovedEvent</code>, to arrive, see the <a href="#switch-state">switch state definition</a>.</p>
 </div>
@@ -778,9 +797,9 @@ See the <a href="#callback-state">callback state definition</a>.</p>
 </div>
 <div class="title">Figure 2. Switch timeout workflow</div>
 </div>
-<div class="paragraph">
-<p>=== Event workflow</p>
 </div>
+<div class="sect2">
+<h3 id="_event_workflow"><a class="anchor" href="#_event_workflow"></a>Event workflow</h3>
 <div class="paragraph">
 <p>The event example is similar to the switch one but once the execution reaches the state, it waits for one of the configured events, <code>event1</code> or <code>event2</code>, to arrive, see the <a href="#event-state">event state definition</a>.</p>
 </div>
@@ -796,22 +815,29 @@ See the <a href="#callback-state">callback state definition</a>.</p>
 </div>
 <div class="title">Figure 3. Event timeout workflow</div>
 </div>
-<div class="paragraph">
-<p>=== Running the example</p>
 </div>
+<div class="sect2">
+<h3 id="_running_the_example"><a class="anchor" href="#_running_the_example"></a>Running the example</h3>
 <div class="paragraph">
 <p>To run the example you must have access to a kubernetes cluster running with Knative configured.</p>
 </div>
 <div class="paragraph">
 <p>For simplicity, the example uses minikube, you can follow the steps described in the example&#8217;s <a href="https://github.com/kiegroup/kogito-examples/tree/1.32.x/serverless-workflow-examples/serverless-workflow-timeouts-showcase">readme</a>.</p>
 </div>
-</div>
-</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
 <p>All the descriptor files used to deploy the example infrastructure are present in the example.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>The database and Job Service deployment files are located under <code>/kubernetes</code> folder.</p>
 </div>
@@ -827,9 +853,8 @@ See the <a href="#callback-state">callback state definition</a>.</p>
 </div>
 <div class="title">Figure 4. Knative Workflow with Job Service architecture</div>
 </div>
-<div class="paragraph">
-<p>==== Deploying the database</p>
-</div>
+<div class="sect3">
+<h4 id="_deploying_the_database"><a class="anchor" href="#_deploying_the_database"></a>Deploying the database</h4>
 <div class="paragraph">
 <p>The workflow application and Job Service uses PostgreSQL as the persistence backend to store information about the workflow instances and jobs, respectively.
 In the example you can deploy a single database instance to be used on both, in a production environment is recommended to have independent database instances.</p>
@@ -851,11 +876,11 @@ deployment.apps/timeouts-showcase-database created
 service/timeouts-showcase-database created</code></pre>
 </div>
 </div>
-<div id="job-service-deploy" class="paragraph">
-<p>==== Deploying Job Service
-.Deploying Job Service</p>
 </div>
+<div class="sect3">
+<h4 id="job-service-deploy"><a class="anchor" href="#job-service-deploy"></a>Deploying Job Service</h4>
 <div class="listingblock">
+<div class="title">Deploying Job Service</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl apply -f kubernetes/jobs-service-postgresql.yml</code></pre>
 </div>
@@ -870,9 +895,9 @@ trigger.eventing.knative.dev/jobs-service-postgresql-cancel-job-trigger created
 sinkbinding.sources.knative.dev/jobs-service-postgresql-sb created</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>==== Deploying the timeout showcase workflow</p>
 </div>
+<div class="sect3">
+<h4 id="_deploying_the_timeout_showcase_workflow"><a class="anchor" href="#_deploying_the_timeout_showcase_workflow"></a>Deploying the timeout showcase workflow</h4>
 <div class="paragraph">
 <p>You need to build the workflow with the <code>knative</code> maven profile, then the descriptor files are generated under the <code>target/kubernetes</code> folder, and the image is pushed in the container registry.</p>
 </div>
@@ -900,9 +925,9 @@ trigger.eventing.knative.dev/callback-event-type-trigger-timeouts-showcase creat
 sinkbinding.sources.knative.dev/sb-timeouts-showcase created</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>==== Creating a workflow instance</p>
 </div>
+<div class="sect3">
+<h4 id="_creating_a_workflow_instance"><a class="anchor" href="#_creating_a_workflow_instance"></a>Creating a workflow instance</h4>
 <div class="paragraph">
 <p>To create a workflow you can interact with the workflow using the provided REST APIs, in the example provide a test Web UI to make it easy to test.</p>
 </div>
@@ -922,9 +947,10 @@ sinkbinding.sources.knative.dev/sb-timeouts-showcase created</code></pre>
 timeouts-showcase         http://timeouts-showcase.default.10.105.86.217.sslip.io         timeouts-showcase-00001         3m50s   3 OK / 3     True</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>=== Using the showcase UI</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_using_the_showcase_ui"><a class="anchor" href="#_using_the_showcase_ui"></a>Using the showcase UI</h3>
 <div class="paragraph">
 <p>The example Web UI is handy to interact with the workflow, you just need to open in the browser the URL you got from the previous step.</p>
 </div>
@@ -938,9 +964,9 @@ timeouts-showcase         http://timeouts-showcase.default.10.105.86.217.sslip.i
 <p>You can create new workflow instances and interact with them to complete, or simply wait for the timeout to be triggered to check it&#8217;s working.
 More details on the <a href="https://github.com/kiegroup/kogito-examples/tree/1.32.x/serverless-workflow-examples/serverless-workflow-timeouts-showcase#timeouts-showcase-ui">readme</a>.</p>
 </div>
-<div class="paragraph">
-<p>=== Using REST APIs</p>
 </div>
+<div class="sect2">
+<h3 id="_using_rest_apis"><a class="anchor" href="#_using_rest_apis"></a>Using REST APIs</h3>
 <div class="paragraph">
 <p>You can test the workflows using the REST APIs, in fact they are the same used by the Web UI in both workflows.</p>
 </div>
@@ -1034,9 +1060,12 @@ More details on the <a href="https://github.com/kiegroup/kogito-examples/tree/1.
 <div class="paragraph">
 <p>As you can see there are no active workflow instances, indicating the timeout was executed and the created instance was completed.</p>
 </div>
-<div class="paragraph">
-<p>== Additional resources</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
@@ -1044,15 +1073,14 @@ More details on the <a href="https://github.com/kiegroup/kogito-examples/tree/1.
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>== <em><strong>Found an issue?</strong></em>
-:new_issue: <a href="https://github.com/kiegroup/kogito-docs/issues/new" class="bare">https://github.com/kiegroup/kogito-docs/issues/new</a></p>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>If you find an issue or any misleading information, please feel free to report it {new_issue}[here].
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
 We really appreciate it!</p>
-</div>
-</div>
 </div>
 </div>
 </div>
