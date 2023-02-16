@@ -22,6 +22,10 @@ setupPostReleaseJob()
 KogitoJobUtils.createQuarkusUpdateToolsJob(this, 'kogito-docs', [:], [:], [[
     filepath: 'serverlessworkflow/antora.yml',
     regex: 'quarkus_version: ',
+],
+[
+    filepath: 'serverlessworkflow/antora.yml',
+    regex: 'quarkus_platform_version: ',
 ]])
 
 /////////////////////////////////////////////////////////////////
