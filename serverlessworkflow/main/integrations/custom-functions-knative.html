@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Event state in Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <title>Invoking Knative services from Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Explain what is and how the Knative service discovery works">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, service-discovery, knative">
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -178,23 +180,23 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Eventing</span>
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="handling-events-on-workflows.html">Event state in Serverless Workflow</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/handling-events-on-workflows.html">Event state in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="event-correlation-with-workflows.html">Event correlation in Serverless Workflow</a>
+    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event correlation in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="working-with-callbacks.html">Callback state in Serverless Workflow</a>
+    <a class="nav-link" href="../eventing/working-with-callbacks.html">Callback state in Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="working-with-openapi-callbacks.html">OpenAPI Callback in Serverless Workflow</a>
+    <a class="nav-link" href="../eventing/working-with-openapi-callbacks.html">OpenAPI Callback in Serverless Workflow</a>
   </li>
 </ul>
   </li>
@@ -266,16 +268,16 @@
     <span class="nav-text">Integrations</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/camel-routes-integration.html">Integrating with Camel Routes</a>
+    <a class="nav-link" href="camel-routes-integration.html">Integrating with Camel Routes</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="custom-functions-knative.html">Invoking Knative services from Serverless Workflow</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/custom-functions-knative.html">Invoking Knative services from Serverless Workflow</a>
+    <a class="nav-link" href="expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
+    <a class="nav-link" href="serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
   </li>
 </ul>
   </li>
@@ -355,178 +357,223 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
-    <li>Eventing</li>
-    <li><a href="handling-events-on-workflows.html">Event state in Serverless Workflow</a></li>
+    <li>Integrations</li>
+    <li><a href="custom-functions-knative.html">Invoking Knative services from Serverless Workflow</a></li>
   </ul>
 </nav>
 <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">snapshot</button>
   <div class="version-menu">
-    <a class="version is-current" href="handling-events-on-workflows.html">snapshot</a>
-    <a class="version" href="../../1.34.0-SNAPSHOT/eventing/handling-events-on-workflows.html">1.34-RC</a>
-    <a class="version" href="../../latest/eventing/handling-events-on-workflows.html">1.33</a>
-    <a class="version" href="../../1.32.0.Final/eventing/handling-events-on-workflows.html">1.32</a>
-    <a class="version" href="../../1.31.1.Final/eventing/handling-events-on-workflows.html">1.31</a>
-    <a class="version" href="../../1.30.0.Final/eventing/handling-events-on-workflows.html">1.30</a>
-    <a class="version" href="../../1.29.0.Final/eventing/handling-events-on-workflows.html">1.29</a>
-    <a class="version" href="../../1.28.0.Final/eventing/handling-events-on-workflows.html">1.28</a>
-    <a class="version" href="../../1.27.0.Final/eventing/handling-events-on-workflows.html">1.27</a>
-    <a class="version" href="../../1.26.0.Final/eventing/handling-events-on-workflows.html">1.26</a>
-    <a class="version" href="../../1.25.0.Final/eventing/handling-events-on-workflows.html">1.25</a>
-    <a class="version" href="../../1.24.1.Final/eventing/handling-events-on-workflows.html">1.24</a>
+    <a class="version is-current" href="custom-functions-knative.html">snapshot</a>
+    <a class="version is-missing" href="../../1.34.0-SNAPSHOT/index.html">1.34-RC</a>
+    <a class="version is-missing" href="../../latest/index.html">1.33</a>
+    <a class="version is-missing" href="../../1.32.0.Final/index.html">1.32</a>
+    <a class="version is-missing" href="../../1.31.1.Final/index.html">1.31</a>
+    <a class="version is-missing" href="../../1.30.0.Final/index.html">1.30</a>
+    <a class="version is-missing" href="../../1.29.0.Final/index.html">1.29</a>
+    <a class="version is-missing" href="../../1.28.0.Final/index.html">1.28</a>
+    <a class="version is-missing" href="../../1.27.0.Final/index.html">1.27</a>
+    <a class="version is-missing" href="../../1.26.0.Final/index.html">1.26</a>
+    <a class="version is-missing" href="../../1.25.0.Final/index.html">1.25</a>
+    <a class="version is-missing" href="../../1.24.1.Final/index.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/eventing/handling-events-on-workflows.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/integrations/custom-functions-knative.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Event state in Serverless Workflow</h1>
+<h1 class="page">Invoking Knative services from Serverless Workflow</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-State">event state</a> in a workflow. You can use the event state to start a new workflow instance upon the reception of a designated <a href="https://cloudevents.io/">CloudEvent</a> or to pause the execution of an existing workflow instance until a designated CloudEvent is received.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="ref-example-event-match"><a class="anchor" href="#ref-example-event-match"></a>Example of event match</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>An event state consists of one or more <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#event-definition">event definitions</a>. Event definitions are combined to designate the CloudEvent types that the event state listens to.</p>
+<p>This document describes how to call Knative services using Serverless Workflow custom functions. The procedure described in this document is based on the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-custom-function-knative"><code>serverless-workflow-custom-function-knative</code></a> example application.</p>
 </div>
 <div class="paragraph">
-<p>In an event definition, the <code>onEvents</code> property is used to group the CloudEvent types that might trigger the same set of <code>actions</code>. The <code>exclusive</code> property in an event definition indicates how an event match is calculated. In case the value of <code>exclusive</code> property is <code>false</code>, then all CloudEvent types in the <code>eventRefs</code> array must be received for a match to occur. Otherwise, the reception of the referenced CloudEvent types is considered a match.</p>
+<p>For more details about the Knative custom function, see <a href="../core/custom-functions-support.html#knative-custom-function" class="xref page">Custom functions for your Serverless Workflow service</a>.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Your Serverless Workflow application is ready to use.<br>
+For more information about building the application container, see <a href="../cloud/build-workflow-image-with-quarkus-cli.html" class="xref page">Building workflow images using Quarkus CLI</a>.</p>
+</li>
+<li>
+<p>Minikube is installed</p>
+</li>
+<li>
+<p><code>kubectl</code> command-line tool is installed. Otherwise, Minikube handles it.</p>
+</li>
+<li>
+<p>Knative CLI is installed.<br>
+For more information, see <a href="https://knative.dev/docs/client/install-kn/">Install the Knative CLI</a>.</p>
+</li>
+<li>
+<p>Knative workflow CLI is installed.<br>
+For more information see <a href="../tooling/kn-plugin-workflow-overview.html" class="xref page">Serverless Workflow plug-in for Knative CLI</a>.</p>
+</li>
+<li>
+<p>(Optional) Quarkus CLI is installed.<br>
+For more information, see <a href="https://quarkus.io/guides/cli-tooling">Building Quarkus Apps with Quarkus command line interface (CLI)</a>.</p>
+</li>
+<li>
+<p>You have the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-custom-function-knative/custom-function-knative-service">custom-function-knative-service</a> project deployed on Knative. For more information on how to deploy a Quarkus project to Knative, see the <a href="https://quarkus.io/guides/deploying-to-kubernetes">Quarkus Kubernetes extension documentation</a>.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Add the <code>knative-serving</code> add-on dependency to your <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-custom-function-knative/workflow">workflow</a> project.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+    &lt;artifactId&gt;kogito-addons-quarkus-knative-serving&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Discover the name of the Knative service that your workflow will invoke. In a terminal window, run the following command:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kn service list</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>The following is an example of event definitions, consisting of two CloudEvent types including <code>noisy</code> and <code>silent</code>:</p>
+<p>You should see an output like:</p>
 </div>
 <div class="listingblock">
-<div class="title">Example event definitions</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"events": [
-    {
-      "name": "noisyEvent",
-      "source": "",
-      "type": "noisy",
-      "dataOnly" : "false"
-    },
-    {
-      "name": "silentEvent",
-      "source": "",
-      "type": "silent"
-    }
-  ]</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME                              URL                                                                      LATEST                                  AGE     CONDITIONS   READY   REASON
+custom-function-knative-service   http://custom-function-knative-service.default.10.109.169.193.sslip.io   custom-function-knative-service-00001   3h16m   3 OK / 3     True</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>To indicate that an event match occurs when both <code>noisy</code> and <code>silent</code> CloudEvent types are received and to execute different actions for both CloudEvent types, define an event state containing both event definitions in separate <code>onEvent</code> items and set <code>exclusive</code> property to <code>false</code>.</p>
+<p>Save the Knative service name (<code>custom-function-knative-service</code>) to use it in the next step.</p>
 </div>
-<div class="listingblock">
-<div class="title">Example event state defintion with multiple <code>onEvent</code> items</div>
+</div>
+</div>
+</li>
+<li>
+<p>Declare the Knative Serverless Workflow custom function. In the <code>functions</code> section of your workflow, add the following:</p>
+<div class="openblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  {
-    "name": "waitForEvent",
-    "type": "event",
-    "onEvents": [
-      {
-        "eventRefs": [
-          "noisyEvent"
-         ],
-         "actions": [
-           {
-             "functionRef": "letsGetLoud"
-           }
-         ]
-      },
-      {
-        "eventRefs": [
-           "silentEvent"
-        ],
-        "actions": [
-          {
-            "functionRef": "beQuiet"
-          }
-        ]
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "name": "greet", <i class="conum" data-value="1"></i><b>(1)</b>
+  "type": "custom", <i class="conum" data-value="2"></i><b>(2)</b>
+  "operation": "knative:custom-function-knative-service", <i class="conum" data-value="3"></i><b>(3)</b>
+  "metadata": {
+    "path": "/function" <i class="conum" data-value="4"></i><b>(4)</b>
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The name of the Serverless Workflow function</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Indicates that this function is a custom one</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Indicates that your custom function is of type <code>knative</code> and it will invoke the <code>custom-function-knative-service</code> service.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The resource path you want to access</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Invoke the declared function. In an <code>operation</code> state, add an <code>action</code> that references the function you declared in the previous step like the following:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"actions": [
+  {
+    "functionRef": {
+      "refName": "greet", <i class="conum" data-value="1"></i><b>(1)</b>
+      "arguments": { <i class="conum" data-value="2"></i><b>(2)</b>
+        "name": ".name"
       }
-    ]
-    ,
-    "exclusive": false
-  }</code></pre>
+    }
+  }
+]</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Function&#8217;s name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The payload that should be sent in the request</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Deploy your workflow service to Knative. For more information on how to deploy a Kogito Serverless Workflow project to Knative, see the <a href="../cloud/deploying-on-kubernetes.html" class="xref page">Deploying on Kubernetes</a>.</p>
+</li>
+<li>
+<p>Submit a request to the workflow service</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -X 'POST' \
+  '&lt;URL&gt;/knativeFunction' \ <i class="conum" data-value="1"></i><b>(1)</b>
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{ "name": "Kogito" }'</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Replace <code>&lt;URL&gt;</code> with the URL of your deployed workflow service</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>To execute the same action when both event types are received, use only one <code>onEvent</code> item as shown in the following example:</p>
+<p>You should see an output like (<code>id</code> will change):</p>
 </div>
 <div class="listingblock">
-<div class="title">Example event state definition with single <code>onEvent</code> item</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  {
-    "name": "waitForEvent",
-    "type": "event",
-    "onEvents": [
-      {
-        "eventRefs": [
-          "noisyEvent",
-          "silentEvent"
-         ],
-         "actions": [
-           {
-             "functionRef": "notCareAboutNoise"
-           }
-         ]
-       }
-    ]
-    ,
-    "exclusive": false
-  }</code></pre>
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{"id":"87cf8275-782d-4e0b-a9be-a95f95c9c190","workflowdata":{"name":"Kogito","greeting":"Greetings from Serverless Workflow, Kogito"}}</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>If you want the same action to be executed when any of the event types is received, set the <code>exclusive</code> property to <code>true</code> as shown in the following example:</p>
-</div>
-<div class="listingblock">
-<div class="title">Example event state definition executing same action</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  {
-    "name": "waitForEvent",
-    "type": "event",
-    "onEvents": [
-      {
-        "eventRefs": [
-          "noisyEvent",
-          "silentEvent"
-         ],
-         "actions": [
-           {
-             "functionRef": "notCareAboutNoise"
-           }
-         ]
-       }
-    ]
-    ,"exclusive": true
-  }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>You can also remove the <code>exclusive</code> property, as <code>true</code> is the default value.</p>
-</div>
-<div class="paragraph">
-<p>To start a new workflow instance, set the <code>start</code> property to the event state name in the workflow header. The workflow instance starts when there is an event match. Using the previous example of event state definition, add the following code in the workflow header:</p>
-</div>
-<div class="listingblock">
-<div class="title">Start a workflow instance</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"start":"waitForEvent"</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>An event state can also be used to pause an existing workflow instance. When the workflow execution reaches an event state, which is not starting, then the execution is paused until there is an event match for that workflow instance.</p>
-</div>
-<div class="paragraph">
-<p>Similar to the callback state in a workflow, the workflow instance to be resumed is identified by <code>kogitoprocrefid</code> CloudEvent attribute or calculated according to the <a href="event-correlation-with-workflows.html" class="xref page">event correlation</a> functionality. While callback state is used for <em>fire&amp;wait</em> scenaiors, event state covers <em>wait&amp;fire</em> scenarios. For more information about callback state, see <a href="working-with-callbacks.html" class="xref page">Callback state in Serverless Workflow</a>.</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -536,13 +583,13 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a></p>
+<p><a href="../core/custom-functions-support.html" class="xref page">Custom functions for your Serverless Workflow service</a></p>
 </li>
 <li>
-<p><a href="consume-producing-events-with-kafka.html" class="xref page">Consuming and producing events using Apache Kafka</a></p>
+<p><a href="../cloud/deploying-on-minikube.html" class="xref page">Deploying your Serverless Workflow application on Minikube</a></p>
 </li>
 <li>
-<p><a href="consume-produce-events-with-knative-eventing.html" class="xref page">Consuming and producing events on Knative Eventing</a></p>
+<p><a href="../cloud/deploying-on-kubernetes.html" class="xref page">Deploying your Serverless Workflow application on Kubernetes</a></p>
 </li>
 </ul>
 </div>
