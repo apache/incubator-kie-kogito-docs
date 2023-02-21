@@ -9,8 +9,6 @@ Kogito provides an out-of-the-box way to manage your database schema changes wit
 
 When you upgrade your Kogito version, by default it will pick up the latest changes available from Kogito and apply them automatically.
 
-NOTE: This feature is currently available only for `kogito-addons-quarkus-persistence-postgresql` extension.
-
 == How to migrate
 
 === Migrate using Flyway Config
@@ -18,12 +16,15 @@ NOTE: This feature is currently available only for `kogito-addons-quarkus-persis
 * Kogito provides a default mechanism for migrating your database while updating the Kogito version using the following `Flyway` properties (default value is `false`):
 +
 --
-[source,console]
+[source,properties]
 ----
 quarkus.flyway.migrate-at-start=true
+quarkus.datasource.db-kind=postgresql
 ----
 --
 This will create a schema history table `flyway_schema_history` in your database to track the version of each database, recording in it every versioned migration file applied to build that version.
+
+NOTE: When using `kogito-addons-persistence-jdbc`, it is mandatory to set the `quarkus.datasource.db-kind` property, so thay Flyway can locate the appropriate scripts for the database.
 
 === Migrate using Flyway CLI
 If you want to migrate manually you can use the Flyway migration CLI tool.
@@ -32,7 +33,7 @@ If you want to migrate manually you can use the Flyway migration CLI tool.
 * Add the following properties in the `/conf/flyway.conf` file:
 +
 --
-[source,console]
+[source,properties]
 ----
 flyway.url=jdbc:postgresql://localhost:5432/foobardb
 flyway.user=foo
@@ -78,7 +79,7 @@ Using below properties you can initialize flyway schema table.
 
 === Baseline using Quarkus Configuration:
 --
-[source,console]
+[source,properties]
 ----
 quarkus.flyway.baseline-on-migrate=true
 quarkus.flyway.baseline-version=1.32.0
