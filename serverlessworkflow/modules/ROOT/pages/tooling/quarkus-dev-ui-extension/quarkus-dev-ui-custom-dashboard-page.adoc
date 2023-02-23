@@ -1,0 +1,42 @@
+= Dashboards in Kogito Serverless Workflow Tools extension
+:compat-mode!:
+// Metadata:
+:description: Dashboards in Kogito Serverless Workflow Tools extension
+:keywords: kogito, workflow, serverless, Quarkus, Dev UI, Dashboards
+:dashboard_guide: https://www.dashbuilder.org/docs/#chap-dashbuilder-yaml-guides
+:dashboard_editor: https://start.kubesmarts.org/
+
+In Kogito Serverless Workflow Tools, the Dashboards page is used to display the available dashboard files. The page displays a list of available dashboards and add filters to the list.
+
+.Dashboard page
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-dashboard-list.png[]
+
+The table on the Dashboards page displays the following details:
+
+* *Name*: the name of a custom dashboard.
+* *Last Modified*: the time reference indicating when the custom dashboard was last updated.
+
+== Creating a custom dashboard
+
+=== Create a custom dashboard file
+See the {dashboard_guide}[dashboard guide] for creating dashboards and visualizations with YAML. You can run all examples with {dashboard_editor}[Dashbuilder YAML Online].
+
+=== Storage path of custom dashboards
+The default storage path for dashboard files is *src/main/resources/dashboards*, but the property *quarkus.kogito-runtime-tools.custom.dashboard.folder* can be used to set a custom storage path.
+
+.Default storage path
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-dashboard-storage-path.png[]
+
+== Filtering the dashboards
+To filter the dashboard based on name, enter a name in the *Filter by dashboard name* field and click *Apply filter* button.
+
+.Example filters applied on the dashboards
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-filters-in-dashboards.png[]
+
+== Accessing a dashboard details
+In the dashboard table, the *name* column contains a clickable link, which enables you to navigate to the *Dashboard Details* page.
+
+.Dashboard Details page
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-dashboard-details.png[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
