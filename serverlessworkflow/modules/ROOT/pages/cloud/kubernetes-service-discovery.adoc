@@ -97,16 +97,6 @@ image::cloud/sw-discovery-flow.jpg[]
 [[ref-example-kubernetes-service-discovery]]
 == Example of Kubernetes service discovery in {context}
 
-Add the following dependency to your `pom.xml`:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.kie.kogito</groupId>
-  <artifactId>kogito-addons-quarkus-kubernetes</artifactId>
-</dependency>
-----
-
 The Kubernetes service discovery is performed at the _STATIC_INIT_ time of Quarkus during the workflow application startup. First, the service discovery scans the Quarkus configuration values and searches for the Kubernetes URI pattern. If the URI pattern is found, the engine parses the URI, queries the Kubernetes API searching for the given resource, and overrides the given application property.
 
 For example, consider an application that consumes a resource running on Kubernetes. This resource is a Knative service that exposes a function, which can be discovered using the following URI:
@@ -174,14 +164,24 @@ When using the Kubernetes service discovery feature, you need to balance if your
 
 If the URI pattern is not found in the application properties, then discovery is not triggered. However, the scanning is performed anyway. Therefore, a short time is required to go through the startup scan.
 
-You can disable the Kubernetes service discovery by removing the `kogito-addons-quarkus-kubernetes` library from the application's dependencies:
+You can disable the Kubernetes service discovery by removing the `kogito-addons-quarkus-kubernetes` library from the application's dependencies as shown in the following Maven exclusions:
 
-.Remove the following dependency
+.Example Maven exclusions
 [source,shell]
 ----
 <dependency>
   <groupId>org.kie.kogito</groupId>
-  <artifactId>kogito-addons-quarkus-kubernetes</artifactId>
+  <artifactId>kogito-quarkus-serverless-workflow</artifactId>
+  <exclusions>
+    <exclusion>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>kogito-addons-quarkus-kubernetes</artifactId>
+    </exclusion>
+    <exclusion>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>kogito-addons-quarkus-kubernetes-deployment</artifactId>
+    </exclusion>
+  </exclusions>
 </dependency>
 ----
 
