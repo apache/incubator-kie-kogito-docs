@@ -561,17 +561,6 @@
 <h2 id="ref-example-kubernetes-service-discovery"><a class="anchor" href="#ref-example-kubernetes-service-discovery"></a>Example of Kubernetes service discovery in Serverless Workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Add the following dependency to your <code>pom.xml</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-  &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
-  &lt;artifactId&gt;kogito-addons-quarkus-kubernetes&lt;/artifactId&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div>
-<div class="paragraph">
 <p>The Kubernetes service discovery is performed at the <em>STATIC_INIT</em> time of Quarkus during the workflow application startup. First, the service discovery scans the Quarkus configuration values and searches for the Kubernetes URI pattern. If the URI pattern is found, the engine parses the URI, queries the Kubernetes API searching for the given resource, and overrides the given application property.</p>
 </div>
 <div class="paragraph">
@@ -680,14 +669,24 @@ __  ____  __  _____   ___  __ ____  ______
 <p>If the URI pattern is not found in the application properties, then discovery is not triggered. However, the scanning is performed anyway. Therefore, a short time is required to go through the startup scan.</p>
 </div>
 <div class="paragraph">
-<p>You can disable the Kubernetes service discovery by removing the <code>kogito-addons-quarkus-kubernetes</code> library from the application&#8217;s dependencies:</p>
+<p>You can disable the Kubernetes service discovery by removing the <code>kogito-addons-quarkus-kubernetes</code> library from the application&#8217;s dependencies as shown in the following Maven exclusions:</p>
 </div>
 <div class="listingblock">
-<div class="title">Remove the following dependency</div>
+<div class="title">Example Maven exclusions</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">&lt;dependency&gt;
   &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
-  &lt;artifactId&gt;kogito-addons-quarkus-kubernetes&lt;/artifactId&gt;
+  &lt;artifactId&gt;kogito-quarkus-serverless-workflow&lt;/artifactId&gt;
+  &lt;exclusions&gt;
+    &lt;exclusion&gt;
+      &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+      &lt;artifactId&gt;kogito-addons-quarkus-kubernetes&lt;/artifactId&gt;
+    &lt;/exclusion&gt;
+    &lt;exclusion&gt;
+      &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+      &lt;artifactId&gt;kogito-addons-quarkus-kubernetes-deployment&lt;/artifactId&gt;
+    &lt;/exclusion&gt;
+  &lt;/exclusions&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
