@@ -12,6 +12,7 @@
 :kogito_sw_callback_example: {kogito_sw_examples_url}/serverless-workflow-callback-quarkus
 :postgresql_url: https://www.postgresql.org/
 :postgresql_doc_url: https://www.postgresql.org/docs/current/
+:flyway_url: https://flywaydb.org/
 
 This document describes how you can run your workflow application using PostgreSQL persistence.
 
@@ -97,9 +98,15 @@ quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/postgres
 . Create PostgreSQL database schema.
 +
 --
-Note that, the persistence add-on creates the required database schema structure by default. To disable the creation of database schema by default, you can set the `kogito.persistence.auto.ddl` property to `false` in `application.properties` file.
+The persistence add-on uses link:{flyway_url}[Flyway] to create the database schema. To enable the database schema creation during the runtime startup, you must set the following properties in the `application.properties` file.
 
-If you want to manually create the database schema, you can use the DDL scripts. The DDL scripts are included in the link:https://repository.jboss.org/org/kie/kogito/kogito-ddl/{page-component-version}/kogito-ddl-{page-component-version}-db-scripts.zip[kogito-ddl-{page-component-version}-db-scripts.zip] artifact.
+[source,properties]
+----
+quarkus.flyway.migrate-at-start=true
+quarkus.datasource.db-kind=postgresql
+----
+
+You can find more details regarding the PostgreSQL database schema migration in the xref:persistence/postgresql-flyway-migration.adoc[Flyway migration guide].
 --
 
 . Optional: To handle the concurrent requests to shared workflow instances, enable the persistence-enabled optimistic locking for concurrency control using the version field in the database. 
@@ -149,10 +156,6 @@ The following table serves as a quick reference of commonly used persistence con
 |boolean
 |`false`
 
-|`kogito.persistence.auto.ddl`
-|boolean
-|`true`
-
 |`kogito.workflow.version-strategy`
 |string
 |`workflow`
@@ -164,5 +167,6 @@ The following table serves as a quick reference of commonly used persistence con
 == Additional resources
 
 * xref:testing-and-troubleshooting/integration-tests-with-postgresql.adoc[{context} integration test using PostgreSQL]
+* xref:persistence/postgresql-flyway-migration.adoc[Migrating Your PostgreSQL Database with a Kogito upgrade]
 
 include::../../pages/_common-content/report-issue.adoc[]
