@@ -517,10 +517,16 @@ quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/postgres</code></pr
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Note that, the persistence add-on creates the required database schema structure by default. To disable the creation of database schema by default, you can set the <code>kogito.persistence.auto.ddl</code> property to <code>false</code> in <code>application.properties</code> file.</p>
+<p>The persistence add-on uses <a href="https://flywaydb.org/">Flyway</a> to create the database schema. To enable the database schema creation during the runtime startup, you must set the following properties in the <code>application.properties</code> file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.flyway.migrate-at-start=true
+quarkus.datasource.db-kind=postgresql</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>If you want to manually create the database schema, you can use the DDL scripts. The DDL scripts are included in the <a href="https://repository.jboss.org/org/kie/kogito/kogito-ddl/main/kogito-ddl-main-db-scripts.zip">kogito-ddl-main-db-scripts.zip</a> artifact.</p>
+<p>You can find more details regarding the PostgreSQL database schema migration in the <a href="postgresql-flyway-migration.html" class="xref page">Flyway migration guide</a>.</p>
 </div>
 </div>
 </div>
@@ -602,11 +608,6 @@ quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/postgres</code></pr
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.persistence.auto.ddl</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.workflow.version-strategy</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>workflow</code></p></td>
@@ -622,6 +623,9 @@ quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/postgres</code></pr
 <ul>
 <li>
 <p><a href="../testing-and-troubleshooting/integration-tests-with-postgresql.html" class="xref page">Serverless Workflow integration test using PostgreSQL</a></p>
+</li>
+<li>
+<p><a href="postgresql-flyway-migration.html" class="xref page">Migrating Your PostgreSQL Database with a Kogito upgrade</a></p>
 </li>
 </ul>
 </div>
