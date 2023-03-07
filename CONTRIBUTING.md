@@ -214,7 +214,7 @@ More details at [Antora documentation](https://docs.antora.org/antora/latest/asc
 
 ## Generating Release Notes for Serverless Workflow
 
-1. Use the [JIRA to search for the issues]([https://issues.redhat.com/](https://issues.redhat.com/issues/?jql=)) with:
+1. Use the [JIRA to search for the issues](https://issues.redhat.com/issues/?jql=) with:
 
 ```
 project = Kogito and fixVersion = <version> and component in ("Serverless Workflow Editor", "Serverless Workflow Engine") AND status in (Resolved, Done)  and type != Sub-task and type != Epic
