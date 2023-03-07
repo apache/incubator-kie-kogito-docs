@@ -214,17 +214,19 @@ More details at [Antora documentation](https://docs.antora.org/antora/latest/asc
 
 ## Generating Release Notes for Serverless Workflow
 
-1. Use the JIRA to search for the issues with:
+1. Use the [JIRA to search for the issues]([https://issues.redhat.com/](https://issues.redhat.com/issues/?jql=)) with:
 
 ```
-project = Kogito and fixVersion = <version> and component in (Serverless) and type != Sub-task and type != Epic
+project = Kogito and fixVersion = <version> and component in ("Serverless Workflow Editor", "Serverless Workflow Engine") AND status in (Resolved, Done)  and type != Sub-task and type != Epic
 ```
 
-Replace `<version>` with the given version, for example `1.26.0.Final`.
+Replace `<version>` with the given version, for example `1.35.0.Final`.
 
 2. Update the page [release_notes.adoc](serverlessworkflow/modules/ROOT/pages/release_notes.adoc)
 3. Align with the team what should be under "Notable changes"
 4. Add the rest to "Other Changes and Bug Fixing".
+5. Open a PR in the target **branch** version, **not** main
+6. Add one member from each squad to review
 
 ## Useful Resources
 
