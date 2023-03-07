@@ -417,11 +417,37 @@ Is exactly the same as:
   ]
 ----
 
+[[sending-cloudevents]]
+==== Sending CloudEvents
+
+By default, {product_name} sends the payload of a Knative function as a regular JSON object. However, you can tell {product_name} to send the payload as a CloudEvent. In that case, {product_name} will check if the CloudEvent has all mandatory attributes set.
+
+To tell {product_name} you want to send the payload as a CloudEvent, you must define your function like:
+
+[source,json]
+----
+  "functions": [
+    {
+      "name": "greet",
+      "type": "custom",
+      "operation": "knative:custom-function-knative-service",
+      "metadata": {
+        "path": "/",
+        "asCloudEvent": true <1>
+      }
+    }
+  ]
+----
+
+<1> Tells {product_name} to send the payload as a CloudEvent. Default is `false`
+
 === Function arguments
 
 In case you need to send a payload in the request, you can add it to `arguments` in `functionRef`.
 
-For instance, given you want to send the following JSON object as the payload:
+==== Sending a regular JSON object
+
+Given you want to send the following JSON object as the payload:
 
 [source,json]
 ----
@@ -455,6 +481,59 @@ You must declare a `functionRef` like the following.
   ]
 ----
 <1> The request payload is set in `arguments`.
+
+==== Sending a CloudEvent
+
+Given you want to send the following CloudEvent as the payload:
+
+[source,json]
+----
+{
+  "specversion" : "1.0",
+  "type" : "com.github.pull_request.opened",
+  "source" : "https://github.com/cloudevents/spec/pull",
+  "subject" : "123",
+  "id" : "A234-1234-1234",
+  "time" : "2018-04-05T17:31:00Z",
+  "comexampleextension1" : "value",
+  "comexampleothervalue" : 5,
+  "datacontenttype" : "text/xml",
+  "data" : "<much wow=\"xml\"/>"
+}
+----
+
+You must declare a `functionRef` like the following: (Don't forget to set `asCloudEvent` as `true` in function metadata. See <<sending-cloudevents>>.)
+
+[source,json]
+----
+  "states": [
+    {
+      "name": "invokeFunction",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "greet",
+            "arguments": { <1>
+                "specversion" : "1.0",
+                "type" : "com.github.pull_request.opened",
+                "source" : "https://github.com/cloudevents/spec/pull",
+                "subject" : "123",
+                "id" : "A234-1234-1234",
+                "time" : "2018-04-05T17:31:00Z",
+                "comexampleextension1" : "value",
+                "comexampleothervalue" : 5,
+                "datacontenttype" : "text/xml",
+                "data" : "<much wow=\"xml\"/>"
+            }
+          }
+        }
+      ],
+      "end": true
+    }
+  ]
+----
+<1> The CloudEvent is set in `arguments`.
 
 === Configurations
 
