@@ -441,6 +441,11 @@ To tell {product_name} you want to send the payload as a CloudEvent, you must de
 
 <1> Tells {product_name} to send the payload as a CloudEvent. Default is `false`
 
+[WARNING]
+====
+You can't send a CloudEvent if you don't set the `asCloudEvent` attribute to `true`. If you do so, {product_name} will throw an error.
+====
+
 === Function arguments
 
 In case you need to send a payload in the request, you can add it to `arguments` in `functionRef`.
@@ -481,6 +486,11 @@ You must declare a `functionRef` like the following.
   ]
 ----
 <1> The request payload is set in `arguments`.
+
+[WARNING]
+====
+You can't send a CloudEvent if you don't set the `asCloudEvent` attribute to `true`. If you do so, {product_name} will throw an error.
+====
 
 ==== Sending a CloudEvent
 
