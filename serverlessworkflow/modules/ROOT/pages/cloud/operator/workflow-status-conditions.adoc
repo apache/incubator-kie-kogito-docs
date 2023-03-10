@@ -1,0 +1,68 @@
+= Understanding Workflow Services Status Conditions
+:compat-mode!:
+// Metadata:
+:description: Description of the status and conditions of a workflow deployed by the operator
+:keywords: kogito, workflow, serverless, operator, kubernetes, minikube, status, conditions
+
+This document describes the status and conditions of the `KogitoServerlessWorkflow` object deployed by the {operator_name}.
+
+link:https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties[Kubernetes Status] is an important property to observe in order to understand what is currently happening with the object. Can help you troubleshoot or integrate with other objects in your cluster. 
+
+== General Status
+
+The table bellow lists the general structure of a workflow status.
+
+.Description of KogitoServerlessWorkflow resource object
+[cols="1,2"]
+|===
+|Status | Description
+
+| `ObservedGeneration`
+| Last object generation observed by the status
+
+| `Conditions`
+| Current observed workflow conditions
+
+| `Address`
+| External or internal workflow access endpoint. Implements the link:https://github.com/knative/specs/blob/main/specs/eventing/overview.md#addressable[Knative Addressable Interface]
+
+| `RecoverFailureAttempts`
+| How many attempts the operator tried to recover from a failure
+
+|===
+
+The `Conditions` property might vary depending on the workflow profile. The next sections describe the current implementation.
+
+== Development Profile Conditions
+
+When you deploy a workflow with the xref:cloud/operator/developing-applications.adoc[development profile], the operator deploys a ready-to-use container with a running workflow instance. 
+
+The following table lists the possible condition scenarios.
+
+.Condition Scenarios in Development
+[cols="1,1,1,2"]
+|===
+|Condition | Status | Reason | Description
+
+
+|===
+
+
+== Production Profile Conditions
+
+.Condition Scenarios in Production
+[cols="1,1,1,2"]
+|===
+|Condition | Status | Reason | Description
+
+
+|===
+
+
+== Additional resources
+
+* xref:cloud/operator/known-issues.adoc[]
+* xref:cloud/operator/developing-applications.adoc[]
+* xref:cloud/operator/build-and-deploy-applications.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]

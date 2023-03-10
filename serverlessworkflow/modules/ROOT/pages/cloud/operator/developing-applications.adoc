@@ -10,9 +10,9 @@ Workflows in development profile are not tailored for production environments. T
 
 == Introduction to the Development Profile
 
-The development profile is the easiest way of starting playing around with workflows and the operator. 
+The development profile is the easiest way to start playing around with workflows and the operator. 
 
-To get started, you can use the editor of your choice to create a new Kubernetes Workflow YAML definition. For example:
+To get started, you can use an editor of your choice to create a new Kubernetes Workflow YAML definition. For example:
 
 .Example of a Kubernetes {product_name} YAML definition
 [source,yaml,subs="attributes+"]
@@ -24,8 +24,8 @@ metadata:
   annotations:
     sw.kogito.kie.org/description: Greeting example on k8s!
     sw.kogito.kie.org/version: 0.0.1
-    sw.kogito.kie.org/profile: dev <2>
-spec: <1>
+    sw.kogito.kie.org/profile: dev <1>
+spec: <2>
   start: ChooseOnLanguage
   functions:
     - name: greetFunction
@@ -61,11 +61,9 @@ spec: <1>
       end: true
 ----
 
-<1> In the `spec` attribute goes the workflow definition as described by the xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow specification]. So if you already have a workflow definition, you can use it there. Alternatively, you can use the xref:tooling/serverless-workflow-editor/swf-editor-overview.adoc[editors to create your workflow definition].
+<1> The annotation `sw.kogito.kie.org/profile: dev` tells the operator to deploy your workflow using the devlopment profile. This means that the operator will build a running instance of the workflow ready to receive changes during your development cycle.
 
-<2> The annotation `sw.kogito.kie.org/profile: dev` tells to the operator to deploy your workflow using the devlopment profile. This means that the operator will build a running instance of the workflow ready to receive changes during your development cycle.
-
-You can make changes to the definition using any Kubernetes editor such as `kubectl`. The operator ensures that the latest workflow definition is running and ready. This way, you can include the workflow application in your development scenario and start making requests to it.
+<2> In the `spec` attribute goes the workflow definition as described by the xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow specification]. So if you already have a workflow definition, you can use it there. Alternatively, you can use the xref:tooling/serverless-workflow-editor/swf-editor-overview.adoc[editors to create your workflow definition].
 
 == Deploying a New Workflow Service
 
@@ -73,7 +71,7 @@ You can make changes to the definition using any Kubernetes editor such as `kube
 * You have xref:cloud/operator/install-serverless-operator.adoc[installed the {operator_name}]
 * You have created a new {product_name} Kubernetes YAML file
 
-Having a new Kubernetes workflow definition in a YAML file, you can deploy it in your cluster with the following command:
+Having a new Kubernetes workflow definition in a YAML file (you can use the above example), you can deploy it in your cluster with the following command:
 
 .Deploying a new KogitoServerlessWorkflow custom resource in Kubernetes
 [source,bash,subs="attributes+"]
@@ -86,7 +84,7 @@ Alternatively, you can try one of the examples available in the operator reposit
 .Deploying the greeting workflow example
 [source,bash,subs="attributes+"]
 ----
-kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessworkflow.yaml -n <your_namespace>
+kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessworkflow_devmode.yaml -n <your_namespace>
 ----
 
 [TIP]
@@ -117,12 +115,74 @@ greeting   dev       0.0.1               True
 The `REASON` field gives you a cue about the current workflow status.
 ====
 
-From here, you can make any changes to the workflow definition in the YAML file and apply it again to the cluster. After doing that, in a few seconds the new version of your workflow should be ready to receive new requests.
+You can make changes to the workflow YAML using any Kubernetes editor such as `kubectl`. The operator ensures that the latest workflow definition is running and ready. 
+This way, you can include the workflow application in your development scenario and start making requests to it.
 
 == Troubleshooting the Workflow Service
 
+Since during development you are iterating over the deployed workflow service, it's likely that you will need to troubleshoot the application if something goes wrong.
 
+To ensure the workflow is running in a healthy state, the operator deploy the application pod with health checks probes.
+So if your changes impact the application somehow, the pod will stop responding.
 
+[[basic-troubleshooting]]
+=== Basic Troubleshooting
+
+1. Analyze the workflow status with:
++
+.Get the workflow status conditions
+[source,shell,subs="attributes+"]
+----
+kubectl get workflow <name> -o jsonpath={.status.conditions} | jq .
+----
++
+It can give you a clue about what might be happening. See xref:cloud/operator/workflow-status-conditions.adoc[] for more information.
++
+2. Fetch the logs and look for `ERROR` messages:
++
+.Watch the application logs
+[source,shell,subs="attributes+"]
+----
+kubectl logs deployment/<workflow-name> -f
+----
++
+If you are looking for opening an issue or ask in {product_name} communication channels, this logging information is always useful for the person who will try to help you.
+
+=== Possible Failure Scenarios
+
+==== Feature Not Yet Supported 
+The {operator_name} is under active development. Sometimes a feature might not be available yet. Please see xref:cloud/operator/known-issues.adoc[] for a compreehensive list of available features.
+
+If you identify you're refering to a feature not yet available, please file a new issue so we can prioritize it for you or ask in {product_name} communication channels.
+
+==== Wrong Application Configuration
+A wrong configuration, or lack of one might impact your workflow to run correctly. 
+The operator deploys a `ConfigMap` that holds the application properties for the workflow. 
+
+.Get the properties ConfigMap
+[source,shell,subs="attributes+"]
+----
+kubectl get cm <workflow-name>-props
+----
+
+The `ConfigMap` name pattern is the workflow name followed by `-props`.
+
+Make sure that the configuration is correct and you're not lacking any required properties for a given feature to work. 
+If so, you can make your changes to the configuration as you normally would to any `ConfigMap`. 
+
+The operator ensures that these properties are applied to the application.
+
+See xref:cloud/operator/configure-workflows.adoc[] for more information.
+
+==== Wrong Workflow Definition
+The {operator_name} validates the workflow definition at the moment you create or edit the YAML file, avoiding to persist a workflow in an invalid state. 
+Although, the operator is under active development, so errors during the validation might occur. 
+
+In this case, you might have to make a few modifications to the workflow definition to fix any structural error.
+
+You can identify such problems by looking at the deployed workflow application logs as explained <<basic-troubleshooting, here>>.
+
+If you found an issue that a cause is not listed in this section, please link:{docs_issues_url}[let's know].
 
 == Additional resources
 
