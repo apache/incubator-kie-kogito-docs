@@ -7,6 +7,8 @@
 :kogito_messaging_url: https://docs.jboss.org/kogito/release/latest/html_single/#_kogito_messaging_add_on
 :kogito_kafka_integration_url: https://docs.jboss.org/kogito/release/latest/html_single/#proc-messaging-enabling_kogito-configuring
 :callback_example_url: {kogito_sw_examples_url}/serverless-workflow-callback-quarkus/src/main/resources/application.properties
+:overflow_management_url: https://quarkus.io/blog/reactive-messaging-emitter/#overflow-management
+:overflow_annotation_url: https://smallrye.io/smallrye-reactive-messaging/2.3/apidocs/org/eclipse/microprofile/reactive/messaging/OnOverflow.html
 :events_example_url: {kogito_sw_examples_url}/serverless-workflow-events-quarkus/src/main/resources/application.properties
 :smallrye_connector_doc_url: {smallrye_messaging_url}/connectors/connectors.html
 :kafka_connector_properties_url: {smallrye_messaging_url}/kafka/kafka.html#_configuration_reference
@@ -107,6 +109,25 @@ mp.messaging.outgoing.kogito_outgoing_stream.connector=smallrye-kafka
 mp.messaging.outgoing.kogito_outgoing_stream.topic=decisions
 mp.messaging.outgoing.kogito_outgoing_stream.value.serializer=org.apache.kafka.common.serialization.StringSerializer
 ----
+--
+
+== OnOverflow handling
+
+Smallrye provide means to link:{overflow_management_url}[manage emitter overflow] through link:{overflow_annotation_url}[OnOverflow] annotation
+
+Kogito will annotate generated smallrye `emitters` for a particular channel using the information provided by a property of the form `kogito.addon.messaging.emitter.<channel_name>.overflow-strategy`, which possible values are `BUFFER`,`NONE`,`UNBOUNDED`,`FAIL` and `DROP`. If the value of strategy is `BUFFER`, then you might specify the buffer size by using property of the form `kogito.addon.messaging.emitter.<channel_name>.buffer-size` 
+
+Therefore, for `wait` channel, in previous example, if we want to buffer as much as 100 events we will add these two properties
+
+.Example overflow configuration
+[source,properties]
+----
+kogito.addon.messaging.emitter.wait.overflow-strategy=BUFFER
+kogito.addon.messaging.emitter.wait.buffer-size=100
+----
+
+If all your channels are using the same strategy and this strategy is different from `BUFFER` one (you can change buffer size globally by using smallrye property `mp.messaging.emitter.default-buffer-size`), you can set up it by using `kogito.addon.messaging.emitter.overflow-strategy=NONE|UNBOUNDED|FAIL|DROP`
+
 --
 
 == Additional resources
