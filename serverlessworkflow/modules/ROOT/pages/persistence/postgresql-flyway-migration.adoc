@@ -5,15 +5,15 @@
 :flyway_url: https://flywaydb.org/
 :flyway_baseline_migration_url: https://documentation.red-gate.com/fd/baseline-migrations-184127465.html
 
-Kogito provides an out-of-the-box way to manage your database schema changes with each upgrade. It uses link:{flyway_url}[Flyway] to achieve this functionality.
+When working with {context} PostgreSQL database, you can either opt to use link:{flyway_url}[Flyway] or manually upgrade your database via DDL scripts. 
 
-When you upgrade your Kogito version, by default it will pick up the latest changes available from Kogito and apply them automatically.
+When you upgrade your {context} version, by default it **won't** pick up the latest changes available.
 
 == How to migrate
 
 === Migrate using Flyway Config
 
-* Kogito provides a default mechanism for migrating your database while updating the Kogito version using the following `Flyway` properties (default value is `false`):
+* Kogito provides a mechanism for migrating your database while updating the Kogito version using the following `Flyway` properties (default value is `false`, not upgrade):
 +
 --
 [source,properties]
