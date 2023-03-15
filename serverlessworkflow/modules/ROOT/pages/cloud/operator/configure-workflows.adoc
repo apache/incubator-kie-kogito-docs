@@ -25,7 +25,7 @@ kubectl edit cm <workflow-name>-props
 
 Note that it's important to respect the properties format, otherwise the operator will replace your configuration with the default one.
 
-Here's an example of a default workflow properties:
+Here's an example of a workflow properties:
 
 .Example of a Workflow ConfigMap Properties
 [source,yaml,subs="attributes+"]
@@ -39,9 +39,7 @@ metadata:
   namespace: default
 data:
   application.properties: |
-    quarkus.http.port = 8080
-    quarkus.http.host = 0.0.0.0
-    org.kie.kogito.addons.knative.health-enabled = false
+    my.properties.key = any-value
 ----
 
 The underlying runtime engine that executes the workflow service is based on link:{quarkus_url}[Quarkus]. So that, you can configure the workflow as you normally would any link:{quarkus_config_url}[Quarkus application].
