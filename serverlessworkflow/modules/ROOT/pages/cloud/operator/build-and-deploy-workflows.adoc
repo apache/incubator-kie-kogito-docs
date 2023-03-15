@@ -1,15 +1,14 @@
-= Building and Deploying Production Ready Workflows with the Operator
+= Building and Deploying Workflows with the Operator
 :compat-mode!:
 // Metadata:
-:description: Build and deploy using the Kogito Serverless Workflow Operator a serverless workflow application
-:keywords: kogito, workflow, serverless, operator, kubernetes, minikube
+:description: Build and deploy with {operator_name}
+:keywords: kogito, workflow, serverless, operator, kubernetes, minikube, openshift, containers
 // links
 :kogito_serverless_operator_url: https://github.com/kiegroup/kogito-serverless-operator/
 :kogito_greeting_example_url: https://github.com/kiegroup/kogito-examples/tree/stable/serverless-workflow-examples/serverless-workflow-greeting-quarkus
 :kaniko_issue_url: https://github.com/GoogleContainerTools/kaniko/issues/2201
 
-This document describes how to build and deploy your workflow application using a Kubernetes cluster with the link:{kogito_serverless_operator_url}[{operator_name}]. 
-Using the {product_name} Operator, you will be able to build and deploy a workflow application only by having a workflow definition.
+This document describes how to build and deploy your workflow on a Kubernetes cluster using the link:{kogito_serverless_operator_url}[{operator_name}] only by having a workflow definition.
 
 [IMPORTANT]
 ====
@@ -59,7 +58,7 @@ Double check your `$\{HOME\}/.docker/config.json`. If you're using local desktop
 The `KogitoServerlessPlatform` is the resource used to control the behavior of the {operator_name}.
 It defines the behavior of all Custom Resources (Workflow and Build) in the given namespace.
 
-Since the operator is installed in global mode, you will need to specify a platform in each namespace where you want to deploy production-ready workflows.
+Since the operator is installed in global mode, you will need to specify a platform in each namespace where you want to deploy workflows.
 You can find a basic `KogitoServerlessPlatform` CR example in the `config/samples` folder that you can simply apply to configure your operator.
 
 .Create a `KogitoServerlessPlatform`
@@ -130,3 +129,8 @@ If everything is working well you should receive a response like this:
 ----
 
 // TODO: add a troubleshooting guide - https://issues.redhat.com/browse/KOGITO-8864
+
+* xref:cloud/operator/known-issues.adoc[]
+* xref:cloud/operator/developing-workflows.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
