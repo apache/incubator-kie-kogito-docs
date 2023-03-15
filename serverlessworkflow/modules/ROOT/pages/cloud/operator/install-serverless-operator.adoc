@@ -2,7 +2,7 @@
 :compat-mode!:
 // Metadata:
 :description: Install the operator on Kubernetes clusters
-:keywords: kogito, workflow, serverless, operator, kubernetes, minikube
+:keywords: kogito, workflow, serverless, operator, kubernetes, minikube, openshift, containers
 
 This guide describes how to install the {operator_name} in a Kubernetes cluster. The operator is in an xref:/cloud/operator/known-issues.adoc[early development stage] (community only) and has been tested on Kubernetes 1.22+, link:{minikube_url}[Minikube], and link:https://kind.sigs.k8s.io/[KIND].
 
@@ -33,7 +33,7 @@ minikube start --cpus 4 --memory 4096 --addons registry --addons metrics-server 
 To speed up the build time, you can increase CPUs and memory options so that your minikube instance will have more resources. For example, use `--cpus 12 --memory 16384`. In order to work, you will have to recreate your instance.
 ====
 
-If it does not work with the default driver, as known as `docker`, you can try to start with the `podman` driver as follows:
+If it does not work with the default driver, also known as `docker`, you can try to start with the `podman` driver as follows:
 
 .Start minikube with podman driver
 [source,shell,subs="attributes+"]
