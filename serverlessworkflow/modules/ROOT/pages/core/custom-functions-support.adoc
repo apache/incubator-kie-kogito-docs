@@ -417,35 +417,6 @@ Is exactly the same as:
   ]
 ----
 
-[[sending-cloudevents]]
-==== Sending CloudEvents
-
-By default, {product_name} sends the payload of a Knative function as a regular JSON object and `Content-Type` as `application/json`. However, you can tell {product_name} to send the payload as a CloudEvent. In that case, {product_name} will check if the CloudEvent has all mandatory attributes set and use `application/cloudevents+json; charset=UTF-8` in `Content-Type`.
-
-To tell {product_name} you want to send the payload as a CloudEvent, you must define your function like:
-
-[source,json]
-----
-  "functions": [
-    {
-      "name": "greet",
-      "type": "custom",
-      "operation": "knative:custom-function-knative-service",
-      "metadata": {
-        "path": "/",
-        "asCloudEvent": true <1>
-      }
-    }
-  ]
-----
-
-<1> Tells {product_name} to send the payload as a CloudEvent. Default is `false`
-
-[WARNING]
-====
-You can't send a CloudEvent if you don't set the `asCloudEvent` attribute to `true`. If you do so, {product_name} will throw an error.
-====
-
 === Function arguments
 
 In case you need to send a payload in the request, you can add it to `arguments` in `functionRef`.
@@ -487,12 +458,34 @@ You must declare a `functionRef` like the following.
 ----
 <1> The request payload is set in `arguments`.
 
+[[sending-cloudevents]]
+==== Sending a CloudEvent
+
+By default, {product_name} sends the payload of a Knative function as a regular JSON object and `Content-Type` as `application/json`. However, you can tell {product_name} to send the payload as a CloudEvent. In that case, {product_name} will check if the CloudEvent has all mandatory attributes set and use `application/cloudevents+json; charset=UTF-8` in `Content-Type`.
+
+To tell {product_name} you want to send the payload as a CloudEvent, you must define your function like:
+
+[source,json]
+----
+  "functions": [
+    {
+      "name": "greet",
+      "type": "custom",
+      "operation": "knative:custom-function-knative-service",
+      "metadata": {
+        "path": "/",
+        "asCloudEvent": true <1>
+      }
+    }
+  ]
+----
+
+<1> Tells {product_name} to send the payload as a CloudEvent. Default is `false`
+
 [WARNING]
 ====
 You can't send a CloudEvent if you don't set the `asCloudEvent` attribute to `true`. If you do so, {product_name} will throw an error.
 ====
-
-==== Sending a CloudEvent
 
 Given you want to send the following CloudEvent as the payload:
 
@@ -511,7 +504,7 @@ Given you want to send the following CloudEvent as the payload:
 }
 ----
 
-You must declare a `functionRef` like the following: (Don't forget to set `asCloudEvent` as `true` in function metadata. See <<sending-cloudevents>>.)
+You must declare a `functionRef` like the following: (Don't forget to set `asCloudEvent` as `true` in function metadata)
 
 [source,json]
 ----
