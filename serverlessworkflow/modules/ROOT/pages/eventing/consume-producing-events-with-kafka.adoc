@@ -115,7 +115,7 @@ mp.messaging.outgoing.kogito_outgoing_stream.value.serializer=org.apache.kafka.c
 
 Smallrye provide means to link:{overflow_management_url}[manage emitter overflow] through link:{overflow_annotation_url}[OnOverflow] annotation
 
-Kogito will annotate generated smallrye `emitters` for a particular channel using the information provided by a property of the form `kogito.addon.messaging.emitter.<channel_name>.overflow-strategy`, which possible values are `BUFFER`,`NONE`,`UNBOUNDED`,`FAIL` and `DROP`. If the value of strategy is `BUFFER`, then you might specify the buffer size by using property of the form `kogito.addon.messaging.emitter.<channel_name>.buffer-size` 
+Kogito will annotate generated smallrye `emitters` for a particular channel using the information provided by a property of the form `kogito.addon.messaging.emitter.<channel_name>.overflow-strategy`. The possible values are `BUFFER`, `NONE`, `UNBOUNDED`, `FAIL`, and `DROP`. If the value of the strategy is `BUFFER`, then you must specify the buffer size by using the property of the form `kogito.addon.messaging.emitter.<channel_name>.buffer-size` 
 
 Therefore, for the `wait` channel, in the previous example, if we want to buffer as many as 100 events we will add these two properties
 
