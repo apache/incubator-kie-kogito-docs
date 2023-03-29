@@ -975,8 +975,10 @@ custom-function-knative-service   http://custom-function-knative-service.default
 <div class="paragraph">
 <p>In case you need to send a payload in the request, you can add it to <code>arguments</code> in <code>functionRef</code>.</p>
 </div>
+<div class="sect3">
+<h4 id="_sending_a_regular_json_object"><a class="anchor" href="#_sending_a_regular_json_object"></a>Sending a regular JSON object</h4>
 <div class="paragraph">
-<p>For instance, given you want to send the following JSON object as the payload:</p>
+<p>You must send the following JSON object as the payload:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1018,6 +1020,125 @@ custom-function-knative-service   http://custom-function-knative-service.default
 <td>The request payload is set in <code>arguments</code>.</td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="sending-cloudevents"><a class="anchor" href="#sending-cloudevents"></a>Sending a CloudEvent</h4>
+<div class="paragraph">
+<p>By default, Kogito sends the payload of a Knative function as a regular JSON object and <code>Content-Type</code> as <code>application/json</code>. However, you can tell Kogito to send the payload as a CloudEvent. In that case, Kogito will check if the CloudEvent has all mandatory attributes set and use <code>application/cloudevents+json; charset=UTF-8</code> in <code>Content-Type</code>.</p>
+</div>
+<div class="paragraph">
+<p>To tell Kogito you want to send the payload as a CloudEvent, you must define your function as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  "functions": [
+    {
+      "name": "greet",
+      "type": "custom",
+      "operation": "knative:custom-function-knative-service",
+      "metadata": {
+        "path": "/",
+        "asCloudEvent": true <i class="conum" data-value="1"></i><b>(1)</b>
+      }
+    }
+  ]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Tells Kogito to send the payload as a CloudEvent. Default is <code>false</code></td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you do not set the <code>asCloudEvent</code> attribute to <code>true</code>,  you can not send a CloudEvent. If you do so, Kogito will throw an error.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You must send the following CloudEvent as the payload:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "specversion" : "1.0",
+  "type" : "com.github.pull_request.opened",
+  "source" : "https://github.com/cloudevents/spec/pull",
+  "subject" : "123",
+  "time" : "2018-04-05T17:31:00Z",
+  "comexampleextension1" : "value",
+  "comexampleothervalue" : 5,
+  "datacontenttype" : "text/xml",
+  "data" : "&lt;much wow=\"xml\"/&gt;"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You must declare a <code>functionRef</code> like the following: (Do not forget to set <code>asCloudEvent</code> as <code>true</code> in function metadata)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  "states": [
+    {
+      "name": "invokeFunction",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "greet",
+            "arguments": { <i class="conum" data-value="1"></i><b>(1)</b>
+                "specversion" : "1.0",
+                "type" : "com.github.pull_request.opened",
+                "source" : "https://github.com/cloudevents/spec/pull",
+                "subject" : "123",
+                "time" : "2018-04-05T17:31:00Z",
+                "comexampleextension1" : "value",
+                "comexampleothervalue" : 5,
+                "datacontenttype" : "text/xml",
+                "data" : "&lt;much wow=\"xml\"/&gt;"
+            }
+          }
+        }
+      ],
+      "end": true
+    }
+  ]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The CloudEvent is set in <code>arguments</code>.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Kogito generates a CloudEvent ID based on the <code>source</code> and the workflow instance ID. In case an ID is set, Kogito will ignore it and use a generated one.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect2">
