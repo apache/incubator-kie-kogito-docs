@@ -421,7 +421,9 @@ Is exactly the same as:
 
 In case you need to send a payload in the request, you can add it to `arguments` in `functionRef`.
 
-For instance, given you want to send the following JSON object as the payload:
+==== Sending a regular JSON object
+
+You must send the following JSON object as the payload:
 
 [source,json]
 ----
@@ -455,6 +457,89 @@ You must declare a `functionRef` like the following.
   ]
 ----
 <1> The request payload is set in `arguments`.
+
+[[sending-cloudevents]]
+==== Sending a CloudEvent
+
+By default, {product_name} sends the payload of a Knative function as a regular JSON object and `Content-Type` as `application/json`. However, you can tell {product_name} to send the payload as a CloudEvent. In that case, {product_name} will check if the CloudEvent has all mandatory attributes set and use `application/cloudevents+json; charset=UTF-8` in `Content-Type`.
+
+To tell {product_name} you want to send the payload as a CloudEvent, you must define your function as follows:
+
+[source,json]
+----
+  "functions": [
+    {
+      "name": "greet",
+      "type": "custom",
+      "operation": "knative:custom-function-knative-service",
+      "metadata": {
+        "path": "/",
+        "asCloudEvent": true <1>
+      }
+    }
+  ]
+----
+
+<1> Tells {product_name} to send the payload as a CloudEvent. Default is `false`
+
+[WARNING]
+====
+If you do not set the `asCloudEvent` attribute to `true`,  you can not send a CloudEvent. If you do so, {product_name} will throw an error.
+====
+
+You must send the following CloudEvent as the payload:
+
+[source,json]
+----
+{
+  "specversion" : "1.0",
+  "type" : "com.github.pull_request.opened",
+  "source" : "https://github.com/cloudevents/spec/pull",
+  "subject" : "123",
+  "time" : "2018-04-05T17:31:00Z",
+  "comexampleextension1" : "value",
+  "comexampleothervalue" : 5,
+  "datacontenttype" : "text/xml",
+  "data" : "<much wow=\"xml\"/>"
+}
+----
+
+You must declare a `functionRef` like the following: (Do not forget to set `asCloudEvent` as `true` in function metadata)
+
+[source,json]
+----
+  "states": [
+    {
+      "name": "invokeFunction",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "greet",
+            "arguments": { <1>
+                "specversion" : "1.0",
+                "type" : "com.github.pull_request.opened",
+                "source" : "https://github.com/cloudevents/spec/pull",
+                "subject" : "123",
+                "time" : "2018-04-05T17:31:00Z",
+                "comexampleextension1" : "value",
+                "comexampleothervalue" : 5,
+                "datacontenttype" : "text/xml",
+                "data" : "<much wow=\"xml\"/>"
+            }
+          }
+        }
+      ],
+      "end": true
+    }
+  ]
+----
+<1> The CloudEvent is set in `arguments`.
+
+[NOTE]
+====
+{product_name} generates a CloudEvent ID based on the `source` and the workflow instance ID. In case an ID is set, {product_name} will ignore it and use a generated one.
+====
 
 === Configurations
 
