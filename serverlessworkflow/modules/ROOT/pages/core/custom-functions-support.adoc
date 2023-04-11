@@ -17,7 +17,7 @@ The CNCF specification does not support `java` and `sysout` functions. Therefore
 [[con-func-sysout]]
 == Sysout custom function
 
-You can use the `sysout` function for debugging or for quick demonstrations as shown in the following example:
+You can use the `sysout` function for logging as shown in the following example:
 
 .Example of `sysout` function definition
 [source,json]
@@ -25,13 +25,15 @@ You can use the `sysout` function for debugging or for quick demonstrations as s
 {
   "functions": [
     {
-      "name": "printMessage",
+      "name": "logInfo",
       "type": "custom",
-      "operation": "sysout"
+      "operation": "sysout:INFO"
     }
   ]
 }
 ----
+
+The string after the `:` is optional and is used to indicate the log level.  The possible values are TRACE, DEBUG, INFO, WARN, and ERROR. If not present, INFO is considered by default. 
 
 In the `state` definition, you can call the same `sysout` function as shown in the following example:
 
@@ -47,9 +49,9 @@ In the `state` definition, you can call the same `sysout` function as shown in t
         {
           "name": "printAction",
           "functionRef": {
-            "refName": "printMessage",
+            "refName": "logInfo",
             "arguments": {
-              "message": "."
+              "message": "\"Workflow model is \\(.)\""
             }
           }
         }
@@ -58,11 +60,7 @@ In the `state` definition, you can call the same `sysout` function as shown in t
   ]
 }
 ----
-
-[WARNING]
-====
-You must avoid using the `sysout` function in a production environment since it can spam the unnecessary data in the application log.
-====
+`message` argument can be a jq expression or a jq string using interpolation, as in the example above
 
 [[con-func-java]]
 == Java custom function
