@@ -41,10 +41,20 @@ The following resources are supported for the Kubernetes GVK (Group, Version, an
 * `route.openshift.io/v1/route`
 * `networking.k8s.io/v1/ingress`
 
+[NOTE]
+====
+When using `knative`, you can also use a simplified URI like:
+
+[source]
+----
+knative:<namespace>/<serviceName>
+----
+
+The above URI looks directly for serving.knative.dev/v1/service resource.
+====
+
 [IMPORTANT]
 ====
-The Kubernetes GVK is mandatory and cannot be empty. In case the Kubernetes GVK is empty, the engine throws a validation issue and discovery is not performed. The last value in the URI is always considered as resource name. 
-
 The `namespace` in the URI is optional, however, if `namespace` contains an empty value, the current namespace or context is used.
 ====
 
