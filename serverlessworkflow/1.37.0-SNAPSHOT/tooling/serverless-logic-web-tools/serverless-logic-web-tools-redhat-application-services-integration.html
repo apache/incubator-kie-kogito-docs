@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Integrating with Red Hat OpenShift Application and Data Services :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Serverless Logic Web Tools Red Hat OpenShift Application and Data Services integration">
+    <meta name="keywords" content="kogito, workflow, serverless, editor, web, tools, settings, red hat, application, data, services, integration">
+    <meta name="generator" content="Antora 3.0.3">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+<link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../../_/css/search.css">
+<link rel="stylesheet" href="../../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../../_/css/home.css"><script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../../..">
+                    <img src="../../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.37.0-SNAPSHOT">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../release_notes.html">Release notes for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../getting-started/getting-familiar-with-our-tooling.html">Getting familiar with Serverless Workflow tooling</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/understanding-jq-expressions.html">jq expressions in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/understanding-workflow-error-handling.html">Error handling in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/working-with-parallelism.html">Parallelism in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/configuration-properties.html">Configuration properties in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/defining-an-input-schema-for-workflows.html">Input schema definition for Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/custom-functions-support.html">Custom functions for your Serverless Workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/timeouts-support.html">Timeouts in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../serverless-workflow-editor/swf-editor-overview.html">Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome GitHub extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Kogito Serverless Workflow Tools extension in Quarkus Dev UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances in Kogito Serverless Workflow Tools extension</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions in Kogito Serverless Workflow Tools extension</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../quarkus-dev-ui-extension/quarkus-dev-ui-custom-dashboard-page.html">Dashboards in Kogito Serverless Workflow Tools extension</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../kn-plugin-workflow-overview.html">Serverless Workflow plug-in for Knative CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serverless-logic-web-tools-github-integration.html">Integrating your Serverless Workflow project in GitHub using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serverless-logic-web-tools-openshift-integration.html">Integrating your Serverless Workflow project with OpenShift using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="serverless-logic-web-tools-redhat-application-services-integration.html">Integrating with Red Hat OpenShift Application and Data Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serverless-logic-web-tools-deploy-projects.html">Deploying your Serverless Workflow projects using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serverless-logic-web-tools-enable-kogito-swf-visualization.html">Enabling Kogito Serverless Workflow Visualization in Serverless Logic Web Tools</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../service-orchestration/orchestration-of-openapi-based-services.html">Orchestrating the OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../service-orchestration/configuring-openapi-services-endpoints.html">Configuring the OpenAPI services endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../service-orchestration/orchestration-of-asyncapi-based-services.html">Orchestrating the AsyncAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../service-orchestration/orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Eventing</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../eventing/handling-events-on-workflows.html">Event state in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../eventing/consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../eventing/event-correlation-with-workflows.html">Event correlation in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../eventing/working-with-callbacks.html">Callback state in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../eventing/working-with-openapi-callbacks.html">OpenAPI Callback in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../security/authention-support-for-openapi-services.html">Authentication for OpenAPI services in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../security/orchestrating-third-party-services-with-oauth2.html">Orchestration of third-party services using OAuth 2.0 authentication in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing your workflow application using REST Assured</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../testing-and-troubleshooting/integration-tests-with-postgresql.html">Serverless Workflow integration test using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../persistence/postgresql-flyway-migration.html">Migrate your PostgreSQL database</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Cloud</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../cloud/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../cloud/deploying-on-minikube.html">Deploying your Serverless Workflow application on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../cloud/deploying-on-kubernetes.html">Deploying your Serverless Workflow application on Kubernetes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../cloud/kubernetes-service-discovery.html">Kubernetes service discovery in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../cloud/build-and-deploy-with-serverless-operator-on-kubernetes.html">Buiding and deploying a  Serverless Workflow application on Kubernetes using the Kogito Serverless Operator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../integrations/camel-routes-integration.html">Integrating with Camel Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../integrations/custom-functions-knative.html">Invoking Knative services from Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../integrations/expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../use-cases/orchestration-based-saga-pattern.html">Saga orchestration example in Serverless Workflow</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../use-cases/timeout-showcase-example.html">Timeout example in Serverless Workflow</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.37-RC</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-current">
+          <a href="../../index.html">1.37-RC</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../latest/index.html">1.36</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.35.0.Final/index.html">1.35</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.34.0.Final/index.html">1.34</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.33.0.Final/index.html">1.33</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.32.0.Final/index.html">1.32</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.31.1.Final/index.html">1.31</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.30.0.Final/index.html">1.30</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.29.0.Final/index.html">1.29</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.28.0.Final/index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Tooling</li>
+    <li><a href="serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a></li>
+    <li><a href="serverless-logic-web-tools-redhat-application-services-integration.html">Integrating with Red Hat OpenShift Application and Data Services</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.37-RC</button>
+  <div class="version-menu">
+    <a class="version" href="../../../main/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">snapshot</a>
+    <a class="version is-current" href="serverless-logic-web-tools-redhat-application-services-integration.html">1.37-RC</a>
+    <a class="version" href="../../../latest/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.36</a>
+    <a class="version" href="../../../1.35.0.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.35</a>
+    <a class="version" href="../../../1.34.0.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.34</a>
+    <a class="version" href="../../../1.33.0.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.33</a>
+    <a class="version" href="../../../1.32.0.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.32</a>
+    <a class="version" href="../../../1.31.1.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.31</a>
+    <a class="version" href="../../../1.30.0.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.30</a>
+    <a class="version" href="../../../1.29.0.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.29</a>
+    <a class="version" href="../../../1.28.0.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.28</a>
+    <a class="version" href="../../../1.27.0.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.27</a>
+    <a class="version is-missing" href="../../../1.26.0.Final/index.html">1.26</a>
+    <a class="version is-missing" href="../../../1.25.0.Final/index.html">1.25</a>
+    <a class="version is-missing" href="../../../1.24.1.Final/index.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.37.x/serverlessworkflow/modules/ROOT/pages/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Integrating with Red Hat OpenShift Application and Data Services</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Some of the features in Serverless Logic Web Tools require integration with Red Hat OpenShift Application and Data Services. Consider uploading OpenAPI specifications to a service registry and deploying Serverless Workflow that requires Apache Kafka as examples of integration with Red Hat OpenShift Application and Data Services.</p>
+</div>
+<div class="paragraph">
+<p>This document describes how you can configure the required settings to complete the integration with Red Hat OpenShift Application and Data Services.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-create-service-account-serverless-logic-web-tools"><a class="anchor" href="#proc-create-service-account-serverless-logic-web-tools"></a>Creating a service account in Red Hat OpenShift application and Data Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can create or use a service account from your Red Hat OpenShift Application and Data Services console and add the service account to the Serverless Logic Web Tools.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You have access to the Red Hat OpenShift Application and Data Services console.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>To create a service account in Red Hat Openshift Application and Data Services, perform the following steps:</p>
+<div class="openblock">
+<div class="content">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can skip this step if you already have a service account.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Go to <a href="https://console.redhat.com/application-services/service-accounts">Service Accounts | Red Hat OpenShift Application and Data Services</a>.</p>
+</li>
+<li>
+<p>Click <strong>Create service account</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Create a service account</strong> window, enter a service account name in the <strong>Short description</strong> field.</p>
+</li>
+<li>
+<p>Click <strong>Create</strong>.</p>
+<div class="paragraph">
+<p>A modal displaying your <strong>Client ID</strong> and <strong>Client Secret</strong> appears.</p>
+</div>
+</li>
+<li>
+<p>Copy and save the Client ID and Client Secret.</p>
+</li>
+<li>
+<p>Check the <strong>I have copied the client ID and secret</strong> checkbox and click <strong>Close</strong>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>If you already have a service account, find your <strong>Client ID</strong> and <strong>Client Secret</strong>.</p>
+</li>
+<li>
+<p>In the Serverless Logic Web Tools, click on the <strong>Cog wheel</strong> (⚙️) on the top-right corner and go to the <strong>Service Account</strong> tab.</p>
+</li>
+<li>
+<p>Enter your <strong>Client ID</strong> and <strong>Client Secret</strong> in the respective fields.</p>
+</li>
+<li>
+<p>Click <strong>Apply</strong>.</p>
+<div class="paragraph">
+<p>The content in the <strong>Service Account</strong> tab updates and displays <strong>Your Service Account information is set</strong> message.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-create-service-registry-serverless-logic-web-tools"><a class="anchor" href="#proc-create-service-registry-serverless-logic-web-tools"></a>Creating a Service Registry in Red Hat OpenShift application and Data Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can create or use a Service Registry instance from your Red Hat OpenShift Application and Data Services console and add the Service Registry to Serverless Logic Web Tools.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You have access to the Red Hat OpenShift Application and Data Services console.</p>
+</li>
+<li>
+<p>You have created a service account.</p>
+<div class="paragraph">
+<p>For information about creating a service account, see <a href="#proc-create-service-account-serverless-logic-web-tools">Creating a service account in Red Hat OpenShift application and Data Services</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>To create a Service Registry instance in Red Hat Openshift Application and Data Services console, perform the following steps:</p>
+<div class="openblock">
+<div class="content">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can skip this step if you already have a Service Registry instance.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Go to <a href="https://console.redhat.com/application-services/service-registry">Service Registry | Red Hat OpenShift Application and Data Services</a>.</p>
+</li>
+<li>
+<p>Click <strong>Create Service Registry instance</strong> button.</p>
+</li>
+<li>
+<p>In the <strong>Create a Service Registry instance</strong> window, enter a Service Registry instance name and click <strong>Create</strong>.</p>
+<div class="paragraph">
+<p>The list of Service Registry instances updates with your instance.</p>
+</div>
+</li>
+<li>
+<p>Find the Service Registry instance you created in the list and click on the instance.</p>
+</li>
+<li>
+<p>Go to the <strong>Settings</strong> tab and click on <strong>Grant access</strong>.</p>
+</li>
+<li>
+<p>In the drop-down, select the service account you created in the previous procedure.</p>
+</li>
+<li>
+<p>Select a role for your service account.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You must select the role as Manager or Administrator to have the read and write access.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Click <strong>Save</strong>.</p>
+</li>
+<li>
+<p>Click on the menu on the top-right corner of the screen.</p>
+</li>
+<li>
+<p>Click <strong>Connection</strong>.</p>
+<div class="paragraph">
+<p>A drawer opens containing the required connection and authentication information.</p>
+</div>
+</li>
+<li>
+<p>Copy the value of <strong>Core Registry API</strong>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>If you already have a Service Registry, find the value of <strong>Core Registry API</strong> of your Service Registry.</p>
+</li>
+<li>
+<p>In the Serverless Logic Web Tools web application, click on the <strong>Cog wheel</strong> (⚙️) on the top-right corner and go to the <strong>Service Registry</strong> tab.</p>
+</li>
+<li>
+<p>Enter a name for your registry.</p>
+<div class="paragraph">
+<p>You can enter the same name that you used while creating the Service Registry instance.</p>
+</div>
+</li>
+<li>
+<p>Enter the value of <strong>Core Registry API</strong> and click <strong>Apply</strong>.</p>
+<div class="paragraph">
+<p>The content in the <strong>Service Registry</strong> tab updates and displays <strong>Your Service Registry information is set</strong> message.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-setting-apache-kafka-serverless-logic-web-tools"><a class="anchor" href="#proc-setting-apache-kafka-serverless-logic-web-tools"></a>Creating Streams for Apache Kafka in Red Hat OpenShift application and Data Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can create or use a Kafka instance from Red Hat OpenShift Application and Data Services console and add the instance to the Serverless Logic Web Tools.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>You have access to the Red Hat OpenShift Application and Data Services console.</p>
+</li>
+<li>
+<p>You have created a service account.</p>
+<div class="paragraph">
+<p>For information about creating a service account, see <a href="#proc-create-service-account-serverless-logic-web-tools">Creating a service account in Red Hat OpenShift application and Data Services</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>To create an Apache Kafka instance in Red Hat Openshift Application and Data Services console, perform the following steps:</p>
+<div class="openblock">
+<div class="content">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can skip this step if you already have an Apache Kafka instance.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Go to <a href="https://console.redhat.com/application-services/streams/kafkas">Streams for Apache Kafka | Red Hat OpenShift Application and Data Services</a>.</p>
+</li>
+<li>
+<p>Click <strong>Create Kafka instance</strong>.</p>
+</li>
+<li>
+<p>In the <strong>Create a Kafka instance</strong> window, enter the name for a Kafka instance.</p>
+<div class="paragraph">
+<p>You can also fill the other fields or leave those fields with default values.</p>
+</div>
+</li>
+<li>
+<p>Click <strong>Create instance</strong>.</p>
+</li>
+<li>
+<p>Reload the <strong>Kafka instances</strong> page for the list of instances to reflect the instance you created.</p>
+</li>
+<li>
+<p>Once the status of the Kafka instance you created is updated as <strong>Ready</strong>, click on the instance.</p>
+</li>
+<li>
+<p>Go to the <strong>Topics</strong> tab and create a new topic.</p>
+</li>
+<li>
+<p>Go to the <strong>Access</strong> tab, click <strong>Manage Access</strong>, and select <strong>All Accounts</strong> or the service account you created.</p>
+</li>
+<li>
+<p>Add the following permissions:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><em>Consumer group is " * " | Allow All | All Accounts</em>;</p>
+</li>
+<li>
+<p><em>Topic is " * " | Allow All | All Accounts</em>;</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Click on the menu on the top-right corner of the screen.</p>
+</li>
+<li>
+<p>Click <strong>Connection</strong>.</p>
+</li>
+<li>
+<p>Copy the value of <strong>Bootstrap server</strong>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>If you already have a Kafka instance, find the value of <strong>Bootstrap server</strong> of your Kafka instance.</p>
+</li>
+<li>
+<p>In the Serverless Logic Web Tools web application, click on the <strong>Cog wheel</strong> (⚙️) on the top-right corner and go to the <strong>Streams for Apache Kafka</strong> tab.</p>
+</li>
+<li>
+<p>Enter the value of <strong>Bootstrap server</strong>.</p>
+</li>
+<li>
+<p>Enter the name of topic you created in the <strong>Topic</strong> field and click <strong>Apply</strong>.</p>
+<div class="paragraph">
+<p>The content in the <strong>Streams for Apache Kafka</strong> tab updates and displays <strong>Your Streams for Apache Kafka information is set</strong> message.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The procedures in this document make the integration easy for you. However, you can also create specific service accounts, topics, and consumer groups.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/tabsBehavior.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+  </body>
+</html>
