@@ -4,7 +4,7 @@ import org.jenkinsci.plugins.workflow.libs.Library
 
 pipeline {
     agent {
-        label 'kie-rhel7 && !built-in'
+        label 'kie-rhel8 && !built-in'
     }
 
     tools {
@@ -48,7 +48,7 @@ pipeline {
                     if (getBuildBranch().split("\\.").length != 3) {
                         error "Build branch name '${getBuildBranch()}' is in the wrong format. It should be X.Y.x"
                     }
-                    
+
                     dir("kogito-docs-${getBuildBranch()}") {
                         deleteDir()
                         checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
