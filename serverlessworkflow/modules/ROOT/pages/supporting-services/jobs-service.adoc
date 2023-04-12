@@ -15,7 +15,7 @@ The job execution is a callback to the {context} runtime application. This callb
 [#job-service]
 == Job Service configuration
 
-All timer nodes that might be declared in a workflow, are handled by Job Service, which is responsible for managing, scheduling, and firing all actions (jobs) to be executed in the workflows.
+All timer nodes that might be declared in a workflow, are handled by the Job Service, which is responsible for managing, scheduling, and firing all actions (jobs) to be executed in the workflows.
 
 [NOTE]
 ====
@@ -36,18 +36,18 @@ Data index service and the support for jobs information will be available in fut
 
 === Job Service persistence
 
-An important configuration aspect of job service is the persistence mechanism, where all job information is stored in a database that makes this information durable upon service restarts and guarantees no information is lost.
+An important configuration aspect of the Job Service is the persistence mechanism, where all job information is stored in a database that makes this information durable upon service restarts and guarantees no information is lost.
 
 [#job-service-postgresql]
 ==== PostgreSQL
 
-PostgreSQL is the recommended database to use with job service.
+PostgreSQL is the recommended database to use with the Job Service.
 Additionally, it provides an initialization procedure that integrates link:https://flywaydb.org[Flyway] for the database initialization. It automatically controls the database schema, in this way all tables are created by the service.
 
 In case you need to externally control the database schema, you can check and apply the DDL scripts for the Job Service in the same way as described in
 xref:persistence/postgresql-flyway-migration.adoc#manually-executing-scripts[Manually executing scripts] guide.
 
-You need to set the proper configuration parameters when starting job service.
+You need to set the proper configuration parameters when starting the Job Service.
 The xref:use-cases/timeout-showcase-example.adoc[timeout showcase example] shows how to run PostgreSQL as a Kubernetes deployment, but you can run it the way it fits in your environment, the important part is to set all the configuration parameters points to your running instance of PostgreSQL.
 
 ==== Ephemeral
@@ -55,14 +55,14 @@ Alternatively, there is an in-memory database support that does not require any 
 
 [NOTE]
 ====
-The job service link:{jobs_service_image_url}[image] is equipped with the PostgreSQL and Ephemeral (InMemory) options that can be switched using the `JOBS_SERVICE_PERSISTENCE`. If not set, it defaults to the `ephemeral` option. For more information about the job service, the container image can be found link:{jobs_service_image_usage_url}[here].
+The Job Service link:{jobs_service_image_url}[image] is equipped with the PostgreSQL and Ephemeral (InMemory) options that can be switched using the `JOBS_SERVICE_PERSISTENCE`. If not set, it defaults to the `ephemeral` option. For more information about the Job Service, the container image can be found link:{jobs_service_image_usage_url}[here].
 ====
 
 == Job service leader election
 
-Currently, job service works in a single instance manner where there should be just one active instance of the service.
+Currently, the Job Service works in a single instance manner where there should be just one active instance of the service.
 
-To avoid issues when deploying the service in the cloud, where it is common to eventually have more than one instance deployed, the job service supports a leader instance election process. Only the instance that become the leader activates the external communication to receive and schedule jobs.
+To avoid issues when deploying the service in the cloud, where it is common to eventually have more than one instance deployed, the Job Service supports a leader instance election process. Only the instance that become the leader activates the external communication to receive and schedule jobs.
 
 All instances who are not leaders, stay inactive in a kind of wait state and try to become the leader continuously.
 
@@ -78,10 +78,10 @@ image::core/job-service-leader.png[]
 This leader election mechanism uses the underlying persistence backend, which currently is only supported in the PostgreSQL implementation.
 ====
 
-There is no need for any configuration to support this feature, the only requirement is to have the supported database with the data schema up-to-date as described in <<job-service-postgresql>>.
+There is no need for any configuration to support this feature, the only requirement is to have the supported database with the data schema up-to-date as described in the <<job-service-postgresql>> section.
 
 In case the underlying persistence does not support this feature, you should guarantee
-that just one single instance of job service is running at the same time.
+that just one single instance of the Job Service is running at the same time.
 
 [#job-service-communication]
 == Job Service communication
