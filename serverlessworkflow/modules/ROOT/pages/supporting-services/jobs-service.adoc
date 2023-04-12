@@ -17,7 +17,12 @@ The job execution is a callback to the {context} runtime application. This callb
 
 All timer nodes that might be declared in a workflow, are handled by Job Service, which is responsible for managing, scheduling, and firing all actions (jobs) to be executed in the workflows.
 
-Suppose the workflow service is not configured to use job service or there is no such service running. In that case, all timer-related actions use an embedded in-memory implementation of job service, which should not be used in production, since when the application shutdown, all timers are lost, which in a serverless architecture is a very common behavior with the scale to zero approach. That said, the no job service configuration can only be used for testing or development, but not for production.
+[NOTE]
+====
+Suppose the workflow service is not configured to use job service or there is no such service running.
+In that case, all timer-related actions use an embedded in-memory implementation of job service, which should not be used in production, since when the application shutdown, all timers are lost, which in a serverless architecture is a very common behavior with the scale to zero approach.
+That said, the no job service configuration can only be used for testing or development, but not for production.
+====
 
 The main goal of the Job Service is to work with only active jobs. The Job Service tracks only the jobs that are scheduled and that need to be executed. When a job reaches a final state, the job is removed from the Job Service.
 
@@ -39,10 +44,11 @@ An important configuration aspect of job service is the persistence mechanism, w
 PostgreSQL is the recommended database to use with job service.
 Additionally, it provides an initialization procedure that integrates link:https://flywaydb.org[Flyway] for the database initialization. It automatically controls the database schema, in this way all tables are created by the service.
 
-In case you need to externally control the database schema, you can check the Flyway SQL scripts in link:{kogito_apps_url}/jobs-service/jobs-service-postgresql/src/main/resources/db/jobs-service[the repository] and apply them.
+In case you need to externally control the database schema, you can check and apply the DDL scripts for the Job Service in the same way as described in
+xref:persistence/postgresql-flyway-migration.adoc#manually-executing-scripts[Manually executing scripts] guide.
 
 You need to set the proper configuration parameters when starting job service.
-The example shows how to run PostgreSQL as a Kubernetes deployment, but you can run it the way it fits in your environment, the important part is to set all the configuration parameters points to your running instance of PostgreSQL.
+The xref:use-cases/timeout-showcase-example.adoc[timeout showcase example] shows how to run PostgreSQL as a Kubernetes deployment, but you can run it the way it fits in your environment, the important part is to set all the configuration parameters points to your running instance of PostgreSQL.
 
 ==== Ephemeral
 Alternatively, there is an in-memory database support that does not require any external database configuration, it can be used for testing and development purposes, but it is not recommended for production, since all jobs are lost upon a service restart or failure.
