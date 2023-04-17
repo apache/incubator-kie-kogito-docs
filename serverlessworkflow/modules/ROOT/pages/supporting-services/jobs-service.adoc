@@ -19,9 +19,9 @@ All timer nodes that might be declared in a workflow, are handled by the job ser
 
 [NOTE]
 ====
-Suppose the workflow service is not configured to use job service or there is no such service running.
-In that case, all timer-related actions use an embedded in-memory implementation of job service, which should not be used in production, since when the application shutdown, all timers are lost, which in a serverless architecture is a very common behavior with the scale to zero approach.
-That said, the no job service configuration can only be used for testing or development, but not for production.
+Suppose the workflow service is not configured to use the Job Service or there is no such service running.
+In that case, all timer-related actions use an embedded in-memory implementation of the Job Service, which should not be used in production, since when the application shutdown, all timers are lost, which in a serverless architecture is a very common behavior with the scale to zero approach.
+That said, the usage of in-memory Job Service can only be done for testing or development, but not for production.
 ====
 
 The main goal of the Job Service is to work with only active jobs. The Job Service tracks only the jobs that are scheduled and that need to be executed. When a job reaches a final state, the job is removed from the Job Service.
@@ -51,7 +51,7 @@ You need to set the proper configuration parameters when starting the Job Servic
 The xref:use-cases/timeout-showcase-example.adoc[timeout showcase example] shows how to run PostgreSQL as a Kubernetes deployment, but you can run it the way it fits in your environment, the important part is to set all the configuration parameters points to your running instance of PostgreSQL.
 
 ==== Ephemeral
-Alternatively, there is an in-memory database support that does not require any external database configuration, it can be used for testing and development purposes, but it is not recommended for production, since all jobs are lost upon a service restart or failure.
+Alternatively, there is an in-memory database support that does not require any external database configuration. It can be used for testing and development purposes, but it is not recommended for production, since all jobs are lost upon a service restart or failure.
 
 [NOTE]
 ====
@@ -62,11 +62,11 @@ The Job Service link:{jobs_service_image_url}[image] is equipped with the Postgr
 
 Currently, the Job Service works in a single instance manner where there should be just one active instance of the service.
 
-To avoid issues when deploying the service in the cloud, where it is common to eventually have more than one instance deployed, the Job Service supports a leader instance election process. Only the instance that become the leader activates the external communication to receive and schedule jobs.
+To avoid issues when deploying the service in the cloud, where it is common to eventually have more than one instance deployed, the Job Service supports a leader instance election process. Only the instance that becomes the leader activates the external communication to receive and schedule jobs.
 
 All instances who are not leaders, stay inactive in a kind of wait state and try to become the leader continuously.
 
-When a new instance of the service is started it is not set as a leader at startup time but instead, it starts the process to become one.
+When a new instance of the service is started, it is not set as a leader at startup time but instead, it starts the process to become one.
 
 When an instance that is the leader for any issue stays unresponsive or it is shut down, one of the other running instances becomes the leader.
 
