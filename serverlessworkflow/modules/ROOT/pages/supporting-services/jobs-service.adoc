@@ -64,7 +64,7 @@ Currently, the Job Service works in a single instance manner where there should 
 
 To avoid issues when deploying the service in the cloud, where it is common to eventually have more than one instance deployed, the Job Service supports a leader instance election process. Only the instance that becomes the leader activates the external communication to receive and schedule jobs.
 
-All instances who are not leaders, stay inactive in a kind of wait state and try to become the leader continuously.
+In all instances who are not leaders, stay inactive in a kind of wait state and try to become the leader continuously.
 
 When a new instance of the service is started, it is not set as a leader at startup time but instead, it starts the process to become one.
 
@@ -80,7 +80,7 @@ This leader election mechanism uses the underlying persistence backend, which cu
 
 There is no need for any configuration to support this feature, the only requirement is to have the supported database with the data schema up-to-date as described in the <<job-service-postgresql>> section.
 
-In case the underlying persistence does not support this feature, you should guarantee
+In case the underlying persistence does not support this feature, you must guarantee that just one single instance of the Job Service is running at the same time.
 that just one single instance of the Job Service is running at the same time.
 
 [#job-service-communication]
@@ -96,7 +96,7 @@ managed by the configured xref:core/timeouts-support.adoc#job-addon-configuratio
 
 To configure the communication between the Job Service and the workflow runtime through the Knative eventing system, you must provide a set of configurations.
 
-The Job Service configuration is done through the deployment descriptor shown in the xref:use-cases/timeout-showcase-example.adoc#job-service-deploy[example].
+The Job Service configuration is accomplished through the deployment descriptor shown in the xref:use-cases/timeout-showcase-example.adoc#job-service-deploy[example].
 
 
 == Additional resources
