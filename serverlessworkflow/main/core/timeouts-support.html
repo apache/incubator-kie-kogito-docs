@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Timeouts for Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <title>Timeouts in Serverless Workflow :: Kogito Serverless Workflow Guides</title>
     <meta name="description" content="Using timeouts in Serverless Workflow">
     <meta name="keywords" content="kogito, workflow, serverless, timeout, timer, expiration">
     <meta name="generator" content="Antora 3.0.3">
@@ -286,6 +286,15 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
+    <span class="nav-text">Supporting Services</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../supporting-services/jobs-service.html">Job Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
     <span class="nav-text">Use Cases</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
@@ -400,7 +409,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Timeouts for Serverless Workflow</h1>
+<h1 class="page">Timeouts in Serverless Workflow</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -615,150 +624,8 @@ If the event state is a starting state, a new workflow instance is created.</p>
 <div class="sect2">
 <h3 id="_deploying_a_timed_based_workflow"><a class="anchor" href="#_deploying_a_timed_based_workflow"></a>Deploying a timed-based workflow</h3>
 <div class="paragraph">
-<p>In order to deploy a workflow that contains timeouts or any other timer-based action, it is necessary to have Job Service running in your environment, which is an external service responsible to control the workflows timers, see the <a href="#job-service">section</a> for more information.
+<p>In order to deploy a workflow that contains timeouts or any other timer-based action, it is necessary to have a job service running in your environment, which is an external service responsible to control the workflows timers, see the <a href="../supporting-services/jobs-service.html#job-service" class="xref page">job service guide</a> for more information.
 In the <a href="#timeout-example">timeout example</a> you can see the details of how set up a Knative infrastructure with the workflow and job service running.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="job-service"><a class="anchor" href="#job-service"></a>Job Service configuration</h3>
-<div class="paragraph">
-<p>All timer-related actions that might be declared in a workflow, are handled by a supporting service, called Job Service, which is responsible for managing, scheduling, and firing all actions (jobs) to be executed in the workflows.</p>
-</div>
-<div class="paragraph">
-<p>Suppose the workflow service is not configured to use job service or there is no such service running. In that case, all timer-related actions use an embedded in-memory implementation of job service, which should not be used in production, since when the application shutdown, all timers are lost, which in a serverless architecture is a very common behavior with the scale to zero approach. That said, the no job service configuration can only be used for testing or development, but not for production.</p>
-</div>
-<div class="paragraph">
-<p>The main goal of the Job Service is to work with only active jobs. The Job Service tracks only the jobs that are scheduled and that need to be executed. When a job reaches a final state, the job is removed from the Job Service.</p>
-</div>
-<div class="paragraph">
-<p>When configured in your environment, all the jobs information and status changes are sent to the Kogito <code>Data
-Index Service</code>, where they can be indexed and made available by GraphQL queries.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Data index service and the support for jobs information will be available in future releases.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_job_service_persistence"><a class="anchor" href="#_job_service_persistence"></a>Job Service persistence</h4>
-<div class="paragraph">
-<p>An important configuration aspect of job service is the persistence mechanism, where all job information is stored in a database that makes this information durable upon service restarts and guarantees no information is lost.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="job-service-postgresql"><a class="anchor" href="#job-service-postgresql"></a>PostgreSQL</h4>
-<div class="paragraph">
-<p>PostgreSQL is the recommended database to use with job service.
-Additionally, it provides an initialization procedure that integrates <a href="https://flywaydb.org">Flyway</a> for the database initialization. It automatically controls the database schema, in this way all tables are created by the service.</p>
-</div>
-<div class="paragraph">
-<p>In case you need to externally control the database schema, you can check the Flyway SQL scripts in <a href="https://github.com/kiegroup/kogito-apps/tree/main/jobs-service/jobs-service-postgresql/src/main/resources/db/migration">migration</a> and apply them.</p>
-</div>
-<div class="paragraph">
-<p>You need to set the proper configuration parameters when starting job service.
-The example shows how to run PostgreSQL as a Kubernetes deployment, but you can run it the way it fits in your environment, the important part is to set all the configuration parameters points to your running instance of PostgreSQL.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_ephemeral"><a class="anchor" href="#_ephemeral"></a>Ephemeral</h4>
-<div class="paragraph">
-<p>Alternatively, there is an in-memory database support that does not require any external database configuration, it can be used for testing and development purposes, but it is not recommended for production, since all jobs are lost upon a service restart or failure.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The job service <a href="https://quay.io/repository/kiegroup/kogito-jobs-service-allinone">image</a> is equipped with the PostgreSQL and Ephemeral (InMemory) options that can be switched using the <code>JOBS_SERVICE_PERSISTENCE</code>. If not set, it defaults to the <code>ephemeral</code> option. For more information about the job service, the container image can be found <a href="https://github.com/kiegroup/kogito-images#jobs-services-all-in-one">here</a>.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_job_service_leader_election"><a class="anchor" href="#_job_service_leader_election"></a>Job service leader election</h3>
-<div class="paragraph">
-<p>Currently, job service works in a single instance manner where there should be just one active instance of the service.</p>
-</div>
-<div class="paragraph">
-<p>To avoid issues when deploying the service in the cloud, where it is common to eventually have more than one instance deployed, the job service supports a leader instance election process. Only the instance that become the leader activates the external communication to receive and schedule jobs.</p>
-</div>
-<div class="paragraph">
-<p>All instances who are not leaders, stay inactive in a kind of wait state and try to become the leader continuously.</p>
-</div>
-<div class="paragraph">
-<p>When a new instance of the service is started it is not set as a leader at startup time but instead, it starts the process to become one.</p>
-</div>
-<div class="paragraph">
-<p>When an instance that is the leader for any issue stays irresponsive or it is shut down, one of the other running instances becomes the leader.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../_images/core/job-service-leader.png" alt="job service leader">
-</div>
-<div class="title">Figure 1. Job Service leader election</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>This leader election mechanism uses the underlying persistence backend, which currently is only supported in the PostgreSQL implementation.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>There is no need for any configuration to support this feature, the only requirement is to have the supported database with the data schema up-to-date as described in <a href="#job-service-postgresql">PostgreSQL</a>.</p>
-</div>
-<div class="paragraph">
-<p>In case the underlying persistence does not support this feature, you should guarantee
-that just one single instance of job service is running at the same time.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_job_service_communication"><a class="anchor" href="#_job_service_communication"></a>Job Service communication</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The Job Service does not execute a job but triggers a callback that might be an HTTP request or a Cloud Event that is
-managed by the configured <a href="#job-addon-configuration">jobs addon</a> in the workflow application.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_knative_eventing"><a class="anchor" href="#_knative_eventing"></a>Knative Eventing</h4>
-<div class="paragraph">
-<p>To configure the communication between the Job Service and the workflow runtime through the Knative eventing system, you must provide a set of configurations.</p>
-</div>
-<div class="paragraph">
-<p>The Job Service configuration is done through the deployment descriptor shown in the <a href="#job-service-deploy">example</a>.</p>
-</div>
 </div>
 <div class="sect3">
 <h4 id="job-addon-configuration"><a class="anchor" href="#job-addon-configuration"></a>Addon configuration in the workflow runtime</h4>
