@@ -1,11 +1,8 @@
-= Timeouts for {context}
+= Timeouts in {context}
 :compat-mode!:
 // Metadata:
 :description: Using timeouts in {context}
 :keywords: kogito, workflow, serverless, timeout, timer, expiration
-// links
-:jobs_service_image_url: https://quay.io/repository/kiegroup/kogito-jobs-service-allinone
-:jobs_service_image_usage_url: https://github.com/kiegroup/kogito-images#jobs-services-all-in-one
 
 
 Serverless Workflow specification defines a wide amount of possible link:{spec_doc_url}#workflow-timeout-definition[timeout configurations]. 
@@ -189,87 +186,8 @@ For more information about event state timeout, see link:{spec_doc_url}#event-ti
 
 === Deploying a timed-based workflow
 
-In order to deploy a workflow that contains timeouts or any other timer-based action, it is necessary to have Job Service running in your environment, which is an external service responsible to control the workflows timers, see the <<job-service, section>> for more information.
+In order to deploy a workflow that contains timeouts or any other timer-based action, it is necessary to have a job service running in your environment, which is an external service responsible to control the workflows timers, see the xref:supporting-services/jobs-service.adoc#job-service[job service guide] for more information.
 In the <<timeout-example, timeout example>> you can see the details of how set up a Knative infrastructure with the workflow and job service running.
-
-[#job-service]
-=== Job Service configuration
-
-All timer-related actions that might be declared in a workflow, are handled by a supporting service, called Job Service, which is responsible for managing, scheduling, and firing all actions (jobs) to be executed in the workflows.
-
-Suppose the workflow service is not configured to use job service or there is no such service running. In that case, all timer-related actions use an embedded in-memory implementation of job service, which should not be used in production, since when the application shutdown, all timers are lost, which in a serverless architecture is a very common behavior with the scale to zero approach. That said, the no job service configuration can only be used for testing or development, but not for production.
-
-The main goal of the Job Service is to work with only active jobs. The Job Service tracks only the jobs that are scheduled and that need to be executed. When a job reaches a final state, the job is removed from the Job Service.
-
-When configured in your environment, all the jobs information and status changes are sent to the {product_name} `Data
-Index Service`, where they can be indexed and made available by GraphQL queries.
-
-[NOTE]
-====
-Data index service and the support for jobs information will be available in future releases.
-====
-
-==== Job Service persistence
-
-An important configuration aspect of job service is the persistence mechanism, where all job information is stored in a database that makes this information durable upon service restarts and guarantees no information is lost.
-
-[#job-service-postgresql]
-==== PostgreSQL
-
-PostgreSQL is the recommended database to use with job service.
-Additionally, it provides an initialization procedure that integrates link:https://flywaydb.org[Flyway] for the database initialization. It automatically controls the database schema, in this way all tables are created by the service.
-
-In case you need to externally control the database schema, you can check the Flyway SQL scripts in link:{kogito_apps_url}/jobs-service/jobs-service-postgresql/src/main/resources/db/migration[migration] and apply them.
-
-You need to set the proper configuration parameters when starting job service.
-The example shows how to run PostgreSQL as a Kubernetes deployment, but you can run it the way it fits in your environment, the important part is to set all the configuration parameters points to your running instance of PostgreSQL.
-
-==== Ephemeral
-Alternatively, there is an in-memory database support that does not require any external database configuration, it can be used for testing and development purposes, but it is not recommended for production, since all jobs are lost upon a service restart or failure.
-
-[NOTE]
-====
-The job service link:{jobs_service_image_url}[image] is equipped with the PostgreSQL and Ephemeral (InMemory) options that can be switched using the `JOBS_SERVICE_PERSISTENCE`. If not set, it defaults to the `ephemeral` option. For more information about the job service, the container image can be found link:{jobs_service_image_usage_url}[here].
-====
-
-=== Job service leader election
-
-Currently, job service works in a single instance manner where there should be just one active instance of the service.
-
-To avoid issues when deploying the service in the cloud, where it is common to eventually have more than one instance deployed, the job service supports a leader instance election process. Only the instance that become the leader activates the external communication to receive and schedule jobs.
-
-All instances who are not leaders, stay inactive in a kind of wait state and try to become the leader continuously.
-
-When a new instance of the service is started it is not set as a leader at startup time but instead, it starts the process to become one.
-
-When an instance that is the leader for any issue stays irresponsive or it is shut down, one of the other running instances becomes the leader.
-
-.Job Service leader election
-image::core/job-service-leader.png[]
-
-[NOTE]
-====
-This leader election mechanism uses the underlying persistence backend, which currently is only supported in the PostgreSQL implementation.
-====
-
-There is no need for any configuration to support this feature, the only requirement is to have the supported database with the data schema up-to-date as described in <<job-service-postgresql>>.
-
-In case the underlying persistence does not support this feature, you should guarantee
-that just one single instance of job service is running at the same time.
-
-=== Job Service communication
-
-[NOTE]
-====
-The Job Service does not execute a job but triggers a callback that might be an HTTP request or a Cloud Event that is
-managed by the configured <<job-addon-configuration, jobs addon>> in the workflow application.
-====
-
-==== Knative Eventing
-
-To configure the communication between the Job Service and the workflow runtime through the Knative eventing system, you must provide a set of configurations.
-
-The Job Service configuration is done through the deployment descriptor shown in the <<job-service-deploy, example>>.
 
 [[job-addon-configuration]]
 ==== Addon configuration in the workflow runtime
