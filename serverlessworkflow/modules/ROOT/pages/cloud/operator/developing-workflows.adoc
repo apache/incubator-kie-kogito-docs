@@ -102,7 +102,7 @@ You can follow the workflow status to check if everything is fine with:
 .Checking the workflow status
 [source,bash,subs="attributes+"]
 ----
-kubectl get workflow -w
+kubectl get workflow -n <your_namespace> -w
 ----
 
 You should see the workflow conditions evolving to `READY` in a few seconds:
@@ -120,7 +120,26 @@ greeting   dev       0.0.1               True
 The `REASON` field gives you a cue about the current workflow status.
 ====
 
-You can make changes to the workflow YAML using any Kubernetes editor such as `kubectl`. The operator ensures that the latest workflow definition is running and ready. 
+You can make changes to the workflow YAML using any Kubernetes editor. For example you can use `kubectl` and the following commanda:
+
+[source,bash,subs="attributes+"]
+----
+kubectl edit workflow/greeting -n <your_namespace>
+----
+and changing the workflow definition inside the CustomResource Spec section.
+
+Otherwhise you can save the CustomResource definition file and edit it with your desired editor and re-applying it.
+
+For example using VSCode, there are the commands needed:
+
+[source,bash,subs="attributes+"]
+----
+curl -S https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessworkflow_devmode.yaml > workflow_devmode.yaml
+code workflow_devmode.yaml
+kubectl apply -f workflow_devmode.yaml -n <your_namespace>
+----
+
+The operator ensures that the latest workflow definition is running and ready.
 This way, you can include the workflow application in your development scenario and start making requests to it.
 
 == Check the workflow application is running
@@ -130,8 +149,8 @@ In order to check that the {product_name} Greeting application is up and running
 .Exposing the workflow application
 [source,bash,subs="attributes+"]
 ----
-kubectl patch svc greeting -p '{"spec": {"type": "NodePort"}}'
-minikube service greeting --url
+kubectl patch svc greeting -n <your_namespace> -p '{"spec": {"type": "NodePort"}}'
+minikube service greeting -n <your_namespace> --url
 http://127.0.0.1:57053
 
 # use the above output to get the current workflow URL in your environment
