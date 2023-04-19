@@ -1,4 +1,4 @@
-= Saga orchestration example in {context}
+= Saga orchestration example in {product_name}
 
 :compat-mode!:
 // Metadata:
@@ -19,7 +19,7 @@ The Saga pattern manages the transactions using a sequence of steps. If a failur
 
 To understand the implementation of Saga pattern in a workflow, you can use the link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus[`serverless-workflow-saga-quarkus`] example application in GitHub repository. 
 
-The `serverless-workflow-saga-quarkus` example application is based on the order fulfillment process and describes how to define Saga pattern using {context}. In the order fulfillment example, a user buys an item from an e-commerce application. The user adds the delivery information and payment details, and waits for the item to be delivered. The following figure shows the sequence of steps that are executed to complete an order:
+The `serverless-workflow-saga-quarkus` example application is based on the order fulfillment process and describes how to define the Saga pattern using {product_name}. In the order fulfillment example, a user buys an item from an e-commerce application. The user adds the delivery information and payment details, and waits for the item to be delivered. The following figure shows the sequence of steps that are executed to complete an order:
 
 .Example of order fulfillment process
 image::use-cases/orchestration-based-saga-pattern/order-fulfillment-example.png[Example of order fulfillment process]
@@ -98,7 +98,7 @@ Compensation actions::
 --
 When designing a Saga pattern, compensation actions for each step is considered as a core functionality, which is executed by a participant.
 
-In {context} each workflow state must define a compensation action using `compensatedBy` attribute, indicating another workflow state that performs the compensation action. For example, in `serverless-workflow-saga-quarkus`, `processPayment` state defines `CancelPayment` as a compensation action in the <<payment-state, payment process>>.
+In {product_name} each workflow state must define a compensation action using `compensatedBy` attribute, indicating another workflow state that performs the compensation action. For example, in `serverless-workflow-saga-quarkus`, `processPayment` state defines `CancelPayment` as a compensation action in the <<payment-state, payment process>>.
 
 .Example of defining a compensation action
 [source,json]
@@ -108,7 +108,7 @@ In {context} each workflow state must define a compensation action using `compen
 Errors::
 +
 --
-In {context} errors are identified by a name and can be associated with a workflow state. For example, a `process payment failed` error is associated with the `processPayment` state. 
+In {product_name} errors are identified by a name and can be associated with a workflow state. For example, a `process payment failed` error is associated with the `processPayment` state. 
 
 Following is an example of error declaration in the workflow definition:
 
@@ -149,7 +149,7 @@ An error definition uses the fully qualified class name (FQCN) for Java exceptio
 }
 ----
 
-The function that are throwing errors can be any type of functions, such as REST, OpenAPI, or gRPC. For information about error handling, see xref:core/understanding-workflow-error-handling.adoc[Error handling in {context}].
+The function that are throwing errors can be any type of functions, such as REST, OpenAPI, or gRPC. For information about error handling, see xref:core/understanding-workflow-error-handling.adoc[Error handling in {product_name}].
 --
 
 The workflow engine controls the execution of the flow and keeps the track of the steps that need to be compensated. Also, the engine ensures that compensated states are executed in reverse order of each completed step. 
@@ -282,6 +282,6 @@ When executing the application, you can also verify the log with information rel
 
 == Additional resources
 
-* xref:core/understanding-workflow-error-handling.adoc[Error handling in {context}]
+* xref:core/understanding-workflow-error-handling.adoc[Error handling in {product_name}]
 
 include::../../pages/_common-content/report-issue.adoc[]
