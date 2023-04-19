@@ -1,0 +1,81 @@
+= Configuring Workflow Services
+:compat-mode!:
+// Metadata:
+:description: Configuration of Workflow Services deployed by the operator
+:keywords: kogito, workflow, serverless, operator, kubernetes, minikube, config, openshift, containers
+
+This document describes how to configure a workflow service with the {operator_name}.
+
+[IMPORTANT]
+====
+This feature is supported only for development profile. Configuring workflows not in development is mapped and tracked by link:https://issues.redhat.com/browse/KOGITO-8522[KOGITO-8522]. See xref:cloud/operator/known-issues.adoc[]
+====
+
+== Editing the Workflow Configuration
+
+When the operator deploys the workflow service, it also creates a `ConfigMap` named after the `KogitoServerlessWorkflow` object with the suffix `-props`. For example, if your workflow name is `greeting`, then the `ConfigMap` name is `greeting-props`.
+
+You can use the Kubernetes object editor of your preference to add or edit the link:https://en.wikipedia.org/wiki/.properties[properties] in the workflow configuration. Using `kubectl` you can do:
+
+.Editing the Workflow Properties
+[source,shell,subs="attributes+"]
+----
+kubectl edit cm <workflow-name>-props
+----
+
+Note that it's important to respect the properties format, otherwise the operator will replace your configuration with the default one.
+
+Here's an example of a workflow properties:
+
+.Example of a Workflow ConfigMap Properties
+[source,yaml,subs="attributes+"]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: greeting
+  name: greeting-props
+  namespace: default
+data:
+  application.properties: |
+    my.properties.key = any-value
+----
+
+The underlying runtime engine that executes the workflow service is based on link:{quarkus_url}[Quarkus]. So that, you can configure the workflow as you normally would any link:{quarkus_config_url}[Quarkus application].
+
+Any xref:core/configuration-properties.adoc[{product_name} configuration that the documentation describes] or general Quarkus application property can be configured using this method.
+
+== Immutable properties
+
+A few properties can not be changed in this configuration. Usually, they are already defined in the properties file. The table below lists them.
+
+.List of immutable properties
+[cols="2,1,1"]
+|===
+|Property Key | Immutable Value | Profile
+
+|quarkus.http.port
+|8080
+|all
+
+|quarkus.http.host
+|0.0.0.0
+|all
+
+|org.kie.kogito.addons.knative.health-enabled
+|false
+|dev
+
+|===
+
+If you try to change any of them, the operator will override them with the default, but preserving your changes in other property keys.
+
+== Additional resources
+
+* xref:core/configuration-properties.adoc[]
+* xref:cloud/operator/known-issues.adoc[]
+* xref:cloud/operator/developing-workflows.adoc[]
+* xref:cloud/operator/build-and-deploy-workflows.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]

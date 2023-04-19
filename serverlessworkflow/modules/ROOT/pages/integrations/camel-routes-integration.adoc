@@ -1,9 +1,9 @@
 = Integrating with Camel routes
 
-{context} can integrate with link:{camel_url}[Apache Camel Routes] by adding the Kogito Quarkus Camel Add-on to your project. It enables the workflow engine to identify and call Camel routes declared in YAML or XML in the same workflow project context.
+{product_name} can integrate with link:{camel_url}[Apache Camel Routes] by adding the Kogito Quarkus Camel Add-on to your project. It enables the workflow engine to identify and call Camel routes declared in YAML or XML in the same workflow project context.
 
 [[proc-enable-quarkus-camel]]
-== Enabling Quarkus Camel in {context}
+== Enabling Quarkus Camel in {product_name}
 
 You can enable Quarkus Camel in your project.
 
@@ -27,7 +27,7 @@ For more information about creating a workflow, see xref:getting-started/create-
 --
 
 [[con-creating-camel-routes]]
-== Creating Camel routes in {context}
+== Creating Camel routes in {product_name}
 
 You can add YAML or XML Camel routes to your workflow project.
 
@@ -82,7 +82,7 @@ You can define and reference your Camel functions in the workflow definition.
 }
 ----
 +
-The operation description must have the prefix `camel:direct:`, indicating that you want to produce a message to this route via the link:{camel_extensions_url}/direct.html[Camel Direct Component]. Direct is the only component supported by {context} at the moment.
+The operation description must have the prefix `camel:direct:`, indicating that you want to produce a message to this route via the link:{camel_extensions_url}/direct.html[Camel Direct Component]. Direct is the only component supported by {product_name} at the moment.
 +
 The `operation` suffix contains the name of the route endpoint. In the case of this example, `logRouteReplaceHeader`.
 +
@@ -91,7 +91,7 @@ The `operation` suffix contains the name of the route endpoint. In the case of t
 The Camel route defined in the workflow must be available in your project during runtime, otherwise, an `IllegalArgumentException` will be thrown.
 ====
 +
-. To use the Camel function definition in a workflow action, you can simply reference it as you normally would with any other {context} function definitions. For example:
+. To use the Camel function definition in a workflow action, you can simply reference it as you normally would with any other {product_name} function definitions. For example:
 +
 .Example of a workflow state action referencing
 [source,json]
@@ -134,11 +134,11 @@ Once a message is received back from the Camel route, the data is merged into th
 
 == Example project
 
-There is an link:{kogito_sw_examples_url}/serverless-workflow-camel-routes[example project available on GitHub] using this new feature. You can use it as a reference to have a better understanding of the Camel integration with {context}.
+There is an link:{kogito_sw_examples_url}/serverless-workflow-camel-routes[example project available on GitHub] using this new feature. You can use it as a reference to have a better understanding of the Camel integration with {product_name}.
 
 == Additional resources
 
-* xref:core/custom-functions-support.adoc[Custom functions for your {context} service]
-* xref:core/understanding-jq-expressions.adoc[jq expressions in {context}]
+* xref:core/custom-functions-support.adoc[Custom functions for your {product_name} service]
+* xref:core/understanding-jq-expressions.adoc[jq expressions in {product_name}]
 
 include::../../pages/_common-content/report-issue.adoc[]

@@ -1,4 +1,4 @@
-= Custom functions for your {context} service
+= Custom functions for your {product_name} service
 
 :compat-mode!:
 // Metadata:
@@ -201,6 +201,7 @@ public class MyInterfaceOrClass {
 Avoid using `java` functions to call the external services, instead, you can use the xref:service-orchestration/orchestration-of-openapi-based-services.adoc[services orchestration features].
 ====
 
+[[con-func-camel]]
 == Camel custom function
 
 Kogito supports the link:{camel_url}[Camel Routes] functions within an Apache Maven project, in which you define your workflow service.
@@ -229,7 +230,7 @@ The following example shows the declaration of a Camel function:
 
 <1> `myCamelEndpoint` is the function name
 <2> `custom` is the function type
-<3> `camel:direct:myendpoint` is the custom operation definition. In this definition, `camel` is the reserved keyword followed by the `direct` endpoint. link:{camel_extensions_url}/direct.html[Camel Direct] is the only supported consumer by {context}. Finally, `myendpoint` is the endpoint URI name found in the route within your project's context.
+<3> `camel:direct:myendpoint` is the custom operation definition. In this definition, `camel` is the reserved keyword followed by the `direct` endpoint. link:{camel_extensions_url}/direct.html[Camel Direct] is the only supported consumer by {product_name}. Finally, `myendpoint` is the endpoint URI name found in the route within your project's context.
 
 === Function arguments
 
@@ -299,7 +300,7 @@ The Camel route is responsible to produce the return value in a way that the wor
 
 include::../../pages/_common-content/camel-valid-responses.adoc[]
 
-[#knative-custom-function]
+[[con-func-knative]]
 == Knative custom function
 
 {product_name} provides an implementation of a custom function through the `knative-serving` add-on to invoke Knative services. It allows you to have a static URI, defining a Knative service, which is used to perform HTTP requests. The Knative service defined in the URI is queried in the current Knative cluster and translated to a valid URL.
@@ -320,7 +321,7 @@ NAME                              URL                                           
 custom-function-knative-service   http://custom-function-knative-service.default.10.109.169.193.sslip.io   custom-function-knative-service-00001   3h16m   3 OK / 3     True
 ----
 
-You can declare a {context} custom function using the Knative service name, like the following:
+You can declare a {product_name} custom function using the Knative service name, like the following:
 
 [source,json]
 ----
@@ -695,6 +696,6 @@ void init () {
 == Additional resources
 
 * xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow specification]
-* xref:core/understanding-jq-expressions.adoc[jq expressions in {context}]
+* xref:core/understanding-jq-expressions.adoc[jq expressions in {product_name}]
 
 include::../../pages/_common-content/report-issue.adoc[]

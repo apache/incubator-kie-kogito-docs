@@ -1,0 +1,140 @@
+= Install the {operator_name}
+:compat-mode!:
+// Metadata:
+:description: Install the operator on Kubernetes clusters
+:keywords: kogito, workflow, serverless, operator, kubernetes, minikube, openshift, containers
+
+This guide describes how to install the {operator_name} in a Kubernetes cluster. The operator is in an xref:/cloud/operator/known-issues.adoc[early development stage] (community only) and has been tested on Kubernetes 1.22+, and link:{minikube_url}[Minikube].
+
+.Prerequisites
+* A Kubernetes cluster with admin privileges. Alternatively, you can use Minikube or KIND.
+* `kubectl` command-line tool is installed. Otherwise, Minikube provides it.
+
+== Prepare a Minikube instance
+
+[WARNING]
+====
+You can safely skip this section if you're not using Minikube.
+====
+
+.Prerequisites
+* A machine with at least 8GB memory and a link:https://en.wikipedia.org/wiki/Multi-core_processor[CPU with 8 cores]
+* Docker or Podman installed
+
+Run the following command to create a new instance capable of installing the operator and deploy workflows:
+
+[source,shell,subs="attributes+"]
+----
+minikube start --cpus 4 --memory 4096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"
+----
+
+[NOTE]
+====
+To speed up the build time, you can increase CPUs and memory options so that your minikube instance will have more resources. For example, use `--cpus 12 --memory 16384`. In order to work, you will have to recreate your instance.
+====
+
+If it does not work with the default driver, also known as `docker`, you can try to start with the `podman` driver as follows:
+
+.Start minikube with podman driver
+[source,shell,subs="attributes+"]
+----
+minikube start [...] --driver podman
+----
+
+== Install the {product_name} Operator
+
+In order to have an up-and-running instance of the {product_name} Operator you can use the following command:
+
+// TODO: replace this URI with the GitHub's artifact release instead.
+.Install {product_name} Operator on Kubernetes
+[source,shell,subs="attributes+"]
+----
+kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/operator.yaml
+----
+
+You can follow the deployment of the {product_name} Operator:
+
+.Watch the {product_name} Operator pod
+[source,shell,subs="attributes+"]
+----
+kubectl get pod -n kogito-serverless-operator-system --watch
+----
+
+A successful installation should have an output like this:
+
+.Successful Installation Output
+[source]
+----
+NAME                                                            READY   STATUS              RESTARTS   AGE
+kogito-serverless-operator-controller-manager-948547ffd-sr2j2   0/2     ContainerCreating   0          6s
+kogito-serverless-operator-controller-manager-948547ffd-sr2j2   1/2     Running             0          7s
+kogito-serverless-operator-controller-manager-948547ffd-sr2j2   2/2     Running             0          20s
+----
+
+You can also follow the operator’s log:
+
+.Watch the {product_name} Operator pod logs
+[source,shell,subs="attributes+"]
+----
+kubectl logs deployment/kogito-serverless-operator-controller-manager -n kogito-serverless-operator-system -f
+----
+
+Once the operator is running, it will watch for new custom resources (CR) so that you can prepare your environment to be ready to create a new {product_name} application based on the definitions you will send to the operator.
+
+To check if the definitions are correclty installed, try running:
+
+.Check if the CRDs are correctly installed
+[source,shell,subs="attributes+"]
+----
+kubectl get crds | grep kogito
+kogitoserverlessbuilds.sw.kogito.kie.org      2023-03-08T18:31:15Z
+kogitoserverlessplatforms.sw.kogito.kie.org   2023-03-08T18:31:15Z
+kogitoserverlessworkflows.sw.kogito.kie.org   2023-03-08T18:31:15Z
+----
+
+== Uninstall the Operator
+// TODO: this is super verbose for now because we don't have OLM/OperatorHub. This procedure should be replaced as soon as we have them. Or it should be renamed to "Uninstalling snapshot/local versions", so crazy users that don't rely on operatorhub/olm can also install/uninstall their instances.
+
+To uninstall the {operator_name}, first you should remove all the object instances managed by it. Then, you can delete every object created during the installation.
+
+To delete every object instance managed by the workflow in your cluster, you can run these series of commands:
+
+.Delete every {product_name} object instances
+[source,shell,subs="attributes+"]
+----
+kubectl delete --all workflow --all-namespaces
+kubectl delete --all kogitoserverlessbuild --all-namespaces
+kubectl delete --all kogitoserverlessplatform --all-namespaces
+----
+
+Alternatively, if you created everything under the same namespace, deleting the given namespace has the same outcome.
+
+To uninstall the correct version of the operator, first you must get the current version by running:
+
+.Getting the operator version
+[source,shell,subs="attributes+"]
+----
+kubectl get deployment kogito-serverless-operator-controller-manager -n kogito-serverless-operator-system -o jsonpath="{.spec.template.spec.containers[?(@.name=='manager')].image}"
+
+quay.io/kiegroup/kogito-serverless-operator-nightly:1.34.0
+----
+
+The operator manager image reflects the current operator's version. Replace the major and minor version names in the command below. For example, if the image version is `1.34.0` use `1.34` in the placeholder:
+
+.Uninstalling the operator
+[source,shell,subs="attributes+"]
+----
+kubectl delete -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/<version>.x/operator.yaml
+----
+
+[TIP]
+====
+If you're running a snapshot version, use this URL instead `https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/operator.yaml`.
+====
+
+== Additional resources
+
+* xref:cloud/operator/known-issues.adoc[]
+* xref:cloud/operator/developing-workflows.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]

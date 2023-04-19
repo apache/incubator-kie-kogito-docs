@@ -12,12 +12,12 @@
 :prometheus_operator_url: https://prometheus-operator.dev/
 :prometheus_operator_getting_started_guide: https://prometheus.io/docs/prometheus/latest/getting_started/#configure-prometheus-to-monitor-the-sample-targets
 
-{context} generates metrics that can be consumed by Prometheus and visualized by dashboard tools, such as link:{openshift_micrometer_url}[OpenShift], link:{dashbuilder_url}[Dashbuilder], and link:{grafana_url}[Grafana].
+{product_name} generates metrics that can be consumed by Prometheus and visualized by dashboard tools, such as link:{openshift_micrometer_url}[OpenShift], link:{dashbuilder_url}[Dashbuilder], and link:{grafana_url}[Grafana].
 
 This document describes how you can enable and expose the generated metrics to Prometheus.
 
 [[proc-enable-metrics-sw]]
-== Enabling metrics in {context}
+== Enabling metrics in {product_name}
 
 You can enable the metrics in your workflow application.
 
@@ -45,9 +45,9 @@ For more information about creating a workflow, see xref:getting-started/create-
 The metrics is available at `/q/metrics` endpoint.
 
 [[con-consume-metrics-sw]]
-== Metrics consumption in {context}
+== Metrics consumption in {product_name}
 
-After enabling the metrics in {context}, the generated metrics can be consumed from OpenShift, Kubernetes, and Prometheus to visualize on different dashboard tools.
+After enabling the metrics in {product_name}, the generated metrics can be consumed from OpenShift, Kubernetes, and Prometheus to visualize on different dashboard tools.
 
 [[proc-consume-metrics-openshift]]
 === Consuming metrics from OpenShift
@@ -55,9 +55,9 @@ After enabling the metrics in {context}, the generated metrics can be consumed f
 If your workflow server is running on OpenShift, then you can use the server to monitor your workflow application. Also, you can perform the task of consuming metrics from OpenShift.
 
 .Prerequisites
-* Metrics is enabled in {context}.
+* Metrics is enabled in {product_name}.
 +
-For more information, see <<proc-enable-metrics-sw, Enabling metrics in {context}>>.
+For more information, see <<proc-enable-metrics-sw, Enabling metrics in {product_name}>>.
 
 .Procedure
 . To consume metrics from OpenShift, enable monitoring for user-defined projects. 
@@ -120,9 +120,9 @@ For more information about installing Prometheus Operator, see link:{prometheus_
 If your workflow server is running on Prometheus, then you can perform the task of consuming metrics from Prometheus and visualize the workflow on different dashboard tools.
 
 .Prerequisites
-* Metrics is enabled in {context}.
+* Metrics is enabled in {product_name}.
 +
-For more information, see <<proc-enable-metrics-sw, Enabling metrics in {context}>>.
+For more information, see <<proc-enable-metrics-sw, Enabling metrics in {product_name}>>.
 
 .Procedure
 . Use the following configuration to enable Prometheus to remove metrics directly from the workflow application:
@@ -145,9 +145,9 @@ For more information, see <<proc-enable-metrics-sw, Enabling metrics in {context
 For more information about configuring Prometheus, see link:{prometheus_operator_getting_started_guide}[Configure Prometheus to monitor the sample targets] in Prometheus Getting Started document.
 
 [[ref-sw-example-metrics]]
-== Example metrics in {context}
+== Example metrics in {product_name}
 
-In {context}, you can check the following example metrics:
+In {product_name}, you can check the following example metrics:
 
 * `kogito_process_instance_completed_total`: Completed workflows
 * `kogito_process_instance_started_total`: Started workflows
@@ -173,7 +173,7 @@ kogito_process_instance_completed_total{app_id="default-process-monitoring-liste
 
 [NOTE]
 ====
-Internally, {product_name} uses Quarkus Micrometer extension, which also exposes built-in metrics. You can disable the Micrometer metrics in {context}. For more information, see link:{quarkus_micrometer_url}[Quarkus - Micrometer Metrics].
+Internally, {product_name} uses Quarkus Micrometer extension, which also exposes built-in metrics. You can disable the Micrometer metrics in {product_name}. For more information, see link:{quarkus_micrometer_url}[Quarkus - Micrometer Metrics].
 ====
 
 include::../../pages/_common-content/report-issue.adoc[]

@@ -1,0 +1,68 @@
+= {operator_name} Known Issues, Limitations and Roadmap
+:compat-mode!:
+// Metadata:
+:description: Known issues, features, and limitations of the operator
+:keywords: kogito, workflow, serverless, operator, kubernetes, minikube, roadmap
+:rest_example_url: 
+
+The link:{kogito_serverless_operator_url}[{operator_name}] is currently in Alpha version, is under active development.
+
+== Supported Features
+
+* Functions
+    - xref:core/custom-functions-support.adoc#con-func-sysout[Sysout]
+    - link:{kogito_sw_examples_url}/serverless-workflow-functions-quarkus/src/main/resources/restfunctions.sw.json[Rest Custom Functions]
+    - xref:core/understanding-jq-expressions.adoc[Expression functions]
+* Events
+    - xref:eventing/consume-produce-events-with-knative-eventing.adoc[Knative Eventing integration]. Every Knative Eventing object (brokers, sources, sinks) must be manually configured.
+* States
+    - Switch including dataConditions
+    - Inject including data with a transition
+    - States with Operations including Actions containing functionRef with arguments
+* ExpressionsLang (jq or jsonpath)
+* xref:cloud/operator/configuring-workflows.adoc[Configuring the workflow application in development profile]
+
+== Not Supported Features
+
+Every other feature from the xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow Specification] not listed in the section above, is not supported or tested at the moment.
+
+Any feature requiring external file configuration such as OpenAPI or Camel Routes is not supported at the moment.
+
+== Known Bugs
+
+- link:https://issues.redhat.com/browse/KOGITO-8805[Workflow Dev Profile Builder Image lacking permissions to write on mvn dir on OpenShift]
+
+== Roadmap
+
+The following issues is currently being prioritized.
+
+=== CNCF Specification v0.8 Alignment
+
+- link:https://issues.redhat.com/browse/KOGITO-8452[Alignment with Serverless Workflow v0.8 model]
+- link:https://issues.redhat.com/browse/KOGITO-7840[Implement admission webhooks for workflow validation]
+
+=== Workflow Development Profile
+
+- link:https://issues.redhat.com/browse/KOGITO-8675[Make Workflow Dev Profile builder image configurable via Platform]
+- link:https://issues.redhat.com/browse/KOGITO-8517[Support external resources configuration for Workflow CR in devmode]
+- link:https://issues.redhat.com/browse/KOGITO-8643[Expose Workflow Dev Profile application endpoint externally]
+- link:https://issues.redhat.com/browse/KOGITO-8650[Ensure that Data Index is embedded in the workflow dev profile]
+- link:https://issues.redhat.com/browse/KOGITO-8651[Ensure that the Management Console is embedded in the workflow dev profile]
+- link:https://issues.redhat.com/browse/KOGITO-8866[Ensure that Jobs Service is embedded in the workflow dev profile]
+
+=== Workflow Productization Profile
+
+- link:https://issues.redhat.com/browse/KOGITO-8522[Map an external ConfigMap for application properties on Serverless Workflow services]
+- link:https://issues.redhat.com/browse/KOGITO-7755[Manage the Functions included in a Workflow with Operator]
+- link:https://issues.redhat.com/browse/KOGITO-8524[Enable toggle Workflow CR from devmode to production mode and vice-versa]
+- link:https://issues.redhat.com/browse/KOGITO-8792[Review build failures and signal the reasoning in the Events API]
+- link:https://issues.redhat.com/browse/KOGITO-8794[Handle deployment failures in prod profile]
+- link:https://issues.redhat.com/browse/KOGITO-8806[Evaluate internal registry integration on OpenShift, Kubernetes and Minikube]
+
+=== Knative Integration
+
+- link:https://issues.redhat.com/browse/KOGITO-8648[Implement the Knative Addressable interface in dev profile]
+- link:https://issues.redhat.com/browse/KOGITO-8409[Add support to Cloud Events to Knative custom function]
+- link:https://issues.redhat.com/browse/KOGITO-8410[Add support to GET method to Knative custom function]
+- link:https://issues.redhat.com/browse/KOGITO-8766[Adjust the Knative Function definition to use the same interface as defined by the extension]
+- link:https://issues.redhat.com/browse/KOGITO-8646[Review the need of the knative/kubernetes addons inside the dev profile builder image]
