@@ -1,0 +1,140 @@
+= Building and Deploying Workflows with the Operator
+:compat-mode!:
+// Metadata:
+:description: Build and deploy with {operator_name}
+:keywords: kogito, workflow, serverless, operator, kubernetes, minikube, openshift, containers
+// links
+:kogito_serverless_operator_url: https://github.com/kiegroup/kogito-serverless-operator/
+:kogito_greeting_example_url: https://github.com/kiegroup/kogito-examples/tree/stable/serverless-workflow-examples/serverless-workflow-greeting-quarkus
+:kaniko_issue_url: https://github.com/GoogleContainerTools/kaniko/issues/2201
+
+This document describes how to build and deploy your workflow on a Kubernetes cluster using the link:{kogito_serverless_operator_url}[{operator_name}] only by having a workflow definition.
+
+[IMPORTANT]
+====
+{operator_name} is under active development with features yet to be implemented. Please see xref:cloud/operator/known-issues.adoc[].
+====
+
+.Prerequisites
+* A workflow definition.
+* The {operator_name} installed. See xref:cloud/operator/install-serverless-operator.adoc[]
+
+== Preparing for the build
+
+You should follow these steps to create a container that you can deploy as a service on Kubernetes.
+
+=== Create a namespace for the building phase
+
+Create a new namespace that will hold all the resources that the operator will create (pods, deployments, services, secretes, config map, and Custom Resources) in this guide.
+
+.Create a namespace for the application to build & run in
+[source,bash,subs="attributes+"]
+----
+kubectl create namespace kogito-workflows
+# set the kogito-workflows namespace to your context
+kubectl config set-context --current --namespace=kogito-workflows
+----
+
+=== Create a secret for the container registry authentication
+.Create a secret for the container registry authentication
+[source,bash,subs="attributes+"]
+----
+kubectl create secret docker-registry regcred --docker-server=<registry_url> --docker-username=<registry_username> --docker-password=<registry_password> --docker-email=<registry_email> -n kogito-workflows
+----
+
+or you can directly import your local docker config into your Kubernetes cluster:
+
+.Create a secret for the container registry authentication based on local docker config
+[source,bash,subs="attributes+"]
+----
+kubectl create secret generic regcred --from-file=.dockerconfigjson=$\{HOME\}/.docker/config.json --type=kubernetes.io/dockerconfigjson -n kogito-workflows
+----
+
+[WARNING]
+====
+Double check your `$\{HOME\}/.docker/config.json`. If you're using local desktop authentication, this configuration **won't work** in the cluster. You can initialize this by logging in in the target registry, e.g. `docker login`. 
+====
+
+=== Configure the {operator_name} (i.e. registry address, secret) for building your workflows
+
+The `KogitoServerlessPlatform` is the resource used to control the behavior of the {operator_name}.
+It defines the behavior of all Custom Resources (Workflow and Build) in the given namespace.
+
+Since the operator is installed in global mode, you will need to specify a platform in each namespace where you want to deploy workflows.
+You can find a basic `KogitoServerlessPlatform` custom resource example in the link:https://github.com/kiegroup/kogito-serverless-operator/tree/{operator_version}/config/samples[`config/samples` folder] that you can simply apply to configure your operator.
+
+.Create a `KogitoServerlessPlatform`
+[source,bash,subs="attributes+"]
+----
+kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml -n kogito-workflows
+----
+
+[NOTE]
+====
+In this Custom Resource, `spec.platform.registry.secret` is the name of the secret you created just before.
+====
+
+You can also update "on-the-fly" the `KogitoServerlessPlatform` registry field with this command (change <YOUR_REGISTRY>)
+
+.Create a `KogitoServerlessPlatform` with a specific registry
+[source,bash,subs="attributes+"]
+----
+curl https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml | sed "s|address: .*|address: <YOUR_REGISTRY>" | kubectl apply -f -
+----
+
+In order to retrieve the Cluster IP address of Minikube's internal registry to configure your platform, you can use the following command:
+
+.Retrieve Minikube registry internal IP
+[source,bash,subs="attributes+"]
+----
+kubectl get svc registry -n kube-system -ojsonpath='{.spec.clusterIP}'
+----
+
+== Build and deploy your workflow application
+
+You can now send your workflow definition (`KogitoServerlessWorkflow`) to the operator.
+
+You can find a basic `KogitoServerlessWorkflow` in the link:https://github.com/kiegroup/kogito-serverless-operator/tree/{operator_version}/config/samples[`config/samples` folder] that is defining the link:{kogito_greeting_example_url}[{product_name} Greeting example].
+
+[source,bash,subs="attributes+"]
+----
+kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessworkflow.yaml -n kogito-workflows
+----
+You can check the logs of the build of your workflow via:
+
+.Get the workflow application pod logs
+[source,bash,subs="attributes+"]
+----
+kubectl logs kogito-greeting-builder -n kogito-workflows
+----
+
+The final pushed image must be printed into the logs at the end of the build.
+
+== Check the workflow application is running
+
+In order to check that the {product_name} Greeting application is up and running, you can try to perform a test HTTP call, from the greeting pod.
+
+.Check the greeting application is running
+[source,bash,subs="attributes+"]
+----
+kubectl patch svc greeting -n kogito-workflows -p '{"spec": {"type": "NodePort"}}'
+GREETING_SVC=$(minikube service greeting -n kogito-workflows --url)
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' $GREETING_SVC/greeting
+----
+
+If everything is working well you should receive a response like this:
+
+.Response from the greeting application
+[source,json,subs="attributes+"]
+----
+{"id":"b5fbfaa3-b125-4e6c-9311-fe5a3577efdd","workflowdata":{"name":"John","language":"English","greeting":"Hello from JSON Workflow, "}}
+----
+
+// TODO: add a troubleshooting guide - https://issues.redhat.com/browse/KOGITO-8864
+
+== Additional resources
+
+* xref:cloud/operator/known-issues.adoc[]
+* xref:cloud/operator/developing-workflows.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
