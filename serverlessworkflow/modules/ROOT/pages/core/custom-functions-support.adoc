@@ -329,11 +329,8 @@ You can declare a {product_name} custom function using the Knative service name,
     {
       "name": "greet", <1>
       "type": "custom", <2>
-      "operation": "knative", <3>
+      "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service", <3>
       "metadata": { <4>
-        "apiVersion": "serving.knative.dev/v1",
-        "kind": "Service",
-        "name": "custom-function-knative-service",
         "uri": "/plainJsonFunction"
       }
     }
@@ -342,8 +339,7 @@ You can declare a {product_name} custom function using the Knative service name,
 
 <1> `greet` is the function name
 <2> `custom` is the function type
-<3> `knative` is the reserved keyword indicating that this is a Knative custom function
-<4> In `metadata` you set the coordinates of the Knative service
+<3> In `operation` you set the coordinates of the Knative service
 
 The above function will send a `POST` request to the http://custom-function-knative-service.default.10.109.169.193.sslip.io URL.
 
@@ -365,12 +361,8 @@ In case you need to call a Knative service in a different namespace, you can dec
     {
       "name": "greet",
       "type": "custom",
-      "operation": "knative",
+      "operation": "knative:services.v1.serving.knative.dev/my_different_namespace/custom-function-knative-service",
       "metadata": {
-        "apiVersion": "serving.knative.dev/v1",
-        "kind": "Service",
-        "namespace": "my_different_namespace",
-        "name": "custom-function-knative-service",
         "uri": "/plainJsonFunction"
       }
     }
@@ -433,12 +425,9 @@ To tell {product_name} you want to send the payload as a CloudEvent, you must de
     {
       "name": "greet",
       "type": "custom",
-      "operation": "knative",
+      "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service",
       "metadata": {
         "asCloudEvent": true, <1>
-        "apiVersion": "serving.knative.dev/v1",
-        "kind": "Service",
-        "name": "custom-function-knative-service",
         "uri": "/plainJsonFunction"
       }
     }

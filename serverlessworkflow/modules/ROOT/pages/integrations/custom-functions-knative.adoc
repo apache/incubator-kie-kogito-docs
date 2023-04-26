@@ -64,21 +64,17 @@ Save the Knative service name (`custom-function-knative-service`) to use it in t
 {
   "name": "greet", <1>
   "type": "custom", <2>
-  "operation": "knative", <3>
+  "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service", <3>
   "metadata": {
-    "apiVersion": "serving.knative.dev/v1",
-    "kind": "Service",
-    "name": "custom-function-knative-service", <4>
-    "uri": "/function" <5>
+    "uri": "/function" <4>
   }
 }
 ----
 
 <1> The name of the {product_name} function
 <2> Indicates that this function is a custom one
-<3> Indicates that your custom function is of type `knative`
-<4> The name of the service you want to invoke
-<5> The resource path you want to access
+<3> The coordinates of the service you want to invoke
+<4> The resource path you want to access
 
 --
 
