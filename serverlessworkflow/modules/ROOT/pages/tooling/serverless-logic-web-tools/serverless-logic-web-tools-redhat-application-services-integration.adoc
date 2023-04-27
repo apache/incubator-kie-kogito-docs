@@ -4,7 +4,7 @@
 :description: {serverless_logic_web_tools_name} Red Hat OpenShift Application and Data Services integration
 :keywords: kogito, workflow, serverless, editor, web, tools, settings, red hat, application, data, services, integration
 
-Some of the features in {serverless_logic_web_tools_name} require integration with Red Hat OpenShift Application and Data Services. Consider uploading OpenAPI specifications to a service registry and deploying {product_name} that requires Apache Kafka as examples of integration with Red Hat OpenShift Application and Data Services.
+Some of the features in {serverless_logic_web_tools_name} require integration with Red Hat OpenShift Application and Data Services. Consider uploading OpenAPI specifications to a service registry and fetching its service functions as examples of integration with Red Hat OpenShift Application and Data Services.
 
 This document describes how you can configure the required settings to complete the integration with Red Hat OpenShift Application and Data Services.
 
@@ -49,7 +49,7 @@ You can create or use a Service Registry instance from your Red Hat OpenShift Ap
 
 .Prerequisites
 * You have access to the Red Hat OpenShift Application and Data Services console.
-* You have created a service account. 
+* You have created a service account.
 +
 For information about creating a service account, see <<proc-create-service-account-serverless-logic-web-tools, Creating a service account in Red Hat OpenShift application and Data Services>>.
 
@@ -69,7 +69,7 @@ The list of Service Registry instances updates with your instance.
 .. Find the Service Registry instance you created in the list and click on the instance.
 .. Go to the *Settings* tab and click on *Grant access*.
 .. In the drop-down, select the service account you created in the previous procedure.
-.. Select a role for your service account. 
+.. Select a role for your service account.
 +
 [IMPORTANT]
 ====
@@ -94,57 +94,5 @@ You can enter the same name that you used while creating the Service Registry in
 . Enter the value of *Core Registry API* and click *Apply*.
 +
 The content in the *Service Registry* tab updates and displays *Your Service Registry information is set* message.
-
-[[proc-setting-apache-kafka-serverless-logic-web-tools]]
-== Creating Streams for Apache Kafka in Red Hat OpenShift application and Data Services
-
-You can create or use a Kafka instance from Red Hat OpenShift Application and Data Services console and add the instance to the {serverless_logic_web_tools_name}.
-
-.Prerequisites
-* You have access to the Red Hat OpenShift Application and Data Services console.
-* You have created a service account. 
-+
-For information about creating a service account, see <<proc-create-service-account-serverless-logic-web-tools, Creating a service account in Red Hat OpenShift application and Data Services>>.
-
-.Procedure
-. To create an Apache Kafka instance in Red Hat Openshift Application and Data Services console, perform the following steps:
-+
---
-[NOTE]
-====
-You can skip this step if you already have an Apache Kafka instance.
-====
-.. Go to link:{openshift_application_data_services_apache_kafka_url}[Streams for Apache Kafka | Red Hat OpenShift Application and Data Services].
-.. Click *Create Kafka instance*.
-.. In the *Create a Kafka instance* window, enter the name for a Kafka instance.
-+
-You can also fill the other fields or leave those fields with default values.
-
-.. Click *Create instance*.
-.. Reload the *Kafka instances* page for the list of instances to reflect the instance you created.
-.. Once the status of the Kafka instance you created is updated as *Ready*, click on the instance.
-.. Go to the *Topics* tab and create a new topic.
-.. Go to the *Access* tab, click *Manage Access*, and select *All Accounts* or the service account you created.
-.. Add the following permissions:
-+
-** _Consumer group is " * " | Allow All | All Accounts_;
-** _Topic is " * " | Allow All | All Accounts_;
-
-.. Click on the menu on the top-right corner of the screen.
-.. Click *Connection*.
-.. Copy the value of *Bootstrap server*.
---
-
-. If you already have a Kafka instance, find the value of *Bootstrap server* of your Kafka instance.
-. In the {serverless_logic_web_tools_name} web application, click on the *Cog wheel* (⚙️) on the top-right corner and go to the *Streams for Apache Kafka* tab.
-. Enter the value of *Bootstrap server*. 
-. Enter the name of topic you created in the *Topic* field and click *Apply*.
-+
-The content in the *Streams for Apache Kafka* tab updates and displays *Your Streams for Apache Kafka information is set* message.
-
-[NOTE]
-====
-The procedures in this document make the integration easy for you. However, you can also create specific service accounts, topics, and consumer groups.
-====
 
 include::../../../pages/_common-content/report-issue.adoc[]

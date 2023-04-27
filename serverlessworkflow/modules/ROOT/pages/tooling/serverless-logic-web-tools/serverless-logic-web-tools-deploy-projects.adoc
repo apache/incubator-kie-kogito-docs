@@ -4,7 +4,7 @@
 :description: {serverless_logic_web_tools_name} deploying your projects
 :keywords: kogito, workflow, serverless, editor, web, tools, settings, openshift, deploy, project
 
-You can deploy your {product_name} projects to an OpenShift instance using the OpenShift integration. The OpenShift integration allows you test your implementations in a live environment. 
+You can deploy your {product_name} projects to an OpenShift instance using the OpenShift integration. The OpenShift integration allows you test your implementations in a live environment.
 
 [NOTE]
 ====
@@ -25,7 +25,7 @@ For more information, see xref:tooling/serverless-logic-web-tools/serverless-log
 . Create a project using an example application in link:{kogito_sw_examples_url}[GitHub].
 +
 --
-You can use the link:https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-quarkus[`serverless-workflow-greeting-quarkus`] example application, which does not contain external dependencies, and is easy to test and comprehend. 
+You can use the link:https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-greeting-quarkus[`serverless-workflow-greeting-quarkus`] example application, which does not contain external dependencies, and is easy to test and comprehend.
 
 The `serverless-workflow-greeting-quarkus` example application contains a single operation state with one action, sending request to the `greeting` function. In the example application, the workflow data is assumed to be the name of the person to greet, and the result is the greeting for the person. The result is added to the state data, which later becomes the workflow data output.
 --
@@ -42,8 +42,6 @@ A modal appears, displaying the following deployment options:
 ** If *Deploy as a project* option is enabled, all the workflow files are deployed as-is, indicating that no project template is used. Therefore, ensure that the project is deployable.
 
 * *Upload OpenAPI spec to Service Registry*: After a workflow is deployed, an OpenAPI specification is available in the deployed service. When you check this option, the {serverless_logic_web_tools_name} fetches the OpenAPI specification, and when ready, the OpenAPI specification is uploaded to your configured service registry. To use this option, you need to configure your service account and service registry on the *Settings* page. To configure the service account and service registry, see xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.adoc[Integrating with Red Hat OpenShift Application and Data Services].
-
-* *Attach KafkaSource to the deployment*: You must check this option if your workflow contains an Apache Kafka event dependency. To use this option, you need to configure your service account and streams for Apache Kafka on the *Settings* page. To configure your service account and Apache Kafka streams, see xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.adoc[Integrating with Red Hat OpenShift Application and Data Services].
 --
 
 . Uncheck all options and click *Confirm*.
