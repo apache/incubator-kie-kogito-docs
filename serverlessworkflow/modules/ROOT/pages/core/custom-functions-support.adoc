@@ -329,7 +329,7 @@ You can declare a {product_name} custom function using the Knative service name,
     {
       "name": "greet", <1>
       "type": "custom", <2>
-      "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service#plainJsonFunction", <3>
+      "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service?path=/plainJsonFunction", <3>
     }
   ]
 ----
@@ -358,7 +358,7 @@ In case you need to call a Knative service in a different namespace, you can dec
     {
       "name": "greet",
       "type": "custom",
-      "operation": "knative:services.v1.serving.knative.dev/my_different_namespace/custom-function-knative-service#plainJsonFunction"
+      "operation": "knative:services.v1.serving.knative.dev/my_different_namespace/custom-function-knative-service?path=/plainJsonFunction"
     }
   ]
 ----
@@ -419,10 +419,7 @@ To tell {product_name} you want to send the payload as a CloudEvent, you must de
     {
       "name": "greet",
       "type": "custom",
-      "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service#plainJsonFunction",
-      "metadata": {
-        "asCloudEvent": true <1>
-      }
+      "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service?path=/plainJsonFunction&asCloudEvent=true" <1>
     }
   ]
 ----
