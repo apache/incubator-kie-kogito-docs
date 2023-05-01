@@ -1,0 +1,52 @@
+:_content-type: ASSEMBLY
+:description: Creating first workflow service
+:keywords: creating, serverless, workflow
+:navtitle: Creating your first workflow service
+:page-aliases:
+
+[id="assembly-create-your-first-workflow-service_{context}"]
+= Creating your first workflow service
+
+As a developer, you can use {product_name} and create a `Hello World` application, which includes the following procedures:
+
+* <<proc-boostrapping-a-project,Bootstrapping a project>>
+* <<proc-creating-a-workflow,Creating a workflow>>
+* <<proc-building-your-workflow-application,Building your workflow application>>
+* <<proc-running-your-workflow-application,Running your workflow application>>
+* <<proc-testing-your-workflow-application,Testing your workflow application>>
+
+Also, you can directly access an example application by cloning `serverless-workflow-examples/serverless-workflow-hello-world` from the link:{kogito_sw_examples_url}/serverless-workflow-hello-world[GitHub repository].
+
+This document describes how to create a workflow application that serves a `hello_world` endpoint. The workflow contains the following two states:
+
+* `Inject Hello World`: Injects a `Hello World` message into the response
+* `Inject Mantra`: Injects a `Mantra` message into the response
+
+.Example Hello World workflow
+image::getting-started/hello-world-workflow.png[]
+
+.Prerequisites
+* Java {java_min_version} is installed with `JAVA_HOME` configured appropriately.
+* Apache Maven {maven_min_version} is installed.
+* {quarkus_cli_url}[Quarkus CLI] or xref:tooling/kn-plugin-workflow-overview.adoc[Knative Workflow CLI] {kn_cli_version} is installed.
+* Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.java[Red Hat Java Extension]
+and https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
+
+For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {product_name} tooling].
+
+ifeval::["{kogito_version_redhat}" != ""]
+include::../../pages/_common-content/downstream-project-setup-instructions.adoc[]
+endif::[]
+
+include::proc-boostrapping-a-project.adoc[leveloffset=+1]
+include::proc-creating-a-workflow.adoc[leveloffset=+1]
+include::proc-building-your-workflow-application.adoc[leveloffset=+1]
+include::proc-running-your-workflow-application.adoc[leveloffset=+1]
+include::proc-testing-your-workflow-application.adoc[leveloffset=+1]
+
+== Additional resources
+
+* xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {product_name} tooling]
+* xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services]
+
+include::../../pages/_common-content/report-issue.adoc[]
