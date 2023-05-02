@@ -537,8 +537,26 @@ You must declare a `functionRef` like the following: (Do not forget to set `asCl
 
 [NOTE]
 ====
-{product_name} generates a CloudEvent ID based on the `source` and the workflow instance ID. In case you decide to set an ID, {product_name} will use it and you must ensure it's unique.
+{product_name} generates a CloudEvent ID based on the `source` and the workflow instance ID. In case you decide to set an ID, {product_name} will use it and you must ensure it's unique. See below how to set a CloudEvent ID.
 ====
+
+.Setting a CloudEvent ID
+[source,json]
+----
+"arguments": {
+    "specversion" : "1.0",
+    "id": "a_unique_id_42", <1>
+    "type" : "com.github.pull_request.opened",
+    "source" : "https://github.com/cloudevents/spec/pull",
+    "subject" : "123",
+    "time" : "2018-04-05T17:31:00Z",
+    "comexampleextension1" : "value",
+    "comexampleothervalue" : 5,
+    "datacontenttype" : "text/xml",
+    "data" : "<much wow=\"xml\"/>"
+}
+----
+<1> The CloudEvent ID.
 
 === Configurations
 
