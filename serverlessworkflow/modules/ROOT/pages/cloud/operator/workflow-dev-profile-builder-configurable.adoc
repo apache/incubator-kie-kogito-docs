@@ -1,0 +1,27 @@
+= Make Workflow Dev Profile builder image configurable via Platform
+:compat-mode!:
+// Metadata:
+:description: Configuration workflow Dev Profile builder image via Platform
+:keywords: kogito, workflow, serverless, operator, kubernetes, minikube, config, openshift, containers
+
+This document describes how to configure Workflow Dev Profile builder image via Platform with the {operator_name}.
+
+== Override Builder image and version
+
+By default the builder image uses a stable version aligned to the {product_name} version.
+
+In the dev mode, you can override the default builder image using the `devBaseImage` in the KogitoServerlessPlatform:
+
+```sh
+apiVersion: sw.kogito.kie.org/v1alpha08
+kind: KogitoServerlessPlatform
+metadata:
+  name: kogito-workflow-platform
+spec:
+  cluster: kubernetes
+  devBaseImage:  quay.io/<your_org>/<your-swf-builder>
+  platform:
+    registry:
+      address: quay.io/kiegroup
+      secret: regcred
+```
