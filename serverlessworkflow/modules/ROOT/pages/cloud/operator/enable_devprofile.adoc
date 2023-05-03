@@ -1,0 +1,24 @@
+= Enable dev mode
+:compat-mode!:
+// Metadata:
+:description: Enable Dev Profile
+:keywords: kogito, workflow, serverless, operator, kubernetes, minikube, config, openshift, containers, development
+
+This document describes how to enable the dev profile to use the Quarkus devmode with the {operator_name}.
+
+To enable the dev profile and use the Quarkus dev mode by editing the external resources files,
+you have to add an annotation to the KogitoServerlessWorkflow Custom Resource:
+`sw.kogito.kie.org/profile: dev`
+
+.Example of dev profile annotation on a KogitoServerlessWorkflow Custom Resource
+----
+apiVersion: sw.kogito.kie.org/v1alpha08
+kind: KogitoServerlessWorkflow
+metadata:
+  name: greeting
+  annotations:
+    sw.kogito.kie.org/description: Greeting example on k8s!
+    sw.kogito.kie.org/version: 0.0.1
+    sw.kogito.kie.org/profile: dev
+[...]
+----

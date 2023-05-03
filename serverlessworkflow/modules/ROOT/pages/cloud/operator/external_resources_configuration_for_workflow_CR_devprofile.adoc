@@ -1,0 +1,217 @@
+= Support external resources configuration in development profile
+:compat-mode!:
+// Metadata:
+:description: Support external resources configuration in development mode
+:keywords: kogito, workflow, serverless, operator, kubernetes, minikube, config, openshift, containers, development
+
+This document describes how to use external resources configuration for Workflow Custom Resource in development mode with the {operator_name}.
+
+== Configure external files support
+
+In development mode, different external files can be edited.
+Each file type should be saved into a different configmap.
+In order to be able to edit a file via a `ConfigMap`, you must set up an annotation in your `KogitoServerlessWorkflow` Custom Resource which references the specific `ConfigMap` which is already existing in the namespace.
+Then, each annotation entry will be turned into a file inside the path `src/main/resources/<File type specific folder>` path and use the key as the filename.
+Refer to the following table below for the supported types and the corresponding annotations and folder paths:
+
+[cols="1,1,1"]
+|===
+|File type  | Annotation                          | Folder path
+|CamelRoute | sw.kogito.kie.org/resource-camel    | src/main/resources/routes
+|AsyncApi   | sw.kogito.kie.org/resource-openapi  | src/main/resources/templates
+|OpenApi    | sw.kogito.kie.org/resource-asyncapi | src/main/resources/specs
+|Generic    | sw.kogito.kie.org/resource-generic  | src/main/resources/generic |
+|===
+
+Example:
+Using the repo https://github.com/kiegroup/kogito-examples/tree/stable/serverless-workflow-examples/serverless-workflow-camel-routes
+we want to load from a config map the `sendSoapMessage.yaml` and the `numberconversion.wsdl` available under src/main/resources to
+be edited using the development mode and see the results of our changes using the development mode
+
+We can create a `ConfigMap` called `mycamel-configmap` where copy the `sendSoapMessage.yaml` in the `data` section,
+the key will be the name of the file and the value the content of the file,
+we save the file as a `mycamel-configmap.yaml`
+----
+apiVersion: v1
+data:
+  sendSoapMessage.yaml: '- from:
+         uri: direct:numberToWords
+         steps:
+           - bean:
+               beanType: java.math.BigInteger
+               method: valueOf
+           - setHeader:
+                 name: operationName
+                 constant: NumberToWords
+           - toD:
+               uri: cxf://{{com.dataaccess.webservicesserver.url}}?serviceClass=com.dataaccess.webservicesserver.NumberConversionSoapType&wsdlURL=/wsdl/numberconversion.wsdl'
+metadata:
+  name: mycamel-configmap
+kind: ConfigMap
+----
+We create the configmap with the command after replacing the placeholder `your-namespace`
+
+----
+kubectl apply -f mycamel-configmap.yaml -n <your-namespace>
+----
+
+Then we create a second `ConfigMap` containing the `numberconversion.wsdl` in the `data` section,
+the key will be the name of the file and the value the content of the file and we call it  `mygeneric-configmap`,
+, we save the file as a `mygeneric-configmap.yaml`
+
+----
+apiVersion: v1
+data:
+  numberconversion.wsdl: '<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://www.dataaccess.com/webservicesserver/" name="NumberConversion" targetNamespace="http://www.dataaccess.com/webservicesserver/">
+  <types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://www.dataaccess.com/webservicesserver/">
+      <xs:element name="NumberToWords">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ubiNum" type="xs:unsignedLong"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="NumberToWordsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="NumberToWordsResult" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="NumberToDollars">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="dNum" type="xs:decimal"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="NumberToDollarsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="NumberToDollarsResult" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </types>
+  <message name="NumberToWordsSoapRequest">
+    <part name="parameters" element="tns:NumberToWords"/>
+  </message>
+  <message name="NumberToWordsSoapResponse">
+    <part name="parameters" element="tns:NumberToWordsResponse"/>
+  </message>
+  <message name="NumberToDollarsSoapRequest">
+    <part name="parameters" element="tns:NumberToDollars"/>
+  </message>
+  <message name="NumberToDollarsSoapResponse">
+    <part name="parameters" element="tns:NumberToDollarsResponse"/>
+  </message>
+  <portType name="NumberConversionSoapType">
+    <operation name="NumberToWords">
+      <documentation>Returns the word corresponding to the positive number passed as parameter. Limited to quadrillions.</documentation>
+      <input message="tns:NumberToWordsSoapRequest"/>
+      <output message="tns:NumberToWordsSoapResponse"/>
+    </operation>
+    <operation name="NumberToDollars">
+      <documentation>Returns the non-zero dollar amount of the passed number.</documentation>
+      <input message="tns:NumberToDollarsSoapRequest"/>
+      <output message="tns:NumberToDollarsSoapResponse"/>
+    </operation>
+  </portType>
+  <binding name="NumberConversionSoapBinding" type="tns:NumberConversionSoapType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="NumberToWords">
+      <soap:operation soapAction="" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="NumberToDollars">
+      <soap:operation soapAction="" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <binding name="NumberConversionSoapBinding12" type="tns:NumberConversionSoapType">
+    <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="NumberToWords">
+      <soap12:operation soapAction="" style="document"/>
+      <input>
+        <soap12:body use="literal"/>
+      </input>
+      <output>
+        <soap12:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="NumberToDollars">
+      <soap12:operation soapAction="" style="document"/>
+      <input>
+        <soap12:body use="literal"/>
+      </input>
+      <output>
+        <soap12:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="NumberConversion">
+    <documentation>The Number Conversion Web Service, implemented with Visual DataFlex, provides functions that convert numbers into words or dollar amounts.</documentation>
+    <port name="NumberConversionSoap" binding="tns:NumberConversionSoapBinding">
+      <soap:address location="https://www.dataaccess.com/webservicesserver/numberconversion.wso"/>
+    </port>
+    <port name="NumberConversionSoap12" binding="tns:NumberConversionSoapBinding12">
+      <soap12:address location="https://www.dataaccess.com/webservicesserver/numberconversion.wso"/>
+    </port>
+  </service>
+</definitions>'
+metadata:
+  name: mygeneric-configmap
+kind: ConfigMap
+----
+
+We create the configmap with the command after replacing the placeholder `your-namespace`
+
+----
+kubectl apply -f mygeneric-configmap.yaml -n <your-namespace>
+----
+
+Then the workflow
+
+----
+apiVersion: sw.kogito.kie.org/v1alpha08
+kind: KogitoServerlessWorkflow
+metadata:
+    name: camelCustomFunction
+    annotations:
+        sw.kogito.kie.org/description: his test a custom type can be added as addon in the classpath
+        sw.kogito.kie.org/version: 0.0.1
+        sw.kogito.kie.org/profile: dev
+        sw.kogito.kie.org/resource-camel: mycamel-configmap
+        sw.kogito.kie.org/resource-generic: mygeneric-configmap
+    spec:
+        start: start
+        functions:
+          - name: callSoap
+            type: custom
+            operation: camel:direct:numberToWords
+        dataInputSchema: camel.sw.schema.json
+        states:
+          - name: start
+            type: operation
+            actions:
+                functionRef:
+                refName: callSoap
+            arguments:
+                body: "${ .number }"
+        stateDataFilter:
+            output: "${ words = .response[0]}"
+        end: true
+----
