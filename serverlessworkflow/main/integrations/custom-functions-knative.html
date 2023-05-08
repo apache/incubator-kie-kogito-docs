@@ -530,10 +530,7 @@ custom-function-knative-service   http://custom-function-knative-service.default
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "name": "greet", <i class="conum" data-value="1"></i><b>(1)</b>
   "type": "custom", <i class="conum" data-value="2"></i><b>(2)</b>
-  "operation": "knative:custom-function-knative-service", <i class="conum" data-value="3"></i><b>(3)</b>
-  "metadata": {
-    "path": "/function" <i class="conum" data-value="4"></i><b>(4)</b>
-  }
+  "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service?path=/function", <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
 </div>
@@ -549,11 +546,7 @@ custom-function-knative-service   http://custom-function-knative-service.default
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Indicates that your custom function is of type <code>knative</code> and it will invoke the <code>custom-function-knative-service</code> service.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The resource path you want to access</td>
+<td>The coordinates of the service you want to invoke</td>
 </tr>
 </table>
 </div>

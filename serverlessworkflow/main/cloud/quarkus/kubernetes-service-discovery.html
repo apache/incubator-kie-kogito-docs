@@ -456,9 +456,9 @@
 <div class="listingblock">
 <div class="title">URI pattern in Kubernetes service discovery</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubernetes:&lt;group&gt;/&lt;version&gt;/&lt;kind&gt;/&lt;namespace&gt;/&lt;resourceName&gt;?&lt;attributeName&gt;=&lt;attributeValue&gt;
-\________/ \_____/ \_______/ \____/ \_________/ \____________/ \______________________________/
-  scheme    group   version   kind   namespace   resourceName   additional resource attributes
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubernetes:&lt;kind&gt;.&lt;version&gt;.&lt;group&gt;/&lt;namespace&gt;/&lt;resourceName&gt;?&lt;attributeName&gt;=&lt;attributeValue&gt;
+\________/ \____/ \_______/ \_____/ \_________/ \____________/ \______________________________/
+  scheme    kind   version   group   namespace   resourceName   additional resource attributes
             \____________________/                               \__________________________/
                      GVK                                           Supported values:
                                                                    - port-name={PORT_NAME}
@@ -487,28 +487,28 @@
 <div class="ulist">
 <ul>
 <li>
-<p><code>v1/service</code></p>
+<p><code>services.v1</code></p>
 </li>
 <li>
-<p><code>serving.knative.dev/v1/service</code></p>
+<p><code>services.v1.serving.knative.dev</code></p>
 </li>
 <li>
-<p><code>v1/pod</code></p>
+<p><code>pods.v1</code></p>
 </li>
 <li>
-<p><code>apps/v1/deployment</code></p>
+<p><code>deployments.v1.apps</code></p>
 </li>
 <li>
-<p><code>apps.openshift.io/v1/deploymentconfig</code></p>
+<p><code>deploymentconfigs.v1.apps.openshift.io</code></p>
 </li>
 <li>
-<p><code>apps/v1/statefulset</code></p>
+<p><code>statefulsets.v1.apps</code></p>
 </li>
 <li>
-<p><code>route.openshift.io/v1/route</code></p>
+<p><code>routes.v1.route.openshift.io</code></p>
 </li>
 <li>
-<p><code>networking.k8s.io/v1/ingress</code></p>
+<p><code>ingresses.v1.networking.k8s.io</code></p>
 </li>
 </ul>
 </div>
@@ -528,7 +528,7 @@
 </div>
 </div>
 <div class="paragraph">
-<p>The above URI looks directly for serving.knative.dev/v1/service resource.</p>
+<p>The above URI looks directly for services.v1.serving.knative.dev resource.</p>
 </div>
 </td>
 </tr>
@@ -573,7 +573,7 @@
 <div class="listingblock">
 <div class="title">Example label definition in URI</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubernetes:v1/pod/&lt;namespace&gt;/&lt;pod-name&gt;?labels=label-name=test-label</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubernetes:pods.v1/&lt;namespace&gt;/&lt;pod-name&gt;?labels=label-name=test-label</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -637,7 +637,7 @@
 <div class="listingblock">
 <div class="title">Example URI</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">org.kie.kogito.sw.knative.service=knative:v1/Service/serverless-workflow-greeting-quarkus/greeting-quarkus-cli</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">org.kie.kogito.sw.knative.service=knative:services.v1/serverless-workflow-greeting-quarkus/greeting-quarkus-cli</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
