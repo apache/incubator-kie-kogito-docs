@@ -15,9 +15,9 @@ Following is the URI pattern in Kubernetes service discovery:
 .URI pattern in Kubernetes service discovery
 [source,shell]
 ----
-kubernetes:<group>/<version>/<kind>/<namespace>/<resourceName>?<attributeName>=<attributeValue>
-\________/ \_____/ \_______/ \____/ \_________/ \____________/ \______________________________/
-  scheme    group   version   kind   namespace   resourceName   additional resource attributes
+kubernetes:<kind>.<version>.<group>/<namespace>/<resourceName>?<attributeName>=<attributeValue>
+\________/ \____/ \_______/ \_____/ \_________/ \____________/ \______________________________/
+  scheme    kind   version   group   namespace   resourceName   additional resource attributes
             \____________________/                               \__________________________/
                      GVK                                           Supported values:
                                                                    - port-name={PORT_NAME}
@@ -32,14 +32,14 @@ The following scheme values are supported in the URI pattern:
 
 The following resources are supported for the Kubernetes GVK (Group, Version, and Kind):
 
-* `v1/service`
-* `serving.knative.dev/v1/service`
-* `v1/pod`
-* `apps/v1/deployment`
-* `apps.openshift.io/v1/deploymentconfig`
-* `apps/v1/statefulset`
-* `route.openshift.io/v1/route`
-* `networking.k8s.io/v1/ingress`
+* `services.v1`
+* `services.v1.serving.knative.dev`
+* `pods.v1`
+* `deployments.v1.apps`
+* `deploymentconfigs.v1.apps.openshift.io`
+* `statefulsets.v1.apps`
+* `routes.v1.route.openshift.io`
+* `ingresses.v1.networking.k8s.io`
 
 [NOTE]
 ====
@@ -50,7 +50,7 @@ When using `knative`, you can also use a simplified URI like:
 knative:<namespace>/<serviceName>
 ----
 
-The above URI looks directly for serving.knative.dev/v1/service resource.
+The above URI looks directly for services.v1.serving.knative.dev resource.
 ====
 
 [IMPORTANT]
@@ -74,7 +74,7 @@ The label is defined with the following expression and in case of multiple label
 .Example label definition in URI
 [source,shell]
 ----
-kubernetes:v1/pod/<namespace>/<pod-name>?labels=label-name=test-label
+kubernetes:pods.v1/<namespace>/<pod-name>?labels=label-name=test-label
 ----
 +
 Using the previous URI example, if there are more than one service exposing the given pod, the `label-name=test-label` label is used to filter the service. If the label does not exist, the first found service is used.
@@ -114,7 +114,7 @@ For example, consider an application that consumes a resource running on Kuberne
 .Example URI
 [source,shell]
 ----
-org.kie.kogito.sw.knative.service=knative:v1/Service/serverless-workflow-greeting-quarkus/greeting-quarkus-cli
+org.kie.kogito.sw.knative.service=knative:services.v1/serverless-workflow-greeting-quarkus/greeting-quarkus-cli
 ----
 
 [NOTE]

@@ -329,16 +329,16 @@ You can declare a {product_name} custom function using the Knative service name,
     {
       "name": "greet", <1>
       "type": "custom", <2>
-      "operation": "knative:custom-function-knative-service" <3>
+      "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service?path=/plainJsonFunction", <3>
     }
   ]
 ----
 
 <1> `greet` is the function name
 <2> `custom` is the function type
-<3> `knative:custom-function-knative-service` is the custom operation definition. In this definition, `knative` is the reserved keyword followed by the `custom-function-knative-service` Knative service.
+<3> In `operation` you set the coordinates of the Knative service
 
-The above function will send a `POST` request to the http://custom-function-knative-service.default.10.109.169.193.sslip.io URL.
+The above function will send a `POST` request to the http://custom-function-knative-service.default.10.109.169.193.sslip.io/plainJsonFunction URL. If you don't specify a path, {product_name} will use the root path (/).
 
 [NOTE]
 ====
@@ -358,63 +358,12 @@ In case you need to call a Knative service in a different namespace, you can dec
     {
       "name": "greet",
       "type": "custom",
-      "operation": "knative:my_different_namespace/custom-function-knative-service"
+      "operation": "knative:services.v1.serving.knative.dev/my_different_namespace/custom-function-knative-service?path=/plainJsonFunction"
     }
   ]
 ----
 
 In the above example, {product_name} will look for the `custom-function-knative-service` in the `my_different_namespace` namespace.
-
-=== Function metadata
-
-==== HTTP resource path
-
-You can specify the HTTP resource path by adding the `path` property to the function's metadata.
-
-For instance, given the `/path/to/my/resource` HTTP resource path, you can define your function as:
-
-[source,json]
-----
-  "functions": [
-    {
-      "name": "greet",
-      "type": "custom",
-      "operation": "knative:custom-function-knative-service",
-      "metadata": {
-        "path": "/path/to/my/resource"
-      }
-    }
-  ]
-----
-
-In case you don't specify any path, the root path will be used. For instance, the following function:
-
-[source,json]
-----
-  "functions": [
-    {
-      "name": "greet",
-      "type": "custom",
-      "operation": "knative:custom-function-knative-service"
-    }
-  ]
-----
-
-Is exactly the same as:
-
-[source,json]
-----
-  "functions": [
-    {
-      "name": "greet",
-      "type": "custom",
-      "operation": "knative:custom-function-knative-service",
-      "metadata": {
-        "path": "/"
-      }
-    }
-  ]
-----
 
 === Function arguments
 
@@ -470,11 +419,7 @@ To tell {product_name} you want to send the payload as a CloudEvent, you must de
     {
       "name": "greet",
       "type": "custom",
-      "operation": "knative:custom-function-knative-service",
-      "metadata": {
-        "path": "/",
-        "asCloudEvent": true <1>
-      }
+      "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service?path=/plainJsonFunction&asCloudEvent=true" <1>
     }
   ]
 ----
