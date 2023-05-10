@@ -120,26 +120,24 @@ image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-variables-pane
 
 == Sending Cloud Events to active Workflow Instances
 
-the *Workflow Instances* page also allows you to send HTTP Cloud Events to the active workflow instances that are waiting for
+The *Workflow Instances* page also allows you to send HTTP Cloud Events to the active workflow instances that are waiting for
 an event to advance.
 
 To do so you just have to click on the *Trigger Cloud Event* button that will lead you to the *Trigger Cloud Event* page.
-This will lead you to the *Trigger Cloud Event* page.
 
 Once there, you will have to fill out the form with the Cloud Event information:
 
 - *Endpoint*: Defines the Path and the HTTP method where the cloud event should be triggered.
 - *Event Type*: Sets the Cloud Event type header.
 - *Event Source*: Sets the Cloud Event Source header. Defaults to `/local/quarkus-devUi`.
-- *Instance Id.*: Sets the id of the workflow instance that must receive the event, it will be added in the `kogitoprocrefid` event header.
-- *Event Custom Headers*: Allows you to define custom headers to be added to the event.
+- *Instance Id*: Sets the id of the workflow instance that must receive the event, it will be added in the `kogitoprocrefid` event header.
 - *Event Data*: Data that will be in the event in JSON format.
 
 .Sending a Cloud Event to an active workflow instance.
-image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-trigger-cloud-events.png[]
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instances-cloud-event.png[]
 
 Additionally, you can use the *Send Cloud Event* action present available on the instance actions kebab. By using it you
-will be lead to the *Trigger Cloud Event* page, but in this case the *Instance Id.* field will be already filled with
+will be lead to the *Trigger Cloud Event* page, but in this case the *Instance Id* field will be already filled with
 the selected workflow id.
 
 .*Send Cloud Event* button in the actions kebab.
@@ -153,9 +151,8 @@ dependency on its `pom.xml` file, like:
 ----
 <dependency>
   <groupId>org.kie.kogito</groupId>
-  <artifactId>kogito-addons-quarkus-source-files</artifactId>
-  <version>{kogito_version_redhat}</version>
-</dependency>
+  <artifactId>kogito-addons-quarkus-process-management</artifactId>
+<version>{kogito_version_redhat}</version>
 ----
 ====
 
