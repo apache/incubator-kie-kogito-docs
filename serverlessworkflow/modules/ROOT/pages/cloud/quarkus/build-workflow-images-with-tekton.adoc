@@ -2,25 +2,32 @@
 :compat-mode!:
 // Metadata:
 :description: Building Workflow Images with Tekton
-:keywords: kogito, workflow, serverless, kubernetes, minikube, openshift, containers, tekton, pipeline
+:keywords: kogito, workflow, serverless, kubernetes, minikube, openshift, containers, tekton, pipeline, ci
 
 This document describes how to build a Workflow Application on a Kubernetes cluster using the Tekton pipeline.
 
 
 .Prerequisites
-You have a git repo containing your workflow and the Dockerfile/Containerfile to build the workflow as a docker/podman image
-and a namespace where to install Tekton i.e. `custom-namespace`.
+You have a git repository containing your workflow and the Containerfile to build the workflow as a container image
+and a namespace where you can install Tekton i.e. `custom-namespace`.
 
-[NOTE]
-====
+.OptionalPrerequisites
+Tekton CLI:
 
-If you are using Openshift, you can install the Red Hat Pipeline Operator. If you are using Minikube, you can follow this link:https://github.com/tektoncd/pipeline/blob/main/docs/developers/local-setup.md#using-minikube[tekton guide for Minikube].
-If you are using Kind you can follow this link:https://github.com/tektoncd/plumbing/tree/main/hack[Tekton guide for Kind]. If you want to use it on a plain kubernetes cluster, you can follow this link:https://tekton.dev/docs/pipelines/install/[Tekton guide for kubernetes].
-====
+- On Openshift in the Operator pipelines is available a link to download the correct cli from the operaotr
+- On Minikube/kind/Kubernetes use this link https://tekton.dev/docs/cli/
 
+
+== Install Tekton pipeline
+
+If you are using Openshift, you can install the Red Hat Pipeline Operator.
+If you are using Minikube, you can follow this link:https://github.com/tektoncd/pipeline/blob/main/docs/developers/local-setup.md#using-minikube[tekton guide for Minikube].
+If you are using Kind you can follow this link:https://github.com/tektoncd/plumbing/tree/main/hack[Tekton guide for Kind].
+If you want to use it on a plain kubernetes cluster, you can follow this link:https://tekton.dev/docs/pipelines/install/[Tekton guide for kubernetes].
 
 == Create the pipeline
-In the `custom-namespace` namespace, in the pipelines menu, open the pipeline item, create it, and copy the following `custom-workflow-image-pipeline.yaml` file.
+
+In the `custom-namespace` namespace, in the pipelines menu on Openshift UI, open the pipeline item, create it, and copy the following `custom-workflow-image-pipeline.yaml` file.
 It contains a pipeline to clone your git repo, build the image and push it to the local image registry.
 
 ----
@@ -79,17 +86,17 @@ spec:
     - name: shared-workspace
 ----
 
-If you use the Tekton Dashboard on Minikube, Kind or on a Kubernets cluster, copy the content of the yaml in the pipeline section.
-I you don't want to use the UI, replace the placeholder in the `custom-workflow-image-pipeline.yaml` (the previous yaml) and execute:
+If you use the Tekton Dashboard on Minikube, Kind or on a Kubernetes cluster, copy the content of the yaml in the pipeline section.
+If you don't want to use the UI, replace the placeholder in the `custom-workflow-image-pipeline.yaml` (the previous yaml) and execute:
 ----
 kubectl apply -f custom-workflow-image-pipeline.yaml
 ----
 
-== Create The PipelineRun to execute the pipeline
+== Create a PipelineRun to execute the pipeline
 
 The next step is to create a pipeline run with the details of your git repository and the desired name of the image.
 
-On OCP in the Pipeline menu, in the item PipelineRun, copy the following custom-workflow-image-pipeline-run.yaml file replacing the placeholder with your values.
+On OCP -> Pipeline menu -> PipelineRun, copy the following yaml file and replace the placeholders with your values.
 
 i.e. `image registry available at image-registry.openshift-image-registry.svc:5000/`
 
@@ -129,7 +136,7 @@ image-registry.openshift-image-registry.svc:5000/custom-namespace/<your-image-na
 On Minikube, Kind or plain Kubernetes cluster you can install the
 link:{https://tekton.dev/docs/dashboard/}[Tekton Dashboard]
 
-otherwise replace the in the custom-workflow-image-pipeline-run.yaml and execute
+Otherwise replace the in the custom-workflow-image-pipeline-run.yaml and execute
 ----
 kubectl apply -f custom-workflow-image-pipeline-run.yaml
 ----
@@ -137,7 +144,7 @@ kubectl apply -f custom-workflow-image-pipeline-run.yaml
 
 == Create The PipelineRun with Tkn CLI
 
-If you have installed the Tekton CLI,  you can run the pipeline with the following command:
+If you have installed the Tekton CLI, you can run the pipeline with the following command:
 
 ----
 tkn pipeline start custom-namespace-pipeline \
