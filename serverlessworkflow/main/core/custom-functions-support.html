@@ -1108,9 +1108,34 @@ custom-function-knative-service   http://custom-function-knative-service.default
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Kogito Serverless Workflow generates a CloudEvent ID based on the <code>source</code> and the workflow instance ID. In case an ID is set, Kogito Serverless Workflow will ignore it and use a generated one.</p>
+<p>Kogito Serverless Workflow generates a CloudEvent ID based on the <code>source</code> and the workflow instance ID. In case you decide to set an ID, Kogito Serverless Workflow will use it and you must ensure it&#8217;s unique. Refer to the following example on how to set a CloudEvent ID:</p>
 </div>
 </td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Setting a CloudEvent ID</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"arguments": {
+    "specversion" : "1.0",
+    "id": "a_unique_id_42", <i class="conum" data-value="1"></i><b>(1)</b>
+    "type" : "com.github.pull_request.opened",
+    "source" : "https://github.com/cloudevents/spec/pull",
+    "subject" : "123",
+    "time" : "2018-04-05T17:31:00Z",
+    "comexampleextension1" : "value",
+    "comexampleothervalue" : 5,
+    "datacontenttype" : "text/xml",
+    "data" : "&lt;much wow=\"xml\"/&gt;"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The CloudEvent ID.</td>
 </tr>
 </table>
 </div>
