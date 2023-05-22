@@ -1,0 +1,38 @@
+:_content-type: REFERENCE
+:description: jq expressions in switch conditions
+:keywords: kogito, workflow, serverless, jq, expression, switch, conditions
+:navtitle: Example of jq expressions in switch conditions
+// :page-aliases:
+
+[id="ref-example-jq-expression-switch-conditions"]
+
+= Example of jq expressions in switch conditions
+
+The conditions occurring in a switch state enable the workflow designer to select the path that workflow follows based on the data model content.
+
+A condition in a switch state is an expression, which returns a boolean value when evaluated against the data model. If a condition associated with a state transition returns true, then the workflow must follow that transition.
+
+For example, in the link:{kogito_sw_examples_url}/serverless-workflow-greeting-quarkus[`serverless-workflow-greeting-quarkus`] example application, a message is displayed depending on the selected language, that is English or Spanish.
+
+If the value of the `language` property is English, the constant literal injected on the `message` property is _Hello from_, otherwise the constant value injected on the `message` property is _Saludos desde…_.
+
+image::core/switch_condition.png[]
+
+The switch state in the `serverless-workflow-greeting-quarkus` example application contains the following conditions, which in turn contains two jq expressions returning a boolean.
+
+.Example conditions in `serverless-workflow-greeting-quarkus`
+[source,json]
+----
+"dataConditions": [
+        {
+          "condition": "${ .language == \"English\" }",
+          "transition": "GreetInEnglish"
+        },
+        {
+          "condition": "${ .language == \"Spanish\" }",
+          "transition": "GreetInSpanish"
+        }
+      ]
+----
+
+NOTE: The Serverless Workflow specification requires all the expressions to be embedded within `${… }`. However, {product_name} figures out whether or not a string is an expression. Therefore, you can save characters and skip `${` in the beginning and `}` in the end. In case of portability, you must embed the expressions within `${… }`.

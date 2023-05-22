@@ -1,0 +1,57 @@
+:_content-type: REFERENCE
+:description: jq expressions in function arguments
+:keywords: kogito, workflow, serverless, jq, expression, function, arguments
+:navtitle: Example of jq expressions in function arguments
+// :page-aliases:
+
+[id="ref-example-jq-expression-function-arguments"]
+
+= Example of jq expressions in function arguments
+
+In the Serverless Workflow specification, you can define link:{spec_doc_url}#workflow-functions[workflow functions], which can be invoked several times by the workflow states. Each workflow function call might contain different arguments, which are specified using the function arguments.
+
+For example, you can see the link:{kogito_sw_examples_url}/serverless-workflow-temperature-conversion/conversion-workflow/src/main/resources/fahrenheit-to-celsius.sw.json[temperature conversion] function definition in `serverless-workflow-temperature-conversion` example application. The temperature conversion function performs OpenAPI invocations to convert Fahrenheit to Celsius. For more information about OpenAPI, see xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services].
+
+Following is the `subtraction` function in `serverless-workflow-temperature-conversion` example application:
+
+.Example `subtraction` function in `serverless-workflow-temperature-conversion`
+[source,json]
+----
+"functions": [
+{
+  "name": "subtraction",
+  "operation": "specs/subtraction.yaml#doOperation"
+}]
+----
+
+The arguments in `subtraction` function are expressed as a JSON object, and the property values of the JSON object are either a string containing an expression or a link:{json_data_types_url}[JSON data type], such as string, number, or boolean.
+
+.Example arguments in `subtraction` function
+[source,json]
+----
+"functionRef":
+{
+  "refName": "subtraction",
+  "arguments":
+  {
+    "leftElement": ".fahrenheit",
+    "rightElement": ".subtractValue"
+  }
+}
+----
+
+In the previous example, the left number is equal to the `fahrenheit` property (an input number that invokes the workflow), and the right number is equal to the `subtractValue` property (a constant number that is injected to the workflow model by `SetConstants` state). Once the expression evaluation is resolved for all properties that contain an expression, the resulting object is passed in the OpenAPI request. Based on the OpenAPI definition, the properties in the JSON object are used as body, path, query, or header of the upcoming REST invocation.
+
+Following is an example of function arguments defined as string that contains an expression, returning a JSON object:
+
+.Example function arguments defined as string
+[source,json]
+----
+"functionRef": {
+  "refName": "subtraction",
+  "arguments": "{leftElement: .fahrenheit, rightElement : .subtractValue}"
+ }
+
+----
+
+In the previous example, the result of the expression evaluation is the same JSON object than in the first case, which is passed as arguments of the OpenAPI request.
