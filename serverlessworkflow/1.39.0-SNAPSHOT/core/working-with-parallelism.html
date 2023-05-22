@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Parallelism in Kogito Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Working with parallelism in Serverless Workflow">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, parallelism">
+    <meta name="generator" content="Antora 3.0.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.39.0-SNAPSHOT">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../release_notes.html">Release notes</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/getting-familiar-with-our-tooling.html">Getting familiar with tooling</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="understanding-jq-expressions.html">jq expressions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="understanding-workflow-error-handling.html">Error handling</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="working-with-parallelism.html">Parallelism</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="configuration-properties.html">Configuration properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="defining-an-input-schema-for-workflows.html">Input schema definition</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="custom-functions-support.html">Custom functions for your workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timeouts-support.html">Timeouts Support</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-overview.html">Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome GitHub extension for Serverless Workflow editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Kogito Serverless Workflow Tools extension in Quarkus Dev UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances in Kogito Serverless Workflow Tools extension</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions in Kogito Serverless Workflow Tools extension</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/quarkus-dev-ui-extension/quarkus-dev-ui-custom-dashboard-page.html">Dashboards in Kogito Serverless Workflow Tools extension</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/kn-plugin-workflow-overview.html">Kogito Serverless Workflow plug-in for Knative CLI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">Integrating your workflow project in GitHub using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">Integrating your workflow project with OpenShift using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Integrating with Red Hat OpenShift Application and Data Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deploying your workflow projects using Serverless Logic Web Tools</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-enable-kogito-swf-visualization.html">Enabling Visualization in Serverless Logic Web Tools</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">Orchestrating the OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Configuring the OpenAPI services endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-asyncapi-based-services.html">Orchestrating the AsyncAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Eventing</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/handling-events-on-workflows.html">Event State</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event Correlation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/working-with-callbacks.html">Callback State</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/working-with-openapi-callbacks.html">OpenAPI Callback</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">Authentication for OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">Orchestration of third-party services using OAuth 2.0 authentication</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents sink using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI services using WireMock</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing using REST Assured</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../testing-and-troubleshooting/integration-tests-with-postgresql.html">Integration tests using PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/postgresql-flyway-migration.html">Migrate your PostgreSQL database</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../cloud/index.html">Cloud</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Operator</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/install-serverless-operator.html">Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/developing-workflows.html">Developing Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/configuring-workflows.html">Configuring Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/workflow-status-conditions.html">Workflows Status</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/build-and-deploy-workflows.html">Building and Deploying Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/known-issues.html">Known Issues</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-minikube.html">Deploying Workflows on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-kubernetes.html">Deploying Workflows on Kubernetes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/kubernetes-service-discovery.html">Kubernetes service discovery</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/camel-routes-integration.html">Integrating with Camel Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/custom-functions-knative.html">Invoking Knative services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing workflow base metrics to Prometheus</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow data in dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Supporting Services</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../supporting-services/jobs-service.html">Job Service</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga Orchestration Example</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/timeout-showcase-example.html">Timeout Example</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.39-RC</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">1.39-RC</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../latest/index.html">1.38</a>
+        </li>
+        <li class="version">
+          <a href="../../1.37.0.Final/index.html">1.37</a>
+        </li>
+        <li class="version">
+          <a href="../../1.36.1.Final/index.html">1.36</a>
+        </li>
+        <li class="version">
+          <a href="../../1.35.0.Final/index.html">1.35</a>
+        </li>
+        <li class="version">
+          <a href="../../1.34.0.Final/index.html">1.34</a>
+        </li>
+        <li class="version">
+          <a href="../../1.33.0.Final/index.html">1.33</a>
+        </li>
+        <li class="version">
+          <a href="../../1.32.0.Final/index.html">1.32</a>
+        </li>
+        <li class="version">
+          <a href="../../1.31.1.Final/index.html">1.31</a>
+        </li>
+        <li class="version">
+          <a href="../../1.30.0.Final/index.html">1.30</a>
+        </li>
+        <li class="version">
+          <a href="../../1.29.0.Final/index.html">1.29</a>
+        </li>
+        <li class="version">
+          <a href="../../1.28.0.Final/index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Core</li>
+    <li><a href="working-with-parallelism.html">Parallelism</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.39-RC</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/core/working-with-parallelism.html">snapshot</a>
+    <a class="version is-current" href="working-with-parallelism.html">1.39-RC</a>
+    <a class="version" href="../../latest/core/working-with-parallelism.html">1.38</a>
+    <a class="version" href="../../1.37.0.Final/core/working-with-parallelism.html">1.37</a>
+    <a class="version" href="../../1.36.1.Final/core/working-with-parallelism.html">1.36</a>
+    <a class="version" href="../../1.35.0.Final/core/working-with-parallelism.html">1.35</a>
+    <a class="version" href="../../1.34.0.Final/core/working-with-parallelism.html">1.34</a>
+    <a class="version" href="../../1.33.0.Final/core/working-with-parallelism.html">1.33</a>
+    <a class="version" href="../../1.32.0.Final/core/working-with-parallelism.html">1.32</a>
+    <a class="version" href="../../1.31.1.Final/core/working-with-parallelism.html">1.31</a>
+    <a class="version" href="../../1.30.0.Final/core/working-with-parallelism.html">1.30</a>
+    <a class="version" href="../../1.29.0.Final/core/working-with-parallelism.html">1.29</a>
+    <a class="version" href="../../1.28.0.Final/core/working-with-parallelism.html">1.28</a>
+    <a class="version" href="../../1.27.0.Final/core/working-with-parallelism.html">1.27</a>
+    <a class="version" href="../../1.26.0.Final/core/working-with-parallelism.html">1.26</a>
+    <a class="version" href="../../1.25.0.Final/core/working-with-parallelism.html">1.25</a>
+    <a class="version" href="../../1.24.1.Final/core/working-with-parallelism.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.39.x/serverlessworkflow/modules/ROOT/pages/core/working-with-parallelism.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Parallelism in Kogito Serverless Workflow</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes how you can run parallel tasks in Kogito Serverless Workflow.</p>
+</div>
+<div class="paragraph">
+<p>The testing procedure described in this document is based on the <code>serverless-workflow-service-calls-quarkus</code> example application in <a href="https://github.com/kiegroup/kogito-examples/tree/1.39.x/serverless-workflow-examples/serverless-workflow-service-calls-quarkus">GitHub repository</a>.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Kogito Serverless Workflow serializes the execution of parallel tasks. Therefore, the word "parallel" does not indicate simultaneous execution, but it means that there is no logical dependency between the execution of branches. An inactive branch can start or resume the execution of a task without waiting for an active branch to be completed, in case the latter suspends the execution (for example, wait for an event reception).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>serverless-workflow-service-calls-quarkus</code> example application is a workflow that concatenates three strings and returns a result. The concatenation in the example application is done in parallel, which includes one branch per three strings.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-parallel-creating-the-workflow"><a class="anchor" href="#proc-parallel-creating-the-workflow"></a>Creating a parallel workflow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can create a workflow, which performs a series of parallel tasks.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A workflow project is created.</p>
+<div class="paragraph">
+<p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Create a workflow file named as <code>parallel.sw.json</code> under the <code>src/main/resources/</code> directory.</p>
+</li>
+<li>
+<p>Add the following content to the <code>parallel.sw.json</code> file:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example content for <code>parallel.sw.json</code> file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "parallel",
+  "version": "1.0",
+  "specVersion": "0.8",
+  "name": "Welcome to the Parallel dimension",
+  "description": "Testing parallelism",
+  "start": "Parallel",
+  "functions": [
+    {
+      "name": "concatA",
+      "type": "expression",
+      "operation": ".result|=.+\"A\"" <i class="conum" data-value="1"></i><b>(1)</b>
+    },
+    {
+      "name": "concatB",
+      "type": "expression",
+      "operation": ".result|=.+\"B\"" <i class="conum" data-value="2"></i><b>(2)</b>
+    },
+    {
+      "name": "concatC",
+      "type": "expression",
+      "operation": ".result|=.+\"C\"" <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+  ],
+  "states": [
+    {
+      "name": "Parallel",
+      "type": "parallel", <i class="conum" data-value="4"></i><b>(4)</b>
+      "branches": [ <i class="conum" data-value="5"></i><b>(5)</b>
+        {
+          "name": "branchA",
+          "actions": [
+            {
+              "functionRef": "concatA" <i class="conum" data-value="6"></i><b>(6)</b>
+            }
+          ]
+        },
+        {
+          "name": "branchB",
+          "actions": [
+            {
+              "functionRef": "concatB" <i class="conum" data-value="7"></i><b>(7)</b>
+            }
+          ]
+        },
+        {
+          "name": "branchC",
+          "actions": [
+            {
+              "functionRef": "concatC" <i class="conum" data-value="8"></i><b>(8)</b>
+            }
+          ]
+        }
+      ],
+      "completionType": "allOf", <i class="conum" data-value="9"></i><b>(9)</b>
+      "end": {
+        "terminate": true
+      }
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Function that concatenates the string <code>A</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Function that concatenates the string <code>B</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Function that concatenates the string <code>C</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Defines the type of the state as <code>parallel</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Defines the branches that run in parallel.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Defines the function that runs in <code>branchA</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Defines the function that runs in <code>branchB</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Defines the function that runs in <code>branchC</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Defines the completion type of the parallel state as <code>allOf</code>. This means that the parallel state is completed when all the branches are completed.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-parallel-run-workflow"><a class="anchor" href="#proc-parallel-run-workflow"></a>Running a parallel workflow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After you create a workflow that performs a series of parallel tasks, you can run the workflow.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A parallel workflow is created.</p>
+<div class="paragraph">
+<p>For more information, see <a href="#proc-parallel-creating-the-workflow">Creating a parallel workflow</a>.</p>
+</div>
+</li>
+<li>
+<p>The workflow application is up and running.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>You can start the workflow application in development mode by using the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn quarkus:dev</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>To run the created parallel workflow, send a request to the <code>/parallel</code> endpoint as shown in the following example request:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
+  'http://localhost:8080/parallel' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{}'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{"id":"358f97ba-f0f9-4f25-86cc-4b35e85c2406","workflowdata":{"result":"ABC"}}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <code>"result":"ABC"</code> in the previous example response might be different in each request since the branches are running in parallel and the execution order of the branches is unpredictable.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Note that the parallel workflow data shows the concatenated string as result.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="proc-parallel-run-branches"><a class="anchor" href="#proc-parallel-run-branches"></a>Running some branches in parallel workflow</h3>
+<div class="paragraph">
+<p>You can define the <code>"completionType": "atLeast"</code> to run only some branches in parallel workflow, instead of defining <code>"completionType": "allOf"</code>. When you define <code>"completionType": "atLeast"</code>, you also need to define the minimum number of branches that you want to run by defining the <code>"numCompleted":</code> property.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A parallel workflow is created.</p>
+<div class="paragraph">
+<p>For more information, see <a href="#proc-parallel-creating-the-workflow">Creating a parallel workflow</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Change the <code>completionType</code> property to <code>"atLeast"</code> and add the <code>"numCompleted": 2</code> property to the parallel state.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example parallel workflow</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "parallel",
+  "version": "1.0",
+  "specVersion": "0.8",
+  "name": "Welcome to the Parallel dimension",
+  "description": "Testing parallelism",
+  "start": "Parallel",
+  "functions": [
+    {
+      "name": "concatA",
+      "type": "expression",
+      "operation": ".result|=.+\"A\""
+    },
+    {
+      "name": "concatB",
+      "type": "expression",
+      "operation": ".result|=.+\"B\""
+    },
+    {
+      "name": "concatC",
+      "type": "expression",
+      "operation": ".result|=.+\"C\""
+    }
+  ],
+  "states": [
+    {
+      "name": "Parallel",
+      "type": "parallel",
+      "branches": [
+        {
+          "name": "branchA",
+          "actions": [
+            {
+              "functionRef": "concatA"
+            }
+          ]
+        },
+        {
+          "name": "branchB",
+          "actions": [
+            {
+              "functionRef": "concatB"
+            }
+          ]
+        },
+        {
+          "name": "branchC",
+          "actions": [
+            {
+              "functionRef": "concatC"
+            }
+          ]
+        }
+      ],
+      "completionType": "atLeast", <i class="conum" data-value="1"></i><b>(1)</b>
+      "numCompleted": "2", <i class="conum" data-value="2"></i><b>(2)</b>
+      "end": {
+        "terminate": true
+      }
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Defines the completion type of the parallel state as <code>atLeast</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Defines the minimum number of branches that you want to run. This means that the parallel state is completed when at least two branches are completed.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>To run the created parallel workflow, send a request to the <code>/parallel</code> endpoint as shown in the following example:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
+  'http://localhost:8080/parallel' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{}'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">{"id":"3da62df1-c4e7-48c9-a3e4-7f63872c92f4","workflowdata":{"result":"BC"}}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <code>"result":"BC"</code> in the response might be different in each request.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The parallel workflow data shows the concatenated string as result, but in this case, the workflow concatenates only two letters.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>
