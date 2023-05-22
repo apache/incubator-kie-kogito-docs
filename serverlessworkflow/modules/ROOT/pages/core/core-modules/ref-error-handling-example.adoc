@@ -1,0 +1,114 @@
+:_content-type: REFERENCE
+:description: Example of error handling
+:keywords: kogito, workflow, serverless, error
+:navtitle: Example of error handling
+// :page-aliases:
+
+[id="ref-error-handling-example"]
+
+= Example of error handling
+
+The workflow in the link:{kogito_sw_examples_url}/serverless-workflow-error-quarkus[`serverless-workflow-error-quarkus`] example application illustrate the usage of the error handling mechanism.
+
+.Example of error handling
+image::core/error_handling.png[]
+
+The workflow accepts an integer number as the input model. When the workflow starts, it invokes the link:{kogito_sw_examples_url}/serverless-workflow-error-quarkus/src/main/java/org/kie/kogito/examples/EvenService.java[`isEven` Java service], which accepts that integer number as a parameter. This service throws an `IllegalArgumentException` exception if the integer number is odd. This means that if the integer number is even, the workflow transitions to the `even` state, however, if the integer number is odd, the workflow transitions to the `odd` state, resulting in a different model output.
+
+.Example `checkEven` state
+[source,json]
+----
+{
+      "name": "checkEven",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "checkEvenAction",
+          "functionRef": {
+            "refName": "isEven",
+            "arguments": {
+              "number": "$.number"
+            }
+          }
+        }
+      ],
+      "transition": "even",
+      "onErrors": [
+        {
+          "errorRef": "odd number",
+          "transition": "odd"
+        }
+      ]
+    }
+----
+
+The workflow defines a function that invokes the `isEven` method of `org.kie.kogito.examples.EvenService` class. This function uses a link:{spec_doc_url}#defining-custom-function-types[custom function type], enabling {product_name} to invoke Java methods.
+
+.Example `isEven` function definition
+[source, json]
+----
+{
+    "name": "isEven",
+    "type": "custom",
+    "operation": "service:java:org.kie.kogito.examples.EvenService::isEven"
+}
+----
+
+To handle the error, the workflow defines an `odd number` error which handles any runtime exception. As the `IllegalArgumentException` is a child of `RuntimeException`, if `isEven` method throws the exception, it will be handled.
+
+.Example error definition
+[source, json]
+----
+"errors": [
+    {
+      "name": "odd number",
+      "code": "java.lang.RuntimeException"
+     }
+  ]
+----
+
+The link:{spec_doc_url}#inject-state[Inject] state is used to populate the model with specific JSON payload. Therefore, the even and odd state defines the `message` property as `even` and `odd` respectively.
+
+[source, json]
+----
+   {
+      "name": "even",
+      "type": "inject",
+      "data": {
+        "numberType": "even"
+      },
+      "transition": "finish"
+    },
+    {
+      "name": "odd",
+      "type": "inject",
+      "data": {
+        "numberType": "odd"
+      },
+      "transition": "finish"
+    }
+----
+
+The `finish` state in the `serverless-workflow-error-quarkus` example application displays the model content to the console, so you can verify that the expected message has been set.
+
+[source, json]
+----
+    {
+      "name": "finish",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "printAction",
+          "functionRef": {
+            "refName": "printMessage",
+            "arguments": {
+              "message": "$.numberType"
+            }
+          }
+        }
+      ],
+      "end": {
+        "terminate": "true"
+      }
+    }
+----

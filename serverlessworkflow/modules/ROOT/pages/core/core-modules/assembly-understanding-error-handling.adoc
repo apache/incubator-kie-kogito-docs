@@ -1,0 +1,40 @@
+:_content-type: ASSEMBLY
+:description: Error handling in in Serverless Workflow
+:keywords: kogito, workflow, serverless, error
+:navtitle: Error handling in {product_name}
+:compat-mode!:
+// Metadata:
+:page-aliases:
+// links
+:java_exception_url: https://docs.oracle.com/javase/tutorial/essential/exceptions/index.html
+:java_regex_url: https://docs.oracle.com/javase/tutorial/essential/regex/index.html
+:java_regex_pattern_url: https://docs.oracle.com/javase/tutorial/essential/regex/pattern.html
+
+[id="assembly-understanding-error-handling"]
+
+= Error handling in {product_name}
+
+This document describes how you can handle the errors that might occur in {product_name}.
+
+The Serverless Workflow specification provides an link:{spec_doc_url}#workflow-error-handling[error handling] mechanism, enabling you to handle the errors that might happen during the interactions between the workflow and external systems.
+
+When an error occurs, it changes the regular workflow sequence. In such cases, a workflow state transitions to an alternative state that can potentially handle the error, instead of transitioning to the predefined state.
+
+Note that error definition for a workflow is optional. If error handling is not defined, then the workflow execution is aborted when an error occurs. As a developer, you can consider the error handling in {product_name} as a `try-catch` or a `goto` construct.
+
+* <<con-error-definition,Error definition>>
+* <<ref-error-handling-example,Example of error handling>>
+
+include::con-error-definition.adoc[leveloffset=+1]
+include::ref-error-handling-example.adoc[leveloffset=+1]
+
+== Additional resources
+
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
+
+== _**Found an issue?**_
+
+If you find an issue or any misleading information, please feel free to report it link:{docs_issues_url}[here].
+We really appreciate it!
+
+//include::../../pages/_common-content/report-issue.adoc[]
