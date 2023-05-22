@@ -1,0 +1,57 @@
+:_content-type: PROCEDURE
+:description: Running a parallel workflow
+:keywords: kogito, workflow, quarkus, serverless, parallelism, parallel workflow
+:navtitle: Running a parallel workflow
+:compat-mode!:
+// Metadata:
+:page-aliases:
+
+[id="proc-running-parallel-workflow"]
+
+= Running a parallel workflow
+
+After you create a workflow that performs a series of parallel tasks, you can run the workflow.
+
+.Prerequisites
+
+* A parallel workflow is created.
++
+For more information, see <<proc-parallel-creating-the-workflow, Creating a parallel workflow>>.
+
+* The workflow application is up and running.
++
+--
+You can start the workflow application in development mode by using the following command:
+[source,shell]
+----
+mvn quarkus:dev
+----
+--
+
+.Procedure
+. To run the created parallel workflow, send a request to the `/parallel` endpoint as shown in the following example request:
++
+--
+.Example request
+[source,shell]
+----
+curl -X 'POST' \
+  'http://localhost:8080/parallel' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{}'
+----
+
+.Example response
+[source,json]
+----
+{"id":"358f97ba-f0f9-4f25-86cc-4b35e85c2406","workflowdata":{"result":"ABC"}}
+----
+
+[NOTE]
+====
+The `"result":"ABC"` in the previous example response might be different in each request since the branches are running in parallel and the execution order of the branches is unpredictable.
+====
+
+Note that the parallel workflow data shows the concatenated string as result.
+--
