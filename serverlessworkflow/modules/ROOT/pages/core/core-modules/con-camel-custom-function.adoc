@@ -1,0 +1,105 @@
+:_content-type: CONCEPT
+:description: Camel custom function
+:keywords: kogito, workflow, serverless, cncf, specification, functions, camel
+:navtitle: Camel custom function
+// :page-aliases:
+
+[id="con-camel-custom-function"]
+
+= Camel custom function
+
+Kogito supports the link:{camel_url}[Camel Routes] functions within an Apache Maven project, in which you define your workflow service.
+
+[NOTE]
+====
+This section briefly exemplifies how to define and use Camel Routes within your workflow application. For more information, see the xref:integrations/camel-routes-integration.adoc[Integrating with Camel Routes].
+====
+
+== Function definition
+
+The following example shows the declaration of a Camel function:
+
+[source,json]
+----
+{
+  "functions": [
+    {
+      "name": "myCamelEndpoint", <1>
+      "type": "custom",  <2>
+      "operation": "camel:direct:myendpoint" <3>
+    }
+  ]
+}
+----
+
+<1> `myCamelEndpoint` is the function name
+<2> `custom` is the function type
+<3> `camel:direct:myendpoint` is the custom operation definition. In this definition, `camel` is the reserved keyword followed by the `direct` endpoint. link:{camel_extensions_url}/direct.html[Camel Direct] is the only supported consumer by {product_name}. Finally, `myendpoint` is the endpoint URI name found in the route within your project's context.
+
+== Function arguments
+
+The Camel function arguments must follow a specific structure when passing data from the workflow state to the route. The `body` and `headers` are the only attributes supported in the function arguments. Both are optional if you need to call the Camel routes without arguments. The only constraint is that you can not call a Camel route with only `headers`.
+
+The following examples display valid argument structures for Camel function arguments:
+
+.Example calling a Camel route using `body` and `headers`
+[source,json]
+----
+{
+  "functionRef": {
+    "refName": "myCamelEndpoint",
+    "arguments": {
+      "body": "${ .my.body.data }", <1>
+      "headers": { <2>
+        "key1": "${ .my.value }",
+        "key2": "${ .my.other.value }"
+      }
+    }
+  }
+}
+----
+
+<1> `jq` expression filtering the state data for the `body` argument.
+<2> JSON key/value pair for the `headers` argument. A `jq` expression returning the same JSON object is also valid.
+
+.Example calling a Camel route using `body`
+[source,json]
+----
+{
+  "functionRef": {
+    "refName": "myCamelEndpoint",
+    "arguments": {
+      "body": "${ .my.body.data }"
+    }
+  }
+}
+----
+
+.Example calling a Camel route without arguments
+[source,json]
+----
+{
+  "functionRef": {
+    "refName": "myCamelEndpoint"
+  }
+}
+----
+
+.Example calling a Camel route with only one argument
+[source,json]
+----
+{
+  "functionRef": {
+    "refName": "myCamelEndpoint",
+    "arguments": "${ .my.body.data }"
+  }
+}
+----
+
+In this last example, the `jq` expression result is used as the `body` argument in a way to simplify the definition.
+
+== Function return values
+
+The Camel route is responsible to produce the return value in a way that the workflow can understand. The following are considered valid objects:
+
+include::../../pages/_common-content/camel-valid-responses.adoc[]

@@ -1,0 +1,145 @@
+:_content-type: CONCEPT
+:description: Java custom function
+:keywords: kogito, workflow, serverless, cncf, specification, functions, java
+:navtitle: Java custom function
+// :page-aliases:
+
+[id="con-java-custom-function"]
+
+= Java custom function
+
+{product_name} supports the `java` functions within an Apache Maven project, in which you define your workflow service.
+
+== Function definition
+
+The following example shows the declaration of a `java` function:
+
+.Example of a `java` function declaration
+[source,json]
+----
+{
+  "functions": [
+    {
+      "name": "myFunction", <1>
+      "type": "custom", <2>
+      "operation": "service:java:com.acme.MyInterfaceOrClass::myMethod" <3>
+    }
+  ]
+}
+----
+
+<1> `myFunction` is the function name
+<2> `custom` is the function type
+<3> `service:java:com.acme.MyInterfaceOrClass::myMethod` is the custom operation definition. In the custom operation definition, `service` is the reserved operation keyword followed by the `java` keyword. `com.acme.MyInterfaceOrClass` is the FQCN (Fully Qualified Class Name) of the interface or implementation class followed by the method name (`myMethod`).
+
+
+== Function arguments
+
+Your method interface signature must copy the arguments passed by the workflow.
+
+For example, if you invoke a function using one argument as follows, then your method signature assumes that the `number` model variable is an integer:
+
+.Example of a `java` function reference with one argument
+[source,json]
+----
+{
+ "functionRef": {
+   "refName": "myFunction",
+   "arguments": {
+     "number": "${.number}"
+   }
+ }
+}
+----
+
+
+.Example of a `java` function implementation
+[source,java]
+----
+public class MyInterfaceOrClass {
+
+  public void myMethod(int number) {
+        if (number % 2 != 0) {
+            throw new IllegalArgumentException("Odd situation");
+        }
+    }
+}
+----
+
+As a particular case, if you provide no argument in the workflow definition, the signature of the Java method might include a link:https://github.com/FasterXML/jackson[Jackson's] `JsonNode` parameter. This means that the Java method expects the entire workflow model as input.
+
+When using the following example function reference with no arguments, and if the method signature contains a `JsonNode` parameter, the entire workflow model is passed when the method call is performed.
+
+.Example of a `java` function reference with no arguments
+[source,json]
+----
+{
+  "functionRef": {
+    "refName": "myFunction"
+   }
+}
+----
+
+
+.Example of a `java` function implementation
+[source,java]
+----
+public class MyInterfaceOrClass {
+
+    public JsonNode myMethod(JsonNode workflowData) {
+        // do whatever I want with the Workflow model
+        ......
+        // return the modified content:
+        return workflowData;
+    }
+}
+----
+
+== Function return values
+
+If your method returns a `JsonNode`, the content of that node is merged into the workflow model (you can use an action data filter to control what is merged).
+
+The same occurs if your method returns any Java `Object` descendant that is not a primitive wrapper, the Java object is recursively converted to a JSON object and the result is merged into the workflow model (you can use an action data filter to control what is merged).
+
+If your method returns a primitive type or their corresponding wrapper object (int, boolean, long, and so on), then the primitive value is added to the workflow model with the name `response` (you can change that name using an action data filter).
+
+If your method returns Java collections, it is converted to a JSON array and added to the workflow model with the name `response` (you can change that name using an action data filter).
+
+== Function accessing Kogito context
+
+If you need access to process contextual information (for example, Kogito process instance ID) inside your Java service, you can add a `KogitoProcessContext` parameter as the last one in the method signature.
+
+Therefore, if you need to do so, you can update the signature of methods from previous sections.
+
+.Example of a function accessing Kogito context
+[source,java]
+----
+public class MyInterfaceOrClass {
+public JsonNode myMethod(JsonNode workflowData, KogitoProcessContext context ) {
+        // do whatever I want with the JsonNode and the Kogito process context
+        ......
+        // return the modified content:
+        return workflowData;
+    }
+}
+----
+
+.Example of a function accessing Kogito context
+[source,java]
+----
+public class MyInterfaceOrClass {
+
+
+    public void myMethod(int number, KogitoProcessContext context) {
+        if (number % 2 != 0) {
+            throw new IllegalArgumentException("Odd situation");
+        }
+    }
+}
+----
+
+
+[WARNING]
+====
+Avoid using `java` functions to call the external services, instead, you can use the xref:service-orchestration/orchestration-of-openapi-based-services.adoc[services orchestration features].
+====

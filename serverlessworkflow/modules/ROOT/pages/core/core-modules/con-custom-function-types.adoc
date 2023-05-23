@@ -1,0 +1,146 @@
+:_content-type: CONCEPT
+:description: Custom function types
+:keywords: kogito, workflow, serverless, cncf, specification, functions, types
+:navtitle: Custom function types
+// :page-aliases:
+
+[id="con-custom-function-types"]
+
+= Custom function types
+
+You can add your custom types by using the Kogito add-on mechanism. As predefined custom types like xref:core/custom-functions-support.adoc#con-func-sysout[`sysout`] or xref:core/custom-functions-support.adoc#con-func-java[`java`], the custom type identifier is the prefix of the operation field of the function definition.
+
+Kogito add-ons relies on the link:{quarkus_guides_base_url}/writing-extensions[Quarkus extensions] mechanism. And the add-on consists of at least two Maven projects:
+
+- The deployment module, which is responsible for generating the code required for the extension to work.
+- The runtime module, which includes the non-generated classes that are required for the extension to work.
+
+In the case of a Serverless Workflow custom type, following are the roles of the modules:
+
+- *The deployment project*
++
+The deployment project is expected to configure the work item handler used during runtime to perform the logic associated with the custom type.
+It must contain a Java class that inherits from `WorkItemTypeHandler`. Its responsibilities are to indicate the custom type identifier (the operation prefix, as indicated earlier) and to set up the `WorkItemNodeFactory` instance passed as a parameter of the `fillWorkItemHandler` method. That instance is included in the Kogito process definition for that Workflow. As a part of this setup, you must indicate the name of the  `WorkItemNodeFactory`. You might also provide any relevant metadata for that handler if needed.
+
+- *The runtime project*
++
+The runtime project consists of a `WorkflowWorkItemHandler` implementation, which name must match with the one provided to `WorkItemNodeFactory` during the deployment phase, and a `WorkItemHandlerConfig` bean that registers that handler with that name.
++
+When a Serverless Workflow function is called, Kogito identifies the proper `WorkflowWorkItemHandler` instance to be used for that function type (using the handler name associated with that type by the deployment project) and then invokes the `internalExecute` method. The `Map` parameter contains the function arguments defined in the workflow, and the `WorkItem` parameter contains the metadata information added to the handler by the deployment project. Hence, the `executeWorkItem` implementation has an access to all the information needed to perform the computational logic intended for that custom type.
+
+== Custom function type example
+
+Assuming you want to interact, from a workflow file, with a legacy RPC server as the one defined in link:{kogito_sw_examples_url}/serverless-workflow-custom-type/serverless-workflow-custom-rpc-server[this project]. This legacy server supports four simple arithmetic operations: add, minus, multiply and divide, which can be invoked using a custom RPC protocol.
+
+Since this is an uncommon protocol, the workflow cannot handle them by using any of the predefined Serverless Workflow function types. The available options are to use a Java service, which invokes a Java class that knows how to interact with the server, or define a custom type that knows how to interact with the service.
+
+Using the recent approach, you can write a link:{kogito_sw_examples_url}/serverless-workflow-custom-type/serverless-workflow-custom-type-example/src/main/resources/customType.sw.json[workflow file] defining this function.
+
+.RPC Custom function definition example
+
+[source,json]
+----
+ "functions": [
+    {
+      "name": "division",
+      "type": "custom",
+      "operation": "rpc:division"
+    }
+  ],
+----
+
+The `operation` starts with `rpc`, which is the custom type identifier, and continues with `division`, which denotes the operation that will be executed in the legacy server.
+
+A Kogito addon that defines the `rpc` custom type must be developed for this function definition to be identified. It is consist of a link:{kogito_sw_examples_url}/serverless-workflow-custom-type/serverless-workflow-custom-rpc-deployment[deployment project] and a link:{kogito_sw_examples_url}/serverless-workflow-custom-type/serverless-workflow-custom-rpc[runtime project].
+
+The deployment project is responsible for extending the link:{kogito_sw_examples_url}/serverless-workflow-custom-type/serverless-workflow-custom-rpc-deployment/src/main/java/org/kie/kogito/examples/sw/services/RPCCustomTypeHandler.java[`WorkItemTypeHandler`] and setup the `WorkItemNodeFactory` as follows:
+
+.Example of the RPC function Java implementation
+
+[source,java]
+----
+
+import static org.kie.kogito.examples.sw.custom.RPCCustomWorkItemHandler.NAME;
+import static org.kie.kogito.examples.sw.custom.RPCCustomWorkItemHandler.OPERATION;
+
+public class RPCCustomTypeHandler extends WorkItemTypeHandler{
+
+
+    @Override
+    public String type() {
+        return "rpc";
+    }
+
+    @Override
+    protected <T extends RuleFlowNodeContainerFactory<T, ?>> WorkItemNodeFactory<T> fillWorkItemHandler(Workflow workflow,
+                                                                                                        ParserContext context,
+                                                                                                        WorkItemNodeFactory<T> node,
+                                                                                                        FunctionDefinition functionDef) {
+        return node.workName(NAME).metaData(OPERATION, trimCustomOperation(functionDef));
+    }
+}
+
+----
+
+This example setups the name of the `KogitoWorkItemHandler`, adds a metadata key with the name of the remote operation (extracted from the Serverless Workflow function definition operation property), and declares that the custom type is named as `rpc`.
+
+The Runtime project contains the link:{kogito_sw_examples_url}/serverless-workflow-custom-type/serverless-workflow-custom-rpc/src/main/java/org/kie/kogito/examples/sw/custom/RPCCustomWorkItemHandler.java[KogitoWorkItemHandler] and the link:{kogito_sw_examples_url}/serverless-workflow-custom-type/serverless-workflow-custom-rpc/src/main/java/org/kie/kogito/examples/sw/custom/RPCCustomWorkItemHandlerConfig.java[WorkItemHandlerConfig] implementations.
+
+As expected, `RPCCustomWorkItemHandler` implements the `internalExecute` method as follows:
+
+.Example of implementation of the `internalExecute` method
+
+[source, java]
+----
+ @Override
+protected Object internalExecute(KogitoWorkItem workItem, Map<String, Object> parameters)  {
+    try {
+        Iterator<?> iter = parameters.values().iterator();
+        Map<String, Object> metadata = workItem.getNodeInstance().getNode().getMetaData();
+        String operationId = (String) metadata.get(OPERATION);
+        if (operationId == null) {
+            throw new IllegalArgumentException ("Operation is a mandatory parameter");
+        }
+        return CalculatorClient.invokeOperation((String)metadata.getOrDefault(HOST,"localhost"), (int) metadata.getOrDefault(PORT, 8082),
+                OperationId.valueOf(operationId.toUpperCase()), (Integer)iter.next(), (Integer)iter.next());
+    } catch (IOException io ) {
+        throw new UncheckedIOException(io);
+    }
+}
+----
+
+The implementation invokes the link:{kogito_sw_examples_url}/serverless-workflow-custom-type/serverless-workflow-custom-rpc-server/src/main/java/org/kie/kogito/examples/sw/custom/CalculatorClient.java#L45-L67[`CalculatorClient.invokeOperation`], a java static method that knows how to interact with the legacy service. You can obtain the operation parameter from the `WorkItem` metadata. The dividend and the divisor parameters are obtained from the Map parameter, which contains the function arguments defined in the workflow file.
+
+.Example of the custom function call from the workflow definition
+
+[source, json]
+----
+{
+  "actions":[
+    {
+      "functionRef":{
+        "refName":"division",
+        "arguments":{
+          "dividend":".dividend",
+          "divisor":".divisor"
+        }
+      }
+    }
+  ]
+}
+----
+
+The `RPCCustomWorkItemHandlerConfig` is a bean that registers the handler name.
+
+.Example of injecting the custom`WorkItemHandler`
+
+[source, java]
+----
+@Inject
+RPCCustomWorkItemHandler handler;
+
+@PostConstruct
+void init () {
+    register(handler.getName(),handler);
+}
+----

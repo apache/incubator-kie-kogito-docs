@@ -1,0 +1,221 @@
+:_content-type: CONCEPT
+:description: Knative custom function
+:keywords: kogito, workflow, serverless, cncf, specification, functions, Knative
+:navtitle: Knative custom function
+// :page-aliases:
+
+[id="con-knative-custom-function"]
+
+= Knative custom function
+
+{product_name} provides an implementation of a custom function through the `knative-serving` add-on to invoke Knative services. It allows you to have a static URI, defining a Knative service, which is used to perform HTTP requests. The Knative service defined in the URI is queried in the current Knative cluster and translated to a valid URL.
+
+[NOTE]
+====
+This section briefly exemplifies how to define and use Knative custom functions within your workflow application. For more information, see xref:integrations/custom-functions-knative.adoc[Invoking Knative services from Serverless Workflow].
+====
+
+== Function definition
+
+Given the following deployed Knative service:
+
+[source,bash]
+----
+$ kn service list
+NAME                              URL                                                                      LATEST                                  AGE     CONDITIONS   READY   REASON
+custom-function-knative-service   http://custom-function-knative-service.default.10.109.169.193.sslip.io   custom-function-knative-service-00001   3h16m   3 OK / 3     True
+----
+
+You can declare a {product_name} custom function using the Knative service name, like the following:
+
+[source,json]
+----
+  "functions": [
+    {
+      "name": "greet", <1>
+      "type": "custom", <2>
+      "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service?path=/plainJsonFunction", <3>
+    }
+  ]
+----
+
+<1> `greet` is the function name
+<2> `custom` is the function type
+<3> In `operation` you set the coordinates of the Knative service
+
+The above function will send a `POST` request to the http://custom-function-knative-service.default.10.109.169.193.sslip.io/plainJsonFunction URL. If you don't specify a path, {product_name} will use the root path (/).
+
+[NOTE]
+====
+`GET` requests are not yet supported.
+====
+
+=== About namespaces
+
+Note that in the above example, you declared only the name of the service you wanted to call, but not a namespace. In this case, {product_name} will look for a Knative service in the same namespace the workflow service is running.
+
+In case you need to call a Knative service in a different namespace, you can declare the function as:
+
+[source,json]
+----
+  "functions": [
+    {
+      "name": "greet",
+      "type": "custom",
+      "operation": "knative:services.v1.serving.knative.dev/my_different_namespace/custom-function-knative-service?path=/plainJsonFunction"
+    }
+  ]
+----
+
+In the above example, {product_name} will look for the `custom-function-knative-service` in the `my_different_namespace` namespace.
+
+== Function arguments
+
+In case you need to send a payload in the request, you can add it to `arguments` in `functionRef`.
+
+=== Sending a regular JSON object
+
+You must send the following JSON object as the payload:
+
+[source,json]
+----
+{
+  "product_id": ".product_id",
+  "customer_name": ".customer_name"
+}
+----
+
+You must declare a `functionRef` like the following.
+
+[source,json]
+----
+  "states": [
+    {
+      "name": "invokeFunction",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "greet",
+            "arguments": { <1>
+              "product_id": ".product_id",
+              "customer_name": ".customer_name"
+            }
+          }
+        }
+      ],
+      "end": true
+    }
+  ]
+----
+<1> The request payload is set in `arguments`.
+
+=== Sending a CloudEvent
+
+By default, {product_name} sends the payload of a Knative function as a regular JSON object and `Content-Type` as `application/json`. However, you can tell {product_name} to send the payload as a CloudEvent. In that case, {product_name} will check if the CloudEvent has all mandatory attributes set and use `application/cloudevents+json; charset=UTF-8` in `Content-Type`.
+
+To tell {product_name} you want to send the payload as a CloudEvent, you must define your function as follows:
+
+[source,json]
+----
+  "functions": [
+    {
+      "name": "greet",
+      "type": "custom",
+      "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service?path=/plainJsonFunction&asCloudEvent=true" <1>
+    }
+  ]
+----
+
+<1> Tells {product_name} to send the payload as a CloudEvent. Default is `false`
+
+[WARNING]
+====
+If you do not set the `asCloudEvent` attribute to `true`,  you can not send a CloudEvent. If you do so, {product_name} will throw an error.
+====
+
+You must send the following CloudEvent as the payload:
+
+[source,json]
+----
+{
+  "specversion" : "1.0",
+  "type" : "com.github.pull_request.opened",
+  "source" : "https://github.com/cloudevents/spec/pull",
+  "subject" : "123",
+  "time" : "2018-04-05T17:31:00Z",
+  "comexampleextension1" : "value",
+  "comexampleothervalue" : 5,
+  "datacontenttype" : "text/xml",
+  "data" : "<much wow=\"xml\"/>"
+}
+----
+
+You must declare a `functionRef` like the following: (Do not forget to set `asCloudEvent` as `true` in function metadata)
+
+[source,json]
+----
+  "states": [
+    {
+      "name": "invokeFunction",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "greet",
+            "arguments": { <1>
+                "specversion" : "1.0",
+                "type" : "com.github.pull_request.opened",
+                "source" : "https://github.com/cloudevents/spec/pull",
+                "subject" : "123",
+                "time" : "2018-04-05T17:31:00Z",
+                "comexampleextension1" : "value",
+                "comexampleothervalue" : 5,
+                "datacontenttype" : "text/xml",
+                "data" : "<much wow=\"xml\"/>"
+            }
+          }
+        }
+      ],
+      "end": true
+    }
+  ]
+----
+<1> The CloudEvent is set in `arguments`.
+
+[NOTE]
+====
+{product_name} generates a CloudEvent ID based on the `source` and the workflow instance ID. In case you decide to set an ID, {product_name} will use it and you must ensure it's unique. Refer to the following example on how to set a CloudEvent ID:
+====
+
+.Setting a CloudEvent ID
+[source,json]
+----
+"arguments": {
+    "specversion" : "1.0",
+    "id": "a_unique_id_42", <1>
+    "type" : "com.github.pull_request.opened",
+    "source" : "https://github.com/cloudevents/spec/pull",
+    "subject" : "123",
+    "time" : "2018-04-05T17:31:00Z",
+    "comexampleextension1" : "value",
+    "comexampleothervalue" : 5,
+    "datacontenttype" : "text/xml",
+    "data" : "<much wow=\"xml\"/>"
+}
+----
+<1> The CloudEvent ID.
+
+== Configurations
+
+=== Request timeout
+
+By default, the Knative service must respond within 10 seconds. You can use the `kogito.addon.knative-serving.request-timeout` property to configure this value.
+
+For instance, if you want to reduce the request timeout to 5 seconds, you must add the following to your `application.properties` file:
+
+[source,properties]
+----
+kogito.addon.knative-serving.request-timeout=5000 <1>
+----
+<1> Time in milliseconds

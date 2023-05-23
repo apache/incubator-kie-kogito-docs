@@ -1,0 +1,54 @@
+:_content-type: CONCEPT
+:description: Sysout custom function
+:keywords: kogito, workflow, serverless, cncf, specification, functions, sysout
+:navtitle: Sysout custom function
+// :page-aliases:
+
+[id="con-sysout-custom-function"]
+
+= Sysout custom function
+
+You can use the `sysout` function for logging as shown in the following example:
+
+.Example of `sysout` function definition
+[source,json]
+----
+{
+  "functions": [
+    {
+      "name": "logInfo",
+      "type": "custom",
+      "operation": "sysout:INFO"
+    }
+  ]
+}
+----
+
+The string after the `:` is optional and is used to indicate the log level.  The possible values are TRACE, DEBUG, INFO, WARN, and ERROR. If not present, INFO is considered by default.
+
+In the `state` definition, you can call the same `sysout` function as shown in the following example:
+
+.Example of a `sysout` function reference within a `state`
+[source,json]
+----
+{
+  "states": [
+    {
+      "name": "myState",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "printAction",
+          "functionRef": {
+            "refName": "logInfo",
+            "arguments": {
+              "message": "\"Workflow model is \\(.)\""
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+----
+`message` argument can be a jq expression or a jq string using interpolation, as in the example above
