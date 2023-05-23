@@ -1,0 +1,242 @@
+:_content-type: ASSEMBLY
+:description: Using timeouts in {product_name}
+:keywords: kogito, workflow, serverless, timeout, timer, expiration
+:navtitle: Timeouts in {product_name}
+:compat-mode!:
+// Metadata:
+:page-aliases:
+
+[id="assembly-timeout-support"]
+
+= Timeouts in {product_name}
+
+Serverless Workflow specification defines a wide amount of possible link:{spec_doc_url}#workflow-timeout-definition[timeout configurations].
+Among them, {product_name} currently supports workflow and event timeouts.
+
+Regardless of its application scope (workflow or state), you can not define the timeouts as a specific point in time, but they should be an amount of time, a duration, which is considered to start when the referred scope becomes active. Timeouts use the link:https://en.wikipedia.org/wiki/ISO_8601[`ISO 8601` data and time standard] to specify a duration of time.
+It follows the format `PnDTnHnMn.nS` with days considered to be exactly 24 hours.
+For instance, `PT15M` configures 15 minutes, and `P2DT3H4M` defines 2 days, 3 hours and 4 minutes.
+
+== Workflow timeout
+
+You can set up the maximum amount of time a workflow might be running before being canceled. This is configured in the header section of the flow, by using the link:{spec_doc_url}#workflowexectimeout-definition[WorkflowExecTimeout definition]. Only the `duration` property is currently implemented.
+Once canceled, the workflow is considered to be finished and will not be accessible through a GET request anymore. So it behaves as if the interrupt was `true` by default.
+
+For example, in order to cancel the workflow after an hour of execution, you might add the following snippet.
+
+.Example of workflow timeout
+[source,json]
+[source,json]
+----
+"timeouts": {
+    "workflowExecTimeout": "PT1H"
+}
+----
+
+== Event timeout
+
+When you define a state in a serverless workflow, you can use the `timeouts` property to configure the maximum time to complete this state.
+When that time is overdue, the state is considered timed-out, and the engine continues the execution from this state. The execution flow depends on the state type, for instance,
+a transition to a next state.
+All the properties you can use to configure state timeouts are described in the link:{spec_doc_url}#event-timeout-definition[Serverless Workflow specification].
+
+Event-based states can use the sub-property `eventTimeout` to configure the maximum time to wait for an event to arrive.
+
+
+=== Callback state timeout
+Callback state can be used when you need to execute an action, in general to call an external service, and wait for an asynchronous response in form of an event, the callback.
+
+Once the response event is consumed, the workflow continues the execution, in general moving to the next state defined in the `transition` property. See more on xref:eventing/working-with-callbacks.adoc[Callback state in {product_name}].
+
+Since the callback state halts the execution util the event is consumed, you can define an `eventTimeout` for it, and in case the event does not arrive in the defined duration time, the workflow continues the execution moving to the next state defined in the transition, see the <<callback-state, example>>.
+
+[#callback-state]
+.Example of callback state with timeout
+[source,json]
+----
+{
+ "name": "CallbackState",
+ "type": "callback",
+ "action": {
+   "name": "callbackAction",
+   "functionRef": {
+     "refName": "callbackFunction",
+     "arguments": {
+       "input": "${\"callback-state-timeouts: \" + $WORKFLOW.instanceId + \" has executed the callbackFunction.\"}"
+     }
+   }
+ },
+ "eventRef": "callbackEvent",
+ "transition": "CheckEventArrival",
+ "onErrors": [
+   {
+     "errorRef": "callbackError",
+     "transition": "FinalizeWithError"
+   }
+ ],
+ "timeouts": {
+   "eventTimeout": "PT30S"
+ }
+}
+----
+
+=== Switch state timeout
+
+The switch state can be used when you need to take an action based on conditions, defined with the link:{spec_doc_url}#switch-state-event-conditions[eventConditions] property, where the workflow execution waits to make a decision depending on the events to be consumed and matched, defined through link:{spec_doc_url}#event-definition[event definition].
+
+In this situation, you can define an event timeout, that controls the maximum time to wait for an event to match the conditions, if this time is expired, the workflow moves to the state defined in the `defaultCondition` property of the switch state, as you can see in the <<switch-state, example>>.
+
+See more details about this state on the link:{spec_doc_url}#switch-date[Serverless Workflow specification].
+
+[#switch-state]
+.Example of switch state with timeout
+[source,json]
+----
+{
+    "name": "ChooseOnEvent",
+    "type": "switch",
+    "eventConditions": [
+    {
+        "eventRef": "visaApprovedEvent",
+        "transition": "ApprovedVisa"
+    },
+    {
+        "eventRef": "visaDeniedEvent",
+        "transition": "DeniedVisa"
+    }
+    ],
+        "defaultCondition": {
+        "transition": "HandleNoVisaDecision"
+    },
+        "timeouts": {
+        "eventTimeout": "PT5S"
+    }
+}
+----
+
+=== Event state timeout
+
+The `event` state is used to wait for one or more events to be received by the workflow and then continue the execution.
+If the event state is a starting state, a new workflow instance is created.
+
+[NOTE]
+====
+The event state is not supported as a starting state if the `exclusive` flag is set to `false`, therefore timeout is not supported in this case.
+====
+
+The `timeouts` property is used for this state to configure the maximum time the workflow should wait for the defined events to arrive.
+
+If this time is exceeded and the events are not received, the workflow moves to the state defined in the `transition` property or ends the workflow instance without performing any actions in case of an end state.
+
+You can see this in the <<event-state, example>>.
+
+For more information about event state timeout, see link:{spec_doc_url}#event-timeout-definition[Serverless Workflow specification].
+
+[#event-state]
+.Example of event state with timeout
+[source,json]
+----
+{
+  "name": "WaitForEvent",
+  "type": "event",
+  "onEvents": [
+    {
+      "eventRefs": [
+        "event1"
+      ],
+      "eventDataFilter": {
+        "data": "${ \"The event1 was received.\" }",
+        "toStateData": "${ .exitMessage }"
+      },
+      "actions": [
+        {
+          "name": "printAfterEvent1",
+          "functionRef": {
+            "refName": "systemOut",
+            "arguments": {
+              "message": "${\"event-state-timeouts: \" + $WORKFLOW.instanceId + \" executing actions for event1.\"}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "eventRefs": [
+        "event2"
+      ],
+      "eventDataFilter": {
+        "data": "${ \"The event2 was received.\" }",
+        "toStateData": "${ .exitMessage }"
+      },
+      "actions": [
+        {
+          "name": "printAfterEvent2",
+          "functionRef": {
+            "refName": "systemOut",
+            "arguments": {
+              "message": "${\"event-state-timeouts: \" + $WORKFLOW.instanceId + \" executing actions for event2.\"}"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "timeouts": {
+    "eventTimeout": "PT30S"
+  },
+  "transition": "PrintExitMessage"
+}
+----
+
+=== Deploying a timed-based workflow
+
+In order to deploy a workflow that contains timeouts or any other timer-based action, it is necessary to have a job service running in your environment, which is an external service responsible to control the workflows timers, see the xref:supporting-services/jobs-service.adoc#job-service[job service guide] for more information.
+In the <<timeout-example, timeout example>> you can see the details of how set up a Knative infrastructure with the workflow and job service running.
+
+[[job-addon-configuration]]
+==== Addon configuration in the workflow runtime
+
+The communication from the workflow application with Job Service is done through an addon, which is responsible for publishing and consuming events related to timers.
+When you run the workflow as a Knative service, you must add the `kogito-addons-quarkus-jobs-knative-eventing` to your project and provide the proper configuration.
+
+* Dependency in the `pom.xml`:
+
+.Callback state example with timeout
+[source, xml]
+----
+<dependency>
+    <groupId>org.kie.kogito</groupId>
+    <artifactId>kogito-addons-quarkus-jobs-knative-eventing</artifactId>
+</dependency>
+----
+
+* Configuration parameters:
+
+[[workflow-application-configuration-parameters]]
+.Callback state example with timeout
+[source, properties]
+----
+# Events produced by kogito-addons-quarkus-jobs-knative-eventing to program the timers on the Job Service.
+mp.messaging.outgoing.kogito-job-service-job-request-events.connector=quarkus-http
+mp.messaging.outgoing.kogito-job-service-job-request-events.url=${K_SINK:http://localhost:8280/jobs/events}
+mp.messaging.outgoing.kogito-job-service-job-request-events.method=POST
+----
+
+[NOTE]
+====
+The `K_SINK` variable used in the URL configuration for the outgoing channel in the
+<<workflow-application-configuration-parameters, configuration>>, is injected by Knative Eventing, more information on
+xref:eventing/consume-produce-events-with-knative-eventing.adoc[Consuming and producing events on Knative Eventing].
+====
+
+[#timeout-example]
+== Timeout showcase example
+You can check xref:use-cases/timeout-showcase-example.adoc[Timeout example in {product_name}]
+to see how to use and configure workflows with timeouts.
+
+== Additional resources
+
+* xref:eventing/working-with-callbacks.adoc[Callback state in {product_name}]
+* xref:use-cases/timeout-showcase-example.adoc[Timeout example in {product_name}]
+
+include::../../pages/_common-content/report-issue.adoc[]
