@@ -102,4 +102,10 @@ In this last example, the `jq` expression result is used as the `body` argument 
 
 The Camel route is responsible to produce the return value in a way that the workflow can understand. The following are considered valid objects:
 
-include::../../pages/_common-content/camel-valid-responses.adoc[]
+:page-partial:
+1. A string that contains a valid JSON object
+2. A valid Java bean that can be serialized to JSON
+3. A Jackson's `JsonNode` object
+4. Any primitive type (Integer, Float, Decimal, String, etc)
+
+//include::../../pages/_common-content/camel-valid-responses.adoc[]
