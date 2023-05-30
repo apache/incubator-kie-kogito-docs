@@ -491,39 +491,40 @@ metadata:
     sw.kogito.kie.org/version: 0.0.1
     sw.kogito.kie.org/profile: dev <i class="conum" data-value="1"></i><b>(1)</b>
 spec: <i class="conum" data-value="2"></i><b>(2)</b>
-  start: ChooseOnLanguage
-  functions:
-    - name: greetFunction
-      type: custom
-      operation: sysout
-  states:
-    - name: ChooseOnLanguage
-      type: switch
-      dataConditions:
-        - condition: "${ .language == \"English\" }"
-          transition: GreetInEnglish
-        - condition: "${ .language == \"Spanish\" }"
-          transition: GreetInSpanish
-      defaultCondition: GreetInEnglish
-    - name: GreetInEnglish
-      type: inject
-      data:
-        greeting: "Hello from JSON Workflow, "
-      transition: GreetPerson
-    - name: GreetInSpanish
-      type: inject
-      data:
-        greeting: "Saludos desde JSON Workflow, "
-      transition: GreetPerson
-    - name: GreetPerson
-      type: operation
-      actions:
-        - name: greetAction
-          functionRef:
-            refName: greetFunction
-            arguments:
-              message:  ".greeting+.name"
-      end: true</code></pre>
+  flow:
+    start: ChooseOnLanguage
+    functions:
+      - name: greetFunction
+        type: custom
+        operation: sysout
+    states:
+      - name: ChooseOnLanguage
+        type: switch
+        dataConditions:
+          - condition: "${ .language == \"English\" }"
+            transition: GreetInEnglish
+          - condition: "${ .language == \"Spanish\" }"
+            transition: GreetInSpanish
+        defaultCondition: GreetInEnglish
+      - name: GreetInEnglish
+        type: inject
+        data:
+          greeting: "Hello from JSON Workflow, "
+        transition: GreetPerson
+      - name: GreetInSpanish
+        type: inject
+        data:
+          greeting: "Saludos desde JSON Workflow, "
+        transition: GreetPerson
+      - name: GreetPerson
+        type: operation
+        actions:
+          - name: greetAction
+            functionRef:
+              refName: greetFunction
+              arguments:
+                message:  ".greeting+.name"
+        end: true</code></pre>
 </div>
 </div>
 <div class="colist arabic">
