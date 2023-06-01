@@ -8,6 +8,7 @@
 :registry: OpenShift's
 :cluster_kind: OpenShift with Red Hat OpenShift Serverless is ready
 :k8s_registry: image-registry.openshift-image-registry.svc:5000
+:knative_procedure: link:https://docs.openshift.com/serverless/1.28/install/installing-knative-eventing.html[Knative Eventing]
 :default_namespace: kogito-serverless
 :command_line_tool: oc
 :command_line_tool_name: OpenShift CLI
@@ -18,31 +19,22 @@
 :ocp_local_url: https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.17
 :ocp_local_url_install: https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.17/html/getting_started_guide/installation_gsg
 :ocp_cli_url: https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html#cli-about-cli_cli-developer-commands
+:ocp_swf_install_url: https://docs.openshift.com/serverless/1.29/install/install-serverless-operator.html
 :ocp_kn_cli_url: https://docs.openshift.com/container-platform/4.12/serverless/install/installing-kn.html
 :ocp_knative_eventing_url: https://docs.openshift.com/container-platform/4.12/serverless/install/installing-knative-eventing.html
 :ocp_expose_registry_url: https://docs.openshift.com/container-platform/4.12/registry/securing-exposing-registry.html
 :knative_istio_issue_url: https://access.redhat.com/solutions/4791871
 
 
-
-// ###### Note to the reviewers, should we mention OSL? Or just OpenShift Serverless with Knative is enough?
-
 This document describes how to deploy a {product_name} application using a OpenShift cluster, along with a procedure
 to run the OpenShift Serverless, which is based on Knative.
 
 .Prerequisites
-* Your {product_name} application is ready to use. +
-For more information about building the application container, +
-see xref:cloud/quarkus/build-workflow-image-with-quarkus-cli.adoc[Building workflow images using Quarkus CLI].
-* OpenShift CLI is installed.+
-For more information, see link:{ocp_cli_url}[Getting started with the OpenShift CLI].
-* Knative CLI is installed. +
-For more information, see link:{ocp_kn_cli_url}[Install the Knative CLI].
-* Knative workflow CLI is installed. +
-For more information see xref:tooling/kn-plugin-workflow-overview.adoc[Serverless Workflow plug-in for Knative CLI].
-* (Optional) Quarkus CLI is installed. +
-For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
-
+* Your xref:cloud/quarkus/build-workflow-image-with-quarkus-cli.adoc[{product_name} application] is ready to use.
+* link:{ocp_cli_url}[OpenShift CLI] is installed.
+* link:{ocp_kn_cli_url}[Knative CLI] is installed.
+* xref:tooling/kn-plugin-workflow-overview.adoc[Knative workflow CLI] is installed. +
+* (Optional) link:{quarkus_cli_url}[Quarkus CLI] is installed.
 
 For the following steps we will be using the link:{ocp_local_url}[OpenShift Local]. However, the steps described here
 can be used on any OpenShift 4.x version that has support for OpenShift Serverless.
@@ -56,107 +48,18 @@ But, if you do not have or want to have it locally, you can follow these link:{o
 Once you have OpenShift Local running, proceed to the next topic.
 [IMPORTANT]
 ====
-If you are running OpenShift Local on Mac M1 processors, you might not find the OpenShift Serverless Operator available.
+If you are running OpenShift Local on Mac with M1 processors, you might not find the OpenShift Serverless Operator available.
 ====
 
-Before proceeding further, make sure that you have access to the OpenShift cluster with Serverless available.
+Before proceeding further, make sure that you have access to the OpenShift cluster with Serverless available and the
+OpenShift Serverless operator is properly installed, to do this, please follow these link:{ocp_swf_install_url}[steps].
 
-[[proc-verify-serverless-openshift]]
-== Verifying Serverless availability on OpenShift
-
-To make sure OpenShift Serverless is available, it can be checked with the commands below:
-
-.Verify if Serverless CSV is available
-[source,shell]
-----
-oc get csv | grep serverless-operator
-NAME                          DISPLAY                         VERSION     REPLACES                      PHASE
-serverless-operator.v1.28.0   Red Hat OpenShift Serverless    1.28.0      serverless-operator.v1.27.1   Succeeded
-----
-As the CSV (Cluster Resource Definition) is global, we don't need to specify the namespace for this command.
-
-If the result is similar to the one above, we are ready to proceed, otherwise, we can check the `openshift-serverless`
-namespace to see the Pods' status, example:
-
-
-.Verify if Serverless Pods
-[source,shell]
-----
-oc get pods -n openshift-serverless
-NAME                                         READY   STATUS    RESTARTS   AGE
-knative-openshift-5c7f985d55-4zggl           1/1     Running   0          22d
-knative-openshift-ingress-864c78b45c-mshpr   1/1     Running   0          22d
-knative-operator-webhook-8675c49975-k6wvn    1/1     Running   0          22d
-----
-
-When everything is ok, you can go ahead and make sure that the Knative Serving is configured, it is sufficient for this example only. But for more complex examples, you must have the
-link:{ocp_knative_eventing_url}[Knative Eventing] configured as well.
-will be enough, but for more complex examples, you might be required to have the
-link:{ocp_knative_eventing_url}[Knative Eventing] configured as well.
-
-To check if `Knative Serving` is deployed, execute the following command:
-
-[source,shell]
-----
-oc get knativeserving.operator.knative.dev/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
-----
-
-The result should me similar to:
-[source,properties]
-----
-DependenciesInstalled=True
-DeploymentsAvailable=True
-InstallSucceeded=True
-Ready=True
-----
-
-If you got 'False' as a result for the items above, it means that `Serving` is not fully installed, to install, deploy
-the `KnativeServing` definition:
-
-[source,yaml]
-----
-apiVersion: operator.knative.dev/v1beta1
-kind: KnativeServing
-metadata:
-    name: knative-serving
-    namespace: knative-serving
-----
-
-Another way to check if it is running, is to query the Pods from the `knative-serving` namespace:
-
-[source,shell]
-----
-oc get pods  -n knative-serving
-NAME                                     READY   STATUS    RESTARTS   AGE
-activator-5bdfdbcf44-q7cjt               2/2     Running   0          23h
-activator-5bdfdbcf44-wct6w               2/2     Running   0          23h
-autoscaler-6dff958db8-rf6t6              2/2     Running   0          23h
-autoscaler-6dff958db8-zrmp4              2/2     Running   0          23h
-autoscaler-hpa-5db8575dbc-8nhhg          2/2     Running   0          23h
-autoscaler-hpa-5db8575dbc-h8lfq          2/2     Running   0          23h
-controller-7649d68db6-x9qnb              2/2     Running   0          23h
-controller-7649d68db6-z5q54              2/2     Running   0          23h
-domain-mapping-db4fcb48c-jzpqr           2/2     Running   0          23h
-domain-mapping-db4fcb48c-n8tj6           2/2     Running   0          23h
-domainmapping-webhook-6896bb6475-bvgf6   2/2     Running   0          23h
-domainmapping-webhook-6896bb6475-fqlm9   2/2     Running   0          23h
-webhook-85b79f6c95-q5sld                 2/2     Running   0          23h
-webhook-85b79f6c95-wfc54                 2/2     Running   0          23h
-----
 
 [IMPORTANT]
 ====
 If you get error messages related to `Istio`, this link:{knative_istio_issue_url}[article] might be helpful.
 ====
 
-[IMPORTANT]
-====
-From now on, we will be using the `kogito-serverless` namespace. To create execute:
-[source,shell]
-----
-oc new-project kogito-serverless
-----
-====
 
 [[proc-deploy-sw-application-openshift]]
 == Deploying your workflow application on OpenShift
@@ -165,11 +68,13 @@ Once `Knative Serving` is ready, you can initiate the process of deploying your 
 
 // shared app req
 include::../common/_deploy_workflow_application_requisites.adoc[]
+* Create the namespace `{default_namespace}`.
 
 [NOTE]
 ====
 You can use the native image due to the faster startup.
 ====
+
 
 === Preparing the OpenShift's Registry
 OpenShift comes with a registry where you can push your images built locally to be deployed.
