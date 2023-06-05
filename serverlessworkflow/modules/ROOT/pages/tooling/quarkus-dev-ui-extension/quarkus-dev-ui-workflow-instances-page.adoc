@@ -28,9 +28,11 @@ On the Workflow Instances page, you can filter the list of workflow instances ba
 To filter the workflow instances based on business keys, enter a business key in the *Filter by business key* field and click *Apply filter* button.
 
 .Example filters applied on the workflow instances
-image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-filters-in-workflow-instances.png[]
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instances-filters.png[]
 
 To fetch the newly added workflow instances, click on the refresh icon next to the *Apply Filter* button. Also, to clear the applied filters and reset to the default state, click *Reset to default* button.
+
+== Opening the Workflow instance details
 
 In the workflow instances table, the *Id* column contains a clickable link, which enables you to navigate to the *Workflow Details* page. The *Workflow Details* page contains various panels, providing detailed information about a workflow instance.
 
@@ -115,5 +117,54 @@ The Variables panel displays the data of a workflow in the form of JSON.
 .Variables panel
 image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-variables-panel.png[]
 --
+
+== Sending Cloud Events to active Workflow Instances
+
+The *Workflow Instances* page also allows you to send HTTP Cloud Events to the active workflow instances that are waiting for
+an event to advance.
+
+To do so you just have to click on the *Trigger Cloud Event* button that will lead you to the *Trigger Cloud Event* page.
+
+Once there, you will have to fill out the form with the Cloud Event information:
+
+- *Endpoint*: Defines the Path and the HTTP method where the cloud event should be triggered.
+- *Event Type*: Sets the Cloud Event type header.
+- *Event Source*: Sets the Cloud Event Source header. Defaults to `/local/quarkus-devUi`.
+- *Instance Id*: Sets the id of the workflow instance that must receive the event, it will be added in the `kogitoprocrefid` event header.
+- *Event Data*: Data that will be in the event in JSON format.
+
+.Sending a Cloud Event to an active workflow instance.
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instances-cloud-event.png[]
+
+Additionally, you can use the *Send Cloud Event* action present available on the instance actions kebab. By using it you
+will be lead to the *Trigger Cloud Event* page, but in this case the *Instance Id* field will be already filled with
+the selected workflow id.
+
+.*Send Cloud Event* button in the actions kebab.
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instances-kebab.png[]
+
+[NOTE]
+====
+To enable the actions kebab, make sure your project is configured to have the `kogito-addons-quarkus-process-management`
+dependency on its `pom.xml` file, like:
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-addons-quarkus-process-management</artifactId>
+<version>{kogito_version_redhat}</version>
+----
+====
+
+Click the *Trigger* button to trigger the cloud event. If the event is successfully triggered, a success alert appears
+at the top of the screen, which contains the *Go to workflow list* link to navigate to the xref:tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.adoc[Workflow Instances page].
+
+.Example of cloud event successfully sent notification.
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instances-cloud-event-success.png[]
+
+If there is an issue while sending the event, then a failure alert appears at the top of the screen, containing *View Details* and *Go to workflow list* options. The *View Details* enables you to view the error message.
+
+.Example cloud event unsuccessfully sent notification.
+image::tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instances-cloud-event-failure.png[]
 
 include::../../../pages/_common-content/report-issue.adoc[]
