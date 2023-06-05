@@ -349,11 +349,11 @@
         <li class="version is-current">
           <a href="../../index.html">snapshot</a>
         </li>
-        <li class="version">
-          <a href="../../../1.39.0-SNAPSHOT/index.html">1.39-RC</a>
-        </li>
         <li class="version is-latest">
-          <a href="../../../latest/index.html">1.38</a>
+          <a href="../../../latest/index.html">1.39</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.38.0.Final/index.html">1.38</a>
         </li>
         <li class="version">
           <a href="../../../1.37.0.Final/index.html">1.37</a>
@@ -420,8 +420,8 @@
   <button class="version-menu-toggle" title="Show other versions of page">snapshot</button>
   <div class="version-menu">
     <a class="version is-current" href="quarkus-dev-ui-workflow-instances-page.html">snapshot</a>
-    <a class="version" href="../../../1.39.0-SNAPSHOT/tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">1.39-RC</a>
-    <a class="version" href="../../../latest/tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">1.38</a>
+    <a class="version" href="../../../latest/tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">1.39</a>
+    <a class="version" href="../../../1.38.0.Final/tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">1.38</a>
     <a class="version" href="../../../1.37.0.Final/tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">1.37</a>
     <a class="version" href="../../../1.36.1.Final/tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">1.36</a>
     <a class="version" href="../../../1.35.0.Final/tooling/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">1.35</a>
@@ -496,13 +496,18 @@
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-filters-in-workflow-instances.png" alt="kogito swf tools filters in workflow instances">
+<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instances-filters.png" alt="kogito swf tools workflow instances filters">
 </div>
 <div class="title">Figure 3. Example filters applied on the workflow instances</div>
 </div>
 <div class="paragraph">
 <p>To fetch the newly added workflow instances, click on the refresh icon next to the <strong>Apply Filter</strong> button. Also, to clear the applied filters and reset to the default state, click <strong>Reset to default</strong> button.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_opening_the_workflow_instance_details"><a class="anchor" href="#_opening_the_workflow_instance_details"></a>Opening the Workflow instance details</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>In the workflow instances table, the <strong>Id</strong> column contains a clickable link, which enables you to navigate to the <strong>Workflow Details</strong> page. The <strong>Workflow Details</strong> page contains various panels, providing detailed information about a workflow instance.</p>
 </div>
@@ -674,6 +679,99 @@
 </div>
 </li>
 </ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sending_cloud_events_to_active_workflow_instances"><a class="anchor" href="#_sending_cloud_events_to_active_workflow_instances"></a>Sending Cloud Events to active Workflow Instances</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <strong>Workflow Instances</strong> page also allows you to send HTTP Cloud Events to the active workflow instances that are waiting for
+an event to advance.</p>
+</div>
+<div class="paragraph">
+<p>To do so you just have to click on the <strong>Trigger Cloud Event</strong> button that will lead you to the <strong>Trigger Cloud Event</strong> page.</p>
+</div>
+<div class="paragraph">
+<p>Once there, you will have to fill out the form with the Cloud Event information:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Endpoint</strong>: Defines the Path and the HTTP method where the cloud event should be triggered.</p>
+</li>
+<li>
+<p><strong>Event Type</strong>: Sets the Cloud Event type header.</p>
+</li>
+<li>
+<p><strong>Event Source</strong>: Sets the Cloud Event Source header. Defaults to <code>/local/quarkus-devUi</code>.</p>
+</li>
+<li>
+<p><strong>Instance Id</strong>: Sets the id of the workflow instance that must receive the event, it will be added in the <code>kogitoprocrefid</code> event header.</p>
+</li>
+<li>
+<p><strong>Event Data</strong>: Data that will be in the event in JSON format.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instances-cloud-event.png" alt="kogito swf tools workflow instances cloud event">
+</div>
+<div class="title">Figure 10. Sending a Cloud Event to an active workflow instance.</div>
+</div>
+<div class="paragraph">
+<p>Additionally, you can use the <strong>Send Cloud Event</strong> action present available on the instance actions kebab. By using it you
+will be lead to the <strong>Trigger Cloud Event</strong> page, but in this case the <strong>Instance Id</strong> field will be already filled with
+the selected workflow id.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instances-kebab.png" alt="kogito swf tools workflow instances kebab">
+</div>
+<div class="title">Figure 11. <strong>Send Cloud Event</strong> button in the actions kebab.</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>To enable the actions kebab, make sure your project is configured to have the <code>kogito-addons-quarkus-process-management</code>
+dependency on its <code>pom.xml</code> file, like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+  &lt;artifactId&gt;kogito-addons-quarkus-process-management&lt;/artifactId&gt;
+&lt;version&gt;{kogito_version_redhat}&lt;/version&gt;</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Click the <strong>Trigger</strong> button to trigger the cloud event. If the event is successfully triggered, a success alert appears
+at the top of the screen, which contains the <strong>Go to workflow list</strong> link to navigate to the <a href="#">Workflow Instances page</a>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instances-cloud-event-success.png" alt="kogito swf tools workflow instances cloud event success">
+</div>
+<div class="title">Figure 12. Example of cloud event successfully sent notification.</div>
+</div>
+<div class="paragraph">
+<p>If there is an issue while sending the event, then a failure alert appears at the top of the screen, containing <strong>View Details</strong> and <strong>Go to workflow list</strong> options. The <strong>View Details</strong> enables you to view the error message.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../_images/tooling/quarkus-dev-ui-extension/kogito-swf-tools-workflow-instances-cloud-event-failure.png" alt="kogito swf tools workflow instances cloud event failure">
+</div>
+<div class="title">Figure 13. Example cloud event unsuccessfully sent notification.</div>
 </div>
 </div>
 </div>

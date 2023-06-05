@@ -349,11 +349,11 @@
         <li class="version is-current">
           <a href="../../index.html">snapshot</a>
         </li>
-        <li class="version">
-          <a href="../../../1.39.0-SNAPSHOT/index.html">1.39-RC</a>
-        </li>
         <li class="version is-latest">
-          <a href="../../../latest/index.html">1.38</a>
+          <a href="../../../latest/index.html">1.39</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.38.0.Final/index.html">1.38</a>
         </li>
         <li class="version">
           <a href="../../../1.37.0.Final/index.html">1.37</a>
@@ -420,8 +420,8 @@
   <button class="version-menu-toggle" title="Show other versions of page">snapshot</button>
   <div class="version-menu">
     <a class="version is-current" href="serverless-logic-web-tools-redhat-application-services-integration.html">snapshot</a>
-    <a class="version" href="../../../1.39.0-SNAPSHOT/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.39-RC</a>
-    <a class="version" href="../../../latest/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.38</a>
+    <a class="version" href="../../../latest/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.39</a>
+    <a class="version" href="../../../1.38.0.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.38</a>
     <a class="version" href="../../../1.37.0.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.37</a>
     <a class="version" href="../../../1.36.1.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.36</a>
     <a class="version" href="../../../1.35.0.Final/tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">1.35</a>
@@ -449,7 +449,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Some of the features in Serverless Logic Web Tools require integration with Red Hat OpenShift Application and Data Services. Consider uploading OpenAPI specifications to a service registry and deploying Kogito Serverless Workflow that requires Apache Kafka as examples of integration with Red Hat OpenShift Application and Data Services.</p>
+<p>Some of the features in Serverless Logic Web Tools require integration with Red Hat OpenShift Application and Data Services. Consider uploading OpenAPI specifications to a service registry and fetching its service functions as examples of integration with Red Hat OpenShift Application and Data Services.</p>
 </div>
 <div class="paragraph">
 <p>This document describes how you can configure the required settings to complete the integration with Red Hat OpenShift Application and Data Services.</p>
@@ -658,136 +658,6 @@
 </div>
 </li>
 </ol>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="proc-setting-apache-kafka-serverless-logic-web-tools"><a class="anchor" href="#proc-setting-apache-kafka-serverless-logic-web-tools"></a>Creating Streams for Apache Kafka in Red Hat OpenShift application and Data Services</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You can create or use a Kafka instance from Red Hat OpenShift Application and Data Services console and add the instance to the Serverless Logic Web Tools.</p>
-</div>
-<div class="ulist">
-<div class="title">Prerequisites</div>
-<ul>
-<li>
-<p>You have access to the Red Hat OpenShift Application and Data Services console.</p>
-</li>
-<li>
-<p>You have created a service account.</p>
-<div class="paragraph">
-<p>For information about creating a service account, see <a href="#proc-create-service-account-serverless-logic-web-tools">Creating a service account in Red Hat OpenShift application and Data Services</a>.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="olist arabic">
-<div class="title">Procedure</div>
-<ol class="arabic">
-<li>
-<p>To create an Apache Kafka instance in Red Hat Openshift Application and Data Services console, perform the following steps:</p>
-<div class="openblock">
-<div class="content">
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>You can skip this step if you already have an Apache Kafka instance.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Go to <a href="https://console.redhat.com/application-services/streams/kafkas">Streams for Apache Kafka | Red Hat OpenShift Application and Data Services</a>.</p>
-</li>
-<li>
-<p>Click <strong>Create Kafka instance</strong>.</p>
-</li>
-<li>
-<p>In the <strong>Create a Kafka instance</strong> window, enter the name for a Kafka instance.</p>
-<div class="paragraph">
-<p>You can also fill the other fields or leave those fields with default values.</p>
-</div>
-</li>
-<li>
-<p>Click <strong>Create instance</strong>.</p>
-</li>
-<li>
-<p>Reload the <strong>Kafka instances</strong> page for the list of instances to reflect the instance you created.</p>
-</li>
-<li>
-<p>Once the status of the Kafka instance you created is updated as <strong>Ready</strong>, click on the instance.</p>
-</li>
-<li>
-<p>Go to the <strong>Topics</strong> tab and create a new topic.</p>
-</li>
-<li>
-<p>Go to the <strong>Access</strong> tab, click <strong>Manage Access</strong>, and select <strong>All Accounts</strong> or the service account you created.</p>
-</li>
-<li>
-<p>Add the following permissions:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><em>Consumer group is " * " | Allow All | All Accounts</em>;</p>
-</li>
-<li>
-<p><em>Topic is " * " | Allow All | All Accounts</em>;</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Click on the menu on the top-right corner of the screen.</p>
-</li>
-<li>
-<p>Click <strong>Connection</strong>.</p>
-</li>
-<li>
-<p>Copy the value of <strong>Bootstrap server</strong>.</p>
-</li>
-</ol>
-</div>
-</div>
-</div>
-</li>
-<li>
-<p>If you already have a Kafka instance, find the value of <strong>Bootstrap server</strong> of your Kafka instance.</p>
-</li>
-<li>
-<p>In the Serverless Logic Web Tools web application, click on the <strong>Cog wheel</strong> (⚙️) on the top-right corner and go to the <strong>Streams for Apache Kafka</strong> tab.</p>
-</li>
-<li>
-<p>Enter the value of <strong>Bootstrap server</strong>.</p>
-</li>
-<li>
-<p>Enter the name of topic you created in the <strong>Topic</strong> field and click <strong>Apply</strong>.</p>
-<div class="paragraph">
-<p>The content in the <strong>Streams for Apache Kafka</strong> tab updates and displays <strong>Your Streams for Apache Kafka information is set</strong> message.</p>
-</div>
-</li>
-</ol>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The procedures in this document make the integration easy for you. However, you can also create specific service accounts, topics, and consumer groups.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
