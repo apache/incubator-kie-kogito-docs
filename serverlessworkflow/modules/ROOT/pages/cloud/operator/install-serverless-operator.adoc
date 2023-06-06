@@ -4,12 +4,13 @@
 :description: Install the operator on Kubernetes clusters
 :keywords: kogito, sonataflow, workflow, serverless, operator, kubernetes, minikube, openshift, containers
 // links
-
 :openshift_operator_install_url: https://docs.openshift.com/container-platform/4.13/operators/admin/olm-adding-operators-to-cluster.html
 :openshift_operator_uninstall_url: https://docs.openshift.com/container-platform/4.13/operators/admin/olm-deleting-operators-from-cluster.html
 :kubernetes_operator_install_url: https://operatorhub.io/how-to-install-an-operator
 :kubernetes_operator_uninstall_url: https://olm.operatorframework.io/docs/tasks/uninstall-operator/
 :operatorhub_url: https://operatorhub.io/
+:cert_manager_installer_url: https://github.com/cert-manager/cert-manager/releases/download/v1.12.0/cert-manager.yaml
+:kubebuilder_webhooks_url: https://book.kubebuilder.io/cronjob-tutorial/running.html
 
 This guide describes how to install the {operator_name} in a Kubernetes or OpenShift cluster. The operator is in an xref:/cloud/operator/known-issues.adoc[early development stage] (community only) and has been tested on OpenShift 4.11+, Kubernetes 1.22+, and link:{minikube_url}[Minikube].
 
@@ -79,7 +80,17 @@ minikube start [...] --driver podman
 
 === Install
 
-To install the {product_name} Operator, you can use the following command:
+To install the {product_name} Operator, you can use the following commands:
+
+.Install Cert Manager Operator
+[source,shell,subs="attributes+"]
+----
+kubectl apply -f {cert_manager_installer_url}
+----
+[NOTE]
+====
+The Cert Manager is recommended in order to help on abstracting the certificates configuration, if, for some reason it can't be installed, you need to make sure that the certificates needed by the Webhooks correctly configured, more information can be found link:{kubebuilder_webhooks_url}[here].
+====
 
 .Install {product_name} Operator on Kubernetes
 [source,shell,subs="attributes+"]
@@ -154,6 +165,12 @@ kubectl delete -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-o
 ====
 If you're running a snapshot version, use this URL instead `https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/operator.yaml`.
 ====
+
+.Uninstalling Cert Manager Operator
+[source,shell,subs="attributes+"]
+----
+kubectl delete -f {cert_manager_installer_url}
+----
 
 == Additional resources
 
