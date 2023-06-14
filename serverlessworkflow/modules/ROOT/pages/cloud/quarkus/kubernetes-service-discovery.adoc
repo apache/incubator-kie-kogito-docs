@@ -6,11 +6,11 @@
 // links
 :quarkus_issue_url: https://github.com/quarkusio/quarkus/issues/27457
 
-The Kubernetes service discovery allows you to have a static URI, defining a Kubernetes resource, which is used to perform HTTP requests. The Kubernetes resource defined in the URI is queried in the current Kubernetes cluster and translated in a valid URL. 
+The Kubernetes service discovery allows you to describe the Kubernetes resource you want to perform an HTTP request using a custom URI. Under the hood, it will discover the network endpoint (URL) to where to make the request.
 
-The Kubernetes service discovery feature works during the workflow application startup, in which this feature scans all the Quarkus configuration in search of the URI pattern. Therefore, you must keep in mind that if application startup time matters, then consider to use a static URL instead.
+The Kubernetes service discovery feature works during the workflow application startup, in which this feature scans all the Quarkus configuration in search of the URI pattern. Therefore, you must keep in mind that if application startup time matters, then consider to use a known static URL instead.
 
-Following is the URI pattern in Kubernetes service discovery:
+Following is the custom URI pattern in Kubernetes service discovery:
 
 .URI pattern in Kubernetes service discovery
 [source,shell]
@@ -147,7 +147,7 @@ __  ____  __  _____   ___  __ ____  ______
 
 [NOTE]
 ====
-In the previous example, the URI is translated to `http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io` when the application started. The translated URI is used at runtime, when needed.
+In the previous example, the URI is translated to `http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io` when the application started. The translated URL is used at runtime, when needed.
 ====
 
 The Kubernetes service discovery scans the Quarkus configuration during the startup, which can also cause small delay as follows:
@@ -178,9 +178,14 @@ If the URI pattern is not found in the application properties, then discovery is
 You can enable the Kubernetes service discovery by adding a service discovery implementation to the application's dependencies as shown in the following Maven dependencies:
 
 .Example Maven dependencies
-[source,shell]
+[source,xml]
 ----
 <dependency>
+    <!-- Service Discovery -->
+    <dependency>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>kogito-addons-quarkus-kubernetes</artifactId>
+    </dependency>
     <groupId>org.kie.kogito</groupId>
     <artifactId>kogito-addons-quarkus-fabric8-kubernetes-service-catalog</artifactId>
 </dependency>
