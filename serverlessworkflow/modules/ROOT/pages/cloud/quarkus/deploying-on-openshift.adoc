@@ -16,18 +16,14 @@
 :platform: OpenShift
 :container_push: This property should be removed if deploying on OpenShist Clusters
 // links
-:ocp_local_url: https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.17
 :ocp_local_url_install: https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.17/html/getting_started_guide/installation_gsg
 :ocp_cli_url: https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html#cli-about-cli_cli-developer-commands
 :ocp_swf_install_url: https://docs.openshift.com/serverless/1.29/install/install-serverless-operator.html
-:ocp_kn_cli_url: https://docs.openshift.com/container-platform/4.12/serverless/install/installing-kn.html
-:ocp_knative_eventing_url: https://docs.openshift.com/container-platform/4.12/serverless/install/installing-knative-eventing.html
 :ocp_expose_registry_url: https://docs.openshift.com/container-platform/4.12/registry/securing-exposing-registry.html
 :knative_istio_issue_url: https://access.redhat.com/solutions/4791871
 
 
-This document describes how to deploy a {product_name} application using a OpenShift cluster, along with a procedure
-to run the OpenShift Serverless, which is based on Knative.
+This document describes how to deploy a {product_name} application using a OpenShift cluster, along with a procedure to run the OpenShift Serverless Operator, which is based on Knative.
 
 .Prerequisites
 * Your xref:cloud/quarkus/build-workflow-image-with-quarkus-cli.adoc[{product_name} application] is ready to use.
@@ -36,8 +32,7 @@ to run the OpenShift Serverless, which is based on Knative.
 * xref:tooling/kn-plugin-workflow-overview.adoc[Knative workflow CLI] is installed. +
 * (Optional) link:{quarkus_cli_url}[Quarkus CLI] is installed.
 
-For the following steps we will be using the link:{ocp_local_url}[OpenShift Local]. However, the steps described here
-can be used on any OpenShift 4.x version that has support for OpenShift Serverless.
+For the following steps we will be using the link:{ocp_local_url}[OpenShift Local]. However, the steps described here can be used on any OpenShift 4.x version that has support for OpenShift Serverless.
 
 [[proc-install-openshift-local]]
 == Installing OpenShift Local
@@ -51,8 +46,7 @@ Once you have OpenShift Local running, proceed to the next topic.
 If you are running OpenShift Local on Mac with M1 processors, you might not find the OpenShift Serverless Operator available.
 ====
 
-Before proceeding further, make sure that you have access to the OpenShift cluster with Serverless available and the
-OpenShift Serverless operator is properly installed, to do this, please follow these link:{ocp_swf_install_url}[steps].
+Before proceeding further, make sure that you have access to the OpenShift cluster with Serverless available and the OpenShift Serverless operator is properly installed. To do this, please follow these link:{ocp_swf_install_url}[steps].
 
 
 [IMPORTANT]
@@ -92,9 +86,7 @@ The `OPENSHIFT_REGISTRY_URL` environment variable will be used in the next secti
 This command should assign to the `OPENSHIFT_REGISTRY_URL` variable the publicly accessible URL for the registry. If it does not return it, it does mean that it is not exposed, to expose the registry follow link:{ocp_expose_registry_url}[these] steps.
 it does mean that it is not exposed, to expose the registry follow link:{ocp_expose_registry_url}[these] steps.
 
-The OpenShift's registry requires you to be logged in order to push Container Image. If you already logged in the
-cluster you can use your token to authenticate in the OpenShift's registry. To log in, save the URL from the
-command above:
+The OpenShift's registry requires you to be logged in to be allowed to push Container Images. If you are already logged in the cluster you can use your token to authenticate in the OpenShift's registry. To log in, save the URL from the command above:
 
 [source,shell]
 ----
@@ -103,9 +95,7 @@ podman login -u <USERNAME> -p $(oc whoami -t) --tls-verify=false $OPENSHIFT_REGI
 If everything is working, you should get the *Login Succeeded!* message.
 
 The next step is to deploy your workflow application and execute it.
-You can read the further sections on the different procedures to deploy your {product_name} application.
-
-In the following procedures, you can find two examples of deploying your workflow application, including:
+You can read the further the next sections which explain different approaches deploy your {product_name} application, as such:
 
 * <<proc-deploy-sw-application-knative-cli,Using Knative CLI (kn)>>
 * <<proc-deploy-sw-application-openfhift-client,Using OpenShift command-line tool>>

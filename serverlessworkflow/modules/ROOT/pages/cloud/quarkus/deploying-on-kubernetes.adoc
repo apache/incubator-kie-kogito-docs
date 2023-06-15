@@ -14,8 +14,6 @@
 :default_namespace: kiegroup
 :registry: target
 :container_push: Property to push or not the Container image to the given registry
-:command_line_tool: kubectl
-:command_line_tool_name: kubectl
 :quarkus-k8s-plugin: quarkus-kubernetes
 :platform: Kubernetes
 // links
@@ -27,8 +25,7 @@
 :quarkus_k8s_deploy_url: https://github.com/quarkusio/quarkus/issues/26385
 
 
-This document describes how to deploy a {product_name} application using a Kubernetes cluster, along with a procedure
-to run the Knative platform.
+This document describes how to deploy a {product_name} application using a Kubernetes cluster, along with a procedure to run the Knative platform.
 
 // shared pre req
 include::../common/_prerequisites.adoc[subs=quotes+]
@@ -71,12 +68,9 @@ include::../common/_deploy_workflow_application_requisites.adoc[]
 
 [IMPORTANT]
 ====
-By default, Kubernetes does not have any registry installed. You can check with the administrator if a private registry
-is available. Otherwise, you can publish the Application Container image on the link:{quay_io_url}[Quay.io], or on any
-other registry of your preference.
+By default, Kubernetes does not have any registry installed. You can check with the administrator if a private registry is available. Otherwise, you can publish the Application Container image on the link:{quay_io_url}[Quay.io], or on any other registry of your preference.
 
-If the registry requires authentication you need to create a Pull Secret with the registry credentials, for more
-information please take a look in this link:{k8s_pull_secret_url}[link].
+If the registry requires authentication you need to create a Pull Secret with the registry credentials, for more information please take a look in this link:{k8s_pull_secret_url}[link].
 ====
 
 .Procedure
@@ -84,7 +78,7 @@ information please take a look in this link:{k8s_pull_secret_url}[link].
 +
 include::../common/_create_namespace_and_deploy_info.adoc[]
 
-In the following procedures, you can find two examples of deploying your workflow application, including:
+In the following procedures, you can find different approaches to deploy your workflow application, such as:
 
 * <<proc-deploy-sw-application-knative-cli,Using Knative CLI (kn)>>
 * <<proc-deploy-sw-application-kubectl,Using kubectl command-line tool>>
