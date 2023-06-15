@@ -6,9 +6,9 @@
 // links
 :quarkus_issue_url: https://github.com/quarkusio/quarkus/issues/27457
 
-The Kubernetes service discovery allows you to describe the Kubernetes resource you want to perform an HTTP request using a custom URI. Under the hood, it will discover the network endpoint (URL) to where to make the request.
+The Kubernetes service discovery allows you to describe the Kubernetes resource you want to perform HTTP requests using a custom URI. Under the hood, it will discover the network endpoint (URL) to where to make the request.
 
-The Kubernetes service discovery feature works during the workflow application startup, in which this feature scans all the Quarkus configuration in search of the URI pattern. Therefore, you must keep in mind that if application startup time matters, then consider to use a known static URL instead.
+The Kubernetes service discovery feature works during the workflow application startup, in which this feature scans all the Quarkus configurations in search of the URI pattern. Therefore, you must remember that if the application startup time matters, consider using a known static URL instead.
 
 Following is the custom URI pattern in Kubernetes service discovery:
 
@@ -147,7 +147,7 @@ __  ____  __  _____   ___  __ ____  ______
 
 [NOTE]
 ====
-In the previous example, the URI is translated to `http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io` when the application started. The translated URL is used at runtime, when needed.
+In the previous example, the URI is translated to `http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io` when the application started. The translated URL is used at runtime when needed.
 ====
 
 The Kubernetes service discovery scans the Quarkus configuration during the startup, which can also cause small delay as follows:
