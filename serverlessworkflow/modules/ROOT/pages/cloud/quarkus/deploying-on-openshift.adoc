@@ -29,7 +29,9 @@ This document describes how to deploy a {product_name} application using a OpenS
 * Your xref:cloud/quarkus/build-workflow-image-with-quarkus-cli.adoc[{product_name} application] is ready to use.
 * link:{ocp_cli_url}[OpenShift CLI] is installed.
 * link:{ocp_kn_cli_url}[Knative CLI] is installed.
-* xref:tooling/kn-plugin-workflow-overview.adoc[Knative workflow CLI] is installed. +
+* xref:tooling/kn-plugin-workflow-overview.adoc[Knative workflow CLI] is installed.
+* link:{podman_install_url}[Podman]
+** If you are using link:{docker_install_url}[Docker], you might need to update the commands accordingly.
 * (Optional) link:{quarkus_cli_url}[Quarkus CLI] is installed.
 
 For the following steps we will be using the link:{ocp_local_url}[OpenShift Local]. However, the steps described here can be used on any OpenShift 4.x version that has support for OpenShift Serverless.
@@ -63,7 +65,24 @@ Once `Knative Serving` is ready, you can initiate the process of deploying your 
 
 // shared app req
 include::../common/_deploy_workflow_application_requisites.adoc[]
-* Create the namespace `{default_namespace}`.
+
+After checking the prerequisites, prepare the project that will be used to deploy your application
+.
+.Create project
+[source,shell,subs="attributes+"]
+----
+{command_line_tool} create project {default_namespace}
+----
+--
+
+. Set the Kubernetes context to the newly created namespace using the following command:
++
+--
+.Set OpenShift current project
+[source,shell]
+----
+{command_line_tool} project {default_namespace}
+----
 
 [NOTE]
 ====
