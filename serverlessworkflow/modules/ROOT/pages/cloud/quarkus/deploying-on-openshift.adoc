@@ -94,17 +94,22 @@ You can use the link:build-workflow-image-with-quarkus-cli.html#proc-building-se
 OpenShift comes with a registry where you can push your images built locally to be deployed.
 
 First, let's check if the Registry is already exposed, to do that, check if the route is exposed:
+
+.Check whether the OpenShift registry is exposed
 [source,shell]
 ----
-OPENSHIFT_REGISTRY_URL=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')
+oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}'
 ----
-[IMPORTANT]
-====
-The `OPENSHIFT_REGISTRY_URL` environment variable will be used in the next sections.
-====
 
-This command should assign to the `OPENSHIFT_REGISTRY_URL` variable the publicly accessible URL for the registry. If it does not return it, it does mean that it is not exposed, to expose the registry follow link:{ocp_expose_registry_url}[these] steps.
-it does mean that it is not exposed, to expose the registry follow link:{ocp_expose_registry_url}[these] steps.
+If no information is returned here, it does mean that it is not exposed, to expose the registry follow link:{ocp_expose_registry_url}[these] steps.
+
+Now that we have the OpenShift registry exposed, let's store into the `OPENSHIFT_REGISTRY_URL` environment variable, so we can use it easily in the next steps:
+
+.Retrieve the OpenShift registry
+[source,shell]
+----
+OPENSHIFT_REGISTRY_URL=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }})'
+----
 
 The OpenShift's registry requires you to be logged in to be allowed to push Container Images. If you are already logged in the cluster you can use your token to authenticate in the OpenShift's registry. To log in, save the URL from the command above:
 
