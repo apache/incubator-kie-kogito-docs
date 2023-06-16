@@ -110,6 +110,11 @@ Now that we have the OpenShift registry exposed, let's store into the `OPENSHIFT
 ----
 OPENSHIFT_REGISTRY_URL=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }})'
 ----
+.Retrieve the OpenShift registry
+[source,shell]
+----
+OPENSHIFT_REGISTRY_URL=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }})'
+----
 
 The OpenShift's registry requires you to be logged in to be allowed to push Container Images. If you are already logged in the cluster you can use your token to authenticate in the OpenShift's registry. To log in, save the URL from the command above:
 
