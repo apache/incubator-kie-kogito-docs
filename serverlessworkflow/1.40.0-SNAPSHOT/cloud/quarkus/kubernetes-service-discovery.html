@@ -453,13 +453,13 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Kubernetes service discovery allows you to have a static URI, defining a Kubernetes resource, which is used to perform HTTP requests. The Kubernetes resource defined in the URI is queried in the current Kubernetes cluster and translated in a valid URL.</p>
+<p>The Kubernetes service discovery allows you to describe the Kubernetes resource you want to perform HTTP requests on using a custom URI. Under the hood, it will discover the network endpoint (URL) to where to make the request.</p>
 </div>
 <div class="paragraph">
-<p>The Kubernetes service discovery feature works during the workflow application startup, in which this feature scans all the Quarkus configuration in search of the URI pattern. Therefore, you must keep in mind that if application startup time matters, then consider to use a static URL instead.</p>
+<p>The Kubernetes service discovery feature works during the workflow application startup, in which this feature scans all the Quarkus configurations in search of the URI pattern. Therefore, you must remember that if the application startup time matters, consider using a known static URL instead.</p>
 </div>
 <div class="paragraph">
-<p>Following is the URI pattern in Kubernetes service discovery:</p>
+<p>Following is the custom URI pattern in Kubernetes service discovery:</p>
 </div>
 <div class="listingblock">
 <div class="title">URI pattern in Kubernetes service discovery</div>
@@ -694,7 +694,7 @@ __  ____  __  _____   ___  __ ____  ______
 </td>
 <td class="content">
 <div class="paragraph">
-<p>In the previous example, the URI is translated to <code><a href="http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io" class="bare">http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io</a></code> when the application started. The translated URI is used at runtime, when needed.</p>
+<p>In the previous example, the URI is translated to <code><a href="http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io" class="bare">http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io</a></code> when the application started. The translated URL is used at runtime when needed.</p>
 </div>
 </td>
 </tr>
@@ -748,7 +748,12 @@ __  ____  __  _____   ___  __ ____  ______
 <div class="listingblock">
 <div class="title">Example Maven dependencies</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">&lt;dependency&gt;
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;!-- Service Discovery --&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+      &lt;artifactId&gt;kogito-addons-quarkus-kubernetes&lt;/artifactId&gt;
+    &lt;/dependency&gt;
     &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
     &lt;artifactId&gt;kogito-addons-quarkus-fabric8-kubernetes-service-catalog&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
