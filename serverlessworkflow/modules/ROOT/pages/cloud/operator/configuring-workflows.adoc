@@ -4,13 +4,13 @@
 :description: Configuration of Workflow Services deployed by the operator
 :keywords: kogito, workflow, serverless, operator, kubernetes, minikube, config, openshift, containers
 
-This document describes how to configure a workflow service with the {operator_name}.
+This document describes how to configure a Workflow service with the {operator_name}.
 
 == Editing the Workflow Configuration
 
-When the operator deploys the workflow service, it also creates a `ConfigMap` named after the `KogitoServerlessWorkflow` object with the suffix `-props`. For example, if your workflow name is `greeting`, then the `ConfigMap` name is `greeting-props`.
+When the operator deploys the Workflow service, it also creates a `ConfigMap` named after the `KogitoServerlessWorkflow` object with the suffix `-props`. For example, if your Workflow name is `greeting`, then the `ConfigMap` name is `greeting-props`.
 
-You can use the Kubernetes object editor of your preference to add or edit the link:https://en.wikipedia.org/wiki/.properties[properties] in the workflow configuration. Using `kubectl` you can do:
+You can use the Kubernetes object editor of your preference to add or edit the link:https://en.wikipedia.org/wiki/.properties[properties] in the Workflow configuration. Using `kubectl` you can do:
 
 .Editing the Workflow Properties
 [source,shell,subs="attributes+"]
@@ -20,7 +20,7 @@ kubectl edit cm <workflow-name>-props
 
 Note that it's important to respect the properties format, otherwise the operator will replace your configuration with the default one.
 
-Here's an example of a workflow properties:
+Here's an example of a Workflow properties stored within a ConfigMap:
 
 .Example of a Workflow ConfigMap Properties
 [source,yaml,subs="attributes+"]
@@ -37,13 +37,13 @@ data:
     my.properties.key = any-value
 ----
 
-The underlying runtime engine that executes the workflow service is based on link:{quarkus_url}[Quarkus]. So that, you can configure the workflow as you normally would any link:{quarkus_config_url}[Quarkus application].
+The underlying runtime engine that executes the Workflow service is based on link:{quarkus_url}[Quarkus]. The `application.properties` key in the ConfigMap means that you can configure the Workflow as you would any link:{quarkus_config_url}[Quarkus application].
 
 Any xref:core/configuration-properties.adoc[{product_name} configuration that the documentation describes] or general Quarkus application property can be configured using this method.
 
 == Immutable properties
 
-A few properties can not be changed in this configuration. Usually, they are already defined in the properties file. The table below lists them.
+A few properties cannot be changed in this configuration. Usually, they are already defined in the properties file. The table below lists them.
 
 .List of immutable properties
 [cols="2,1,1"]
