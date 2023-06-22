@@ -1,0 +1,64 @@
+[[proc-deploy-sw-application-quarkus-cli]]
+=== Deploying your workflow application using Quarkus CLI
+
+.Prerequisites
+* Workflow application is ready.
+* Quarkus CLI is installed. +
+  For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
+
+
+.Procedure
+. Add the Quarkus extensions to deploy the `knative` service.
++
+--
+You can add the {platform} and the Kogito Knative extensions to your project with the Quarkus CLI:
+
+.Add {platform} and Kogito Knative extensions to the project with Quarkus CLI
+[source,shell,subs="attributes+"]
+----
+quarkus ext add {quarkus-k8s-plugin} kogito-addons-quarkus-knative-eventing
+----
+--
+. To deploy the workflow application using Quarkus CLI, set the following system properties in `application.properties` file:
++
+--
+.Required system properties
+[source,properties,subs="attributes+"]
+----
+quarkus.knative.name=hello-workflow <1>
+quarkus.kubernetes.deployment-target=knative <2>
+quarkus.kubernetes.deploy=true <3>
+quarkus.container-image.push={container_push_prop} <4>
+quarkus.container-image.group={default_namespace} <5>
+quarkus.container-image.registry={k8s_registry} <6>
+quarkus.container-image.tag=1.0-SNAPSHOT <7>
+----
+
+<1> Property to set the Knative service name
+<2> Property to set the target deployment type
+<3> Property to set whether or not deploy on an active {platform} cluster
+<4> {container_push}
+<5> Property to define which registry group/namespace the built image belongs to
+<6> Property to define to which registry the built image will be pushed to
+<7> Sets the built Container Image tag
+
+[IMPORTANT]
+====
+This feature works with Quarkus 2.10.2.Final or later. For more information, see
+link:{quarkus_k8s_deploy_url}[link].
+====
+--
+
+.Build and Deploy your workflow application
+[source,shell,subs="attributes+"]
+----
+quarkus build -DskipTests
+----
+
+[NOTE]
+====
+The `kogito-examples` already have this extension added by default, and can be activated with the `container` Maven profile.
+====
+
+// verify deployed swf
+include::../common/_verify_if_swf_is_deployed.adoc[]

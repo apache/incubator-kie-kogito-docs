@@ -2,17 +2,17 @@ Verify if the workflow application is deployed correctly:
 --
 [tabs]
 ====
-On kubectl::
+On {command_line_tool_name}::
 +
-[source,shell]
+[source,shell,subs="attributes+"]
 ----
-kubectl get services.serving.knative.dev greeting-quarkus-cli
+{command_line_tool} get services.serving.knative.dev hello-workflow
 ----
 On Knative CLI::
 +
 [source,shell]
 ----
-kn service list greeting-quarkus-cli
+kn service list hello-workflow
 ----
 ====
 --
@@ -21,8 +21,8 @@ kn service list greeting-quarkus-cli
 .Example output
 [source,shell]
 ----
-NAME                   URL                                                                                      LATEST                       AGE    CONDITIONS   READY   REASON
-greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   greeting-quarkus-cli-00001   7m6s   3 OK / 3     True
+NAME             URL                                                                                LATEST                 AGE    CONDITIONS   READY   REASON
+hello-workflow   http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   hello-workflow-00001   7m6s   3 OK / 3     True
 ----
 --
 
@@ -31,7 +31,7 @@ greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-
 .Example request
 [source,shell]
 ----
-curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet
 ----
 
 .Example response

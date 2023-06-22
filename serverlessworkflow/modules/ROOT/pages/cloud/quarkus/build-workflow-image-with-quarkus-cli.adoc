@@ -43,6 +43,13 @@ cd kogito-examples/serverless-workflow-examples/serverless-workflow-greeting-qua
 +
 --
 .Add the Jib extension
+
+[NOTE]
+====
+The `kogito-examples` already have this extension added by default, and can be activated with the `container` Maven profile.
+====
+
+The steps to add the extension in your Serverless Workflow application are:
 [source,shell]
 ----
 quarkus extension add 'container-image-jib'
@@ -85,7 +92,7 @@ The previous command builds your image with name: `\{system_username\}/\{project
 
 Optionally, you can set the following properties to specify the image:
 
-* `quarkus.container-image.registry`: To define the registry address of the image, such as `quay.io`.
+* `quarkus.container-image.registry`: To define the registry address of the image, such as `quay.io`. When using OpenShift use the provided registry.
 * `quarkus.container-image.group`: To define the registry namespace of the image. For example, `context/namespace` or in case of Kubernetes or OpenShift `namespace/project`.
 * `quarkus.container-image.name`: To override the image name. By default, this property uses artifact ID.
 
@@ -104,7 +111,6 @@ quarkus build -Dquarkus.container-image.build=true \
 The added Jib extension caches the `target/lib` directory. Based on the size of your project, Jib speeds up the rebuilds.
 ====
 --
-
 . You can also push your workflow application to the defined registry. You need to set the `quarkus.container-image.push` property value to `true` (default value is `false`).
 +
 .Example of pushing the built workflow application to a registry
@@ -264,5 +270,6 @@ Example response::
 
 * xref:cloud/quarkus/deploying-on-minikube.adoc[Deploying your {product_name} application on Minikube]
 * xref:cloud/quarkus/deploying-on-kubernetes.adoc[Deploying your {product_name} application on Kubernetes]
+* xref:cloud/quarkus/deploying-on-openshift.adoc[Deploying your {product_name} application on OpenShift]
 
 include::../../../pages/_common-content/report-issue.adoc[]
