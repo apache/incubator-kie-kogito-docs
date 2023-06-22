@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Deploying your Serverless Workflow application on Kubernetes :: Kogito Serverless Workflow Guides</title>
     <meta name="description" content="Deploying Serverless Application on Kubernetes">
-    <meta name="keywords" content="kogito, workflow, quarkus, serverless, kn, kubectl">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, kn, kubectl, kubernetes">
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../../_/css/site.css">
 <link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
@@ -278,6 +278,9 @@
     <a class="nav-link" href="build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deploying-on-openshift.html">Deploying Workflows on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="deploying-on-minikube.html">Deploying Workflows on Minikube</a>
   </li>
   <li class="nav-item is-current-page" data-depth="3">
@@ -535,7 +538,7 @@ For more information, see <a href="#proc-verify-knative-kubernetes">Verifying Kn
 For more information, see <a href="https://quarkus.io/guides/cli-tooling">Building Quarkus Apps with Quarkus command line interface (CLI)</a>.</p>
 </li>
 <li>
-<p>Kogito Serverless Workflow application container is ready.</p>
+<p>Your <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Kogito Serverless Workflow application</a> is ready to use.</p>
 </li>
 </ul>
 </div>
@@ -550,8 +553,7 @@ For more information, see <a href="https://quarkus.io/guides/cli-tooling">Buildi
 <p>By default, Kubernetes does not have any registry installed. You can check with the administrator if a private registry is available. Otherwise, you can publish the Application Container image on the <a href="https://quay.io/">Quay.io</a>, or on any other registry of your preference.</p>
 </div>
 <div class="paragraph">
-<p>If the registry requires authentication you need to create a Pull Secret with the registry credentials, for more
-information please take a look in this <a href="https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/">link</a>.</p>
+<p>If the registry requires authentication you need to create a Pull Secret with the registry credentials, for more information please take a look in this <a href="https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/">link</a>.</p>
 </div>
 </td>
 </tr>
@@ -612,8 +614,7 @@ You can read the further sections on the different procedures to deploy your Kog
 </td>
 <td class="content">
 <div class="paragraph">
-<p>You can use the native image due to the faster startup.<br>
-For more information about installing the workflow application, see <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Building workflow images using Quarkus CLI</a> document.</p>
+<p>You can use the native image due to the faster startup.</p>
 </div>
 </td>
 </tr>
@@ -625,7 +626,7 @@ For more information about installing the workflow application, see <a href="bui
 </ol>
 </div>
 <div class="paragraph">
-<p>In the following procedures, you can find two examples of deploying your workflow application, including:</p>
+<p>In the following procedures, you can find different approaches to deploy your workflow application, such as:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -658,8 +659,7 @@ the Magic DNS for naming resolution, for more details please check the Knative <
 <div class="sect2">
 <h3 id="proc-deploy-sw-application-knative-cli"><a class="anchor" href="#proc-deploy-sw-application-knative-cli"></a>Deploying your workflow application using Knative CLI</h3>
 <div class="paragraph">
-<p>Once you have pushed your workflow application into the target registry, you can use the command-line tools, such
-as Knative CLI or <code>kubectl</code> to initiate the deployment process.</p>
+<p>Once you have pushed your workflow application into the target registry, you can use the command-line tools, such as Knative CLI or <code>Kubernetes CLI</code> to initiate the deployment process.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
@@ -683,8 +683,8 @@ For more information, see <a href="https://knative.dev/docs/client/install-kn/">
 <div class="listingblock">
 <div class="title">Example of deploying workflow application using Knative CLI</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service create hello \
-    --image=quay.io/mynamespace/serverless-workflow-greeting-quarkus:1.0 \
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service create hello-workflow \
+    --image=quay.io/kiegroup/serverless-workflow-greeting-quarkus:1.0 \
     --pull-policy=IfNotPresent \
     --port 8080</code></pre>
 </div>
@@ -692,24 +692,38 @@ For more information, see <a href="https://knative.dev/docs/client/install-kn/">
 <div class="listingblock">
 <div class="title">Example output</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">Creating service 'hello' in namespace 'serverless-workflow-greeting-quarkus':
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">Creating service 'hello-workflow' in namespace 'serverless-workflow-greeting-quarkus':
 
   0.066s The Route is still working to reflect the latest desired specification.
   0.099s ...
-  0.322s Configuration "hello" is waiting for a Revision to become ready.
+  0.322s Configuration "hello-workflow" is waiting for a Revision to become ready.
   4.885s ...
   5.061s Ingress has not yet been reconciled.
   5.322s Waiting for load balancer to be ready
   5.460s Ready to serve.
 
-Service 'hello' created to latest revision 'hello-00001' is available at URL:
-http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io</code></pre>
+Service 'hello-workflow' created to latest revision 'hello-workflow-00001' is available at URL:
+http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io</code></pre>
 </div>
 </div>
 </div>
 </div>
 </li>
 </ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Depending on the cluster type where you have deployed the workflow application, the service URL might be different. Pay attention to the output to use the correct URL in the next topic.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Verify if the workflow application is deployed correctly:</p>
@@ -720,7 +734,7 @@ http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io</code></
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset1_on-kubectl"></a>On kubectl</p>
+<p><a id="tabset1_on-kubernetes-cli"></a>On Kubernetes CLI</p>
 </li>
 <li>
 <p><a id="tabset1_on-knative-cli"></a>On Knative CLI</p>
@@ -728,17 +742,17 @@ http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io</code></
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_on-kubectl">
+<div class="tab-pane" aria-labelledby="tabset1_on-kubernetes-cli">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get services.serving.knative.dev greeting-quarkus-cli</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get services.serving.knative.dev hello-workflow</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_on-knative-cli">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service list greeting-quarkus-cli</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service list hello-workflow</code></pre>
 </div>
 </div>
 </div>
@@ -751,8 +765,8 @@ http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io</code></
 <div class="listingblock">
 <div class="title">Example output</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">NAME                   URL                                                                                      LATEST                       AGE    CONDITIONS   READY   REASON
-greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   greeting-quarkus-cli-00001   7m6s   3 OK / 3     True</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">NAME             URL                                                                                LATEST                 AGE    CONDITIONS   READY   REASON
+hello-workflow   http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   hello-workflow-00001   7m6s   3 OK / 3     True</code></pre>
 </div>
 </div>
 </div>
@@ -763,7 +777,7 @@ greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-
 <div class="listingblock">
 <div class="title">Example request</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -776,11 +790,10 @@ greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-
 </div>
 </div>
 <div class="sect2">
-<h3 id="proc-deploy-sw-application-kubectl"><a class="anchor" href="#proc-deploy-sw-application-kubectl"></a>Deploying your workflow application using <code>kubectl</code></h3>
+<h3 id="proc-deploy-sw-application-kubectl"><a class="anchor" href="#proc-deploy-sw-application-kubectl"></a>Deploying your workflow application using Kubernetes CLI</h3>
 <div class="paragraph">
 <p>You can also use <code>kubectl</code> command-line interface and plain Kubernetes objects to deploy your workflow application.<br>
-And, instead of creating <code>knative</code> <code>yaml|json</code> descriptors, you can leverage the Quarkus Kubernetes extension and
-Kogito Knative add-on to generate the descriptors.</p>
+And, instead of creating <code>knative</code> <code>yaml|json</code> descriptors, you can leverage the Quarkus Kubernetes extension and Kogito Knative add-on to generate the descriptors.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
@@ -789,7 +802,7 @@ Kogito Knative add-on to generate the descriptors.</p>
 <p>Kogito Workflow application ready to use.</p>
 </li>
 <li>
-<p><code>kubectl</code> command-line tool is installed.</p>
+<p><code>Kubernetes CLI</code> command-line tool is installed.</p>
 </li>
 <li>
 <p>(Optional) Quarkus CLI is installed<br>
@@ -816,6 +829,9 @@ For more information about installing the Quarkus CLI, see <a href="https://quar
 <li>
 <p><a id="tabset2_gradle"></a>Gradle</p>
 </li>
+<li>
+<p><a id="tabset2_quarkus-cli"></a>Quarkus CLI</p>
+</li>
 </ul>
 </div>
 <div class="content">
@@ -841,21 +857,27 @@ quarkus-kubernetes 'org.kie.kogito:kogito-addons-quarkus-knative-eventing:main'<
 </div>
 </div>
 </div>
+<div class="tab-pane" aria-labelledby="tabset2_quarkus-cli">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus ext add org.kie.kogito:kogito-addons-quarkus-knative-eventing quarkus-openshiftmain'</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 </li>
 <li>
-<p>To generate the <code>knative</code> <code>yaml|json</code> descriptors, set the following properties in the <code>application.properties</code>
-file of your workflow application:</p>
+<p>To generate the <code>knative</code> <code>yaml|json</code> descriptors, set the following properties in the <code>application.properties</code> file of your workflow application:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
 <div class="title">System properties to generate knative descriptors</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus.kubernetes.deployment-target=knative
-quarkus.knative.name=greeting-quarkus-kubectl</code></pre>
+quarkus.knative.name=hello-workflow</code></pre>
 </div>
 </div>
 </div>
@@ -878,6 +900,20 @@ quarkus.knative.name=greeting-quarkus-kubectl</code></pre>
 </li>
 </ul>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The image used in this section is the one built in the following guide: <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Build Workflow Image with Quarkus CLI</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Following is an example of the generated files:</p>
 </div>
@@ -892,17 +928,17 @@ metadata:
     app.quarkus.io/commit-id: 06c3fe8e2dfc42e2211cbcc41224f5a3d6bd1f26
     app.quarkus.io/build-timestamp: 2022-06-23 - 23:53:38 +0000
   labels:
-    app.kubernetes.io/name: greeting-quarkus-kubectl
-  name: greeting-quarkus-kubectl
+    app.kubernetes.io/name: hello-workflow
+  name: hello-workflow
 spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: greeting-quarkus-kubectl
+        app.kubernetes.io/name: hello-workflow
     spec:
       containerConcurrency: 0
       containers:
-        - image: quay.io/mynamespace/serverless-workflow-greeting-quarkus:1.0-native
+        - image: quay.io/kiegroup/serverless-workflow-greeting-quarkus:1.0-native
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -913,7 +949,7 @@ spec:
             periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 10
-          name: greeting-quarkus-kubectl
+          name: hello-workflow
           ports:
             - containerPort: 8080
               name: http1
@@ -938,24 +974,7 @@ spec:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Once the files are generated, you might be required to add the <code>imagePullPolicy</code> manually before deploying the workflow application.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Some system properties are not working properly due to a bug in the <code>Decorate API</code>. For more information about the bug, see the <a href="https://github.com/quarkusio/quarkus/issues/23832">Quarkus issue</a>.</p>
-</div>
-<div class="paragraph">
-<p>There is a small bug on the <code>Decorate API</code> where some system properties are not taking effect, for more information take a look at this <a href="https://github.com/quarkusio/quarkus/issues/23832">Quarkus issue</a>. After the file generation, you might be required to add the <code>imagePullPolicy</code> manually before deploying it.</p>
+<p>Once the files are generated, you must add the <code>imagePullPolicy</code> manually before deploying the workflow application.</p>
 </div>
 </td>
 </tr>
@@ -988,7 +1007,7 @@ spec:
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset3_on-kubectl"></a>On kubectl</p>
+<p><a id="tabset3_on-kubernetes-cli"></a>On Kubernetes CLI</p>
 </li>
 <li>
 <p><a id="tabset3_on-knative-cli"></a>On Knative CLI</p>
@@ -996,17 +1015,17 @@ spec:
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset3_on-kubectl">
+<div class="tab-pane" aria-labelledby="tabset3_on-kubernetes-cli">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get services.serving.knative.dev greeting-quarkus-cli</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get services.serving.knative.dev hello-workflow</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset3_on-knative-cli">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service list greeting-quarkus-cli</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service list hello-workflow</code></pre>
 </div>
 </div>
 </div>
@@ -1019,8 +1038,8 @@ spec:
 <div class="listingblock">
 <div class="title">Example output</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">NAME                   URL                                                                                      LATEST                       AGE    CONDITIONS   READY   REASON
-greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   greeting-quarkus-cli-00001   7m6s   3 OK / 3     True</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">NAME             URL                                                                                LATEST                 AGE    CONDITIONS   READY   REASON
+hello-workflow   http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   hello-workflow-00001   7m6s   3 OK / 3     True</code></pre>
 </div>
 </div>
 </div>
@@ -1031,7 +1050,7 @@ greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-
 <div class="listingblock">
 <div class="title">Example request</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -1049,7 +1068,7 @@ greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>Workflow application is installed.</p>
+<p>Workflow application is ready.</p>
 </li>
 <li>
 <p>Quarkus CLI is installed.<br>
@@ -1061,30 +1080,29 @@ For more information, see <a href="https://quarkus.io/guides/cli-tooling">Buildi
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Add the Quarkus extensions to deploy the <code>knative</code> service</p>
+<p>Add the Quarkus extensions to deploy the <code>knative</code> service.</p>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>You can add the Kubernetes and the Kogito Knative extensions to your project with the Quarkus CLI:</p>
 </div>
 <div class="listingblock">
-<div class="title">Add kubernetes and Kogito knative extensions to the project with Quarkus CLI</div>
+<div class="title">Add Kubernetes and Kogito Knative extensions to the project with Quarkus CLI</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus extension add kubernetes
-quarkus extension add kogito-addons-quarkus-knative-eventing</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus ext add quarkus-kubernetes kogito-addons-quarkus-knative-eventing</code></pre>
 </div>
 </div>
 </div>
 </div>
 </li>
 <li>
-<p>To deploy your workflow application using Quarkus CLI, set the following system properties in <code>application.properties</code> file:</p>
+<p>To deploy the workflow application using Quarkus CLI, set the following system properties in <code>application.properties</code> file:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
 <div class="title">Required system properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.knative.name=greeting-quarkus-cli <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.knative.name=hello-workflow <i class="conum" data-value="1"></i><b>(1)</b>
 quarkus.kubernetes.deployment-target=knative <i class="conum" data-value="2"></i><b>(2)</b>
 quarkus.kubernetes.deploy=true <i class="conum" data-value="3"></i><b>(3)</b>
 quarkus.container-image.push=true <i class="conum" data-value="4"></i><b>(4)</b>
@@ -1109,7 +1127,7 @@ quarkus.container-image.tag=1.0-SNAPSHOT <i class="conum" data-value="7"></i><b>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Property to whether or not push images</td>
+<td>Property to push or not the Container image to the given registry</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
@@ -1121,7 +1139,7 @@ quarkus.container-image.tag=1.0-SNAPSHOT <i class="conum" data-value="7"></i><b>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Sets the built Container image tag</td>
+<td>Sets the built Container Image tag</td>
 </tr>
 </table>
 </div>
@@ -1148,16 +1166,22 @@ quarkus.container-image.tag=1.0-SNAPSHOT <i class="conum" data-value="7"></i><b>
 <div class="listingblock">
 <div class="title">Build and Deploy your workflow application</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build -- -Pcontainer -DskipTests \
-  -Dquarkus.container-image.push=true \
-  -Dquarkus.container-image.registry=quay.io \
-  -Dquarkus.container-image.group=kiegroup \
-  -Dquarkus.container-image.tag=1.0-SNAPSHOT</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build -DskipTests</code></pre>
 </div>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>Note that the maven profile activated is named as <code>container</code>, which provides the needed system properties to build the
-target container image.</p>
+<p>The <code>kogito-examples</code> already have this extension added by default, and can be activated with the <code>container</code> Maven profile.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Verify if the workflow application is deployed correctly:</p>
@@ -1168,7 +1192,7 @@ target container image.</p>
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset4_on-kubectl"></a>On kubectl</p>
+<p><a id="tabset4_on-kubernetes-cli"></a>On Kubernetes CLI</p>
 </li>
 <li>
 <p><a id="tabset4_on-knative-cli"></a>On Knative CLI</p>
@@ -1176,17 +1200,17 @@ target container image.</p>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset4_on-kubectl">
+<div class="tab-pane" aria-labelledby="tabset4_on-kubernetes-cli">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get services.serving.knative.dev greeting-quarkus-cli</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get services.serving.knative.dev hello-workflow</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset4_on-knative-cli">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service list greeting-quarkus-cli</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service list hello-workflow</code></pre>
 </div>
 </div>
 </div>
@@ -1199,8 +1223,8 @@ target container image.</p>
 <div class="listingblock">
 <div class="title">Example output</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">NAME                   URL                                                                                      LATEST                       AGE    CONDITIONS   READY   REASON
-greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   greeting-quarkus-cli-00001   7m6s   3 OK / 3     True</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">NAME             URL                                                                                LATEST                 AGE    CONDITIONS   READY   REASON
+hello-workflow   http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   hello-workflow-00001   7m6s   3 OK / 3     True</code></pre>
 </div>
 </div>
 </div>
@@ -1211,7 +1235,7 @@ greeting-quarkus-cli   http://greeting-quarkus-cli.serverless-workflow-greeting-
 <div class="listingblock">
 <div class="title">Example request</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://hello.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet</code></pre>
 </div>
 </div>
 <div class="listingblock">

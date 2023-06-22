@@ -278,6 +278,9 @@
     <a class="nav-link" href="build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
   </li>
   <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deploying-on-openshift.html">Deploying Workflows on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="deploying-on-minikube.html">Deploying Workflows on Minikube</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -518,8 +521,25 @@ cd kogito-examples/serverless-workflow-examples/serverless-workflow-greeting-qua
 <p>Add the required Quarkus extension using Quarkus CLI:</p>
 <div class="openblock">
 <div class="content">
-<div class="listingblock">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="title">Add the Jib extension</div>
+<div class="paragraph">
+<p>The <code>kogito-examples</code> already have this extension added by default, and can be activated with the <code>container</code> Maven profile.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The steps to add the extension in your Serverless Workflow application are:</p>
+</div>
+<div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus extension add 'container-image-jib'</code></pre>
 </div>
@@ -586,7 +606,7 @@ For more information about installing the Quarkus CLI, see <a href="https://quar
 <div class="ulist">
 <ul>
 <li>
-<p><code>quarkus.container-image.registry</code>: To define the registry address of the image, such as <code>quay.io</code>.</p>
+<p><code>quarkus.container-image.registry</code>: To define the registry address of the image, such as <code>quay.io</code>. When using OpenShift use the provided registry.</p>
 </li>
 <li>
 <p><code>quarkus.container-image.group</code>: To define the registry namespace of the image. For example, <code>context/namespace</code> or in case of Kubernetes or OpenShift <code>namespace/project</code>.</p>
@@ -881,6 +901,9 @@ INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final nati
 </li>
 <li>
 <p><a href="deploying-on-kubernetes.html" class="xref page">Deploying your Kogito Serverless Workflow application on Kubernetes</a></p>
+</li>
+<li>
+<p><a href="deploying-on-openshift.html" class="xref page">Deploying your Kogito Serverless Workflow application on OpenShift</a></p>
 </li>
 </ul>
 </div>
