@@ -12,8 +12,10 @@
 :deploy_application: using the Minikube registry
 :k8s_registry: dev.local
 :default_namespace: kogito
+:container_push_prop: false
 :registry: Minikube's
-:container_push: Property to whether or not push images. When using Minikube's remote Docker daemon to avoid image validation
+:container_push: Property to whether or not push images. False when using Minikube's remote Docker daemon to avoid image validation
+:quarkus-k8s-plugin: quarkus-kubernetes
 :command_line_tool: kubectl
 :command_line_tool_name: Kubernetes CLI
 
@@ -216,66 +218,11 @@ include::../common/_proc_deploy_sw_kn_cli.adoc[]
 // deploy with kubectl
 include::../common/_proc_deploy_sw_kubectl.adoc[]
 
-[[proc-deploy-sw-application-quarkus-cli]]
-=== Deploying your workflow application using Quarkus CLI
+// deploy with quarkus-cli
+include::../common/_proc_deploy_sw_quarkus_cli.adoc[]
 
-.Prerequisites
-* Workflow application is installed.
-* Quarkus CLI is installed. +
-For more information, see link:{quarkus_cli_url}[Building Quarkus Apps with Quarkus command line interface (CLI)].
-
-.Procedure
-. Add the Quarkus extensions to deploy the `knative` service
-+
---
-You can simply add the kubernetes and the Kogito knative extension to your project with the Quarkus CLI:
-
-.Add kubernetes and Kogito knative extensions to the project with Quarkus CLI
-[source,shell]
-----
-quarkus extension add kubernetes
-quarkus extension add kogito-addons-quarkus-knative-eventing
-----
---
-. To deploy your workflow application using Quarkus CLI, set the following system properties in `application.properties` file:
-+
---
-.Required system properties
-[source,properties]
-----
-quarkus.knative.name=greeting-quarkus-cli <1>
-quarkus.kubernetes.deployment-target=knative <2>
-quarkus.kubernetes.deploy=true <3>
-quarkus.container-image.push=false <4>
-----
-
-<1> Property to set the Knative service name
-<2> Property to set the target deployment type
-<3> Property to set whether or not deploy on an active Kubernetes cluster
-<4> {container_push}
-
-[IMPORTANT]
-====
-This functionality works with Quarkus 2.10.2.Final or later. For more information, see
-link:{quarkus_k8s_deploy_url}[link].
-====
---
-
-.Build and Deploy your workflow application
-[source,shell]
-----
-quarkus build -- -Pcontainer -DskipTests \
-  -Dquarkus.container-image.push=false \
-  -Dquarkus.container-image.registry=quay.io \
-  -Dquarkus.container-image.group=kiegroup \
-  -Dquarkus.container-image.tag=1.0-SNAPSHOT
-----
-
-Note that the maven profile activated is named as `container`, which provides the needed system properties to build the
-target container image.
 
 // verify deployed swf
 include::../common/_verify_if_swf_is_deployed.adoc[]
-
 
 include::../../../pages/_common-content/report-issue.adoc[]
