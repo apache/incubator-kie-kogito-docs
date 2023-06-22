@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Understanding Workflow Services Status Conditions :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Description of the status and conditions of a workflow deployed by the operator">
+    <meta name="description" content="Description of the status and conditions of a Workflow deployed by the operator">
     <meta name="keywords" content="kogito, workflow, serverless, operator, kubernetes, minikube, status, conditions">
     <meta name="generator" content="Antora 3.0.3">
     <link rel="stylesheet" href="../../../../_/css/site.css">
@@ -450,10 +450,19 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes the status and conditions of the <code>KogitoServerlessWorkflow</code> object deployed by the Kogito Serverless Workflow Operator.</p>
+<p>This document describes the Status and Conditions of a <code>KogitoServerlessWorkflow</code> object managed by the Kogito Serverless Workflow Operator.</p>
 </div>
 <div class="paragraph">
 <p><a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties">Kubernetes Status</a> is an important property to observe in order to understand what is currently happening with the object. It can also help you troubleshoot or integrate with other objects in the cluster.</p>
+</div>
+<div class="paragraph">
+<p>You can inspect the Status of any Workflow object using the following command:</p>
+</div>
+<div class="listingblock">
+<div class="title">Checking the Workflow Status</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get workflow &lt;your_workflow_name&gt; -n &lt;your_namespace&gt; -o jsonpath={.status}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -461,10 +470,10 @@
 <h2 id="_general_status"><a class="anchor" href="#_general_status"></a>General Status</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The table below lists the general structure of a workflow status:</p>
+<p>The table below lists the general structure of a Workflow status:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Description of KogitoServerlessWorkflow status object</caption>
+<caption class="title">Table 1. Description of KogitoServerlessWorkflow Status object</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 66.6667%;">
@@ -478,15 +487,15 @@
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObservedGeneration</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Last object generation observed by the status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Last object generation observed by the operator</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Conditions</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Current observed workflow conditions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Current observed Workflow Conditions</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Address</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">External or internal workflow access endpoint. Implements the <a href="https://github.com/knative/specs/blob/main/specs/eventing/overview.md#addressable">Knative Addressable Interface</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">External or internal Workflow access endpoint. Implements the <a href="https://github.com/knative/specs/blob/main/specs/eventing/overview.md#addressable">Knative Addressable Interface</a></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>RecoverFailureAttempts</code></p></td>
@@ -495,7 +504,7 @@
 </tbody>
 </table>
 <div class="paragraph">
-<p>The <code>Conditions</code> property might vary depending on the workflow profile. The next sections describe the current implementation.</p>
+<p>The <code>Conditions</code> property might vary depending on the Workflow profile. The next sections describe the current implementation.</p>
 </div>
 </div>
 </div>
@@ -503,10 +512,10 @@
 <h2 id="_development_profile_conditions"><a class="anchor" href="#_development_profile_conditions"></a>Development Profile Conditions</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When you deploy a workflow with the <a href="developing-workflows.html" class="xref page">development profile</a>, the operator deploys a ready-to-use container with a running workflow instance.</p>
+<p>When you deploy a Workflow with the <a href="developing-workflows.html" class="xref page">development profile</a>, the operator deploys a ready-to-use container with a running Workflow instance.</p>
 </div>
 <div class="paragraph">
-<p>The following table lists the possible conditions.</p>
+<p>The following table lists the possible Conditions.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 2. Conditions Scenarios in Development</caption>
@@ -535,36 +544,36 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">True</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The workflow is running and in healthy state</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Workflow is running and in healthy state</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">False</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">WaitingForDeployment</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The workflow is waiting for the underlying deployment object to have a minimum availability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Workflow is waiting for the underlying deployment object to have a minimum availability</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">False</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DeploymentFailure</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">There was a problem with the underlying deployment object. Check the message in this condition and the workflow pod logs for more info</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">There was a problem with the underlying deployment object. Check the message in this Condition and the Workflow Pod logs for more info</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">False</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DeploymentIsUnavailable</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The underlying deployment object doesn&#8217;t have the minimum availability for this workflow. Check the message in this condition and the workflow pod logs for more info</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The underlying deployment object doesn&#8217;t have the minimum availability for this Workflow. Check the message in this condition and the Workflow Pod logs for more info</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">False</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">AttemptToRedeployFailed</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">If the workflow deployment is not available, the operator will try to rollout the deployment three times before entering in this stage. Check the message in this condition and the workflow pod logs for more info</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If the Workflow Deployment is not available, the operator will try to rollout the Deployment three times before entering this stage. Check the message in this Condition and the Workflow Pod logs for more info</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>In normal conditions, the workflow will transition from <code>Running</code>, <code>WaitingForDeployment</code> condition to <code>Running</code>. In case something wrong happens, consult the section <a href="developing-workflows.html#troubleshooting" class="xref page">Workflow Troubleshooting in Development</a>.</p>
+<p>In normal conditions, the Workflow will transition from <code>Running</code>, <code>WaitingForDeployment</code> condition to <code>Running</code>. In case something wrong happens, consult the section <a href="developing-workflows.html#troubleshooting" class="xref page">Workflow Troubleshooting in Development</a>.</p>
 </div>
 </div>
 </div>
@@ -572,7 +581,7 @@
 <h2 id="_production_profile_conditions"><a class="anchor" href="#_production_profile_conditions"></a>Production Profile Conditions</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Deploying the workflow in <a href="build-and-deploy-workflows.html" class="xref page">Production profile</a> makes the operator to build an immutable image for the workflow service. The build step can be followed by observing the workflow conditions.</p>
+<p>Deploying the Workflow in <a href="build-and-deploy-workflows.html" class="xref page">Production profile</a> makes the operator build an immutable image for the Workflow service. The progress of the immutable image build can be followed by observing the Workflow Conditions.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 3. Condition Scenarios in Production</caption>
@@ -613,48 +622,48 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">True</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The workflow is running and in healthy state</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Workflow is running and in healthy state</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">False</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">WaitingForPlatform</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The workflow can&#8217;t have a pod running until a <code>KogitoServerlessPlatform</code> is ready</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Workflow can&#8217;t have a Pod running until a <code>KogitoServerlessPlatform</code> is ready</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">False</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">WaitingForBuildReason</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The workflow is waiting for the build to finish to start running</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Workflow is waiting for the build to finish to start running</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">False</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">WaitingForDeployment</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The workflow is waiting for the underlying deployment object to have a minimum availability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Workflow is waiting for the underlying Deployment object to have a minimum availability</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">False</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DeploymentFailure</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">There was a problem with the underlying deployment object. Check the message in this condition and the workflow pod logs for more info</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">There was a problem with the underlying Deployment object. Check the message in this Condition and the Workflow Pod logs for more info</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">False</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DeploymentIsUnavailable</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The underlying deployment object doesn&#8217;t have the minimum availability for this workflow. Check the message in this condition and the workflow pod logs for more info</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The underlying Deployment object doesn&#8217;t have the minimum availability for this Workflow. Check the message in this Condition and the Workflow Pod logs for more info</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">False</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">AttemptToRedeployFailed</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">If the workflow deployment is not available, the operator will try to roll out the deployment three times before entering this stage. Check the message in this condition and the workflow pod logs for more info</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If the Workflow Deployment is not available, the operator will try to roll out the Deployment three times before entering this stage. Check the message in this Condition and the Workflow Pod logs for more info</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>The normal conditions for the workflow resource are to place a <code>KogitoServerlessBuild</code> to run and wait for it to finish. As soon as the image is ready, the workflow transitions to the deployment phase, which is to provision a new workflow service pod to run with the built image.</p>
+<p>When building an image for a Workflow resource, a <code>KogitoServerlessBuild</code> will first be created and the operator will wait for the associated build to finish. Once the build is complete, the Workflow transitions to the deployment phase, which will provision a new Workflow service Pod to run with the built image.</p>
 </div>
 </div>
 </div>

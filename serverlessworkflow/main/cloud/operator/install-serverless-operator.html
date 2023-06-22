@@ -466,7 +466,7 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="_prepare_a_minikube_instance"><a class="anchor" href="#_prepare_a_minikube_instance"></a>Prepare a Minikube instance</h2>
+<h2 id="_prepare_a_minikube_instance"><a class="anchor" href="#_prepare_a_minikube_instance"></a>Prepare a Minikube Instance</h2>
 <div class="sectionbody">
 <div class="admonitionblock warning">
 <table>
@@ -509,17 +509,17 @@
 </td>
 <td class="content">
 <div class="paragraph">
-<p>To speed up the build time, you can increase CPUs and memory options so that your minikube instance will have more resources. For example, use <code>--cpus 12 --memory 16384</code>. In order to work, you will have to recreate your instance.</p>
+<p>To speed up the build time, you can increase the CPUs and memory options so that your Minikube instance will have more resources. For example, use <code>--cpus 12 --memory 16384</code>. If you have already created your Minikube instance, you will need to recreate it for these changes to apply.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>If it does not work with the default driver, also known as <code>docker</code>, you can try to start with the <code>podman</code> driver as follows:</p>
+<p>If Minikube does not work with the default driver, also known as <code>docker</code>, you can try to start with the <code>podman</code> driver as follows:</p>
 </div>
 <div class="listingblock">
-<div class="title">Start minikube with podman driver</div>
+<div class="title">Start Minikube with the Podman driver</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">minikube start [...] --driver podman</code></pre>
 </div>
@@ -530,7 +530,7 @@
 <h2 id="_install_the_kogito_serverless_workflow_operator"><a class="anchor" href="#_install_the_kogito_serverless_workflow_operator"></a>Install the Kogito Serverless Workflow Operator</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In order to have an up-and-running instance of the Kogito Serverless Workflow Operator you can use the following command:</p>
+<p>To install the Kogito Serverless Workflow Operator, you can use the following command:</p>
 </div>
 <div class="listingblock">
 <div class="title">Install Kogito Serverless Workflow Operator on Kubernetes</div>
@@ -569,10 +569,10 @@ kogito-serverless-operator-controller-manager-948547ffd-sr2j2   2/2     Running 
 </div>
 </div>
 <div class="paragraph">
-<p>Once the operator is running, it will watch for new custom resources (CR) so that you can prepare your environment to be ready to create a new Kogito Serverless Workflow application based on the definitions you will send to the operator.</p>
+<p>Once the operator is running, it will watch for instances of the Kogito Serverless Workflow Custom Resources (CR). Using CRs, you can configure your Kogito Serverless Workflow environment and define Workflows and builds to be handled by the operator.</p>
 </div>
 <div class="paragraph">
-<p>To check if the definitions are correclty installed, try running:</p>
+<p>For the operator to correctly manage the CR instances, you must first install the Kogito Serverless Workflow Custom Resource Definitions (CRDs). To check if the CRDs are correctly installed, try running:</p>
 </div>
 <div class="listingblock">
 <div class="title">Check if the CRDs are correctly installed</div>
@@ -589,13 +589,13 @@ kogitoserverlessworkflows.sw.kogito.kie.org   2023-03-08T18:31:15Z</code></pre>
 <h2 id="_uninstall_the_operator"><a class="anchor" href="#_uninstall_the_operator"></a>Uninstall the Operator</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To uninstall the Kogito Serverless Workflow Operator, first you should remove all the object instances managed by it. Then, you can delete every object created during the installation.</p>
+<p>To uninstall the Kogito Serverless Workflow Operator, first, you must delete all the Kogito Serverless Workflow Custom Resources (CR) instances managed by it. Once the CRs are deleted, you can then delete all resources created during the operator installation.</p>
 </div>
 <div class="paragraph">
-<p>To delete every object instance managed by the workflow in your cluster, you can run these series of commands:</p>
+<p>To delete every CR managed by the operator in your cluster, you can run these series of commands:</p>
 </div>
 <div class="listingblock">
-<div class="title">Delete every Kogito Serverless Workflow object instances</div>
+<div class="title">Delete all Kogito Serverless Workflow CR instances</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl delete --all workflow --all-namespaces
 kubectl delete --all kogitoserverlessbuild --all-namespaces
@@ -603,7 +603,7 @@ kubectl delete --all kogitoserverlessplatform --all-namespaces</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Alternatively, if you created everything under the same namespace, deleting the given namespace has the same outcome.</p>
+<p>Alternatively, if you created everything under the same Namespace, deleting the given namespace has the same outcome.</p>
 </div>
 <div class="paragraph">
 <p>To uninstall the correct version of the operator, first you must get the current version by running:</p>

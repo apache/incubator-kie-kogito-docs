@@ -450,7 +450,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how to build and deploy your workflow on a Kubernetes cluster using the <a href="https://github.com/kiegroup/kogito-serverless-operator/">Kogito Serverless Workflow Operator</a> only by having a workflow definition.</p>
+<p>This document describes how to build and deploy your Workflow on a Kubernetes cluster using the <a href="https://github.com/kiegroup/kogito-serverless-operator/">Kogito Serverless Workflow Operator</a> only by having a Workflow definition.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -470,7 +470,7 @@
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>A workflow definition.</p>
+<p>A Workflow definition.</p>
 </li>
 <li>
 <p>The Kogito Serverless Workflow Operator installed. See <a href="install-serverless-operator.html" class="xref page">Install the Kogito Serverless Workflow Operator</a></p>
@@ -486,12 +486,12 @@
 <p>You should follow these steps to create a container that you can deploy as a service on Kubernetes.</p>
 </div>
 <div class="sect2">
-<h3 id="_create_a_namespace_for_the_building_phase"><a class="anchor" href="#_create_a_namespace_for_the_building_phase"></a>Create a namespace for the building phase</h3>
+<h3 id="_create_a_namespace_for_the_building_phase"><a class="anchor" href="#_create_a_namespace_for_the_building_phase"></a>Create a Namespace for the building phase</h3>
 <div class="paragraph">
-<p>Create a new namespace that will hold all the resources that the operator will create (pods, deployments, services, secretes, config map, and Custom Resources) in this guide.</p>
+<p>Create a new Namespace that will hold all the resources that the operator will create (Pods, Deployments, Services, Secrets, ConfigMap, and Custom Resources) in this guide.</p>
 </div>
 <div class="listingblock">
-<div class="title">Create a namespace for the application to build &amp; run in</div>
+<div class="title">Create a Namespace for the application to build and run in</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create namespace kogito-workflows
 # set the kogito-workflows namespace to your context
@@ -500,7 +500,7 @@ kubectl config set-context --current --namespace=kogito-workflows</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_create_a_secret_for_the_container_registry_authentication"><a class="anchor" href="#_create_a_secret_for_the_container_registry_authentication"></a>Create a secret for the container registry authentication</h3>
+<h3 id="_create_a_secret_for_the_container_registry_authentication"><a class="anchor" href="#_create_a_secret_for_the_container_registry_authentication"></a>Create a Secret for the container registry authentication</h3>
 <div class="listingblock">
 <div class="title">Create a secret for the container registry authentication</div>
 <div class="content">
@@ -508,10 +508,10 @@ kubectl config set-context --current --namespace=kogito-workflows</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>or you can directly import your local docker config into your Kubernetes cluster:</p>
+<p>or you can directly import your local Docker config into your Kubernetes cluster:</p>
 </div>
 <div class="listingblock">
-<div class="title">Create a secret for the container registry authentication based on local docker config</div>
+<div class="title">Create a Secret for the container registry authentication based on local Docker config</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl create secret generic regcred --from-file=.dockerconfigjson=${HOME}/.docker/config.json --type=kubernetes.io/dockerconfigjson -n kogito-workflows</code></pre>
 </div>
@@ -524,7 +524,7 @@ kubectl config set-context --current --namespace=kogito-workflows</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Double check your <code>${HOME}/.docker/config.json</code>. If you&#8217;re using local desktop authentication, this configuration <strong>won&#8217;t work</strong> in the cluster. You can initialize this by logging in in the target registry, e.g. <code>docker login</code>.</p>
+<p>Double-check your <code>${HOME}/.docker/config.json</code>. If you&#8217;re using local desktop authentication, this configuration <strong>won&#8217;t work</strong> in the cluster. You can initialize this by logging in to the target registry, e.g. <code>docker login</code>.</p>
 </div>
 </td>
 </tr>
@@ -532,14 +532,14 @@ kubectl config set-context --current --namespace=kogito-workflows</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configure_the_kogito_serverless_workflow_operator_i_e_registry_address_secret_for_building_your_workflows"><a class="anchor" href="#_configure_the_kogito_serverless_workflow_operator_i_e_registry_address_secret_for_building_your_workflows"></a>Configure the Kogito Serverless Workflow Operator (i.e. registry address, secret) for building your workflows</h3>
+<h3 id="_configure_the_kogito_serverless_workflow_operator_i_e_registry_address_secret_for_building_your_workflows"><a class="anchor" href="#_configure_the_kogito_serverless_workflow_operator_i_e_registry_address_secret_for_building_your_workflows"></a>Configure the Kogito Serverless Workflow Operator (i.e. registry address, secret) for building your Workflows</h3>
 <div class="paragraph">
-<p>The <code>KogitoServerlessPlatform</code> is the resource used to control the behavior of the Kogito Serverless Workflow Operator.
-It defines the behavior of all Custom Resources (Workflow and Build) in the given namespace.</p>
+<p>The <code>KogitoServerlessPlatform</code> is the Custom Resource used to control the behavior of the Kogito Serverless Workflow Operator.
+It defines the behavior of the operator when handling all Kogito Serverless Workflow Custom Resources (Workflow and Build) in the given namespace.</p>
 </div>
 <div class="paragraph">
-<p>Since the operator is installed in global mode, you will need to specify a platform in each namespace where you want to deploy workflows.
-You can find a basic <code>KogitoServerlessPlatform</code> custom resource example in the <a href="https://github.com/kiegroup/kogito-serverless-operator/tree/main/config/samples"><code>config/samples</code> folder</a> that you can simply apply to configure your operator.</p>
+<p>Since the operator is installed in global mode, you will need to specify a <code>KogitoServerlessPlatform</code> in each Namespace where you want to deploy Workflows.
+You can find a basic <code>KogitoServerlessPlatform</code> Custom Resource example in the <a href="https://github.com/kiegroup/kogito-serverless-operator/tree/main/config/samples"><code>config/samples</code> folder</a> that you can simply apply to configure your operator.</p>
 </div>
 <div class="listingblock">
 <div class="title">Create a <code>KogitoServerlessPlatform</code></div>
@@ -555,7 +555,7 @@ You can find a basic <code>KogitoServerlessPlatform</code> custom resource examp
 </td>
 <td class="content">
 <div class="paragraph">
-<p>In this Custom Resource, <code>spec.platform.registry.secret</code> is the name of the secret you created just before.</p>
+<p>In this Custom Resource, <code>spec.platform.registry.secret</code> is the name of the Secret you created just before.</p>
 </div>
 </td>
 </tr>
@@ -583,10 +583,10 @@ You can find a basic <code>KogitoServerlessPlatform</code> custom resource examp
 </div>
 </div>
 <div class="sect1">
-<h2 id="_build_and_deploy_your_workflow_application"><a class="anchor" href="#_build_and_deploy_your_workflow_application"></a>Build and deploy your workflow application</h2>
+<h2 id="_build_and_deploy_your_workflow_application"><a class="anchor" href="#_build_and_deploy_your_workflow_application"></a>Build and deploy your Workflow application</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can now send your workflow definition (<code>KogitoServerlessWorkflow</code>) to the operator.</p>
+<p>You can now send your Workflow definition (<code>KogitoServerlessWorkflow</code>) to the operator.</p>
 </div>
 <div class="paragraph">
 <p>You can find a basic <code>KogitoServerlessWorkflow</code> in the <a href="https://github.com/kiegroup/kogito-serverless-operator/tree/main/config/samples"><code>config/samples</code> folder</a> that is defining the <a href="https://github.com/kiegroup/kogito-examples/tree/stable/serverless-workflow-examples/serverless-workflow-greeting-quarkus">Kogito Serverless Workflow Greeting example</a>.</p>
@@ -597,10 +597,10 @@ You can find a basic <code>KogitoServerlessPlatform</code> custom resource examp
 </div>
 </div>
 <div class="paragraph">
-<p>You can check the logs of the build of your workflow via:</p>
+<p>You can check the logs of the build of your Workflow via:</p>
 </div>
 <div class="listingblock">
-<div class="title">Get the workflow application pod logs</div>
+<div class="title">Get the Workflow application pod logs</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl logs kogito-greeting-builder -n kogito-workflows</code></pre>
 </div>
@@ -611,10 +611,10 @@ You can find a basic <code>KogitoServerlessPlatform</code> custom resource examp
 </div>
 </div>
 <div class="sect1">
-<h2 id="_check_the_workflow_application_is_running"><a class="anchor" href="#_check_the_workflow_application_is_running"></a>Check the workflow application is running</h2>
+<h2 id="_check_the_workflow_application_is_running"><a class="anchor" href="#_check_the_workflow_application_is_running"></a>Check the Workflow application is running</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In order to check that the Kogito Serverless Workflow Greeting application is up and running, you can try to perform a test HTTP call, from the greeting pod.</p>
+<p>In order to check that the Kogito Serverless Workflow Greeting application is up and running, you can try to perform a test HTTP call, from the greeting Pod.</p>
 </div>
 <div class="listingblock">
 <div class="title">Check the greeting application is running</div>
@@ -625,7 +625,7 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 </div>
 </div>
 <div class="paragraph">
-<p>If everything is working well you should receive a response like this:</p>
+<p>If everything is working, you should receive a response like this:</p>
 </div>
 <div class="listingblock">
 <div class="title">Response from the greeting application</div>
