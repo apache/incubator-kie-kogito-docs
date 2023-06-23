@@ -14,15 +14,27 @@ You can learn how to create, manage, and deploy your workflow applications with 
 [.card]
 --
 [.card-title]
-xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
+xref:getting-started/create-your-first-workflow-service.adoc[]
 [.card-description]
-Learn how to create your first Serverless Workflow project
+Learn how to create your first Quarkus Workflow Project
 --
+
+// We will refactor this section here: https://issues.redhat.com/browse/KOGITO-9451
+//[.card]
+//--
+//[.card-title]
+//xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {product_name} tooling]
+//[.card-description]
+//Learn which tools you can use to author your workflow assets
+//--
+
+[.card-section]
+== Core Concepts
 
 [.card]
 --
 [.card-title]
-xref:core/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow specification]
+xref:core/cncf-serverless-workflow-specification-support.adoc[]
 [.card-description]
 Learn about the CNCF Serverless Workflow Specification implementation
 --
@@ -30,26 +42,23 @@ Learn about the CNCF Serverless Workflow Specification implementation
 [.card]
 --
 [.card-title]
-xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {product_name} tooling]
+xref:core/handling-events-on-workflows.adoc[]
 [.card-description]
-Learn which tools you can use to author your workflow assets
---
-
-[.card-section]
-== Core
-
-[.card]
---
-[.card-title]
-xref:core/custom-functions-support.adoc[Custom functions for your {product_name} service]
-[.card-description]
-Learn about the custom functions supported by Serverless Workflow
+Learn how to use the Event state in your workflow application
 --
 
 [.card]
 --
 [.card-title]
-xref:core/understanding-jq-expressions.adoc[jq expressions in {product_name}]
+xref:core/working-with-callbacks.adoc[]
+[.card-description]
+Learn how to use the Callback state in your workflow application
+--
+
+[.card]
+--
+[.card-title]
+xref:core/understanding-jq-expressions.adoc[]
 [.card-description]
 Learn how to create jq expressions to manipulate data within a workflow execution
 --
@@ -57,7 +66,7 @@ Learn how to create jq expressions to manipulate data within a workflow executio
 [.card]
 --
 [.card-title]
-xref:core/understanding-workflow-error-handling.adoc[Error handling in {product_name}]
+xref:core/understanding-workflow-error-handling.adoc[]
 [.card-description]
 Learn how to handle errors in your workflow application
 --
@@ -65,15 +74,7 @@ Learn how to handle errors in your workflow application
 [.card]
 --
 [.card-title]
-xref:core/working-with-parallelism.adoc[Parallelism in {product_name}]
-[.card-description]
-Working with parallelism in your workflow service
---
-
-[.card]
---
-[.card-title]
-xref:core/configuration-properties.adoc[Configuration properties in {product_name}]
+xref:core/configuration-properties.adoc[]
 [.card-description]
 Quick reference of configuration properties in workflow
 --
@@ -81,7 +82,7 @@ Quick reference of configuration properties in workflow
 [.card]
 --
 [.card-title]
-xref:core/defining-an-input-schema-for-workflows.adoc[Input schema definition for {product_name}]
+xref:core/defining-an-input-schema-for-workflows.adoc[]
 [.card-description]
 Learn about the input schema definition used to validate the workflow data input against a defined JSON Schema
 --
@@ -89,11 +90,28 @@ Learn about the input schema definition used to validate the workflow data input
 [.card]
 --
 [.card-title]
-xref:core/timeouts-support.adoc[Timeouts in {product_name}]
+xref:core/custom-functions-support.adoc[]
+[.card-description]
+Learn about the custom functions supported by Serverless Workflow
+--
+
+[.card]
+--
+[.card-title]
+xref:core/timeouts-support.adoc[]
 [.card-description]
 Learn how to configure timeouts in the workflow
 --
 
+[.card]
+--
+[.card-title]
+xref:core/working-with-parallelism.adoc[]
+[.card-description]
+Working with parallelism in your workflow project
+--
+
+// TODO: https://issues.redhat.com/browse/KOGITO-9451
 [.card-section]
 == Tooling
 
@@ -135,7 +153,7 @@ Learn how to use {serverless_logic_web_tools_name} for creating and managing wor
 [.card]
 --
 [.card-title]
-xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services]
+xref:service-orchestration/orchestration-of-openapi-based-services.adoc[]
 [.card-description]
 Learn how to orchestrate REST services using OpenAPI specification descriptors
 --
@@ -143,14 +161,7 @@ Learn how to orchestrate REST services using OpenAPI specification descriptors
 [.card]
 --
 [.card-title]
-xref:eventing/orchestration-of-asyncapi-based-services.adoc[Orchestrating the AsyncAPI services]
-[.card-description]
-Learn how to trigger and consume events using AsyncAPI specification descriptors
---
-[.card]
---
-[.card-title]
-xref:service-orchestration/configuring-openapi-services-endpoints.adoc[Configuring the OpenAPI services endpoints]
+xref:service-orchestration/configuring-openapi-services-endpoints.adoc[]
 [.card-description]
 Learn how to configure OpenAPI services endpoints in different environments
 --
@@ -158,50 +169,34 @@ Learn how to configure OpenAPI services endpoints in different environments
 [.card]
 --
 [.card-title]
-xref:service-orchestration/orchestration-of-grpc-services.adoc[Orchestration of gRPC based services]
+xref:service-orchestration/working-with-openapi-callbacks.adoc[]
+[.card-description]
+Learn how to use the OpenAPI Callback in your workflow application
+--
+
+[.card]
+--
+[.card-title]
+xref:service-orchestration/orchestration-of-grpc-services.adoc[]
 [.card-description]
 Learn about orchestrating gRPC services
 --
 
 [.card-section]
-== Eventing
+== Event Orchestration
 
 [.card]
 --
 [.card-title]
-xref:core/handling-events-on-workflows.adoc[Event state in {product_name}]
+xref:eventing/orchestration-of-asyncapi-based-services.adoc[]
 [.card-description]
-Learn how to use the Event state in your workflow application
+Learn how to trigger and consume events using AsyncAPI specification descriptors
 --
 
 [.card]
 --
 [.card-title]
-xref:core/working-with-callbacks.adoc[Callback state in {product_name}]
-[.card-description]
-Learn how to use the Callback state in your workflow application
---
-
-[.card]
---
-[.card-title]
-xref:eventing/consume-producing-events-with-kafka.adoc[Consuming and producing events using Apache Kafka]
-[.card-description]
-Learn how to configure your Serverless Workflow application to produce and consume events using Apache Kafka
---
-
-[.card]
---
-[.card-title]
-xref:eventing/consume-produce-events-with-knative-eventing.adoc[Consuming and producing events on Knative Eventing]
-[.card-description]
-Learn how to configure your Serverless Workflow application to produce and consume events on Knative Eventing
---
-
-[.card]
---
-[.card-title]
-xref:eventing/event-correlation-with-workflows.adoc[Event correlation in {product_name}]
+xref:eventing/event-correlation-with-workflows.adoc[]
 [.card-description]
 Learn how to configure event correlation in your workflow application
 --
@@ -209,9 +204,17 @@ Learn how to configure event correlation in your workflow application
 [.card]
 --
 [.card-title]
-xref:core/working-with-callbacks.adoc[OpenAPI Callback in {product_name}]
+xref:eventing/consume-producing-events-with-kafka.adoc[]
 [.card-description]
-Learn how to use the OpenAPI Callback in your workflow application
+Learn how to configure your Quarkus Workflow Project to produce and consume events using Apache Kafka
+--
+
+[.card]
+--
+[.card-title]
+xref:eventing/consume-produce-events-with-knative-eventing.adoc[]
+[.card-description]
+Learn how to configure your Quarkus Workflow Project to produce and consume events on Knative Eventing
 --
 
 [.card-section]
@@ -220,7 +223,7 @@ Learn how to use the OpenAPI Callback in your workflow application
 [.card]
 --
 [.card-title]
-xref:security/authention-support-for-openapi-services.adoc[Authentication for OpenAPI services in {product_name}]
+xref:security/authention-support-for-openapi-services.adoc[]
 [.card-description]
 Learn how to use authentication methods when calling REST services using OpenAPI specification
 --
@@ -228,44 +231,36 @@ Learn how to use authentication methods when calling REST services using OpenAPI
 [.card]
 --
 [.card-title]
-xref:security/orchestrating-third-party-services-with-oauth2.adoc[Orchestration of third-party services using OAuth 2.0 authentication]
+xref:security/orchestrating-third-party-services-with-oauth2.adoc[]
 [.card-description]
 Learn about the OAuth2 method support when orchestrating REST services using your workflow application
 --
 
 [.card-section]
-== Testing and Troubleshooting
+== Executing, Testing and Troubleshooting
 
 [.card]
 --
 [.card-title]
-xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Testing your workflow application using REST Assured]
+xref:testing-and-troubleshooting/mocking-openapi-services-with-wiremock.adoc[]
 [.card-description]
-Learn how to add unit tests in your workflow application using RestAssured
---
-
-[.card]
---
-[.card-title]
-xref:persistence/integration-tests-with-postgresql.adoc[{product_name} integration test using PostgreSQL]
-[.card-description]
-Learn how to integrate tests on workflow applications that use PostgreSQL as a persistence storage
+Learn how to mock external REST requests when testing your Quarkus Workflow Project
 --
 
 [.card]
 --
 [.card-title]
-xref:testing-and-troubleshooting/mocking-openapi-services-with-wiremock.adoc[Mocking OpenAPI services with WireMock]
+xref:testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc[]
 [.card-description]
-Learn how to mock external REST requests when testing your Serverless Workflow applications
+Testing Quarkus Workflow Project that uses HTTP CloudEvents and Knative Sink Binding
 --
 
 [.card]
 --
 [.card-title]
-xref:testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc[Mocking HTTP CloudEvents Sink with WireMock]
+xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[]
 [.card-description]
-Testing Serverless Workflow application that uses HTTP CloudEvents and Knative Sink Binding
+Learn how to add unit tests in your Quarkus Workflow Project using RestAssured
 --
 
 [.card-section]
@@ -274,17 +269,25 @@ Testing Serverless Workflow application that uses HTTP CloudEvents and Knative S
 [.card]
 --
 [.card-title]
-xref:persistence/persistence-with-postgresql.adoc[Running a workflow service using PostgreSQL]
+xref:persistence/integration-tests-with-postgresql.adoc[]
 [.card-description]
-Running Serverless Workflow service using PostgresSQL
+Learn how to integrate tests on Quarkus Workflow Applications that use PostgreSQL as a persistence storage
 --
 
 [.card]
 --
 [.card-title]
-xref:persistence/postgresql-flyway-migration.adoc[Migrate Your PostgreSQL database with Kogito upgrade]
+xref:persistence/persistence-with-postgresql.adoc[]
 [.card-description]
-Migrating your existing PostgreSQL Database with changes from the Kogito upgrade using Flyway
+Running Quarkus Workflow Applications using PostgresSQL
+--
+
+[.card]
+--
+[.card-title]
+xref:persistence/postgresql-flyway-migration.adoc[]
+[.card-description]
+Migrating your existing PostgreSQL Database with changes from the {product_name} upgrade using Flyway
 --
 
 [.card-section]
@@ -298,29 +301,13 @@ xref:cloud/index.adoc[{product_name} in the Cloud]
 Learn about the options to deploy workflow applications in Kubernetes
 --
 
-[.card]
---
-[.card-title]
-xref:use-cases/orchestration-based-saga-pattern.adoc[Saga orchestration example in {product_name}]
-[.card-description]
-Learn how and when to use the SAGA pattern in your workflow projects
---
-
-[.card]
---
-[.card-title]
-xref:use-cases/timeout-showcase-example.adoc[Timeout example in {product_name}]
-[.card-description]
-Learn how and when to use timeout in your workflow projects
---
-
 [.card-section]
 == Integrations
 
 [.card]
 --
 [.card-title]
-xref:integrations/camel-routes-integration.adoc[Integrating with Camel Routes]
+xref:integrations/camel-routes-integration.adoc[]
 [.card-description]
 Learn how to use Camel Routes within your workflow application
 --
@@ -328,34 +315,34 @@ Learn how to use Camel Routes within your workflow application
 [.card]
 --
 [.card-title]
-xref:integrations/custom-functions-knative.adoc[Invoking Knative services from {product_name}]
+xref:integrations/custom-functions-knative.adoc[]
 [.card-description]
-Learn how to invoke Knative services from {product_name} custom functions
+Learn how to invoke Knative Services from {product_name} custom functions
 --
 
 [.card]
 --
 [.card-title]
-xref:integrations/serverless-dashboard-with-runtime-data.adoc[Displaying workflow data in dashboards]
-[.card-description]
-Learn how to use dashboards to display the runtime data of your workflow application
---
-
-[.card]
---
-[.card-title]
-xref:integrations/expose-metrics-to-prometheus.adoc[Exposing workflow base metrics to Prometheus]
+xref:integrations/expose-metrics-to-prometheus.adoc[]
 [.card-description]
 Exposing the workflow base metrics to Prometheus
 --
 
+[.card]
+--
+[.card-title]
+xref:integrations/serverless-dashboard-with-runtime-data.adoc[]
+[.card-description]
+Learn how to use dashboards to display the runtime data of your workflow application
+--
+
 [.card-section]
-== Supporting Services
+== Job Services
 
 [.card]
 --
 [.card-title]
-xref:job-services/core-concepts.adoc[Job Service]
+xref:job-services/core-concepts.adoc[]
 [.card-description]
 Details about Job Service to control timers in {PRODUCT_NAME}
 --
@@ -366,7 +353,7 @@ Details about Job Service to control timers in {PRODUCT_NAME}
 [.card]
 --
 [.card-title]
-xref:use-cases/orchestration-based-saga-pattern.adoc[Saga orchestration example in {product_name}]
+xref:use-cases/orchestration-based-saga-pattern.adoc[]
 [.card-description]
 Learn how and when to use the SAGA pattern in your workflow projects
 --
@@ -374,7 +361,7 @@ Learn how and when to use the SAGA pattern in your workflow projects
 [.card]
 --
 [.card-title]
-xref:use-cases/timeout-showcase-example.adoc[Timeout example in {product_name}]
+xref:use-cases/timeout-showcase-example.adoc[]
 [.card-description]
 Learn how and when to use timeout in your workflow projects
 --
