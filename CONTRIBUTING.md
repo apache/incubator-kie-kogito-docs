@@ -214,7 +214,7 @@ More details at [Antora documentation](https://docs.antora.org/antora/latest/asc
 
 ## Generating Release Notes for Serverless Workflow
 
-1. You can retrieve all changes in the release page of each repository of the project:
+1. You can retrieve all changes on the release page of each repository of the project:
 
    - https://github.com/kiegroup/kogito-runtimes/releases/tag/{version}
    - https://github.com/kiegroup/kogito-apps/releases/tag/{version}
@@ -222,17 +222,17 @@ More details at [Antora documentation](https://docs.antora.org/antora/latest/asc
    - https://github.com/kiegroup/kogito-runtimes/releases/tag/{version_without_Final}
    - https://github.com/kiegroup/kogito-runtimes/releases/tag/v{version_without_Final}
 
-Replace `{version}` with the given core version, for example `1.40.0.Final`.  
-Replace `{version_without_Final}` with the given cloud version, for example `1.40.0`.
+Replace `{version}` with the given core version, for example, `1.40.0.Final`.  
+Replace `{version_without_Final}` with the given cloud version, for example, `1.40.0`.
 
 2. Update the page [release_notes.adoc](serverlessworkflow/modules/ROOT/pages/release_notes.adoc)
 
-   You should get JIRA issues with `KOGITO` and `DROOLS` projects as well as issues coming from the `kie-issues` repository.
+You must get JIRA issues with the `KOGITO` and `DROOLS` projects and issues from the `kie-issues` repository.
 
 4. Align with the team what should be under "Notable changes"
 5. Add the rest to "Other Changes and Bug Fixing".
-6. Open a PR in the target **branch** version, **not** main
-7. Add one member from each squad to review
+6. Open a PR in the target **branch** version, **not** main.
+7. Add one member from each squad to review.
 
 ## Useful Resources
 
