@@ -228,6 +228,10 @@ Replace `<version>` with the given version, for example `1.35.0.Final`.
 5. Open a PR in the target **branch** version, **not** main
 6. Add one member from each squad to review
 
+## Configuring the Domain
+
+**Don't use the GH Pages Settings**, but change the [CNAME file instead](build/site/CNAME). This is because the GH Settings page will change the branch `gh-pages` directly, whereas we have a CI workflow to build the website. Once we run the CI, it will override anything within `build/site`. Preserving the `CNAME` file there guarantees that the CI won't override it.
+
 ## Useful Resources
 
 - [AsciiDoc Syntax Quick Reference](https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/)
