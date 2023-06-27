@@ -41,7 +41,7 @@ Event-based states can use the sub-property `eventTimeout` to configure the maxi
 === Callback state timeout
 Callback state can be used when you need to execute an action, in general to call an external service, and wait for an asynchronous response in form of an event, the callback.
 
-Once the response event is consumed, the workflow continues the execution, in general moving to the next state defined in the `transition` property. See more on xref:eventing/working-with-callbacks.adoc[Callback state in {product_name}].
+Once the response event is consumed, the workflow continues the execution, in general moving to the next state defined in the `transition` property. See more on xref:core/working-with-callbacks.adoc[Callback state in {product_name}].
 
 Since the callback state halts the execution util the event is consumed, you can define an `eventTimeout` for it, and in case the event does not arrive in the defined duration time, the workflow continues the execution moving to the next state defined in the transition, see the <<callback-state, example>>.
 
@@ -186,7 +186,7 @@ For more information about event state timeout, see link:{spec_doc_url}#event-ti
 
 === Deploying a timed-based workflow
 
-In order to deploy a workflow that contains timeouts or any other timer-based action, it is necessary to have a job service running in your environment, which is an external service responsible to control the workflows timers, see the xref:supporting-services/jobs-service.adoc#job-service[job service guide] for more information.
+In order to deploy a workflow that contains timeouts or any other timer-based action, it is necessary to have a job service running in your environment, which is an external service responsible to control the workflows timers, see the xref:job-services/core-concepts.adoc#job-service[job service guide] for more information.
 In the <<timeout-example, timeout example>> you can see the details of how set up a Knative infrastructure with the workflow and job service running.
 
 [[job-addon-configuration]]
@@ -232,7 +232,7 @@ to see how to use and configure workflows with timeouts.
 
 == Additional resources
 
-* xref:eventing/working-with-callbacks.adoc[Callback state in {product_name}]
+* xref:core/working-with-callbacks.adoc[Callback state in {product_name}]
 * xref:use-cases/timeout-showcase-example.adoc[Timeout example in {product_name}]
 
 include::../../pages/_common-content/report-issue.adoc[]

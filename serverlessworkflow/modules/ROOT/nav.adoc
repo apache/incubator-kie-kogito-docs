@@ -1,18 +1,23 @@
-// * xref:index.adoc[Home]
 * xref:release_notes.adoc[Release notes]
 * Getting Started
-** xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
-** xref:getting-started/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow specification]
-** xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with tooling]
-* Core
-** xref:core/understanding-jq-expressions.adoc[jq expressions]
+// TODO: https://issues.redhat.com/browse/KOGITO-9455
+//** Creating a Workflow Project
+** xref:getting-started/create-your-first-workflow-service.adoc[]
+// We will refactor this section here: https://issues.redhat.com/browse/KOGITO-9451
+//** xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with tooling]
+* Core Concepts
+** xref:core/cncf-serverless-workflow-specification-support.adoc[]
+** xref:core/handling-events-on-workflows.adoc[Events]
+** xref:core/working-with-callbacks.adoc[Callbacks]
+** xref:core/understanding-jq-expressions.adoc[]
 ** xref:core/understanding-workflow-error-handling.adoc[Error handling]
+** xref:core/configuration-properties.adoc[Configuration]
+// TODO: describe output schema https://issues.redhat.com/browse/KOGITO-9468
+** xref:core/defining-an-input-schema-for-workflows.adoc[Input Schema]
+** xref:core/custom-functions-support.adoc[Custom Functions]
+** xref:core/timeouts-support.adoc[Timeouts]
 ** xref:core/working-with-parallelism.adoc[Parallelism]
-** xref:core/configuration-properties.adoc[Configuration properties]
-//** xref:core/accessing-workflow-metainformation-in-runtime.adoc[Accessing workflow metainformation in runtime]
-** xref:core/defining-an-input-schema-for-workflows.adoc[Input schema definition]
-** xref:core/custom-functions-support.adoc[Custom functions for your workflow service]
-** xref:core/timeouts-support.adoc[Timeouts Support]
+// We will refactor this section here: https://issues.redhat.com/browse/KOGITO-9451
 * Tooling
 ** xref:tooling/serverless-workflow-editor/swf-editor-overview.adoc[Serverless Workflow editor]
 ** xref:tooling/serverless-workflow-editor/swf-editor-vscode-extension.adoc[VS Code extension for Serverless Workflow editor]
@@ -28,57 +33,63 @@
 *** xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.adoc[Integrating with Red Hat OpenShift Application and Data Services]
 *** xref:tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.adoc[Deploying your workflow projects using {serverless_logic_web_tools_name}]
 * Service Orchestration
-** xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services]
-** xref:service-orchestration/configuring-openapi-services-endpoints.adoc[Configuring the OpenAPI services endpoints]
-** xref:service-orchestration/orchestration-of-asyncapi-based-services.adoc[Orchestrating the AsyncAPI services]
-** xref:service-orchestration/orchestration-of-grpc-services.adoc[Orchestration of gRPC based services]
-* Eventing
-** xref:eventing/handling-events-on-workflows.adoc[Event State]
-** xref:eventing/consume-producing-events-with-kafka.adoc[Consuming and producing events using Apache Kafka]
-** xref:eventing/consume-produce-events-with-knative-eventing.adoc[Consuming and producing events on Knative Eventing]
+** xref:service-orchestration/orchestration-of-openapi-based-services.adoc[OpenAPI]
+*** xref:service-orchestration/configuring-openapi-services-endpoints.adoc[Advanced Configuration]
+*** xref:service-orchestration/working-with-openapi-callbacks.adoc[Callbacks]
+** xref:service-orchestration/orchestration-of-grpc-services.adoc[gRPC]
+* Event Orchestration
+** xref:eventing/orchestration-of-asyncapi-based-services.adoc[AsyncAPI]
 ** xref:eventing/event-correlation-with-workflows.adoc[Event Correlation]
-** xref:eventing/working-with-callbacks.adoc[Callback State]
-** xref:eventing/working-with-openapi-callbacks.adoc[OpenAPI Callback]
+** Quarkus
+*** xref:eventing/consume-producing-events-with-kafka.adoc[Apache Kafka]
+*** xref:eventing/consume-produce-events-with-knative-eventing.adoc[Knative Eventing]
 * Security
-** xref:security/authention-support-for-openapi-services.adoc[Authentication for OpenAPI services]
-** xref:security/orchestrating-third-party-services-with-oauth2.adoc[Orchestration of third-party services using OAuth 2.0 authentication]
-* Testing and Troubleshooting
-** xref:testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc[Mocking HTTP CloudEvents sink using WireMock]
-** xref:testing-and-troubleshooting/mocking-openapi-services-with-wiremock.adoc[Mocking OpenAPI services using WireMock]
-** xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Testing using REST Assured]
-//** xref:testing-and-troubleshooting/debugging-workflow-execution-runtime.adoc[Debugging the workflow execution in runtime]
-** xref:testing-and-troubleshooting/integration-tests-with-postgresql.adoc[Integration tests using PostgreSQL]
-//** xref:testing-and-troubleshooting/development-tools-for-troubleshooting.adoc[Development tools for troubleshooting]
+** Client Authentication
+*** xref:security/authention-support-for-openapi-services.adoc[OpenAPI Authentication]
+*** xref:security/orchestrating-third-party-services-with-oauth2.adoc[OpenAPI OAuth2]
+//* Running Workflows Locally
+//** Running a Workflow Project TODO: https://issues.redhat.com/browse/KOGITO-9457
+// ** Running a Quarkus Workflow Project TODO: https://issues.redhat.com/browse/KOGITO-9458
+* Executing, Testing and Troubleshooting
+//** Executing and Testing Workflows
+// *** Developer UI TODO: https://issues.redhat.com/browse/KOGITO-9459
+// *** Command Line TODO: https://issues.redhat.com/browse/KOGITO-9460
+// *** Swagger UI, GraphiQL, Console logging TODO: https://issues.redhat.com/browse/KOGITO-9462
+** Quarkus
+*** xref:testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.adoc[Mocking HTTP CloudEvents]
+*** xref:testing-and-troubleshooting/mocking-openapi-services-with-wiremock.adoc[Mocking OpenAPI Services]
+*** xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Testing with REST Assured]
 * Persistence
-** xref:persistence/persistence-with-postgresql.adoc[Running a workflow service using PostgreSQL]
-** xref:persistence/postgresql-flyway-migration.adoc[Migrate your PostgreSQL database]
-//** xref:persistence/workflow-database-for-db-admins.adoc[Workflows database for DB admins]
-// ** xref:persistence/data-consistency.adoc[Data consistency]
+** Quarkus
+*** xref:persistence/persistence-with-postgresql.adoc[PostgreSQL Configuration]
+*** xref:persistence/postgresql-flyway-migration.adoc[PostgreSQL Database Migration]
+*** xref:persistence/integration-tests-with-postgresql.adoc[Integration Tests with PostgreSQL]
+// * Java Workflow Library TODO: https://issues.redhat.com/browse/KOGITO-9454
 * xref:cloud/index.adoc[Cloud]
 ** Operator
 *** xref:cloud/operator/install-serverless-operator.adoc[Installation]
-*** xref:cloud/operator/developing-workflows.adoc[Developing Workflows]
-*** xref:cloud/operator/configuring-workflows.adoc[Configuring Workflows]
-*** xref:cloud/operator/workflow-status-conditions.adoc[Workflows Status]
-*** xref:cloud/operator/build-and-deploy-workflows.adoc[Building and Deploying Workflows]
+*** xref:cloud/operator/developing-workflows.adoc[Development Mode]
+*** xref:cloud/operator/configuring-workflows.adoc[Configuration]
+*** xref:cloud/operator/build-and-deploy-workflows.adoc[Building and Deploying Workflow Images]
+*** xref:cloud/operator/workflow-status-conditions.adoc[Custom Resource Status]
 *** xref:cloud/operator/known-issues.adoc[Known Issues]
 ** Quarkus
-*** xref:cloud/quarkus/build-workflow-image-with-quarkus-cli.adoc[Building workflow images using Quarkus CLI]
-// *** xref:cloud/build-workflow-images-with-tekton.adoc[Building Workflow Images with Tekton Pipelines]
-*** xref:cloud/quarkus/deploying-on-openshift.adoc[Deploying Workflows on OpenShift]
-*** xref:cloud/quarkus/deploying-on-minikube.adoc[Deploying Workflows on Minikube]
-*** xref:cloud/quarkus/deploying-on-kubernetes.adoc[Deploying Workflows on Kubernetes]
-// *** xref:cloud/versioning-workflows-in-knative.adoc[Versioning workflows in Knative]
-*** xref:cloud/quarkus/kubernetes-service-discovery.adoc[Kubernetes service discovery]
+*** xref:cloud/quarkus/build-workflow-image-with-quarkus-cli.adoc[Building Workflow Images]
+*** xref:cloud/quarkus/deploying-on-minikube.adoc[Deploying on Minikube]
+*** xref:cloud/quarkus/deploying-on-kubernetes.adoc[Deploying on Kubernetes]
+*** xref:cloud/quarkus/deploying-on-openshift.adoc[Deploying on OpenShift]
+*** xref:cloud/quarkus/kubernetes-service-discovery.adoc[Service Discovery]
 * Integrations
-** xref:integrations/camel-routes-integration.adoc[Integrating with Camel Routes]
-** xref:integrations/custom-functions-knative.adoc[Invoking Knative services]
-** xref:integrations/expose-metrics-to-prometheus.adoc[Exposing workflow base metrics to Prometheus]
-// ** xref:integrations/camel-k-integration.adoc[Integrating with Camel-K]
- ** xref:integrations/serverless-dashboard-with-runtime-data.adoc[Displaying workflow data in dashboards]
-* Supporting Services
-** xref:supporting-services/jobs-service.adoc[Job Service]
+** xref:integrations/camel-routes-integration.adoc[Camel Routes]
+** xref:integrations/custom-functions-knative.adoc[Knative Serving]
+** xref:integrations/expose-metrics-to-prometheus.adoc[Exposing Prometheus Metrics]
+** xref:integrations/serverless-dashboard-with-runtime-data.adoc[Displaying workflow Data in Dashboards]
+* Job Service
+** xref:job-services/core-concepts.adoc[Core Concepts]
+//** Quarkus Extensions TODO: https://issues.redhat.com/browse/KOGITO-9463
+// * Data Index TODO: https://issues.redhat.com/browse/KOGITO-8740
+// ** Core Concepts
+// ** Quarkus Extensions
 * Use Cases
-** xref:use-cases/orchestration-based-saga-pattern.adoc[Saga Orchestration Example]
-// ** xref:use-cases/newsletter-subscription-example.adoc[Newsletter subscription example]
-** xref:use-cases/timeout-showcase-example.adoc[Timeout Example]
+** xref:use-cases/orchestration-based-saga-pattern.adoc[Saga Orchestration]
+** xref:use-cases/timeout-showcase-example.adoc[Timeout Demonstration]
