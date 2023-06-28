@@ -1,4 +1,4 @@
-= Developing Workflow Services with the Operator
+= Developing Workflow Applications with the Operator
 :compat-mode!:
 // Metadata:
 :description: Developing workflow service with the operator on Kubernetes
@@ -17,19 +17,19 @@ Workflows in the development profile are not tailored for production environment
 
 The development profile is the easiest way to start playing around with Workflows and the operator.
 
-To get started, you can use an editor of your choice to create a new `KogitoServerlessWorkflow` Custom Resource YAML definition. For example:
+To get started, you can use an editor of your choice to create a new `SonataFlow` Custom Resource YAML definition. For example:
 
 .Example of a Kubernetes {product_name} YAML definition
 [source,yaml,subs="attributes+"]
 ----
-apiVersion: sw.kogito.kie.org/v1alpha08
-kind: KogitoServerlessWorkflow
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
 metadata:
   name: greeting
   annotations:
-    sw.kogito.kie.org/description: Greeting example on k8s!
-    sw.kogito.kie.org/version: 0.0.1
-    sw.kogito.kie.org/profile: dev <1>
+    sonataflow.org/description: Greeting example on k8s!
+    sonataflow.org/version: 0.0.1
+    sonataflow.org/profile: dev <1>
 spec:
   flow: <2>
     specVersion: 0.8.0
@@ -68,7 +68,7 @@ spec:
         end: true
 ----
 
-<1> The annotation `sw.kogito.kie.org/profile: dev` tells the operator to deploy your Workflow using the development profile. This means that the operator will build a running instance of the Workflow ready to receive changes during your development cycle.
+<1> The annotation `sonataflow.org/profile: dev` tells the operator to deploy the Workflow using the development profile. This means that the operator will build a running instance of the Workflow ready to receive changes during your development cycle.
 
 <2> In the `flow` attribute goes the Workflow definition as described by the xref:core/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow specification]. So if you already have a workflow definition, you can use it there. Alternatively, you can use the xref:tooling/serverless-workflow-editor/swf-editor-overview.adoc[editors to create your workflow definition].
 
@@ -80,7 +80,7 @@ spec:
 
 Having a new Kubernetes Workflow definition in a YAML file (you can use the above example), you can deploy it in your cluster with the following command:
 
-.Deploying a new KogitoServerlessWorkflow Custom Resource in Kubernetes
+.Deploying a new SonataFlow Custom Resource in Kubernetes
 [source,bash,subs="attributes+"]
 ----
 kubectl apply -f <your_file> -n <your_namespace>
@@ -144,7 +144,7 @@ kubectl apply -f workflow_devmode.yaml -n <your_namespace>
 The operator ensures that the latest Workflow definition is running and ready.
 This way, you can include the Workflow application in your development scenario and start making requests to it.
 
-== Check the Workflow application is running
+== Check if the Workflow is running
 
 In order to check that the {product_name} Greeting application is up and running, you can try to perform a test HTTP call. First, you must expose the service:
 
@@ -189,9 +189,9 @@ You should see a result similar to this:
 }
 ----
 
-You can even make changes to your `KogitoServerlessWorkflow` YAML file and see the results using the Swagger UI.
+You can even make changes to your `SonataFlow` YAML file and see the results using the Swagger UI.
 
-== Remove Workflow application
+== Remove the Workflow application
 
 In order to remove the {product_name} Greeting application, you can execute the following command:
 
