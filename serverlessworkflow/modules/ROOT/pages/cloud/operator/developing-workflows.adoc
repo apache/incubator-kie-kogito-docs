@@ -3,6 +3,9 @@
 // Metadata:
 :description: Developing workflow service with the operator on Kubernetes
 :keywords: kogito, workflow, serverless, operator, kubernetes, minikube, devmode
+//links
+:openshift_route_url: https://docs.openshift.com/container-platform/4.13/networking/routes/route-configuration.html
+:kubernetes_url: https://kubernetes.io/docs/concepts/services-networking/ingress/
 
 This document describes how you can develop your Workflows directly on Kubernetes with the {operator_name}.
 
@@ -146,19 +149,23 @@ This way, you can include the Workflow application in your development scenario 
 
 == Check if the Workflow is running
 
-In order to check that the {product_name} Greeting application is up and running, you can try to perform a test HTTP call. First, you must expose the service:
+In order to check that the {product_name} Greeting application is up and running, you can try to perform a test HTTP call. First, you must get the service URL:
 
 .Exposing the Workflow application
 [source,bash,subs="attributes+"]
 ----
-kubectl patch svc greeting -n <your_namespace> -p '{"spec": {"type": "NodePort"}}'
 minikube service greeting -n <your_namespace> --url
 http://127.0.0.1:57053
 
 # use the above output to get the current Workflow URL in your environment
 ----
 
-Alter exposing the Workflow service, you can point your browser to the Swagger UI and start making requests with the REST interface.
+[TIP]
+====
+When running on Minikube, the service is already exposed for you via `NodePort`. On OpenShift, link:{openshift_route_url}[a Route is automatically created in devmode]. If you're running on Kubernetes you can link:{kubernetes_url}[expose your service using an Ingress].
+====
+
+You can now point your browser to the Swagger UI and start making requests with the REST interface.
 
 For example, using the above command execution you can access the Swagger UI via `http://127.0.0.1:57053/q/swagger-ui/`.
 
@@ -200,6 +207,23 @@ In order to remove the {product_name} Greeting application, you can execute the 
 ----
 kubectl delete -f <your_file> -n <your_namespace>
 ----
+
+== Referencing resources in the workflow
+
+See the xref:cloud/operator/referencing-resource-files.adoc[] guide for more complex scenarios where you may need to reference other resources in the workflow definition.
+
+== Using another workflow base image
+
+By default, the operator will use the image distributed upstream to run the workflows in the development profile. You can change this image by editing the `SonataFlowPlatform` custom resource in the namespace where you deployed your workflows:
+
+.Patching the current SonataFlowPlatform with the new image
+[source,bash,subs="attributes+"]
+----
+# use `kubectl get sonataflowplatform` to get the SonataFlowPlatform name
+kubectl patch sonataflowplatform <name> --patch  'spec:\n devBaseImage: <your new image full name with tag>' -n <your_namespace>
+----
+
+From now on, every workflow deployment in the development profile will use this image to run your application. Make sure that this new image is compatible with the original image.
 
 [[troubleshooting]]
 == Troubleshooting the Workflow Service
@@ -272,7 +296,7 @@ If you find an issue with a cause is not listed in this section, please link:{do
 
 == Additional resources
 
-* xref:cloud/operator/known-issues.adoc[]
+* xref:cloud/operator/referencing-resource-files.adoc[]
 * xref:cloud/operator/build-and-deploy-workflows.adoc[]
 
 include::../../../pages/_common-content/report-issue.adoc[]

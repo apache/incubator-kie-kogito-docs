@@ -10,6 +10,7 @@
 :kaniko_url: https://github.com/GoogleContainerTools/kaniko
 :openshift_build_url: https://docs.openshift.com/container-platform/4.13/cicd/builds/understanding-image-builds.html
 :kubernetes_resource_management: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+:minikube_registry_url: https://minikube.sigs.k8s.io/docs/handbook/registry/#enabling-insecure-registries
 
 This document describes how to build and deploy your workflow on a cluster using the link:{kogito_serverless_operator_url}[{operator_name}] only by having a `SonataFlow` custom resource.
 
@@ -138,6 +139,9 @@ kubectl config set-context --current --namespace=workflows
 ----
 
 === Create a Secret for the container registry authentication
+
+You can follow these steps to publish on external registry that requires authentication. If you're running on Minikube, just link:{minikube_registry_url}[enable the internal registry]. You can skip this whole section since the internal Minikube registry doesn't require authentication.
+
 .Create a secret for the container registry authentication
 [source,bash,subs="attributes+"]
 ----
@@ -169,9 +173,9 @@ Since the operator is installed in global mode, you will need to specify a `Sona
 If you have deployed a workflow for xref:cloud/operator/developing-workflows.adoc[development] you already have a `SonataFlowPlatform` custom resource. Just edit the one you have.
 ====
 
-Following a very basic `SonataFlowPlatform` Custom Resource example:
+Following a very basic `SonataFlowPlatform` Custom Resource example to work on Kubernetes:
 
-.Example of a basic SonataFlowPlatform
+.Example of a basic SonataFlowPlatform on Kubernetes
 [source,yaml,subs="attributes+"]
 ----
 apiVersion: sonataflow.org/v1alpha08
@@ -180,10 +184,37 @@ metadata:
   name: sonataflow-platform
 spec:
   platform:
+    buildStrategyOptions:
+      KanikoBuildCacheEnabled: "true"
     registry:
       address: quay.io/kiegroup
       secret: regcred
 ----
+
+[NOTE]
+====
+In this Custom Resource, `spec.platform.registry.secret` is the name of the Secret you created just before.
+====
+
+On Minikube, you can remove the `registry` information entirely since you don't need credentials for pushing to the internal registry:
+
+.Example of a basic SonataFlowPlatform on Minikube
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  platform:
+    buildStrategyOptions:
+      KanikoBuildCacheEnabled: "true"
+----
+
+[TIP]
+====
+The `spec.platform.buildStrategyOptions.KanikoBuildCacheEnabled` enables the internal Kaniko process to cache builder images to try to speed up the bulding execution.
+====
 
 You can save this file locally and run the following command:
 
@@ -193,25 +224,12 @@ You can save this file locally and run the following command:
 kubectl apply -f my-sonataflowplatform.yaml -n workflows
 ----
 
-[NOTE]
-====
-In this Custom Resource, `spec.platform.registry.secret` is the name of the Secret you created just before.
-====
-
 You can also update "on-the-fly" the `SonataFlowPlatform` registry field with this command (change <YOUR_REGISTRY>)
 
 .Create a `SonataFlowPlatform` with a specific registry
 [source,bash,subs="attributes+"]
 ----
 cat my-sonataflowplatform.yaml | sed "s|address: .*|address: <YOUR_REGISTRY>" | kubectl apply -f -
-----
-
-In order to retrieve the Cluster IP address of Minikube's internal registry to configure your platform, you can use the following command:
-
-.Retrieve Minikube registry internal IP
-[source,bash,subs="attributes+"]
-----
-kubectl get svc registry -n kube-system -ojsonpath='{.spec.clusterIP}'
 ----
 
 [#building-openshift]
@@ -323,7 +341,7 @@ GREETING_SVC=$(minikube service greeting -n workflows --url)
 GREETING_SVC=$(oc get route/greeting -n workflows )
 
 curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' $GREETING_SVC/greeting
-----] 
+----
 
 If everything is working, you should receive a response like this:
 
