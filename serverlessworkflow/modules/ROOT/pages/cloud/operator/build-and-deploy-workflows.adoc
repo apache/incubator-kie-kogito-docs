@@ -344,7 +344,9 @@ GREETING_SVC=$(minikube service greeting -n workflows --url)
 [source,bash,subs="attributes+"]
 ----
 # On OpenShift you can expose a route: {openshift_route_new_url}
-GREETING_SVC=$(oc expose svc greeting -n workflows --output='jsonpath={.status.ingress[0].host}')
+oc expose svc greeting -n workflows
+# get the public URL
+GREETING_SVC=$(oc get route/greeting --template='{{.spec.host}}')
 ----
 +
 2. Make the HTTP call using `curl`:
