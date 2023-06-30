@@ -9,6 +9,7 @@
 :kaniko_issue_url: https://github.com/GoogleContainerTools/kaniko/issues/2201
 :kaniko_url: https://github.com/GoogleContainerTools/kaniko
 :openshift_build_url: https://docs.openshift.com/container-platform/4.13/cicd/builds/understanding-image-builds.html
+:openshift_route_new_url: https://docs.openshift.com/container-platform/4.13/networking/routes/route-configuration.html#nw-creating-a-route_route-configuration
 :kubernetes_resource_management: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
 :minikube_registry_url: https://minikube.sigs.k8s.io/docs/handbook/registry/#enabling-insecure-registries
 
@@ -30,7 +31,7 @@ Follow the <<building-kubernetes, Kubernetes>> or <<building-openshift, OpenShif
 [#configure-build-system]
 == Configuring the build system
 
-The operator can build workflows on Kubernetes or OpenShift. On Kubernetes, it uses link:{kaniko_url}[Kaniko] and on OpenShift a link:{openshift_build_url}[standard BuildConfig]. This build system is not tailored for advanced use cases and you can do only a few customizations.
+The operator can build workflows on Kubernetes or OpenShift. On Kubernetes, it uses link:{kaniko_url}[Kaniko] and on OpenShift a link:{openshift_build_url}[standard BuildConfig]. The operator build system is not tailored for advanced use cases and you can do only a few customizations.
 
 === Changing the base build Dockerfile
 
@@ -187,14 +188,12 @@ spec:
     buildStrategyOptions:
       KanikoBuildCacheEnabled: "true"
     registry:
-      address: quay.io/kiegroup
-      secret: regcred
+      address: quay.io/kiegroup <1>
+      secret: regcred <2>
 ----
 
-[NOTE]
-====
-In this Custom Resource, `spec.platform.registry.secret` is the name of the Secret you created just before.
-====
+<1> Your registry address
+<2> The secret name created in the steps above
 
 On Minikube, you can remove the `registry` information entirely since you don't need credentials for pushing to the internal registry:
 
@@ -235,9 +234,9 @@ cat my-sonataflowplatform.yaml | sed "s|address: .*|address: <YOUR_REGISTRY>" | 
 [#building-openshift]
 == Building on OpenShift
 
-You don't need to do anything to build on OpenShift since the operator will configure everything for you using the defaults. There are a few customizations you can do described in the <<configure-build-system>> section.
+You don't need to do anything to build on OpenShift since the operator will configure everything for you. There are a few customizations you can do described in the <<configure-build-system>> section.
 
-In general, the operator will create a backed `BuildConfig` and use the internal OCI to build the workflow application using the mapped xref:cloud/operator/referencing-resource-files.adoc[resource files] and your workflow definition. After the build is finished, the image will be pushed to the internal OpenShift registry backed by an `ImageStream` object.
+In general, the operator will create a link:{openshift_build_url}[`BuildConfig` to build] the workflow application using the mapped xref:cloud/operator/referencing-resource-files.adoc[resource files] and your workflow definition. After the build is finished, the image will be pushed to the internal OpenShift registry backed by an `ImageStream` object.
 
 === Changing the base builder image
 
@@ -329,26 +328,39 @@ The final pushed image must be printed into the logs at the end of the build.
 
 In order to check that the {product_name} Greeting application is up and running, you can try to perform a test HTTP call, from the greeting Pod.
 
+.Procedure
+
+1. Expose the workflow application so you can access it:
++
+.Exposing the greeting workflow on Minikube
+[source,bash,subs="attributes+"]
+----
+# On Minikube you can use Nodeport
+kubectl patch svc greeting -n workflows -p '{"spec": {"type": "NodePort"}}'
+GREETING_SVC=$(minikube service greeting -n workflows --url)
+----
++
+.Exposing the greeting workflow on OpenShift
+[source,bash,subs="attributes+"]
+----
+# On OpenShift you can expose a route: {openshift_route_new_url}
+GREETING_SVC=$(oc expose svc greeting -n workflows --output='jsonpath={.status.ingress[0].host}')
+----
++
+2. Make the HTTP call using `curl`:
++
 .Check the greeting application is running
 [source,bash,subs="attributes+"]
 ----
-# On Kubernetes/Minikube
-kubectl patch svc greeting -n workflows -p '{"spec": {"type": "NodePort"}}'
-GREETING_SVC=$(minikube service greeting -n workflows --url)
-
-# On OpenShift
-# TODO: figure out the full command
-GREETING_SVC=$(oc get route/greeting -n workflows )
-
 curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' $GREETING_SVC/greeting
 ----
-
++
 If everything is working, you should receive a response like this:
-
++
 .Response from the greeting application
 [source,json,subs="attributes+"]
 ----
-{"id":"b5fbfaa3-b125-4e6c-9311-fe5a3577efdd","workflowdata":{"name":"John","languag#e":"English","greeting":"Hello from JSON Workflow, "}}
+{"id":"b5fbfaa3-b125-4e6c-9311-fe5a3577efdd","workflowdata":{"name":"John","language":"English","greeting":"Hello from JSON Workflow, "}}
 ----
 
 // TODO: add a troubleshooting guide - https://issues.redhat.com/browse/KOGITO-8864
