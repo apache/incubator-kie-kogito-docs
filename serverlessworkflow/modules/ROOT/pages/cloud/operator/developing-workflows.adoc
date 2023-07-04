@@ -94,7 +94,7 @@ Alternatively, you can try one of the examples available in the operator reposit
 .Deploying the greeting Workflow example
 [source,bash,subs="attributes+"]
 ----
-kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/test/testdata/sw.kogito_v1alpha08_kogitoserverlessworkflow_devmode.yaml -n <your_namespace>
+kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/test/testdata/sw.kogito_v1alpha08_sonataflow_devmode.yaml -n <your_namespace>
 ----
 
 [TIP]
@@ -139,7 +139,7 @@ For example using VSCode, there are the commands needed:
 
 [source,bash,subs="attributes+"]
 ----
-curl -S https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessworkflow_devmode.yaml > workflow_devmode.yaml
+curl -S https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_sonataflow_devmode.yaml > workflow_devmode.yaml
 code workflow_devmode.yaml
 kubectl apply -f workflow_devmode.yaml -n <your_namespace>
 ----
@@ -208,11 +208,11 @@ In order to remove the {product_name} Greeting application, you can execute the 
 kubectl delete -f <your_file> -n <your_namespace>
 ----
 
-== Referencing resources in the workflow
+== Referencing resources in the Workflow
 
 See the xref:cloud/operator/referencing-resource-files.adoc[] guide for more complex scenarios where you may need to reference other resources in the workflow definition.
 
-== Using another workflow base image
+== Using another Workflow base image
 
 By default, the operator will use the image distributed upstream to run the workflows in the development profile. You can change this image by editing the `SonataFlowPlatform` custom resource in the namespace where you deployed your workflows:
 
