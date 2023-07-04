@@ -214,6 +214,8 @@ See the xref:cloud/operator/referencing-resource-files.adoc[] guide for more com
 
 == Using another Workflow base image
 
+If your scenario has strict policies for image usages, such as security or hardening constraints, you can replace the default image used by the operator. Alternatively, you might want to test a nighly build with a bug fix or a custom image containing your customizations.
+
 By default, the operator will use the image distributed upstream to run the workflows in the development profile. You can change this image by editing the `SonataFlowPlatform` custom resource in the namespace where you deployed your workflows:
 
 .Patching the current SonataFlowPlatform with the new image
@@ -223,7 +225,12 @@ By default, the operator will use the image distributed upstream to run the work
 kubectl patch sonataflowplatform <name> --patch  'spec:\n devBaseImage: <your new image full name with tag>' -n <your_namespace>
 ----
 
-From now on, every workflow deployment in the development profile will use this image to run your application. Make sure that this new image is compatible with the original image.
+From now on, every workflow deployment in the development profile will use this image to run your application.
+
+[IMPORTANT]
+====
+The default image was created to run a Quarkus Java application in devmode. You can replace this image with another one as long as it has the same concept. One way of doing this is using the default as the base image.
+====
 
 [[troubleshooting]]
 == Troubleshooting the Workflow Service
