@@ -5,6 +5,7 @@
 :keywords: kogito, workflow, quarkus, serverless, service-discovery, enhanced-service-discovery
 // links
 :quarkus_issue_url: https://github.com/quarkusio/quarkus/issues/27457
+:kubernertes_sa_url: https://kubernetes.io/docs/concepts/security/service-accounts/
 
 The Kubernetes service discovery allows you to describe the Kubernetes resource you want to perform HTTP requests on using a custom URI. Under the hood, it will discover the network endpoint (URL) to where to make the request.
 
@@ -83,6 +84,103 @@ Using the previous URI example, if there are more than one service exposing the 
 +
 `port-name=<PORT_NAME>`
 --
+
+[[required-kubernetes-roles]]
+== Required Kubernetes Roles
+
+The service discovery engine requires that the link:{kubernertes_sa_url}[Kubernetes Service Account] running the application has read permissions for the discovered objects.
+
+The following Kubernetes Role resource has all the required permissions for the service discovery to work:
+
+.Required permissions for the Service Discovery on Kubernetes
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: service-discovery-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - services
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - statefulsets
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+  # Knative
+  - apiGroups:
+      - serving.knative.dev
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+----
+
+If running on OpenShift, you must also add the following rules:
+
+.Additional rules to run on OpenShift
+[source,yaml]
+----
+rules:
+  - apiGroups:
+      - route.openshift.io
+    resources:
+      - routes
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - apps.openshift.io
+    resources:
+      - deploymentconfigs
+    verbs:
+      - get
+      - list
+----
+
+You must then bind the Service Account with the `Role` via a `RoleBinding`:
+
+.RoleBinding for the required service discovery role
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: service-discovery-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: service-discovery-role
+subjects:
+  - kind: ServiceAccount
+    name: default
+----
+
+[IMPORTANT]
+====
+Usually, pods run using the `default` Service Account. If your cluster has a different configuration, you should adapt this `RoleBinding` to your requirements.
+====
+
+You should create these two objects in every namespace that you wish to deploy Quarkus Workflow applications with Service Discovery enabled. 
+
+As an alternative, you can create a `ClusterRole` instead of a `Role` in every namespace. In this case, the role will reflect globally in your cluster. For security reasons, you should avoid this approach.
 
 [[con-kubernetes-service-doscovery-configuration]]
 == Configuration in Kubernetes service discovery
