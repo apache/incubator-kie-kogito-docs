@@ -62,14 +62,14 @@ image::use-cases/timeouts-showcase/callback-state-timeouts-decorated.svg[]
 }
 ----
 
-The timeout is configured with a duration of 30 seconds, and if no event arrive during this time, the flow execution moves to the next state, and the workflow's data remains unchanged.
+The timeout is configured with a duration of 30 seconds, and if no event arrives during this time, the flow execution moves to the next state, and the workflow's data remains unchanged.
 
 On the other hand, if the event arrive, the event payload is merged into the workflow's data, and thus, the `eventData` property of the workflow's data, will contain the information carried by the event payload.
 Using this simple configuration strategy, the workflow can collect the event information, and use it for example to determine the path to go in the next state.
 
 See the xref:core/timeouts-support.adoc#callback-state-timeout[callback state definition] for more information.
 
-For more information about how the incoming event information can be merged into the workflow's data you can see: link:{spec_doc_url}#Event-data-filters[Event data filters]
+For more information about how the incoming event information can be merged into the workflow's data you can see: link:{spec_doc_url}#Event-data-filters[Event data filters].
 
 [#switch_state_timeouts_workflow]
 == `switch_state_timeouts` workflow
@@ -232,8 +232,8 @@ cd kogito-examples/serverless-workflow-examples/serverless-workflow-timeouts-sho
 [#execute-quarkus-project-standalone-services]
 === Quarkus Workflow Project with standalone services
 
-This is the most complex and close to a production scenario. In this case, the workflows, the job service, and the database, are deployed as standalone services in the kubernetes/knative cluster.
-Additionally, the communications from the workflows to the job service are resolved via the knative eventing system.
+This is the most complex and close to a production scenario. In this case, the workflows, the job service, the data index service, and the database, are deployed as standalone services in the kubernetes/knative cluster.
+Additionally, the communications from the workflows to the job service, and from the jobs service to the data index service, are resolved via the knative eventing system.
 
 [NOTE]
 ====
@@ -247,15 +247,18 @@ The following diagram shows the architecture for this use case:
 
 . Every time a workflow needs to program a timer for a given timeout, a cloud event is sent to the job service for that purpose.
 . When a timer is overdue, a rest call is executed to notify the workflow, which then must execute accordingly to the given state semantic.
+. Workflow and job status changes are propagated to the Data Index Service via cloud events.
 
 .Knative Workflow with Job Service architecture
 image::use-cases/timeouts-showcase/timeouts-showcase-extended-architecture.png[]
 
-* *timeouts-showcase-extended:* Is the Quarkus Workflow Project that contain the workflows, that must be maven build, and deployed into the kubernetes cluster.
+* *timeouts-showcase-extended:* Is the Quarkus Workflow Project that contains the workflows, that must be maven build, and deployed into the kubernetes cluster.
 
 * *jobs-service-postresql:* Is the job service that will be deployed into the kubernetes cluster.
 
-* *timeouts-showcase-database:* Is the postgresql instance that will be deployed into the kubernetes cluster.
+* *data-index-service-postgresql:* Is the data index service that will be deployed into the kubernetes cluster.
+
+* *timeouts-showcase-database:* Is the PostgreSQL instance that will be deployed into the kubernetes cluster.
 
 [NOTE]
 ====
