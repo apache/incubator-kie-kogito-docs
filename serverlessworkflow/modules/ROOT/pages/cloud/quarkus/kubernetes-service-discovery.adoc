@@ -86,7 +86,7 @@ Using the previous URI example, if there are more than one service exposing the 
 --
 
 [[required-kubernetes-roles]]
-== Required Kubernetes Roles
+== Required Kubernetes roles
 
 The service discovery engine requires that the link:{kubernertes_sa_url}[Kubernetes Service Account] running the application has read permissions for the discovered objects.
 
@@ -178,7 +178,7 @@ subjects:
 Usually, pods run using the `default` Service Account. If your cluster has a different configuration, you should adapt this `RoleBinding` to your requirements.
 ====
 
-You should create these two objects in every namespace that you wish to deploy Quarkus Workflow applications with Service Discovery enabled. 
+You must create these two objects in every namespace that you wish to deploy Quarkus Workflow applications with Service Discovery enabled. 
 
 As an alternative, you can create a `ClusterRole` instead of a `Role` in every namespace. In this case, the role will reflect globally in your cluster. For security reasons, you should avoid this approach.
 
