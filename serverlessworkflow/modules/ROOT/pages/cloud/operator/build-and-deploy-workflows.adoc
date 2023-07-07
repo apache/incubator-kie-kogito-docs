@@ -7,8 +7,17 @@
 :kogito_serverless_operator_url: https://github.com/kiegroup/kogito-serverless-operator/
 :kogito_greeting_example_url: https://github.com/kiegroup/kogito-examples/tree/stable/serverless-workflow-examples/serverless-workflow-greeting-quarkus
 :kaniko_issue_url: https://github.com/GoogleContainerTools/kaniko/issues/2201
+:kaniko_url: https://github.com/GoogleContainerTools/kaniko
+:openshift_build_url: https://docs.openshift.com/container-platform/4.13/cicd/builds/understanding-image-builds.html
+:openshift_route_new_url: https://docs.openshift.com/container-platform/4.13/networking/routes/route-configuration.html#nw-creating-a-route_route-configuration
+:kubernetes_resource_management: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+:minikube_registry_url: https://minikube.sigs.k8s.io/docs/handbook/registry/#enabling-insecure-registries
 
-This document describes how to build and deploy your Workflow on a Kubernetes cluster using the link:{kogito_serverless_operator_url}[{operator_name}] only by having a Workflow definition.
+This document describes how to build and deploy your workflow on a cluster using the link:{kogito_serverless_operator_url}[{operator_name}] only by having a `SonataFlow` custom resource.
+
+Every time you need to change the workflow definition the system will (re)build a new immutable version of the workflow. If you're still in development phase, please see the xref:cloud/operator/developing-workflows.adoc[] guide.
+
+Follow the <<building-kubernetes, Kubernetes>> or <<building-openshift, OpenShift>> sections of this document based on the cluster you wish to build your workflows on.
 
 [IMPORTANT]
 ====
@@ -17,29 +26,127 @@ This document describes how to build and deploy your Workflow on a Kubernetes cl
 
 .Prerequisites
 * A Workflow definition.
-* The {operator_name} installed. See xref:cloud/operator/install-serverless-operator.adoc[]
+* The {operator_name} installed. See xref:cloud/operator/install-serverless-operator.adoc[] guide
 
-== Preparing for the build
+[#configure-build-system]
+== Configuring the build system
 
-You should follow these steps to create a container that you can deploy as a service on Kubernetes.
+The operator can build workflows on Kubernetes or OpenShift. On Kubernetes, it uses link:{kaniko_url}[Kaniko] and on OpenShift a link:{openshift_build_url}[standard BuildConfig]. The operator build system is not tailored for advanced use cases and you can do only a few customizations.
+
+=== Changing the base build Dockerfile
+
+The operator uses the sonataflow-operator-builder-config `ConfigMap` in the operator's installation namespace ({operator_installation_namespace}) to configure and run the workflow build process. 
+You can change the `Dockerfile` entry in this `ConfigMap` to tailor the Dockerfile to your needs. Just be aware that this can break the build process.
+
+.Example of the sonataflow-operator-builder-config `ConfigMap`
+[source,yaml,subs="attributes+"]
+----
+apiVersion: v1
+data:
+  DEFAULT_BUILDER_RESOURCE_NAME: Dockerfile
+  DEFAULT_WORKFLOW_EXTENSION: .sw.json
+  Dockerfile: "FROM quay.io/kiegroup/kogito-swf-builder-nightly:latest AS builder\n
+    \ \n  # Copy from build context to skeleton resources project\nCOPY * ./resources/\n\nRUN
+    /home/kogito/launch/build-app.sh ./resources\n  \n  #=============================\n
+    \ # Runtime Run\n  #=============================\nFROM registry.access.redhat.com/ubi8/openjdk-11:latest\n\nENV
+    LANG='en_US.UTF-8' LANGUAGE='en_US:en'\n  \n  # We make four distinct layers so
+    if there are application changes the library layers can be re-used\nCOPY --from=builder
+    --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/lib/ /deployments/lib/\nCOPY
+    --from=builder --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/*.jar
+    /deployments/\nCOPY --from=builder --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/app/
+    /deployments/app/\nCOPY --from=builder --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/quarkus/
+    /deployments/quarkus/\n\nEXPOSE 8080\nUSER 185\nENV AB_JOLOKIA_OFF=\"\"\nENV JAVA_OPTS=\"-Dquarkus.http.host=0.0.0.0
+    -Djava.util.logging.manager=org.jboss.logmanager.LogManager\"\nENV JAVA_APP_JAR=\"/deployments/quarkus-run.jar\"\n"
+kind: ConfigMap
+metadata:
+  name: sonataflow-operator-builder-config
+----
+
+[WARNING]
+====
+The excerpt above is just an example. The current version might have a slightly different version. Don't use this example in your installation.
+====
+
+=== Changing resources requirements
+
+You can create or edit a `SonataFlowPlatform` in the workflow namespace specifying the link:{kubernetes_resource_management}[resources requirements] for the internal builder pods:
+
+.Example of SonataFlowPlatform
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  build:
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+----
+
+Every build process will reuse this configuration and start new instances based on it from now on.
+
+[IMPORTANT]
+====
+Only one `SonataFlowPlatform` is allowed per namespace. Try fetching the one the operator created for you and edit it instead of trying to create another one.
+====
+
+You can fine tune the resources requirements for a particular workflow. Every workflow instance will have a `SonataFlowBuild` instance created with the same name as the workflow. You can edit the `SonataFlowBuild` custom resource and specify the same parameters. For example:
+
+.Example of SonataFlowBuild
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowBuild
+metadata:
+  name: my-workflow
+spec:
+    resources:
+        requests:
+        memory: "64Mi"
+        cpu: "250m"
+        limits:
+        memory: "128Mi"
+        cpu: "500m"
+----
+
+This parameters will only apply to new build instances.
+
+[#building-kubernetes]
+== Building on Kubernetes
+
+[TIP]
+====
+You can skip this section if you're running <<building-openshift, on OpenShift>>.
+====
+
+Follow these steps to configure your Kubernetes namespace to build workflow images with the operator.
 
 === Create a Namespace for the building phase
 
-Create a new Namespace that will hold all the resources that the operator will create (Pods, Deployments, Services, Secrets, ConfigMap, and Custom Resources) in this guide.
+Create a new namespace that will hold all the resources that the operator will create (Pods, Deployments, Services, Secrets, ConfigMap, and Custom Resources) in this guide.
 
-.Create a Namespace for the application to build and run in
+.Create a Namespace for the workflow to build and run in
 [source,bash,subs="attributes+"]
 ----
-kubectl create namespace kogito-workflows
-# set the kogito-workflows namespace to your context
-kubectl config set-context --current --namespace=kogito-workflows
+kubectl create namespace workflows
+# set the workflows namespace to your context
+kubectl config set-context --current --namespace=workflows
 ----
 
 === Create a Secret for the container registry authentication
+
+You can follow these steps to publish on external registry that requires authentication. If you're running on Minikube, just link:{minikube_registry_url}[enable the internal registry]. You can skip this whole section since the internal Minikube registry doesn't require authentication.
+
 .Create a secret for the container registry authentication
 [source,bash,subs="attributes+"]
 ----
-kubectl create secret docker-registry regcred --docker-server=<registry_url> --docker-username=<registry_username> --docker-password=<registry_password> --docker-email=<registry_email> -n kogito-workflows
+kubectl create secret docker-registry regcred --docker-server=<registry_url> --docker-username=<registry_username> --docker-password=<registry_password> --docker-email=<registry_email> -n workflows
 ----
 
 or you can directly import your local Docker config into your Kubernetes cluster:
@@ -47,7 +154,7 @@ or you can directly import your local Docker config into your Kubernetes cluster
 .Create a Secret for the container registry authentication based on local Docker config
 [source,bash,subs="attributes+"]
 ----
-kubectl create secret generic regcred --from-file=.dockerconfigjson=$\{HOME\}/.docker/config.json --type=kubernetes.io/dockerconfigjson -n kogito-workflows
+kubectl create secret generic regcred --from-file=.dockerconfigjson=$\{HOME\}/.docker/config.json --type=kubernetes.io/dockerconfigjson -n workflows
 ----
 
 [WARNING]
@@ -57,74 +164,202 @@ Double-check your `$\{HOME\}/.docker/config.json`. If you're using local desktop
 
 === Configure the {operator_name} (i.e. registry address, secret) for building your Workflows
 
-The `KogitoServerlessPlatform` is the Custom Resource used to control the behavior of the {operator_name}.
+The `SonataFlowPlatform` is the Custom Resource used to control the behavior of the {operator_name}.
 It defines the behavior of the operator when handling all {product_name} Custom Resources (Workflow and Build) in the given namespace.
 
-Since the operator is installed in global mode, you will need to specify a `KogitoServerlessPlatform` in each Namespace where you want to deploy Workflows.
-You can find a basic `KogitoServerlessPlatform` Custom Resource example in the link:https://github.com/kiegroup/kogito-serverless-operator/tree/{operator_version}/config/samples[`config/samples` folder] that you can simply apply to configure your operator.
+Since the operator is installed in global mode, you will need to specify a `SonataFlowPlatform` in each Namespace where you want to deploy Workflows.
 
-.Create a `KogitoServerlessPlatform`
-[source,bash,subs="attributes+"]
-----
-kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml -n kogito-workflows
-----
-
-[NOTE]
+[TIP]
 ====
-In this Custom Resource, `spec.platform.registry.secret` is the name of the Secret you created just before.
+If you have deployed a workflow for xref:cloud/operator/developing-workflows.adoc[development] you already have a `SonataFlowPlatform` custom resource since the operator created one for you. Just edit the one you have.
 ====
 
-You can also update "on-the-fly" the `KogitoServerlessPlatform` registry field with this command (change <YOUR_REGISTRY>)
+Following is a very basic `SonataFlowPlatform` Custom Resource example to work on Kubernetes:
 
-.Create a `KogitoServerlessPlatform` with a specific registry
+.Example of a basic SonataFlowPlatform on Kubernetes
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  platform:
+    buildStrategyOptions:
+      KanikoBuildCacheEnabled: "true"
+    registry:
+      address: quay.io/kiegroup <1>
+      secret: regcred <2>
+----
+
+<1> Your registry address
+<2> The secret name created in the steps above
+
+On Minikube, you can remove the `registry` information entirely since you don't need credentials for pushing to the internal registry:
+
+.Example of a basic SonataFlowPlatform on Minikube
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  platform:
+    buildStrategyOptions:
+      KanikoBuildCacheEnabled: "true"
+----
+
+[TIP]
+====
+The `spec.platform.buildStrategyOptions.KanikoBuildCacheEnabled` enables the internal Kaniko process to cache builder images to try to speed up the bulding execution.
+====
+
+You can save this file locally and run the following command:
+
+.Create a `SonataFlowPlatform`
 [source,bash,subs="attributes+"]
 ----
-curl https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessplatform.yaml | sed "s|address: .*|address: <YOUR_REGISTRY>" | kubectl apply -f -
+kubectl apply -f my-sonataflowplatform.yaml -n workflows
 ----
 
-In order to retrieve the Cluster IP address of Minikube's internal registry to configure your platform, you can use the following command:
+You can also update "on-the-fly" the `SonataFlowPlatform` registry field with this command (change <YOUR_REGISTRY>)
 
-.Retrieve Minikube registry internal IP
+.Create a `SonataFlowPlatform` with a specific registry
 [source,bash,subs="attributes+"]
 ----
-kubectl get svc registry -n kube-system -ojsonpath='{.spec.clusterIP}'
+cat my-sonataflowplatform.yaml | sed "s|address: .*|address: <YOUR_REGISTRY>" | kubectl apply -f -
 ----
 
-== Build and deploy your Workflow application
+[#building-openshift]
+== Building on OpenShift
 
-You can now send your Workflow definition (`KogitoServerlessWorkflow`) to the operator.
+You don't need to do anything to build on OpenShift since the operator will configure everything for you. There are a few customizations you can do described in the <<configure-build-system>> section.
 
-You can find a basic `KogitoServerlessWorkflow` in the link:https://github.com/kiegroup/kogito-serverless-operator/tree/{operator_version}/config/samples[`config/samples` folder] that is defining the link:{kogito_greeting_example_url}[{product_name} Greeting example].
+In general, the operator will create a link:{openshift_build_url}[`BuildConfig` to build] the workflow using the mapped xref:cloud/operator/referencing-resource-files.adoc[resource files] and your workflow definition. After the build is finished, the image will be pushed to the internal OpenShift registry backed by an `ImageStream` object.
+
+=== Changing the base builder image
+
+If you are running on OpenShift, you have access to the Red Hat's supported registry. You can change the default builder image by editing the sonataflow-operator-builder-config `ConfigMap`.
 
 [source,bash,subs="attributes+"]
 ----
-kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessworkflow.yaml -n kogito-workflows
+oc edit cm/sonataflow-operator-builder-config -n {operator_installation_namespace}
 ----
+
+In your editor, change the first line in the `Dockerfile` entry where it reads `FROM quay.io/kiegroup/kogito-swf-builder-nightly:latest` to the desired image.
+
+This image must be compatible with your operator's installation.
+
+[#build-deploy-workflow]
+== Build and deploy your workflow
+
+You can now send your workflow definition (`SonataFlow`) to the operator.
+
+You can find a basic `SonataFlow` bellow:
+
+.Example of the greetings workflow example
+[source,yaml,subs="attributes+"]
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: greeting
+  annotations:
+    sonataflow.org/description: Greeting example on k8s!
+    sonataflow.org/version: 0.0.1
+spec:
+  flow:
+    start: ChooseOnLanguage
+    functions:
+      - name: greetFunction
+        type: custom
+        operation: sysout
+    states:
+      - name: ChooseOnLanguage
+        type: switch
+        dataConditions:
+          - condition: "${ .language == \"English\" }"
+            transition: GreetInEnglish
+          - condition: "${ .language == \"Spanish\" }"
+            transition: GreetInSpanish
+        defaultCondition: GreetInEnglish
+      - name: GreetInEnglish
+        type: inject
+        data:
+          greeting: "Hello from JSON Workflow, "
+        transition: GreetPerson
+      - name: GreetInSpanish
+        type: inject
+        data:
+          greeting: "Saludos desde JSON Workflow, "
+        transition: GreetPerson
+      - name: GreetPerson
+        type: operation
+        actions:
+          - name: greetAction
+            functionRef:
+              refName: greetFunction
+              arguments:
+                message:  ".greeting+.name"
+        end: true
+
+Save a file in your local file system with this contents named `greetings-workflow.yaml` then run:
+
+[source,bash,subs="attributes+"]
+----
+kubectl apply -f greetings-workflow.yaml -n workflows
+----
+
 You can check the logs of the build of your Workflow via:
 
-.Get the Workflow application pod logs
+.Get the Workflow pod logs
 [source,bash,subs="attributes+"]
 ----
-kubectl logs kogito-greeting-builder -n kogito-workflows
+# on Kubernetes
+kubectl logs kogito-greeting-builder -n workflows
+
+# on OpenShift
+oc logs buildconfig/greeting -n workflows
 ----
 
 The final pushed image must be printed into the logs at the end of the build.
 
-== Check the Workflow application is running
+== Check if the Workflow is running
 
-In order to check that the {product_name} Greeting application is up and running, you can try to perform a test HTTP call, from the greeting Pod.
+In order to check that the {product_name} Greeting is up and running, you can try to perform a test HTTP call, from the greeting Pod.
 
-.Check the greeting application is running
+.Procedure
+
+1. Expose the workflow so you can access it:
++
+.Exposing the greeting workflow on Minikube
 [source,bash,subs="attributes+"]
 ----
-kubectl patch svc greeting -n kogito-workflows -p '{"spec": {"type": "NodePort"}}'
-GREETING_SVC=$(minikube service greeting -n kogito-workflows --url)
+# On Minikube you can use Nodeport
+kubectl patch svc greeting -n workflows -p '{"spec": {"type": "NodePort"}}'
+GREETING_SVC=$(minikube service greeting -n workflows --url)
+----
++
+.Exposing the greeting workflow on OpenShift
+[source,bash,subs="attributes+"]
+----
+# On OpenShift you can expose a route: {openshift_route_new_url}
+oc expose svc greeting -n workflows
+# get the public URL
+GREETING_SVC=$(oc get route/greeting --template='{{.spec.host}}')
+----
++
+2. Make the HTTP call using `curl`:
++
+.Check if the greeting workflow is running
+[source,bash,subs="attributes+"]
+----
 curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' $GREETING_SVC/greeting
 ----
-
++
 If everything is working, you should receive a response like this:
-
-.Response from the greeting application
++
+.Response from the greeting workflow
 [source,json,subs="attributes+"]
 ----
 {"id":"b5fbfaa3-b125-4e6c-9311-fe5a3577efdd","workflowdata":{"name":"John","language":"English","greeting":"Hello from JSON Workflow, "}}

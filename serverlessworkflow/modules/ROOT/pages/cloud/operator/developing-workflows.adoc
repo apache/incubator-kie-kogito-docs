@@ -1,12 +1,15 @@
-= Developing Workflow Services with the Operator
+= Developing Workflow with the Operator
 :compat-mode!:
 // Metadata:
-:description: Developing workflow service with the operator on Kubernetes
+:description: Developing workflows with the operator on Kubernetes
 :keywords: kogito, workflow, serverless, operator, kubernetes, minikube, devmode
+//links
+:openshift_route_url: https://docs.openshift.com/container-platform/4.13/networking/routes/route-configuration.html
+:kubernetes_url: https://kubernetes.io/docs/concepts/services-networking/ingress/
 
 This document describes how you can develop your Workflows directly on Kubernetes with the {operator_name}.
 
-Workflows in the development profile are not tailored for production environments. To build and deploy an immutable Workflow application with the operator, see xref:cloud/operator/build-and-deploy-workflows.adoc[].
+Workflows in the development profile are not tailored for production environments. To build and deploy an immutable Workflow with the operator, see xref:cloud/operator/build-and-deploy-workflows.adoc[].
 
 [IMPORTANT]
 ====
@@ -17,19 +20,19 @@ Workflows in the development profile are not tailored for production environment
 
 The development profile is the easiest way to start playing around with Workflows and the operator.
 
-To get started, you can use an editor of your choice to create a new `KogitoServerlessWorkflow` Custom Resource YAML definition. For example:
+To get started, you can use an editor of your choice to create a new `SonataFlow` Custom Resource YAML definition. For example:
 
 .Example of a Kubernetes {product_name} YAML definition
 [source,yaml,subs="attributes+"]
 ----
-apiVersion: sw.kogito.kie.org/v1alpha08
-kind: KogitoServerlessWorkflow
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
 metadata:
   name: greeting
   annotations:
-    sw.kogito.kie.org/description: Greeting example on k8s!
-    sw.kogito.kie.org/version: 0.0.1
-    sw.kogito.kie.org/profile: dev <1>
+    sonataflow.org/description: Greeting example on k8s!
+    sonataflow.org/version: 0.0.1
+    sonataflow.org/profile: dev <1>
 spec:
   flow: <2>
     specVersion: 0.8.0
@@ -68,11 +71,11 @@ spec:
         end: true
 ----
 
-<1> The annotation `sw.kogito.kie.org/profile: dev` tells the operator to deploy your Workflow using the development profile. This means that the operator will build a running instance of the Workflow ready to receive changes during your development cycle.
+<1> The annotation `sonataflow.org/profile: dev` tells the operator to deploy the Workflow using the development profile. This means that the operator will build a running instance of the Workflow ready to receive changes during your development cycle.
 
 <2> In the `flow` attribute goes the Workflow definition as described by the xref:core/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow specification]. So if you already have a workflow definition, you can use it there. Alternatively, you can use the xref:tooling/serverless-workflow-editor/swf-editor-overview.adoc[editors to create your workflow definition].
 
-== Deploying a New Workflow Service
+== Deploying a New Workflow
 
 .Prerequisites
 * You have xref:cloud/operator/install-serverless-operator.adoc[installed the {operator_name}]
@@ -80,7 +83,7 @@ spec:
 
 Having a new Kubernetes Workflow definition in a YAML file (you can use the above example), you can deploy it in your cluster with the following command:
 
-.Deploying a new KogitoServerlessWorkflow Custom Resource in Kubernetes
+.Deploying a new SonataFlow Custom Resource in Kubernetes
 [source,bash,subs="attributes+"]
 ----
 kubectl apply -f <your_file> -n <your_namespace>
@@ -91,12 +94,12 @@ Alternatively, you can try one of the examples available in the operator reposit
 .Deploying the greeting Workflow example
 [source,bash,subs="attributes+"]
 ----
-kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/test/testdata/sw.kogito_v1alpha08_kogitoserverlessworkflow_devmode.yaml -n <your_namespace>
+kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/test/testdata/sw.kogito_v1alpha08_sonataflow_devmode.yaml -n <your_namespace>
 ----
 
 [TIP]
 ====
-Replace `<your_namespace>` with the Namespace you're using to deploy your applications
+Replace `<your_namespace>` with the Namespace you're using to deploy your workflows
 ====
 
 You can follow the Workflow status to check if everything is fine with:
@@ -136,29 +139,33 @@ For example using VSCode, there are the commands needed:
 
 [source,bash,subs="attributes+"]
 ----
-curl -S https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_kogitoserverlessworkflow_devmode.yaml > workflow_devmode.yaml
+curl -S https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/config/samples/sw.kogito_v1alpha08_sonataflow_devmode.yaml > workflow_devmode.yaml
 code workflow_devmode.yaml
 kubectl apply -f workflow_devmode.yaml -n <your_namespace>
 ----
 
 The operator ensures that the latest Workflow definition is running and ready.
-This way, you can include the Workflow application in your development scenario and start making requests to it.
+This way, you can include the Workflow in your development scenario and start making requests to it.
 
-== Check the Workflow application is running
+== Check if the Workflow is running
 
-In order to check that the {product_name} Greeting application is up and running, you can try to perform a test HTTP call. First, you must expose the service:
+In order to check that the {product_name} Greeting workflow is up and running, you can try to perform a test HTTP call. First, you must get the service URL:
 
-.Exposing the Workflow application
+.Exposing the Workflow
 [source,bash,subs="attributes+"]
 ----
-kubectl patch svc greeting -n <your_namespace> -p '{"spec": {"type": "NodePort"}}'
 minikube service greeting -n <your_namespace> --url
 http://127.0.0.1:57053
 
 # use the above output to get the current Workflow URL in your environment
 ----
 
-Alter exposing the Workflow service, you can point your browser to the Swagger UI and start making requests with the REST interface.
+[TIP]
+====
+When running on Minikube, the service is already exposed for you via `NodePort`. On OpenShift, link:{openshift_route_url}[a Route is automatically created in devmode]. If you're running on Kubernetes you can link:{kubernetes_url}[expose your service using an Ingress].
+====
+
+You can now point your browser to the Swagger UI and start making requests with the REST interface.
 
 For example, using the above command execution you can access the Swagger UI via `http://127.0.0.1:57053/q/swagger-ui/`.
 
@@ -189,24 +196,48 @@ You should see a result similar to this:
 }
 ----
 
-You can even make changes to your `KogitoServerlessWorkflow` YAML file and see the results using the Swagger UI.
+You can even make changes to your `SonataFlow` YAML file and see the results using the Swagger UI.
 
-== Remove Workflow application
+== Remove the Workflow
 
-In order to remove the {product_name} Greeting application, you can execute the following command:
+In order to remove the {product_name} Greeting, you can execute the following command:
 
-.Removing the Workflow application
+.Removing the Workflow
 [source,bash,subs="attributes+"]
 ----
 kubectl delete -f <your_file> -n <your_namespace>
 ----
 
+== Referencing resources in the Workflow
+
+See the xref:cloud/operator/referencing-resource-files.adoc[] guide for more complex scenarios where you may need to reference other resources in the workflow definition.
+
+== Using another Workflow base image
+
+If your scenario has strict policies for image usage, such as security or hardening constraints, you can replace the default image used by the operator. Alternatively, you might want to test a nightly build with a bug fix or a custom image containing your customizations.
+
+By default, the operator will use the image distributed upstream to run the workflows in the development profile. You can change this image by editing the `SonataFlowPlatform` custom resource in the namespace where you deployed your workflows:
+
+.Patching the current SonataFlowPlatform with the new image
+[source,bash,subs="attributes+"]
+----
+# use `kubectl get sonataflowplatform` to get the SonataFlowPlatform name
+kubectl patch sonataflowplatform <name> --patch  'spec:\n devBaseImage: <your new image full name with tag>' -n <your_namespace>
+----
+
+From now on, every deployment in the development profile will use this image to run the workflow.
+
+[IMPORTANT]
+====
+The default image was created to run a Quarkus Java application in dev mode. You can replace this image with another one as long as it has the same concept. One way of doing this is using the default as the base image.
+====
+
 [[troubleshooting]]
-== Troubleshooting the Workflow Service
+== Troubleshooting the Workflow
 
-As you make changes to your Workflow service during development, it's likely that you will need to troubleshoot the application when something goes wrong.
+As you make changes to your workflow during development, it's likely that you will need to troubleshoot it when something goes wrong.
 
-To ensure the Workflow is running in a healthy state, the operator deploys the application Pod with health check probes.
+To ensure the Workflow is running in a healthy state, the operator deploys its Pod with health check probes.
 If the changes you make to your Workflow cause the health checks to fail, the Pod executing the Workflow will stop responding.
 
 The following will help you discover the reason for any failure during development.
@@ -226,7 +257,7 @@ It can give you a clue about what might be happening. See xref:cloud/operator/wo
 +
 2. Fetch the logs and look for `ERROR` messages:
 +
-.Watch the application logs
+.Watch the workflow logs
 [source,shell,subs="attributes+"]
 ----
 kubectl logs deployment/<workflow-name> -f
@@ -241,9 +272,9 @@ The {operator_name} is under active development. Sometimes a feature might not b
 
 If you identify that you are attempting to use a feature that is not available yet, you can file a new issue, so we can prioritize it. Alternatively, you can ask in {product_name} communication channels.
 
-==== Wrong Application Configuration
+==== Wrong Workflow Configuration
 A wrong configuration (or lack of one) might prevent your Workflow from running correctly.
-The operator deploys a `ConfigMap` that holds the application properties for the Workflow.
+The operator deploys a `ConfigMap` that holds the workflow properties for the Workflow.
 
 .Get the properties ConfigMap
 [source,shell,subs="attributes+"]
@@ -256,7 +287,7 @@ The `ConfigMap` name pattern is the Workflow name followed by `-props`.
 Make sure that the configuration is correct and you're not missing any required properties for a given feature to work.
 You can make any changes to the configuration by simply editing the content of the `ConfigMap`.
 
-Once you have updated the configuration in the `ConfigMap`, the operator ensures that these properties are applied to the application.
+Once you have updated the configuration in the `ConfigMap`, the operator ensures that these properties are applied to the workflow.
 
 See xref:cloud/operator/configuring-workflows.adoc[] for more information.
 
@@ -266,13 +297,13 @@ As the operator is under active development, errors during the validation might 
 
 In the case where validation has not prevented your error, you might have to make a few modifications to the Workflow definition to fix any problems.
 
-You can identify such problems by looking at the deployed Workflow application logs as explained <<basic-troubleshooting, here>>.
+You can identify such problems by looking at the deployed Workflow logs as explained <<basic-troubleshooting, here>>.
 
 If you find an issue with a cause is not listed in this section, please link:{docs_issues_url}[let us know].
 
 == Additional resources
 
-* xref:cloud/operator/known-issues.adoc[]
+* xref:cloud/operator/referencing-resource-files.adoc[]
 * xref:cloud/operator/build-and-deploy-workflows.adoc[]
 
 include::../../../pages/_common-content/report-issue.adoc[]
