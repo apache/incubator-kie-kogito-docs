@@ -15,7 +15,7 @@
 
 This document describes how to build and deploy your workflow on a cluster using the link:{kogito_serverless_operator_url}[{operator_name}] only by having a `SonataFlow` custom resource.
 
-Every time you need to change the workflow definition the system will (re)build a new immutable version of the application. If you're still in development phase, please see the xref:cloud/operator/developing-workflows.adoc[] guide.
+Every time you need to change the workflow definition the system will (re)build a new immutable version of the workflow. If you're still in development phase, please see the xref:cloud/operator/developing-workflows.adoc[] guide.
 
 Follow the <<building-kubernetes, Kubernetes>> or <<building-openshift, OpenShift>> sections of this document based on the cluster you wish to build your workflows on.
 
@@ -131,7 +131,7 @@ Follow these steps to configure your Kubernetes namespace to build workflow imag
 
 Create a new namespace that will hold all the resources that the operator will create (Pods, Deployments, Services, Secrets, ConfigMap, and Custom Resources) in this guide.
 
-.Create a Namespace for the application to build and run in
+.Create a Namespace for the workflow to build and run in
 [source,bash,subs="attributes+"]
 ----
 kubectl create namespace workflows
@@ -236,7 +236,7 @@ cat my-sonataflowplatform.yaml | sed "s|address: .*|address: <YOUR_REGISTRY>" | 
 
 You don't need to do anything to build on OpenShift since the operator will configure everything for you. There are a few customizations you can do described in the <<configure-build-system>> section.
 
-In general, the operator will create a link:{openshift_build_url}[`BuildConfig` to build] the workflow application using the mapped xref:cloud/operator/referencing-resource-files.adoc[resource files] and your workflow definition. After the build is finished, the image will be pushed to the internal OpenShift registry backed by an `ImageStream` object.
+In general, the operator will create a link:{openshift_build_url}[`BuildConfig` to build] the workflow using the mapped xref:cloud/operator/referencing-resource-files.adoc[resource files] and your workflow definition. After the build is finished, the image will be pushed to the internal OpenShift registry backed by an `ImageStream` object.
 
 === Changing the base builder image
 
@@ -252,7 +252,7 @@ In your editor, change the first line in the `Dockerfile` entry where it reads `
 This image must be compatible with your operator's installation.
 
 [#build-deploy-workflow]
-== Build and deploy your workflow application
+== Build and deploy your workflow
 
 You can now send your workflow definition (`SonataFlow`) to the operator.
 
@@ -312,7 +312,7 @@ kubectl apply -f greetings-workflow.yaml -n workflows
 
 You can check the logs of the build of your Workflow via:
 
-.Get the Workflow application pod logs
+.Get the Workflow pod logs
 [source,bash,subs="attributes+"]
 ----
 # on Kubernetes
@@ -324,13 +324,13 @@ oc logs buildconfig/greeting -n workflows
 
 The final pushed image must be printed into the logs at the end of the build.
 
-== Check the Workflow application is running
+== Check if the Workflow is running
 
-In order to check that the {product_name} Greeting application is up and running, you can try to perform a test HTTP call, from the greeting Pod.
+In order to check that the {product_name} Greeting is up and running, you can try to perform a test HTTP call, from the greeting Pod.
 
 .Procedure
 
-1. Expose the workflow application so you can access it:
+1. Expose the workflow so you can access it:
 +
 .Exposing the greeting workflow on Minikube
 [source,bash,subs="attributes+"]
@@ -351,7 +351,7 @@ GREETING_SVC=$(oc get route/greeting --template='{{.spec.host}}')
 +
 2. Make the HTTP call using `curl`:
 +
-.Check the greeting application is running
+.Check if the greeting workflow is running
 [source,bash,subs="attributes+"]
 ----
 curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' $GREETING_SVC/greeting
@@ -359,7 +359,7 @@ curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d 
 +
 If everything is working, you should receive a response like this:
 +
-.Response from the greeting application
+.Response from the greeting workflow
 [source,json,subs="attributes+"]
 ----
 {"id":"b5fbfaa3-b125-4e6c-9311-fe5a3577efdd","workflowdata":{"name":"John","language":"English","greeting":"Hello from JSON Workflow, "}}

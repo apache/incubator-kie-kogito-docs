@@ -1,30 +1,30 @@
-= Referencing Resource Files in the Workflow
+= Referencing Additional Files in the Workflow
 :compat-mode!:
 // Metadata:
-:description: Referencing external resource files in a workflow definition
+:description: Referencing external additional files in a workflow definition
 :keywords: workflow, serverless, operator, kubernetes, minikube, configmap
 // links
 :kubernetes_create_configmap_url: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#create-a-configmap
 :kubernetes_configmap_url: https://kubernetes.io/docs/concepts/configuration/configmap/
 
-This document describes how to reference resources files in the `SonataFlow` Custom Resource (CR).
+This document describes how to reference additional files in the `SonataFlow` Custom Resource (CR).
 
 Most of the time, a workflow definition will require not only the flow definition, but also OpenAPI or AsyncAPI specification descriptors, schemas, subflows definitions, and etc.
 For example, when doing xref:service-orchestration/orchestration-of-openapi-based-services.adoc[service orchestration using OpenAPI descriptors], you need to tell the workflow where to find these descriptors in your context.
 
-If these resources are not in a remote location that can be accessed via the HTTP protocol, you must describe in the `SonataFlow` CR where to find them within the cluster. This is done via link:{kubernetes_configmap_url}[`ConfigMaps`].
+If these files are not in a remote location that can be accessed via the HTTP protocol, you must describe in the `SonataFlow` CR where to find them within the cluster. This is done via link:{kubernetes_configmap_url}[`ConfigMaps`].
 
-== Creating ConfigMaps with Workflow resources
+== Creating ConfigMaps with Workflow Additional Files
 
 .Prerequisites
-* You have the resources available in your file system
+* You have the files available in your file system
 * You have permissions to create `ConfigMaps` in the target namespace
 
-Given that you already have the resource you want to add to your workflow definition, you link:{kubernetes_create_configmap_url}[can create a `ConfigMap`] as you normally would with the contents of the file.
+Given that you already have the file you want to add to your workflow definition, you link:{kubernetes_create_configmap_url}[can create a `ConfigMap`] as you normally would with the contents of the file.
 
 For example, given the following workflow:
 
-.Example of a workflow referencing external resources
+.Example of a workflow referencing additional files
 [source,yaml,subs="attributes+"]
 ----
 apiVersion: sonataflow.org/v1alpha08
@@ -65,7 +65,7 @@ To make it simple, you can create only one `ConfigMap`. Given that the files are
 .Creating a ConfigMap from the current directory
 [source,bash,subs="attributes+"]
 ----
-kubectl create configmap service-resources --from-file=$(pwd) -n <workflow-namespace>
+kubectl create configmap service-files --from-file=$(pwd) -n <workflow-namespace>
 ----
 
 [IMPORTANT]
@@ -81,7 +81,7 @@ You should have a `ConfigMap` with two data entries similar to this one:
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: service-resources
+  name: service-files
 data:
   workflow-service-schema.json: # data was removed to save space
   workflow-service-openapi.json: # data was removed to save space
@@ -104,7 +104,7 @@ spec:
   resources: <1>
     configMaps:
       - configMap:
-          name: service-resources <2>
+          name: service-files <2>
         workflowPath: specs <3>
   flow:
     start: Service
@@ -125,20 +125,20 @@ spec:
 
 <1> Introduced a new attribute `.spec.resources` where you can bind the `ConfigMap` to the `SonataFlow` CR
 <2> The name of the `ConfigMap` in the same namespace
-<3> The path where we want to reference these resources
+<3> The path where we want to reference these files
 
 Note that the `workflowPath` is `specs`. This is the path where you want to reference the files within the `ConfigMap` in the workflow definition.
 
 [IMPORTANT]
 ====
-Always create your `ConfigMaps` before the `SonataFlow` since not having the resources available during startup might break the deployment.
+Always create your `ConfigMaps` before the `SonataFlow` since not having the files available during startup might break the deployment.
 ====
 
-Any resource you have to map to the flow definition can be added to the `SonataFlow` CR using this procedure.
+Any files you have to map to the flow definition can be added to the `SonataFlow` CR using this procedure.
 
 == Creating a Static Service Registry
 
-The `ConfigMap` containing workflow resources is not tied to a particular `SonataFlow` instance, just referenced by it. It means that the operator won't edit or delete them if the `SonataFlow` CR is updated or deleted. You have total control of the `ConfigMap` instance.
+The `ConfigMap` containing workflow files are not tied to a particular `SonataFlow` instance, just referenced by it. It means that the operator won't edit or delete them if the `SonataFlow` CR is updated or deleted. You have total control of the `ConfigMap` instance.
 
 You can organize your `ConfigMaps` in a way that other workflows could reuse them. In other words, one `ConfigMap` can be mapped to many `SonataFlow` Custom Resources.
 
