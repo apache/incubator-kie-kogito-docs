@@ -1,8 +1,10 @@
-= Input schema definition for {product_name}
+= Input and Output schema definition for {product_name}
 :compat-mode!:
 // Metadata:
 :description: Defining input schema for Serverless Workflow
 :keywords: kogito, workflow, serverless, dataInputSchema
+
+== Input Schema
 
 The `dataInputSchema` in the link:{spec_doc_url}#workflow-definition-structure[Serverless Workflow specification] is a parameter used in the workflow definition. The `dataInputSchema` parameter validates the workflow data input against a defined JSON Schema. It is important to provide `dataInputSchema`, as it is used to verify if the provided workflow data input is correct before any workflow states are executed.
 
@@ -17,11 +19,36 @@ You can define a `dataInputSchema` as follows:
 }
 ----
 
-In the previous definition, the `schema` property is a URI, which holds the path to the JSON schema used to validate the workflow data input. The URI can be a classpath URI, a file, or an HTTP URL. If a classpath URI is specified, then the JSON schema file must be placed in the resources section of the project.
+In the previous definition, the `schema` property is a URI, which holds the path to the JSON schema used to validate the workflow data input. The URI can be a classpath URI, a file, or an HTTP URL. If a classpath URI is specified, then the JSON schema file must be placed in the resources section of the project or any other directory included in classpath.
 
-You can see the link:{kogito_sw_examples_url}/serverless-workflow-expression-quarkus[`serverless-workflow-expression-quarkus`] example application of a workflow definition with `dataInputSchema`. See the link:{kogito_sw_examples_url}/serverless-workflow-expression-quarkus/src/main/resources/expression.sw.json[Serverless Workflow JSON file] for more details.
+`failOnValidationErrors` is an optional flag that indicates the behaviour adopted when the input data does not match the specified JSON schema. If not specified or set to true, an exception will be thrown and flow execution fails. If set to false, the flow will be executed and a log of level WARN with the validation errors will be printed.
 
-When a workflow definition contains a `dataInputSchema` attribute, the workflow application generates an OpenAPI file, such as `http://localhost/q/openapi`. The generated OpenAPI file references the schema file, which helps in defining the input data for the workflows. For more information about the OpenAPI file, see link:{open_api_spec_url}[OpenAPI specification].
+== Output Schema
+
+Serverless Workflow specification does not support Json Output schema until version 0.9. Therefore {product_name} is implementing it as an link:{spec_doc_url}#extensions[Serverless Workflow specification extension]. Output schema is applied after workflow execution to verify that the output model has the expected format. It is also useful for Swagger generation purposes. 
+
+As with Input schema, you should specify the url to the json schema, using `outputSchema` as follows
+
+.`outputSchema` definition
+----
+"extensions" : [ {
+      "extensionid": "workflow-output-schema",
+      "outputSchema": { 
+         "schema" : "URL_to_json_schema",
+          "failOnValidationErrors": false
+     }
+  ]
+----
+
+Same rules described for `dataInputSchema` applies for `schema` and `failOnValidationErrors`. The difference being that the latter flag is applied after workflow execution.
+
+== Example
+
+You can see the link:{kogito_sw_examples_url}/serverless-workflow-expression-quarkus[serverless-workflow-expression-quarkus] example application of a workflow definition with `dataInputSchema` and `outputSchema`. 
+
+== Swagger documentation
+
+When a workflow definition contains a `dataInputSchema` and/or `outputSchema` attribute, the workflow application generates an OpenAPI file, such as `http://localhost/q/openapi`. The generated OpenAPI file references the schema file, which helps in defining the input and checking the output data for the workflows. For more information about the OpenAPI file, see link:{open_api_spec_url}[OpenAPI specification].
 
 If you want to generate an OpenAPI file for a workflow, then you must add the link:{quarkus_swagger_url}#expose-openapi-specifications[Quarkus dependency] in the project. 
 
