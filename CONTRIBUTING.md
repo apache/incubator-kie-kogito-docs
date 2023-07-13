@@ -214,13 +214,24 @@ More details at [Antora documentation](https://docs.antora.org/antora/latest/asc
 
 ## Generating Release Notes for Serverless Workflow
 
-1. Use the [JIRA to search for the issues](https://issues.redhat.com/issues/?jql=) with:
+1. You can retrieve all changes in the release page of each repository of the project:
 
-```
-project = Kogito and fixVersion = <version> and component in ("Serverless Workflow Editor", "Serverless Workflow Engine") AND status in (Resolved, Done)  and type != Sub-task and type != Epic
-```
+    - https://github.com/kiegroup/kogito-runtimes/releases/tag/{version}
+    - https://github.com/kiegroup/kogito-apps/releases/tag/{version}
+    - https://github.com/kiegroup/kogito-examples/releases/tag/{version}
+    - https://github.com/kiegroup/kogito-images/releases/tag/{version_without_Final}
+    - https://github.com/kiegroup/kogito-serverless-operator/releases/tag/v{version_without_Final}
 
-Replace `<version>` with the given version, for example `1.35.0.Final`.
+   Replace `{version}` with the given core version, for example `1.41.0.Final`.  
+   Replace `{version_without_Final}` with the given cloud version, for example `1.41.0`.
+
+   You should also get JIRA issues with `KOGITO` and `DROOLS` projects as well as issues coming from the `kie-issues` repository. An example of a filter for `KOGITO` JIRA project:
+
+   ```
+   project = Kogito and fixVersion = <version> and component in ("Serverless Workflow Editor", "Serverless Workflow Engine") AND status in (Resolved, Done)  and type != Sub-task and type != Epic
+   ```
+
+   Replace `<version>` with the given version, for example `1.41.0.Final`.
 
 2. Update the page [release_notes.adoc](serverlessworkflow/modules/ROOT/pages/release_notes.adoc)
 3. Align with the team what should be under "Notable changes"
