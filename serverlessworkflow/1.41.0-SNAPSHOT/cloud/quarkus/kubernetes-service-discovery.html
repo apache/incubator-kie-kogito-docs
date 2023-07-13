@@ -281,6 +281,9 @@
     <a class="nav-link" href="../operator/developing-workflows.html">Development Mode</a>
   </li>
   <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../operator/referencing-resource-files.html">Referencing Workflow Resources</a>
+  </li>
+  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="../operator/configuring-workflows.html">Configuration</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -632,6 +635,120 @@
 </div>
 </dd>
 </dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="required-kubernetes-roles"><a class="anchor" href="#required-kubernetes-roles"></a>Required Kubernetes roles</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The service discovery engine requires that the <a href="https://kubernetes.io/docs/concepts/security/service-accounts/">Kubernetes Service Account</a> running the application has read permissions for the discovered objects.</p>
+</div>
+<div class="paragraph">
+<p>The following Kubernetes Role resource has all the required permissions for the service discovery to work:</p>
+</div>
+<div class="listingblock">
+<div class="title">Required permissions for the Service Discovery on Kubernetes</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: service-discovery-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - services
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - statefulsets
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+  # Knative
+  - apiGroups:
+      - serving.knative.dev
+    resources:
+      - services
+    verbs:
+      - get
+      - list</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If running on OpenShift, you must also add the following rules:</p>
+</div>
+<div class="listingblock">
+<div class="title">Additional rules to run on OpenShift</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">rules:
+  - apiGroups:
+      - route.openshift.io
+    resources:
+      - routes
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - apps.openshift.io
+    resources:
+      - deploymentconfigs
+    verbs:
+      - get
+      - list</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You must then bind the Service Account with the <code>Role</code> via a <code>RoleBinding</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">RoleBinding for the required service discovery role</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: service-discovery-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: service-discovery-role
+subjects:
+  - kind: ServiceAccount
+    name: default</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Usually, pods run using the <code>default</code> Service Account. If your cluster has a different configuration, you should adapt this <code>RoleBinding</code> to your requirements.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You must create these two objects in every namespace that you wish to deploy Quarkus Workflow applications with Service Discovery enabled.</p>
+</div>
+<div class="paragraph">
+<p>As an alternative, you can create a <code>ClusterRole</code> instead of a <code>Role</code> in every namespace. In this case, the role will reflect globally in your cluster. For security reasons, you should avoid this approach.</p>
 </div>
 </div>
 </div>

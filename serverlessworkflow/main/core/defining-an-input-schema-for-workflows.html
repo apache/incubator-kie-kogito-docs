@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Input schema definition for Kogito Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <title>Input and Output schema definition for Kogito Serverless Workflow :: Kogito Serverless Workflow Guides</title>
     <meta name="description" content="Defining input schema for Serverless Workflow">
     <meta name="keywords" content="kogito, workflow, serverless, dataInputSchema">
     <meta name="generator" content="Antora 3.1.4">
@@ -483,8 +483,9 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Input schema definition for Kogito Serverless Workflow</h1>
-<div id="preamble">
+<h1 class="page">Input and Output schema definition for Kogito Serverless Workflow</h1>
+<div class="sect1">
+<h2 id="_input_schema"><a class="anchor" href="#_input_schema"></a>Input schema</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>dataInputSchema</code> in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-definition-structure">Serverless Workflow specification</a> is a parameter used in the workflow definition. The <code>dataInputSchema</code> parameter validates the workflow data input against a defined JSON Schema. It is important to provide <code>dataInputSchema</code>, as it is used to verify if the provided workflow data input is correct before any workflow states are executed.</p>
@@ -502,13 +503,52 @@
 </div>
 </div>
 <div class="paragraph">
-<p>In the previous definition, the <code>schema</code> property is a URI, which holds the path to the JSON schema used to validate the workflow data input. The URI can be a classpath URI, a file, or an HTTP URL. If a classpath URI is specified, then the JSON schema file must be placed in the resources section of the project.</p>
+<p>In the previous definition, the <code>schema</code> property is a URI, which holds the path to the JSON schema used to validate the workflow data input. The URI can be a classpath URI, a file, or an HTTP URL. If a classpath URI is specified, then the JSON schema file must be placed in the resources section of the project or any other directory included in the classpath.</p>
 </div>
 <div class="paragraph">
-<p>You can see the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-expression-quarkus"><code>serverless-workflow-expression-quarkus</code></a> example application of a workflow definition with <code>dataInputSchema</code>. See the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-expression-quarkus/src/main/resources/expression.sw.json">Serverless Workflow JSON file</a> for more details.</p>
+<p><code>failOnValidationErrors</code> is an optional flag that indicates the behavior adopted when the input data does not match the specified JSON schema. If not specified or set to true, an exception will be thrown and flow execution will fail. If set to false, the flow will be executed and a log of level WARN with the validation errors will be printed.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_output_schema"><a class="anchor" href="#_output_schema"></a>Output schema</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Serverless Workflow specification does not support JSON output schema until version 0.9. Therefore Kogito Serverless Workflow is implementing it as a <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#extensions">Serverless Workflow specification extension</a>. Output schema is applied after workflow execution to verify that the output model has the expected format. It is also useful for Swagger generation purposes.</p>
 </div>
 <div class="paragraph">
-<p>When a workflow definition contains a <code>dataInputSchema</code> attribute, the workflow application generates an OpenAPI file, such as <code><a href="http://localhost/q/openapi" class="bare">http://localhost/q/openapi</a></code>. The generated OpenAPI file references the schema file, which helps in defining the input data for the workflows. For more information about the OpenAPI file, see <a href="https://spec.openapis.org/oas/v3.1.0.html">OpenAPI specification</a>.</p>
+<p>Similar to Input schema, you must specify the URL to the JSON schema, using <code>outputSchema</code> as follows:</p>
+</div>
+<div class="listingblock">
+<div class="title"><code>outputSchema</code> definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"extensions" : [ {
+      "extensionid": "workflow-output-schema",
+      "outputSchema": {
+         "schema" : "URL_to_json_schema",
+          "failOnValidationErrors": false
+     }
+  ]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The same rules described for <code>dataInputSchema</code> apply for <code>schema</code> and <code>failOnValidationErrors</code>. The difference is that the latter flag is applied after workflow execution.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_example_with_datainputschema_and_outputschema"><a class="anchor" href="#_example_with_datainputschema_and_outputschema"></a>Example with <code>dataInputSchema</code> and <code>outputSchema</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can see the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-expression-quarkus">serverless-workflow-expression-quarkus</a> example application of a workflow definition with <code>dataInputSchema</code> and <code>outputSchema</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_swagger_documentation"><a class="anchor" href="#_swagger_documentation"></a>Swagger documentation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When a workflow definition contains a <code>dataInputSchema</code> and/or <code>outputSchema</code> attribute, the workflow application generates an OpenAPI file, such as <code><a href="http://localhost:8080/q/openapi" class="bare">http://localhost:8080/q/openapi</a></code>. The generated OpenAPI file references the schema file, which helps in defining the input and checking the output data for the workflows. For more information about the OpenAPI file, see <a href="https://spec.openapis.org/oas/v3.1.0.html">OpenAPI specification</a>.</p>
 </div>
 <div class="paragraph">
 <p>If you want to generate an OpenAPI file for a workflow, then you must add the <a href="https://quarkus.io/guides/openapi-swaggerui#expose-openapi-specifications">Quarkus dependency</a> in the project.</p>
