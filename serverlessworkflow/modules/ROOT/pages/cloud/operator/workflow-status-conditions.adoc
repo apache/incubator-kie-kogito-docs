@@ -2,9 +2,9 @@
 :compat-mode!:
 // Metadata:
 :description: Description of the status and conditions of a Workflow deployed by the operator
-:keywords: kogito, workflow, serverless, operator, kubernetes, minikube, status, conditions
+:keywords: sonataflow, workflow, serverless, operator, kubernetes, minikube, status, conditions
 
-This document describes the Status and Conditions of a `KogitoServerlessWorkflow` object managed by the {operator_name}.
+This document describes the Status and Conditions of a `SonataFlow` object managed by the {operator_name}.
 
 link:https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties[Kubernetes Status] is an important property to observe in order to understand what is currently happening with the object. It can also help you troubleshoot or integrate with other objects in the cluster.
 
@@ -20,7 +20,7 @@ kubectl get workflow <your_workflow_name> -n <your_namespace> -o jsonpath={.stat
 
 The table below lists the general structure of a Workflow status:
 
-.Description of KogitoServerlessWorkflow Status object
+.Description of SonataFlow Status object
 [cols="1,2"]
 |===
 |Status | Description
@@ -88,7 +88,7 @@ In normal conditions, the Workflow will transition from `Running`, `WaitingForDe
 
 == Production Profile Conditions
 
-Deploying the Workflow in xref:cloud/operator/build-and-deploy-workflows.adoc[Production profile] makes the operator build an immutable image for the Workflow service. The progress of the immutable image build can be followed by observing the Workflow Conditions.
+Deploying the Workflow in xref:cloud/operator/build-and-deploy-workflows.adoc[Production profile] makes the operator build an immutable image for the Workflow application. The progress of the immutable image build can be followed by observing the Workflow Conditions.
 
 .Condition Scenarios in Production
 [cols="0,0,1,2"]
@@ -118,7 +118,7 @@ Deploying the Workflow in xref:cloud/operator/build-and-deploy-workflows.adoc[Pr
 | Running
 | False
 | WaitingForPlatform
-| The Workflow can't have a Pod running until a `KogitoServerlessPlatform` is ready
+| The Workflow can't have a Pod running until a `SonataFlowPlatform` is ready
 
 | Running
 | False
@@ -147,7 +147,7 @@ Deploying the Workflow in xref:cloud/operator/build-and-deploy-workflows.adoc[Pr
  
 |===
 
-When building an image for a Workflow resource, a `KogitoServerlessBuild` will first be created and the operator will wait for the associated build to finish. Once the build is complete, the Workflow transitions to the deployment phase, which will provision a new Workflow service Pod to run with the built image.
+When building an image for a Workflow resource, a `SonataFlowBuild` will first be created and the operator will wait for the associated build to finish. Once the build is complete, the Workflow transitions to the deployment phase, which will provide a new Workflow service Pod to run with the built image.
 
 == Additional resources
 
