@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Understanding Workflow Services Status Conditions :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Description of the status and conditions of a workflow deployed by the operator">
-    <meta name="keywords" content="kogito, workflow, serverless, operator, kubernetes, minikube, status, conditions">
+    <meta name="description" content="Description of the status and conditions of a Workflow deployed by the operator">
+    <meta name="keywords" content="sonataflow, workflow, serverless, operator, kubernetes, minikube, status, conditions">
     <meta name="generator" content="Antora 3.1.4">
     <link rel="stylesheet" href="../../../../_/css/site.css">
 <link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
@@ -254,16 +254,19 @@
     <a class="nav-link" href="install-serverless-operator.html">Installation</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="developing-workflows.html">Developing Workflows</a>
+    <a class="nav-link" href="developing-workflows.html">Development Mode</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="configuring-workflows.html">Configuring Workflows</a>
+    <a class="nav-link" href="referencing-resource-files.html">Referencing Workflow Resources</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="configuring-workflows.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="build-and-deploy-workflows.html">Building and Deploying Workflow Images</a>
   </li>
   <li class="nav-item is-current-page" data-depth="3">
-    <a class="nav-link" href="workflow-status-conditions.html">Workflows Status</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="build-and-deploy-workflows.html">Building and Deploying Workflows</a>
+    <a class="nav-link" href="workflow-status-conditions.html">Custom Resource Status</a>
   </li>
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="known-issues.html">Known Issues</a>
@@ -422,7 +425,7 @@
     <li><a href="../../index.html">Kogito Serverless Workflow Guides</a></li>
     <li><a href="../index.html">Cloud</a></li>
     <li>Operator</li>
-    <li><a href="workflow-status-conditions.html">Workflows Status</a></li>
+    <li><a href="workflow-status-conditions.html">Custom Resource Status</a></li>
   </ul>
 </nav>
 <div class="page-versions">
@@ -461,7 +464,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes the status and conditions of the <code>KogitoServerlessWorkflow</code> object deployed by the Kogito Serverless Workflow Operator.</p>
+<p>This document describes the Status and Conditions of a <code>SonataFlow</code> object managed by the SonataFlow Operator.</p>
 </div>
 <div class="paragraph">
 <p><a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties">Kubernetes Status</a> is an important property to observe in order to understand what is currently happening with the object. It can also help you troubleshoot or integrate with other objects in the cluster.</p>
@@ -475,7 +478,7 @@
 <p>The table below lists the general structure of a workflow status:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Description of KogitoServerlessWorkflow status object</caption>
+<caption class="title">Table 1. Description of SonataFlow Status object</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 66.6667%;">
@@ -583,7 +586,7 @@
 <h2 id="_production_profile_conditions"><a class="anchor" href="#_production_profile_conditions"></a>Production Profile Conditions</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Deploying the workflow in <a href="build-and-deploy-workflows.html" class="xref page">Production profile</a> makes the operator to build an immutable image for the workflow service. The build step can be followed by observing the workflow conditions.</p>
+<p>Deploying the Workflow in <a href="build-and-deploy-workflows.html" class="xref page">Production profile</a> makes the operator build an immutable image for the Workflow application. The progress of the immutable image build can be followed by observing the Workflow Conditions.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 3. Condition Scenarios in Production</caption>
@@ -630,7 +633,7 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">False</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">WaitingForPlatform</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The workflow can&#8217;t have a pod running until a <code>KogitoServerlessPlatform</code> is ready</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Workflow can&#8217;t have a Pod running until a <code>SonataFlowPlatform</code> is ready</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Running</p></td>
@@ -665,7 +668,7 @@
 </tbody>
 </table>
 <div class="paragraph">
-<p>The normal conditions for the workflow resource are to place a <code>KogitoServerlessBuild</code> to run and wait for it to finish. As soon as the image is ready, the workflow transitions to the deployment phase, which is to provision a new workflow service pod to run with the built image.</p>
+<p>When building an image for a Workflow resource, a <code>SonataFlowBuild</code> will first be created and the operator will wait for the associated build to finish. Once the build is complete, the Workflow transitions to the deployment phase, which will provide a new Workflow service Pod to run with the built image.</p>
 </div>
 </div>
 </div>
@@ -675,10 +678,10 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="known-issues.html" class="xref page">Kogito Serverless Workflow Operator Known Issues, Limitations and Roadmap</a></p>
+<p><a href="known-issues.html" class="xref page">SonataFlow Operator Known Issues, Limitations and Roadmap</a></p>
 </li>
 <li>
-<p><a href="developing-workflows.html" class="xref page">Developing Workflow Services with the Operator</a></p>
+<p><a href="developing-workflows.html" class="xref page">Developing Workflow with the Operator</a></p>
 </li>
 <li>
 <p><a href="build-and-deploy-workflows.html" class="xref page">Building and Deploying Workflows with the Operator</a></p>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Kogito Serverless Workflow Operator Known Issues, Limitations and Roadmap :: Kogito Serverless Workflow Guides</title>
+    <title>SonataFlow Operator Known Issues, Limitations and Roadmap :: Kogito Serverless Workflow Guides</title>
     <meta name="description" content="Known issues, features, and limitations of the operator">
     <meta name="keywords" content="kogito, workflow, serverless, operator, kubernetes, minikube, roadmap">
     <meta name="generator" content="Antora 3.1.4">
@@ -254,16 +254,19 @@
     <a class="nav-link" href="install-serverless-operator.html">Installation</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="developing-workflows.html">Developing Workflows</a>
+    <a class="nav-link" href="developing-workflows.html">Development Mode</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="configuring-workflows.html">Configuring Workflows</a>
+    <a class="nav-link" href="referencing-resource-files.html">Referencing Workflow Resources</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="workflow-status-conditions.html">Workflows Status</a>
+    <a class="nav-link" href="configuring-workflows.html">Configuration</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="build-and-deploy-workflows.html">Building and Deploying Workflows</a>
+    <a class="nav-link" href="build-and-deploy-workflows.html">Building and Deploying Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="workflow-status-conditions.html">Custom Resource Status</a>
   </li>
   <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="known-issues.html">Known Issues</a>
@@ -457,79 +460,11 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Kogito Serverless Workflow Operator Known Issues, Limitations and Roadmap</h1>
+<h1 class="page">SonataFlow Operator Known Issues, Limitations and Roadmap</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <a href="https://github.com/kiegroup/kogito-serverless-operator/">Kogito Serverless Workflow Operator</a> is currently in Alpha version, is under active development.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_supported_features"><a class="anchor" href="#_supported_features"></a>Supported Features</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p>Functions</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../../core/custom-functions-support.html#con-func-sysout" class="xref page">Sysout</a></p>
-</li>
-<li>
-<p><a href="https://github.com/kiegroup/kogito-examples/tree/1.40.x-prod/serverless-workflow-examples/serverless-workflow-functions-quarkus/src/main/resources/restfunctions.sw.json">Rest Custom Functions</a></p>
-</li>
-<li>
-<p><a href="../../core/understanding-jq-expressions.html" class="xref page">Expression functions</a></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Events</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../../eventing/consume-produce-events-with-knative-eventing.html" class="xref page">Knative Eventing integration</a>. Every Knative Eventing object (brokers, sources, sinks) must be manually configured.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>States</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Switch including dataConditions</p>
-</li>
-<li>
-<p>Inject including data with a transition</p>
-</li>
-<li>
-<p>States with Operations including Actions containing functionRef with arguments</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>ExpressionsLang (jq or jsonpath)</p>
-</li>
-<li>
-<p><a href="configuring-workflows.html" class="xref page">Configuring the workflow application in development profile</a></p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_not_supported_features"><a class="anchor" href="#_not_supported_features"></a>Not Supported Features</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Every other feature from the <a href="../../getting-started/cncf-serverless-workflow-specification-support.html" class="xref page">CNCF Serverless Workflow Specification</a> not listed in the section above, is not supported or tested at the moment.</p>
-</div>
-<div class="paragraph">
-<p>Any feature requiring external file configuration such as OpenAPI or Camel Routes is not supported at the moment.</p>
+<p>The <a href="https://github.com/kiegroup/kogito-serverless-operator/">SonataFlow Operator</a> is currently in Alpha version, is under active development.</p>
 </div>
 </div>
 </div>
@@ -543,9 +478,6 @@
 <h3 id="_cncf_specification_v0_8_alignment"><a class="anchor" href="#_cncf_specification_v0_8_alignment"></a>CNCF Specification v0.8 Alignment</h3>
 <div class="ulist">
 <ul>
-<li>
-<p><a href="https://issues.redhat.com/browse/KOGITO-8452">Alignment with Serverless Workflow v0.8 model</a></p>
-</li>
 <li>
 <p><a href="https://issues.redhat.com/browse/KOGITO-7840">Implement admission webhooks for workflow validation</a></p>
 </li>

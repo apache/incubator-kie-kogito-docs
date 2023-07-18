@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Developing Workflow Services with the Operator :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Developing workflow service with the operator on Kubernetes">
+    <title>Developing Workflow with the Operator :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Developing workflows with the operator on Kubernetes">
     <meta name="keywords" content="kogito, workflow, serverless, operator, kubernetes, minikube, devmode">
     <meta name="generator" content="Antora 3.1.4">
     <link rel="stylesheet" href="../../../../_/css/site.css">
@@ -254,16 +254,19 @@
     <a class="nav-link" href="install-serverless-operator.html">Installation</a>
   </li>
   <li class="nav-item is-current-page" data-depth="3">
-    <a class="nav-link" href="developing-workflows.html">Developing Workflows</a>
+    <a class="nav-link" href="developing-workflows.html">Development Mode</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="configuring-workflows.html">Configuring Workflows</a>
+    <a class="nav-link" href="referencing-resource-files.html">Referencing Workflow Resources</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="workflow-status-conditions.html">Workflows Status</a>
+    <a class="nav-link" href="configuring-workflows.html">Configuration</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="build-and-deploy-workflows.html">Building and Deploying Workflows</a>
+    <a class="nav-link" href="build-and-deploy-workflows.html">Building and Deploying Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="workflow-status-conditions.html">Custom Resource Status</a>
   </li>
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="known-issues.html">Known Issues</a>
@@ -422,7 +425,7 @@
     <li><a href="../../index.html">Kogito Serverless Workflow Guides</a></li>
     <li><a href="../index.html">Cloud</a></li>
     <li>Operator</li>
-    <li><a href="developing-workflows.html">Developing Workflows</a></li>
+    <li><a href="developing-workflows.html">Development Mode</a></li>
   </ul>
 </nav>
 <div class="page-versions">
@@ -457,14 +460,14 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Developing Workflow Services with the Operator</h1>
+<h1 class="page">Developing Workflow with the Operator</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can develop your workflows directly on Kubernetes with the Kogito Serverless Workflow Operator.</p>
+<p>This document describes how you can develop your workflows directly on Kubernetes with the SonataFlow Operator.</p>
 </div>
 <div class="paragraph">
-<p>Workflows in development profile are not tailored for production environments. To build and deploy an immutable workflow application with the operator, see <a href="build-and-deploy-workflows.html" class="xref page">Building and Deploying Workflows with the Operator</a>.</p>
+<p>Workflows in the development profile are not tailored for production environments. To build and deploy an immutable Workflow with the operator, see <a href="build-and-deploy-workflows.html" class="xref page">Building and Deploying Workflows with the Operator</a>.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -474,7 +477,7 @@
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Kogito Serverless Workflow Operator is under active development with features yet to be implemented. Please see <a href="known-issues.html" class="xref page">Kogito Serverless Workflow Operator Known Issues, Limitations and Roadmap</a>.</p>
+<p>SonataFlow Operator is under active development with features yet to be implemented. Please see <a href="known-issues.html" class="xref page">SonataFlow Operator Known Issues, Limitations and Roadmap</a>.</p>
 </div>
 </td>
 </tr>
@@ -489,19 +492,19 @@
 <p>The development profile is the easiest way to start playing around with workflows and the operator.</p>
 </div>
 <div class="paragraph">
-<p>To get started, you can use an editor of your choice to create a new <code>KogitoServerlessWorkflow</code> Custom Resource YAML definition. For example:</p>
+<p>To get started, you can use an editor of your choice to create a new <code>SonataFlow</code> Custom Resource YAML definition. For example:</p>
 </div>
 <div class="listingblock">
 <div class="title">Example of a Kubernetes Kogito Serverless Workflow YAML definition</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: sw.kogito.kie.org/v1alpha08
-kind: KogitoServerlessWorkflow
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
 metadata:
   name: greeting
   annotations:
-    sw.kogito.kie.org/description: Greeting example on k8s!
-    sw.kogito.kie.org/version: 0.0.1
-    sw.kogito.kie.org/profile: dev <i class="conum" data-value="1"></i><b>(1)</b>
+    sonataflow.org/description: Greeting example on k8s!
+    sonataflow.org/version: 0.0.1
+    sonataflow.org/profile: dev <i class="conum" data-value="1"></i><b>(1)</b>
 spec:
   flow: <i class="conum" data-value="2"></i><b>(2)</b>
     start: ChooseOnLanguage
@@ -543,7 +546,7 @@ spec:
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The annotation <code>sw.kogito.kie.org/profile: dev</code> tells the operator to deploy your workflow using the development profile. This means that the operator will build a running instance of the workflow ready to receive changes during your development cycle.</td>
+<td>The annotation <code>sonataflow.org/profile: dev</code> tells the operator to deploy the Workflow using the development profile. This means that the operator will build a running instance of the Workflow ready to receive changes during your development cycle.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -554,13 +557,13 @@ spec:
 </div>
 </div>
 <div class="sect1">
-<h2 id="_deploying_a_new_workflow_service"><a class="anchor" href="#_deploying_a_new_workflow_service"></a>Deploying a New Workflow Service</h2>
+<h2 id="_deploying_a_new_workflow"><a class="anchor" href="#_deploying_a_new_workflow"></a>Deploying a New Workflow</h2>
 <div class="sectionbody">
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>You have <a href="install-serverless-operator.html" class="xref page">installed the Kogito Serverless Workflow Operator</a></p>
+<p>You have <a href="install-serverless-operator.html" class="xref page">installed the SonataFlow Operator</a></p>
 </li>
 <li>
 <p>You have created a new Kogito Serverless Workflow Kubernetes YAML file</p>
@@ -571,7 +574,7 @@ spec:
 <p>Having a new Kubernetes workflow definition in a YAML file (you can use the above example), you can deploy it in your cluster with the following command:</p>
 </div>
 <div class="listingblock">
-<div class="title">Deploying a new KogitoServerlessWorkflow custom resource in Kubernetes</div>
+<div class="title">Deploying a new SonataFlow Custom Resource in Kubernetes</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl apply -f &lt;your_file&gt; -n &lt;your_namespace&gt;</code></pre>
 </div>
@@ -582,7 +585,7 @@ spec:
 <div class="listingblock">
 <div class="title">Deploying the greeting workflow example</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/test/testdata/sw.kogito_v1alpha08_kogitoserverlessworkflow_devmode.yaml -n &lt;your_namespace&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/test/testdata/sw.kogito_v1alpha08_sonataflow_devmode.yaml -n &lt;your_namespace&gt;</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -593,7 +596,7 @@ spec:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Replace <code>&lt;your_namespace&gt;</code> with the namespace you&#8217;re using to deploy your applications</p>
+<p>Replace <code>&lt;your_namespace&gt;</code> with the Namespace you&#8217;re using to deploy your workflows</p>
 </div>
 </td>
 </tr>
@@ -652,35 +655,48 @@ greeting   dev       0.0.1               True</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -S https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/config/samples/sw.kogito_v1alpha08_kogitoserverlessworkflow_devmode.yaml &gt; workflow_devmode.yaml
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -S https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/config/samples/sw.kogito_v1alpha08_sonataflow_devmode.yaml &gt; workflow_devmode.yaml
 code workflow_devmode.yaml
 kubectl apply -f workflow_devmode.yaml -n &lt;your_namespace&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The operator ensures that the latest workflow definition is running and ready.
-This way, you can include the workflow application in your development scenario and start making requests to it.</p>
+<p>The operator ensures that the latest Workflow definition is running and ready.
+This way, you can include the Workflow in your development scenario and start making requests to it.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_check_the_workflow_application_is_running"><a class="anchor" href="#_check_the_workflow_application_is_running"></a>Check the workflow application is running</h2>
+<h2 id="_check_if_the_workflow_is_running"><a class="anchor" href="#_check_if_the_workflow_is_running"></a>Check if the Workflow is running</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In order to check that the Kogito Serverless Workflow Greeting application is up and running, you can try to perform a test HTTP call. First, you must expose the service:</p>
+<p>In order to check that the Kogito Serverless Workflow Greeting workflow is up and running, you can try to perform a test HTTP call. First, you must get the service URL:</p>
 </div>
 <div class="listingblock">
-<div class="title">Exposing the workflow application</div>
+<div class="title">Exposing the Workflow</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl patch svc greeting -n &lt;your_namespace&gt; -p '{"spec": {"type": "NodePort"}}'
-minikube service greeting -n &lt;your_namespace&gt; --url
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube service greeting -n &lt;your_namespace&gt; --url
 http://127.0.0.1:57053
 
 # use the above output to get the current workflow URL in your environment</code></pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>Alter exposing the workflow service, you can point your browser to the Swagger UI and start making requests with the REST interface.</p>
+<p>When running on Minikube, the service is already exposed for you via <code>NodePort</code>. On OpenShift, <a href="https://docs.openshift.com/container-platform/4.13/networking/routes/route-configuration.html">a Route is automatically created in devmode</a>. If you&#8217;re running on Kubernetes you can <a href="https://kubernetes.io/docs/concepts/services-networking/ingress/">expose your service using an Ingress</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can now point your browser to the Swagger UI and start making requests with the REST interface.</p>
 </div>
 <div class="paragraph">
 <p>For example, using the above command execution you can access the Swagger UI via <code><a href="http://127.0.0.1:57053/q/swagger-ui/" class="bare">http://127.0.0.1:57053/q/swagger-ui/</a></code>.</p>
@@ -718,18 +734,18 @@ http://127.0.0.1:57053
 </div>
 </div>
 <div class="paragraph">
-<p>You can even make changes to your <code>KogitoServerlessWorkflow</code> YAML file and see the results using the Swagger UI.</p>
+<p>You can even make changes to your <code>SonataFlow</code> YAML file and see the results using the Swagger UI.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_remove_workflow_application"><a class="anchor" href="#_remove_workflow_application"></a>Remove workflow application</h2>
+<h2 id="_remove_the_workflow"><a class="anchor" href="#_remove_the_workflow"></a>Remove the Workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In order to remove the Kogito Serverless Workflow Greeting application, you can execute the following command:</p>
+<p>In order to remove the Kogito Serverless Workflow Greeting, you can execute the following command:</p>
 </div>
 <div class="listingblock">
-<div class="title">Removing the workflow application</div>
+<div class="title">Removing the Workflow</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl delete -f &lt;your_file&gt; -n &lt;your_namespace&gt;</code></pre>
 </div>
@@ -737,14 +753,60 @@ http://127.0.0.1:57053
 </div>
 </div>
 <div class="sect1">
-<h2 id="troubleshooting"><a class="anchor" href="#troubleshooting"></a>Troubleshooting the Workflow Service</h2>
+<h2 id="_referencing_resources_in_the_workflow"><a class="anchor" href="#_referencing_resources_in_the_workflow"></a>Referencing resources in the Workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Since during development you are iterating over the deployed workflow service, it&#8217;s likely that you will need to troubleshoot the application if something goes wrong.</p>
+<p>See the <a href="referencing-resource-files.html" class="xref page">Referencing Additional Files in the Workflow</a> guide for more complex scenarios where you may need to reference other resources in the workflow definition.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_another_workflow_base_image"><a class="anchor" href="#_using_another_workflow_base_image"></a>Using another Workflow base image</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If your scenario has strict policies for image usage, such as security or hardening constraints, you can replace the default image used by the operator. Alternatively, you might want to test a nightly build with a bug fix or a custom image containing your customizations.</p>
 </div>
 <div class="paragraph">
-<p>To ensure the workflow is running in a healthy state, the operator deploys the application pod with health checks probes.
-So if your changes impact the application somehow, the pod will stop responding.</p>
+<p>By default, the operator will use the image distributed upstream to run the workflows in the development profile. You can change this image by editing the <code>SonataFlowPlatform</code> custom resource in the namespace where you deployed your workflows:</p>
+</div>
+<div class="listingblock">
+<div class="title">Patching the current SonataFlowPlatform with the new image</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># use `kubectl get sonataflowplatform` to get the SonataFlowPlatform name
+kubectl patch sonataflowplatform &lt;name&gt; --patch  'spec:\n devBaseImage: &lt;your new image full name with tag&gt;' -n &lt;your_namespace&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>From now on, every deployment in the development profile will use this image to run the workflow.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The default image was created to run a Quarkus Java application in dev mode. You can replace this image with another one as long as it has the same concept. One way of doing this is using the default as the base image.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="troubleshooting"><a class="anchor" href="#troubleshooting"></a>Troubleshooting the Workflow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As you make changes to your workflow during development, it&#8217;s likely that you will need to troubleshoot it when something goes wrong.</p>
+</div>
+<div class="paragraph">
+<p>To ensure the Workflow is running in a healthy state, the operator deploys its Pod with health check probes.
+If the changes you make to your Workflow cause the health checks to fail, the Pod executing the Workflow will stop responding.</p>
+</div>
+<div class="paragraph">
+<p>The following will help you discover the reason for any failure during development.</p>
 </div>
 <div class="sect2">
 <h3 id="basic-troubleshooting"><a class="anchor" href="#basic-troubleshooting"></a>Basic Troubleshooting</h3>
@@ -765,7 +827,7 @@ So if your changes impact the application somehow, the pod will stop responding.
 <li>
 <p>Fetch the logs and look for <code>ERROR</code> messages:</p>
 <div class="listingblock">
-<div class="title">Watch the application logs</div>
+<div class="title">Watch the workflow logs</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl logs deployment/&lt;workflow-name&gt; -f</code></pre>
 </div>
@@ -782,17 +844,17 @@ So if your changes impact the application somehow, the pod will stop responding.
 <div class="sect3">
 <h4 id="_feature_not_yet_supported"><a class="anchor" href="#_feature_not_yet_supported"></a>Feature Not Yet Supported</h4>
 <div class="paragraph">
-<p>The Kogito Serverless Workflow Operator is under active development. Sometimes a feature might not be available yet. Please see <a href="known-issues.html" class="xref page">Kogito Serverless Workflow Operator Known Issues, Limitations and Roadmap</a> for a comprehensive list of available features.</p>
+<p>The SonataFlow Operator is under active development. Sometimes a feature might not be available yet. Please see <a href="known-issues.html" class="xref page">SonataFlow Operator Known Issues, Limitations and Roadmap</a> for a comprehensive list of available features.</p>
 </div>
 <div class="paragraph">
 <p>If you identify you are referring to a feature that is not available yet, you can file a new issue so we can prioritize it for you or request in Kogito Serverless Workflow communication channels.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_wrong_application_configuration"><a class="anchor" href="#_wrong_application_configuration"></a>Wrong Application Configuration</h4>
+<h4 id="_wrong_workflow_configuration"><a class="anchor" href="#_wrong_workflow_configuration"></a>Wrong Workflow Configuration</h4>
 <div class="paragraph">
-<p>A wrong configuration, or lack of one might impact your workflow to run correctly.
-The operator deploys a <code>ConfigMap</code> that holds the application properties for the workflow.</p>
+<p>A wrong configuration (or lack of one) might prevent your Workflow from running correctly.
+The operator deploys a <code>ConfigMap</code> that holds the workflow properties for the Workflow.</p>
 </div>
 <div class="listingblock">
 <div class="title">Get the properties ConfigMap</div>
@@ -808,7 +870,7 @@ The operator deploys a <code>ConfigMap</code> that holds the application propert
 If so, you can make your changes to the configuration as you normally would to any <code>ConfigMap</code>.</p>
 </div>
 <div class="paragraph">
-<p>The operator ensures that these properties are applied to the application.</p>
+<p>Once you have updated the configuration in the <code>ConfigMap</code>, the operator ensures that these properties are applied to the workflow.</p>
 </div>
 <div class="paragraph">
 <p>See <a href="configuring-workflows.html" class="xref page">Configuring Workflow Services</a> for more information.</p>
@@ -817,14 +879,14 @@ If so, you can make your changes to the configuration as you normally would to a
 <div class="sect3">
 <h4 id="_wrong_workflow_definition"><a class="anchor" href="#_wrong_workflow_definition"></a>Wrong Workflow Definition</h4>
 <div class="paragraph">
-<p>The Kogito Serverless Workflow Operator validates the workflow definition at the moment you create or edit the YAML file, to avoid persisting a workflow in an invalid state.
+<p>The SonataFlow Operator validates the workflow definition at the moment you create or edit the YAML file, to avoid persisting a workflow in an invalid state.
 Although, the operator is under active development, so errors during the validation might occur.</p>
 </div>
 <div class="paragraph">
 <p>In this case, you might have to make a few modifications to the workflow definition to fix any structural error.</p>
 </div>
 <div class="paragraph">
-<p>You can identify such problems by looking at the deployed workflow application logs as explained <a href="#basic-troubleshooting">here</a>.</p>
+<p>You can identify such problems by looking at the deployed Workflow logs as explained <a href="#basic-troubleshooting">here</a>.</p>
 </div>
 <div class="paragraph">
 <p>If you found an issue that a cause is not listed in this section, please <a href="https://github.com/kiegroup/kogito-docs/issues/new">let us know</a>.</p>
@@ -839,7 +901,7 @@ Although, the operator is under active development, so errors during the validat
 <div class="ulist">
 <ul>
 <li>
-<p><a href="known-issues.html" class="xref page">Kogito Serverless Workflow Operator Known Issues, Limitations and Roadmap</a></p>
+<p><a href="referencing-resource-files.html" class="xref page">Referencing Additional Files in the Workflow</a></p>
 </li>
 <li>
 <p><a href="build-and-deploy-workflows.html" class="xref page">Building and Deploying Workflows with the Operator</a></p>
