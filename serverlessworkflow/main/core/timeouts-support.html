@@ -361,7 +361,7 @@
     <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga Orchestration</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../use-cases/timeout-showcase-example.html">Timeout Demonstration</a>
+    <a class="nav-link" href="../use-cases/timeout-showcase-example.html">Timeouts Showcase</a>
   </li>
 </ul>
   </li>
@@ -493,12 +493,11 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Serverless Workflow specification defines a wide amount of possible <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-timeout-definition">timeout configurations</a>.
-Among them, Kogito Serverless Workflow currently supports workflow and event timeouts.</p>
+<p>The Serverless Workflow specification defines several <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-timeouts">timeouts configurations</a> that you can use to configure maximum times for the workflow execution in different scenarios.
+For example, you can configure how long a workflow can wait for an event to arrive when it is in a given state, etc. Currently, Kogito Serverless Workflow supports only the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-timeout-definition">workflow execution timeout</a> and <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#event-timeout-definition">event timeouts</a>.</p>
 </div>
 <div class="paragraph">
-<p>Regardless of its application scope (workflow or state), you can not define the timeouts as a specific point in time, but they should be an amount of time, a duration, which is considered to start when the referred scope becomes active. Timeouts use the <a href="https://en.wikipedia.org/wiki/ISO_8601"><code>ISO 8601</code> data and time standard</a> to specify a duration of time.
-It follows the format <code>PnDTnHnMn.nS</code> with days considered to be exactly 24 hours.
+<p>Regardless of its application scope (workflow or state), the timeouts must be configured as an amount of time (a duration), which is considered to start when the referred scope becomes active. Timeouts use the <a href="https://en.wikipedia.org/wiki/ISO_8601"><code>ISO 8601</code> data and time standard</a> to specify a duration of time and follow the format <code>PnDTnHnMn.nS</code> with days considered to be exactly 24 hours.
 For instance, <code>PT15M</code> configures 15 minutes, and <code>P2DT3H4M</code> defines 2 days, 3 hours and 4 minutes.</p>
 </div>
 </div>
@@ -507,17 +506,25 @@ For instance, <code>PT15M</code> configures 15 minutes, and <code>P2DT3H4M</code
 <h2 id="_workflow_timeout"><a class="anchor" href="#_workflow_timeout"></a>Workflow timeout</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can set up the maximum amount of time a workflow might be running before being canceled. This is configured in the header section of the flow, by using the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflowexectimeout-definition">WorkflowExecTimeout definition</a>. Only the <code>duration</code> property is currently implemented.
-Once canceled, the workflow is considered to be finished and will not be accessible through a GET request anymore. So it behaves as if the interrupt was <code>true</code> by default.</p>
+<p>To configure the maximum amount of time a workflow can be running before being canceled, you can use the workflow timeout.
+This is configured in the header section of the workflow, by using the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflowexectimeout-definition">WorkflowExecTimeout definition</a>. Only the <code>duration</code> property is currently implemented.
+Once canceled, the workflow is considered to be finished, and will not be accessible through a GET request anymore. So it behaves as if the interrupt was <code>true</code> by default.</p>
 </div>
 <div class="paragraph">
-<p>For example, in order to cancel the workflow after an hour of execution, you might add the following snippet.</p>
+<p>For example, to cancel the workflow after an hour of execution, you must use the following configuration.</p>
 </div>
 <div class="listingblock">
 <div class="title">Example of workflow timeout</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"timeouts": {
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "workflow_timeout",
+  "version": "1.0",
+  "name": "Workflow timeout example",
+  "description": "An example of how workflow timeout works",
+  "start": "printWaitMessage",
+  "timeouts": {
     "workflowExecTimeout": "PT1H"
+  } ...
 }</code></pre>
 </div>
 </div>
@@ -527,27 +534,28 @@ Once canceled, the workflow is considered to be finished and will not be accessi
 <h2 id="_event_timeout"><a class="anchor" href="#_event_timeout"></a>Event timeout</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When you define a state in a serverless workflow, you can use the <code>timeouts</code> property to configure the maximum time to complete this state.
+<p>When you define a state in a workflow, you can use the <code>timeouts</code> property to configure the maximum time to complete this state.
 When that time is overdue, the state is considered timed-out, and the engine continues the execution from this state. The execution flow depends on the state type, for instance,
-a transition to a next state.
-All the properties you can use to configure state timeouts are described in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#event-timeout-definition">Serverless Workflow specification</a>.</p>
+a transition to a next state might be executed.
+All the properties that you can use to configure state timeouts are described in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#states-timeout-definition">Serverless Workflow specification</a>.</p>
 </div>
 <div class="paragraph">
-<p>Event-based states can use the sub-property <code>eventTimeout</code> to configure the maximum time to wait for an event to arrive.</p>
+<p>Event-based states can use the sub-property <code>eventTimeout</code> to configure the maximum time to wait for an event to arrive.
+This is the only property that is supported in current implementation.</p>
 </div>
 <div class="sect2">
-<h3 id="_callback_state_timeout"><a class="anchor" href="#_callback_state_timeout"></a>Callback state timeout</h3>
+<h3 id="callback-state-timeout"><a class="anchor" href="#callback-state-timeout"></a>Callback state timeout</h3>
 <div class="paragraph">
-<p>Callback state can be used when you need to execute an action, in general to call an external service, and wait for an asynchronous response in form of an event, the callback.</p>
+<p>The Callback state can be used when you need to execute an action, in general to call an external service, and wait for an asynchronous response in form of an event, the callback.</p>
 </div>
 <div class="paragraph">
 <p>Once the response event is consumed, the workflow continues the execution, in general moving to the next state defined in the <code>transition</code> property. See more on <a href="working-with-callbacks.html" class="xref page">Callback state in Kogito Serverless Workflow</a>.</p>
 </div>
 <div class="paragraph">
-<p>Since the callback state halts the execution util the event is consumed, you can define an <code>eventTimeout</code> for it, and in case the event does not arrive in the defined duration time, the workflow continues the execution moving to the next state defined in the transition, see the <a href="#callback-state">example</a>.</p>
+<p>Since the Callback state halts the execution until the event is consumed, you can configure an <code>eventTimeout</code> for it, and in case the event does not arrive in the configured time duration, the workflow continues the execution moving to the next state defined in the transition, see the <a href="#callback-state">example</a>.</p>
 </div>
 <div id="callback-state" class="listingblock">
-<div class="title">Example of callback state with timeout</div>
+<div class="title">Example of Callback state with timeout</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
  "name": "CallbackState",
@@ -577,18 +585,22 @@ All the properties you can use to configure state timeouts are described in the 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_switch_state_timeout"><a class="anchor" href="#_switch_state_timeout"></a>Switch state timeout</h3>
+<h3 id="switch-state-timeout"><a class="anchor" href="#switch-state-timeout"></a>Switch state timeout</h3>
 <div class="paragraph">
-<p>The switch state can be used when you need to take an action based on conditions, defined with the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#switch-state-event-conditions">eventConditions</a> property, where the workflow execution waits to make a decision depending on the events to be consumed and matched, defined through <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#event-definition">event definition</a>.</p>
+<p>The Switch state can be used when you need to take an action depending on certain conditions, these conditions can be based on the workflow data, <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Switch-state-Data-Conditions">dataConditions</a>, or on events, <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Switch-State-Event-Conditions">eventConditions</a>.</p>
 </div>
 <div class="paragraph">
-<p>In this situation, you can define an event timeout, that controls the maximum time to wait for an event to match the conditions, if this time is expired, the workflow moves to the state defined in the <code>defaultCondition</code> property of the switch state, as you can see in the <a href="#switch-state">example</a>.</p>
+<p>When you use the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Switch-State-Event-Conditions">eventConditions</a>, the workflow execution waits to make a decision until any of the configured events arrives and matches a condition.
+In this situation, you can configure an event timeout, that controls the maximum time to wait for an event to match the conditions.</p>
 </div>
 <div class="paragraph">
-<p>See more details about this state on the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#switch-date">Serverless Workflow specification</a>.</p>
+<p>If this time expires, the workflow moves to the state defined in the <code>defaultCondition</code> property of the Switch state, as you can see in the <a href="#switch-state">example</a>.</p>
+</div>
+<div class="paragraph">
+<p>See more details about this state on the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#switch-state">Serverless Workflow specification - Switch State</a>.</p>
 </div>
 <div id="switch-state" class="listingblock">
-<div class="title">Example of switch state with timeout</div>
+<div class="title">Example of Switch state with timeout</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
     "name": "ChooseOnEvent",
@@ -614,10 +626,10 @@ All the properties you can use to configure state timeouts are described in the 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_event_state_timeout"><a class="anchor" href="#_event_state_timeout"></a>Event state timeout</h3>
+<h3 id="event-state-timeout"><a class="anchor" href="#event-state-timeout"></a>Event state timeout</h3>
 <div class="paragraph">
-<p>The <code>event</code> state is used to wait for one or more events to be received by the workflow and then continue the execution.
-If the event state is a starting state, a new workflow instance is created.</p>
+<p>The Event state is used to wait for one or more events to be received by the workflow, execute a set of actions, and then continue the execution.
+If the Event state is a starting state, a new workflow instance is created.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -627,26 +639,26 @@ If the event state is a starting state, a new workflow instance is created.</p>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The event state is not supported as a starting state if the <code>exclusive</code> flag is set to <code>false</code>, therefore timeout is not supported in this case.</p>
+<p>The Event state is not supported as a starting state if the <code>exclusive</code> flag is set to <code>false</code>, therefore timeout is not supported in this case.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The <code>timeouts</code> property is used for this state to configure the maximum time the workflow should wait for the defined events to arrive.</p>
+<p>The <code>timeouts</code> property is used for this state to configure the maximum time the workflow should wait for the configured events to arrive.</p>
 </div>
 <div class="paragraph">
-<p>If this time is exceeded and the events are not received, the workflow moves to the state defined in the <code>transition</code> property or ends the workflow instance without performing any actions in case of an end state.</p>
+<p>If this time is exceeded and the events are not received, the workflow moves to the state defined in the <code>transition</code> property or ends the workflow instance (in case of an end state), without performing any actions.</p>
 </div>
 <div class="paragraph">
 <p>You can see this in the <a href="#event-state">example</a>.</p>
 </div>
 <div class="paragraph">
-<p>For more information about event state timeout, see <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#event-timeout-definition">Serverless Workflow specification</a>.</p>
+<p>For more information about Event state timeout, see <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#event-timeout-definition">Serverless Workflow specification - Event State</a>.</p>
 </div>
 <div id="event-state" class="listingblock">
-<div class="title">Example of event state with timeout</div>
+<div class="title">Example of Event state with timeout</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "name": "WaitForEvent",
@@ -701,76 +713,51 @@ If the event state is a starting state, a new workflow instance is created.</p>
 </div>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deploying_a_timed_based_workflow"><a class="anchor" href="#_deploying_a_timed_based_workflow"></a>Deploying a timed-based workflow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To deploy a workflow that uses timeouts, or any other timer-based action, it is necessary to have a job service running in your environment, which is an independent service responsible to control the workflows timers, see the <a href="../job-services/core-concepts.html#job-service" class="xref page">job service</a> for more information.
+The provisioning of this service depends on the work mode that you are using.</p>
+</div>
 <div class="sect2">
-<h3 id="_deploying_a_timed_based_workflow"><a class="anchor" href="#_deploying_a_timed_based_workflow"></a>Deploying a timed-based workflow</h3>
+<h3 id="_sonataflow_operator_dev_profile"><a class="anchor" href="#_sonataflow_operator_dev_profile"></a>SonataFlow Operator Dev Profile</h3>
 <div class="paragraph">
-<p>In order to deploy a workflow that contains timeouts or any other timer-based action, it is necessary to have a job service running in your environment, which is an external service responsible to control the workflows timers, see the <a href="../job-services/core-concepts.html#job-service" class="xref page">job service guide</a> for more information.
-In the <a href="#timeout-example">timeout example</a> you can see the details of how set up a Knative infrastructure with the workflow and job service running.</p>
+<p>When you work with the SonataFlow Operator Dev Profile, the operator will automatically provide an execution environment that contains an embedded job service instance, as well as an instance of the data index service.
+And thus, there is no need for additional configurations.</p>
 </div>
-<div class="sect3">
-<h4 id="job-addon-configuration"><a class="anchor" href="#job-addon-configuration"></a>Addon configuration in the workflow runtime</h4>
 <div class="paragraph">
-<p>The communication from the workflow application with Job Service is done through an addon, which is responsible for publishing and consuming events related to timers.
-When you run the workflow as a Knative service, you must add the <code>kogito-addons-quarkus-jobs-knative-eventing</code> to your project and provide the proper configuration.</p>
+<p>In the <a href="#timeouts-showcase">timeouts showcase</a> you can see the details of how to work with timeouts and the SonataFlow Operator Dev Profile.</p>
 </div>
-<div class="ulist">
-<ul>
+</div>
+<div class="sect2">
+<h3 id="_quarkus_workflow_project"><a class="anchor" href="#_quarkus_workflow_project"></a>Quarkus Workflow Project</h3>
+<div class="paragraph">
+<p>When you work with a standalone Quarkus Workflow Project, you must:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p>Dependency in the <code>pom.xml</code>:</p>
+<p>Configure the project to include the required addon for the workflows to connect with that service.</p>
 </li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="title">Callback state example with timeout</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
-    &lt;artifactId&gt;kogito-addons-quarkus-jobs-knative-eventing&lt;/artifactId&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
 <li>
-<p>Configuration parameters:</p>
+<p>Ensure that a jobs service instance is available in your environment.</p>
 </li>
-</ul>
+</ol>
 </div>
-<div id="workflow-application-configuration-parameters" class="listingblock">
-<div class="title">Callback state example with timeout</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties"># Events produced by kogito-addons-quarkus-jobs-knative-eventing to program the timers on the Job Service.
-mp.messaging.outgoing.kogito-job-service-job-request-events.connector=quarkus-http
-mp.messaging.outgoing.kogito-job-service-job-request-events.url=${K_SINK:http://localhost:8280/jobs/events}
-mp.messaging.outgoing.kogito-job-service-job-request-events.method=POST</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
 <div class="paragraph">
-<p>The <code>K_SINK</code> variable used in the URL configuration for the outgoing channel in the
-<a href="#workflow-application-configuration-parameters">configuration</a>, is injected by Knative Eventing, more information on
-<a href="../eventing/consume-produce-events-with-knative-eventing.html" class="xref page">Consuming and producing events on Knative Eventing</a>.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
+<p>In the <a href="../job-services/core-concepts.html#job-service" class="xref page">job service</a> guide you can see all the available add-dons and configuration alternatives for this case.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="timeout-example"><a class="anchor" href="#timeout-example"></a>Timeout showcase example</h2>
+<h2 id="timeouts-showcase"><a class="anchor" href="#timeouts-showcase"></a>Timeouts showcase</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can check <a href="../use-cases/timeout-showcase-example.html" class="xref page">Timeout example in Kogito Serverless Workflow</a>
-to see how to use and configure workflows with timeouts.</p>
+<p>To see the examples about how configure the timeouts, and execute them in different deployment scenarios, you can use the <a href="../use-cases/timeout-showcase-example.html" class="xref page">Timeouts showcase in Kogito Serverless Workflow</a></p>
 </div>
 </div>
 </div>
@@ -781,9 +768,6 @@ to see how to use and configure workflows with timeouts.</p>
 <ul>
 <li>
 <p><a href="working-with-callbacks.html" class="xref page">Callback state in Kogito Serverless Workflow</a></p>
-</li>
-<li>
-<p><a href="../use-cases/timeout-showcase-example.html" class="xref page">Timeout example in Kogito Serverless Workflow</a></p>
 </li>
 </ul>
 </div>

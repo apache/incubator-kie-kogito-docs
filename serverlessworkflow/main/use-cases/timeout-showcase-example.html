@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Timeout Demonstration in Kogito Serverless Workflow :: Kogito Serverless Workflow Guides</title>
-    <meta name="description" content="Timeout example use case example in Serverless Workflow">
+    <title>Timeouts Showcase in Kogito Serverless Workflow :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Timeouts showcase in Serverless Workflow">
     <meta name="keywords" content="kogito, workflow, serverless, timer, timeout">
     <meta name="generator" content="Antora 3.1.4">
     <link rel="stylesheet" href="../../../_/css/site.css">
@@ -361,7 +361,7 @@
     <a class="nav-link" href="orchestration-based-saga-pattern.html">Saga Orchestration</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="timeout-showcase-example.html">Timeout Demonstration</a>
+    <a class="nav-link" href="timeout-showcase-example.html">Timeouts Showcase</a>
   </li>
 </ul>
   </li>
@@ -454,7 +454,7 @@
   <ul>
     <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
     <li>Use Cases</li>
-    <li><a href="timeout-showcase-example.html">Timeout Demonstration</a></li>
+    <li><a href="timeout-showcase-example.html">Timeouts Showcase</a></li>
   </ul>
 </nav>
 <div class="page-versions">
@@ -489,31 +489,46 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Timeout Demonstration in Kogito Serverless Workflow</h1>
+<h1 class="page">Timeouts Showcase in Kogito Serverless Workflow</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>In the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase">serverless-workflow-timeouts-showcase</a> you can see an end-to-end example that contains a serverless workflow application with timeouts configured alongside Job Service running on Knative.</p>
+<p>The timeouts showcase is designed to show how to configure and execute workflows that use timeouts, according to different deployment scenarios.
+While all the scenarios contain the same set of workflows, they are provided as independent example projects, to facilitate the execution and understanding of each case.</p>
 </div>
 <div class="paragraph">
-<p>There are two workflows that showcase the timeouts usage in the <code>Callback</code> and <code>Switch</code> states.</p>
+<p>The following workflows are provided:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#callback_state_timeouts_workflow"><code>callback_state_timeouts</code></a></p>
+</li>
+<li>
+<p><a href="#switch_state_timeouts_workflow"><code>switch_state_timeouts</code></a></p>
+</li>
+<li>
+<p><a href="#event_state_timeouts_workflow"><code>event_state_timeouts</code></a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_callback_workflow"><a class="anchor" href="#_callback_workflow"></a>Callback workflow</h2>
+<h2 id="callback_state_timeouts_workflow"><a class="anchor" href="#callback_state_timeouts_workflow"></a><code>callback_state_timeouts</code> workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>It is a simple workflow, where once the execution reaches the callback state it waits for the event <code>callbackEvent</code> to arrive and continue the execution.</p>
+<p>It is a simple workflow that, when the execution reaches the state <code>CallbackState</code>, an action is executed, and it waits for the event <code>callbackEvent</code> to arrive in order to continue the execution.
+However, a timeout is configured to set the maximum waiting time for that event.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../_images/core/callback-state-timeouts.svg" alt="callback state timeouts">
+<img src="../_images/use-cases/timeouts-showcase/callback-state-timeouts-decorated.svg" alt="callback state timeouts decorated">
 </div>
-<div class="title">Figure 1. Callback timeout workflow</div>
+<div class="title">Figure 1. callback_state_timeouts workflow</div>
 </div>
 <div class="listingblock">
-<div class="title">Callback event</div>
+<div class="title">Callback event definition</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
 "name": "callbackEvent",
@@ -522,60 +537,110 @@
 }</code></pre>
 </div>
 </div>
+<div class="listingblock">
+<div class="title">CallbackState definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+ "name": "CallbackState",
+ "type": "callback",
+ "action": {
+   "name": "callbackAction",
+   "functionRef": {
+     "refName": "callbackFunction",
+     "arguments": {
+       "input": "${\"callback-state-timeouts: \" + $WORKFLOW.instanceId + \" has executed the callbackFunction.\"}"
+     }
+   }
+ },
+ "eventRef": "callbackEvent",
+ "transition": "CheckEventArrival",
+ "onErrors": [
+   {
+     "errorRef": "callbackError",
+     "transition": "FinalizeWithError"
+   }
+ ],
+ "timeouts": {
+   "eventTimeout": "PT30S"
+ }
+}</code></pre>
+</div>
+</div>
 <div class="paragraph">
-<p>The timeout is configured with a maximum time 30 seconds to be waited by the workflow to receive the callbackEvent, in case it does not arrive in time, the execution moves, and the eventData variable remains null.
-See the <a href="../core/timeouts-support.html#callback-state" class="xref page">callback state definition</a>.</p>
+<p>The timeout is configured with a duration of 30 seconds, and if no event arrives during this time, the flow execution moves to the next state, and the workflow&#8217;s data remains unchanged.</p>
+</div>
+<div class="paragraph">
+<p>On the other hand, if the event arrive, the event payload is merged into the workflow&#8217;s data, and thus, the <code>eventData</code> property of the workflow&#8217;s data, will contain the information carried by the event payload.
+Using this simple configuration strategy, the workflow can collect the event information, and use it for example to determine the path to go in the next state.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="../core/timeouts-support.html#callback-state-timeout" class="xref page">callback state definition</a> for more information.</p>
+</div>
+<div class="paragraph">
+<p>For more information about how the incoming event information can be merged into the workflow&#8217;s data you can see <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-data-filters">Event data filters</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_switch_workflow"><a class="anchor" href="#_switch_workflow"></a>Switch workflow</h2>
+<h2 id="switch_state_timeouts_workflow"><a class="anchor" href="#switch_state_timeouts_workflow"></a><code>switch_state_timeouts</code> workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The switch example is similar to the callback but once the execution reaches the state, it waits for one of the two configured events, <code>visaDeniedEvent</code> or <code>visaApprovedEvent</code>, to arrive, see the <a href="#switch-state">switch state definition</a>.</p>
+<p>This workflow is similar to the <code>callback_state_timeouts</code>, but when the execution reaches the state <code>ChooseOneEvent</code>, it waits for one of the two configured events, <code>visaDeniedEvent</code> or <code>visaApprovedEvent</code> to arrive.</p>
 </div>
 <div class="paragraph">
 <p>If any of the configured events arrives before the timeout is overdue, the workflow execution moves to the next state defined in the corresponding <code>transition</code>.</p>
 </div>
 <div class="paragraph">
-<p>If none of the events arrive before the timeout is overdue, the workflow then moves to the state defined in <code>defaultCondition</code> transition.</p>
+<p>If none of the events arrives before the timeout is overdue, the workflow execution moves to the state defined in the <code>defaultCondition</code> transition.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="../core/timeouts-support.html#switch-state-timeout" class="xref page">switch state definition</a> for more information.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../_images/core/switch-state-timeouts.svg" alt="switch state timeouts">
+<img src="../_images/use-cases/timeouts-showcase/switch-state-timeouts-decorated.svg" alt="switch state timeouts decorated">
 </div>
-<div class="title">Figure 2. Switch timeout workflow</div>
+<div class="title">Figure 2. switch_state_timeouts workflow</div>
+</div>
+<div class="listingblock">
+<div class="title">ChooseOneEvent definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">    {
+      "name": "ChooseOnEvent",
+      "type": "switch",
+      "eventConditions": [
+        {
+          "eventRef": "visaApprovedEvent",
+          "transition": "ApprovedVisa"
+        },
+        {
+          "eventRef": "visaDeniedEvent",
+          "transition": "DeniedVisa"
+        }
+      ],
+      "defaultCondition": {
+        "transition": "HandleNoVisaDecision"
+      },
+      "timeouts": {
+        "eventTimeout": "PT30S"
+      }
+    }</code></pre>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_event_workflow"><a class="anchor" href="#_event_workflow"></a>Event workflow</h2>
+<h2 id="event_state_timeouts_workflow"><a class="anchor" href="#event_state_timeouts_workflow"></a><code>event_state_timeouts</code> workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The event example is similar to the switch one but once the execution reaches the state, it waits for one of the configured events, <code>event1</code> or <code>event2</code>, to arrive, see the <a href="#event-state">event state definition</a>.</p>
+<p>This workflow is similar to the <code>switch_state_timeouts</code>, but when the execution reaches the state <code>WaitForEvent</code>, it waits for one of the configured events, <code>event1</code> or <code>event2</code>, to arrive.
+Each event has a number of configured actions to execute, but unlike the switch state, only one possible <code>transition</code> exists.</p>
 </div>
 <div class="paragraph">
-<p>If none of the configured events arrive before the timeout is overdue, the workflow execution moves to the next state defined in the corresponding <code>transition</code> property, skipping the events that were not received in time together with actions configured for them.</p>
+<p>If none of the configured events arrives before the timeout is overdue, the workflow execution moves to the next state defined in the <code>transition</code> property, skipping the events that were not received in time together with actions configured for them.</p>
 </div>
 <div class="paragraph">
-<p>If one of the events arrives before the timeout is overdue, the workflow then moves to the state defined in <code>transition</code>, executing the corresponding event that has arrived in the state definition together with actions defined for it.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../_images/core/event-state-timeouts.svg" alt="event state timeouts">
-</div>
-<div class="title">Figure 3. Event timeout workflow</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_running_the_example"><a class="anchor" href="#_running_the_example"></a>Running the example</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To run the example you must have access to a kubernetes cluster running with Knative configured.</p>
-</div>
-<div class="paragraph">
-<p>For simplicity, the example uses minikube, you can follow the steps described in the example&#8217;s <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase">readme</a>.</p>
+<p>If one of the events arrives before the timeout is overdue, the workflow executes the corresponding actions, and finally moves to the state defined in <code>transition</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -585,245 +650,224 @@ See the <a href="../core/timeouts-support.html#callback-state" class="xref page"
 </td>
 <td class="content">
 <div class="paragraph">
-<p>All the descriptor files used to deploy the example infrastructure are present in the example.</p>
+<p>The semantic of this state might vary depending on the <code>exclusive</code> flag, in the example the default value of <code>true</code> will be applied, and thus, the workflow will transition as soon as the first event arrives.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The database and Job Service deployment files are located under <code>/kubernetes</code> folder.</p>
-</div>
-<div class="paragraph">
-<p>The descriptors related to the workflow application are generated after the build under <code>/target/kubernetes</code>.</p>
-</div>
-<div class="paragraph">
-<p>The following diagram shows the example&#8217;s architecture when it is deployed in the Kubernetes + Knative infrastructure.</p>
+<p>See the <a href="../core/timeouts-support.html#event-state-timeout" class="xref page">event state definition</a> for more information.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../_images/core/jobs-service-knative-architecture.png" alt="jobs service knative architecture">
+<img src="../_images/use-cases/timeouts-showcase/event-state-timeouts-decorated.svg" alt="event state timeouts decorated">
+</div>
+<div class="title">Figure 3. event_state_timeouts workflow</div>
+</div>
+<div class="listingblock">
+<div class="title">WaitForEvent definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">    {
+      "name": "WaitForEvent",
+      "type": "event",
+      "onEvents": [
+        {
+          "eventRefs": [
+            "event1"
+          ],
+          "eventDataFilter": {
+            "data": "${ \"The event1 was received.\" }",
+            "toStateData": "${ .exitMessage }"
+          },
+          "actions": [
+            {
+              "name": "printAfterEvent1",
+              "functionRef": {
+                "refName": "systemOut",
+                "arguments": {
+                  "message": "${\"event-state-timeouts: \" + $WORKFLOW.instanceId + \" executing actions for event1.\"}"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "eventRefs": [
+            "event2"
+          ],
+          "eventDataFilter": {
+            "data": "${ \"The event2 was received.\" }",
+            "toStateData": "${ .exitMessage }"
+          },
+          "actions": [
+            {
+              "name": "printAfterEvent2",
+              "functionRef": {
+                "refName": "systemOut",
+                "arguments": {
+                  "message": "${\"event-state-timeouts: \" + $WORKFLOW.instanceId + \" executing actions for event2.\"}"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "timeouts": {
+        "eventTimeout": "PT30S"
+      },
+      "transition": "PrintExitMessage"
+    }</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_executing_the_workflows"><a class="anchor" href="#_executing_the_workflows"></a>Executing the workflows</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To execute the workflows you can use any of the available deployment scenarios:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#execute-operator-dev-profile">Kogito Serverless Workflow Operator Dev Profile</a></p>
+</li>
+<li>
+<p><a href="#execute-quarkus-project-embedded-services">Quarkus Workflow Project with embedded services</a></p>
+</li>
+<li>
+<p><a href="#execute-quarkus-project-standalone-services">Quarkus Workflow Project with standalone services</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="execute-operator-dev-profile"><a class="anchor" href="#execute-operator-dev-profile"></a>Kogito Serverless Workflow Operator Dev Profile</h3>
+<div class="paragraph">
+<p>When you work with the SonataFlow Operator Dev Profile, the operator will automatically provision an execution environment that contains an embedded job service instance, as well as an instance of the data index service.
+And thus, there is no need for additional configurations when you use timeouts.</p>
+</div>
+<div class="paragraph">
+<p>To execute the workflows you must:</p>
+</div>
+<div class="paragraph">
+<p>In a command terminal, clone the <code>kogito-examples</code> repository, navigate to the cloned directory, and follow <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase-operator-devprofile/README.md">these steps</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone https://github.com/kiegroup/kogito-examples.git
+
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-timeouts-showcase-operator-devprofile</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="execute-quarkus-project-embedded-services"><a class="anchor" href="#execute-quarkus-project-embedded-services"></a>Quarkus Workflow Project with embedded services</h3>
+<div class="paragraph">
+<p>Similar to the <a href="#execute-operator-dev-profile">SonataFlow Operator Dev Profile</a>, this scenario shows how to configure the embedded job service and data index service, when you work with a Quarkus Workflow Project. And is also intended for development purposes.</p>
+</div>
+<div class="paragraph">
+<p>In a command terminal, clone the <code>kogito-examples</code> repository, navigate to the cloned directory, and follow <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase-embedded/README.md">these steps</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone https://github.com/kiegroup/kogito-examples.git
+
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-timeouts-showcase-embedded</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="execute-quarkus-project-standalone-services"><a class="anchor" href="#execute-quarkus-project-standalone-services"></a>Quarkus Workflow Project with standalone services</h3>
+<div class="paragraph">
+<p>This is the most complex and close to a production scenario. In this case, the workflows, the job service, the data index service, and the database, are deployed as standalone services in the kubernetes/knative cluster.
+Additionally, the communications from the workflows to the job service, and from the jobs service to the data index service, are resolved via the knative eventing system.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>By using the knative eventing system the underlying low level communication system is transparent to the integration.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_architecture"><a class="anchor" href="#_architecture"></a>Architecture</h4>
+<div class="paragraph">
+<p>The following diagram shows the architecture for this use case:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Every time a workflow needs to program a timer for a given timeout, a cloud event is sent to the job service for that purpose.</p>
+</li>
+<li>
+<p>When a timer is overdue, a rest call is executed to notify the workflow, which then must execute accordingly to the given state semantic.</p>
+</li>
+<li>
+<p>Workflow and job status changes are propagated to the Data Index Service via cloud events.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/use-cases/timeouts-showcase/timeouts-showcase-extended-architecture.png" alt="timeouts showcase extended architecture">
 </div>
 <div class="title">Figure 4. Knative Workflow with Job Service architecture</div>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>timeouts-showcase-extended:</strong> Is the Quarkus Workflow Project that contains the workflows, that must be maven build, and deployed into the kubernetes cluster.</p>
+</li>
+<li>
+<p><strong>jobs-service-postresql:</strong> Is the job service that will be deployed into the kubernetes cluster.</p>
+</li>
+<li>
+<p><strong>data-index-service-postgresql:</strong> Is the data index service that will be deployed into the kubernetes cluster.</p>
+</li>
+<li>
+<p><strong>timeouts-showcase-database:</strong> Is the PostgreSQL instance that will be deployed into the kubernetes cluster.</p>
+</li>
+</ul>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_deploying_the_database"><a class="anchor" href="#_deploying_the_database"></a>Deploying the database</h2>
-<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>The workflow application and Job Service uses PostgreSQL as the persistence backend to store information about the workflow instances and jobs, respectively.
-In the example you can deploy a single database instance to be used on both, in a production environment is recommended to have independent database instances.</p>
+<p>For simplification purposes, a single database instance is used for both services to store the information about the workflow instances, and the timers.  However, in a production environment is recommended to have independent database instances.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_running_the_example"><a class="anchor" href="#_running_the_example"></a>Running the example</h4>
+<div class="paragraph">
+<p>To execute the workflows you must:</p>
 </div>
 <div class="paragraph">
-<p>To run PostgreSQL you need to apply the following on the cluster:</p>
+<p>In a command terminal, clone the <code>kogito-examples</code> repository, navigate to the cloned directory, and follow <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase-extended/README.md">these steps</a>:</p>
 </div>
 <div class="listingblock">
-<div class="title">Deploying the database</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl apply -f kubernetes/timeouts-showcase-database.yml</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">After executing the command, you will see an output like this:</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">secret/timeouts-showcase-database created
-deployment.apps/timeouts-showcase-database created
-service/timeouts-showcase-database created</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="job-service-deploy"><a class="anchor" href="#job-service-deploy"></a>Deploying Job Service</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="title">Deploying Job Service</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl apply -f kubernetes/jobs-service-postgresql.yml</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">After executing the command, you will see an output like this:</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">service/jobs-service-postgresql created
-deployment.apps/jobs-service-postgresql created
-trigger.eventing.knative.dev/jobs-service-postgresql-create-job-trigger created
-trigger.eventing.knative.dev/jobs-service-postgresql-cancel-job-trigger created
-sinkbinding.sources.knative.dev/jobs-service-postgresql-sb created</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_deploying_the_timeout_showcase_workflow"><a class="anchor" href="#_deploying_the_timeout_showcase_workflow"></a>Deploying the timeout showcase workflow</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You need to build the workflow with the <code>knative</code> maven profile, then the descriptor files are generated under the <code>target/kubernetes</code> folder, and the image is pushed in the container registry.</p>
-</div>
-<div class="listingblock">
-<div class="title">Building the timeout workflow showcase for Knative</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean install -Pknative</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Deploying the timeout workflow showcase in Knative</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl apply -f target/kubernetes/knative.yml
-kubectl apply -f target/kubernetes/kogito.yml</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">After executing the commands you will see an output like this:</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">service.serving.knative.dev/timeouts-showcase created
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone https://github.com/kiegroup/kogito-examples.git
 
-trigger.eventing.knative.dev/visa-denied-event-type-trigger-timeouts-showcase created
-trigger.eventing.knative.dev/visa-approved-event-type-trigger-timeouts-showcase created
-trigger.eventing.knative.dev/callback-event-type-trigger-timeouts-showcase created
-sinkbinding.sources.knative.dev/sb-timeouts-showcase created</code></pre>
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-timeouts-showcase-extended</code></pre>
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_creating_a_workflow_instance"><a class="anchor" href="#_creating_a_workflow_instance"></a>Creating a workflow instance</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To create a workflow you can interact with the workflow using the provided REST APIs, in the example provide a test Web UI to make it easy to test.</p>
-</div>
-<div class="paragraph">
-<p>First, you need to get the service URL on the cluster.</p>
-</div>
-<div class="listingblock">
-<div class="title">Getting the workflow service URL on the cluster</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service list | grep timeouts-showcase</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Service URL in the response, similar to this.</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">NAME                      URL                                                             LATEST                          AGE     CONDITIONS   READY   REASON
-timeouts-showcase         http://timeouts-showcase.default.10.105.86.217.sslip.io         timeouts-showcase-00001         3m50s   3 OK / 3     True</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_using_the_showcase_ui"><a class="anchor" href="#_using_the_showcase_ui"></a>Using the showcase UI</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The example Web UI is handy to interact with the workflow, you just need to open in the browser the URL you got from the previous step.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../_images/core/timeout-switch-wokflow-ui.png" alt="timeout switch wokflow ui">
-</div>
-<div class="title">Figure 5. Timeout workflow showcase UI</div>
-</div>
-<div class="paragraph">
-<p>You can create new workflow instances and interact with them to complete, or simply wait for the timeout to be triggered to check it&#8217;s working.
-More details on the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase#timeouts-showcase-ui">readme</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_using_rest_apis"><a class="anchor" href="#_using_rest_apis"></a>Using REST APIs</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You can test the workflows using the REST APIs, in fact they are the same used by the Web UI in both workflows.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Callback</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="title">Creating a callback workflow with timeout</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
-'http://timeouts-showcase.default.10.105.86.217.sslip.io/callback_state_timeouts' \
--H 'accept: */*' \
--H 'Content-Type: application/json' \
--d '{}'</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Switch</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="title">Creating a Switch workflow with timeout</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
-'http://timeouts-showcase.default.10.105.86.217.sslip.io/callback_state_timeouts' \
--H 'accept: */*' \
--H 'Content-Type: application/json' \
--d '{}'</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Event</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="title">Creating an event workflow with timeout</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'POST' \
-'http://timeouts-showcase.default.10.105.86.217.sslip.io/event_state_timeouts' \
--H 'accept: */*' \
--H 'Content-Type: application/json' \
--d '{}'</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Checking whether the workflow instance was created</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="title">Getting the created workflow instance</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'GET' 'http://timeouts-showcase.default.10.105.86.217.sslip.io/switch_state_timeouts'</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The command will produce an output like this, which indicates that the process is waiting for an event to arrive.</p>
-</div>
-<div class="listingblock">
-<div class="title">Response with the created instance</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">[{"id":"2e8e1930-9bae-4d60-b364-6fbd61128f51","workflowdata":{}}]</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Checking the timeout was executed after 30 seconds:</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="title">Getting the created workflow instance after 30 seconds</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X 'GET' 'http://timeouts-showcase.default.10.105.86.217.sslip.io/switch_state_timeouts'
-[]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>As you can see there are no active workflow instances, indicating the timeout was executed and the created instance was completed.</p>
 </div>
 </div>
 </div>
@@ -833,7 +877,7 @@ More details on the <a href="https://github.com/kiegroup/kogito-examples/tree/ma
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../core/timeouts-support.html" class="xref page">Timeout support in Kogito Serverless Workflow</a></p>
+<p><a href="../core/timeouts-support.html" class="xref page">Timeouts support in Kogito Serverless Workflow</a></p>
 </li>
 </ul>
 </div>
