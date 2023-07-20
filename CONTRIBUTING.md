@@ -216,11 +216,11 @@ More details at [Antora documentation](https://docs.antora.org/antora/latest/asc
 
 1. You can retrieve all changes in the release page of each repository of the project:
 
-    - https://github.com/kiegroup/kogito-runtimes/releases/tag/{version}
-    - https://github.com/kiegroup/kogito-apps/releases/tag/{version}
-    - https://github.com/kiegroup/kogito-examples/releases/tag/{version}
-    - https://github.com/kiegroup/kogito-images/releases/tag/{version_without_Final}
-    - https://github.com/kiegroup/kogito-serverless-operator/releases/tag/v{version_without_Final}
+   - https://github.com/kiegroup/kogito-runtimes/releases/tag/{version}
+   - https://github.com/kiegroup/kogito-apps/releases/tag/{version}
+   - https://github.com/kiegroup/kogito-examples/releases/tag/{version}
+   - https://github.com/kiegroup/kogito-runtimes/releases/tag/{version_without_Final}
+   - https://github.com/kiegroup/kogito-runtimes/releases/tag/v{version_without_Final}
 
    Replace `{version}` with the given core version, for example `1.41.0.Final`.  
    Replace `{version_without_Final}` with the given cloud version, for example `1.41.0`.
@@ -233,12 +233,11 @@ More details at [Antora documentation](https://docs.antora.org/antora/latest/asc
 
    Replace `<version>` with the given version, for example `1.41.0.Final`.
 
-2. Update the page [release_notes.adoc](serverlessworkflow/modules/ROOT/pages/release_notes.adoc)
+2. Update the page [release_notes.adoc](serverlessworkflow/modules/ROOT/pages/release_notes.adoc) 
 3. Align with the team what should be under "Notable changes"
 4. Add the rest to "Other Changes and Bug Fixing".
 5. Open a PR in the target **branch** version, **not** main
 6. Add one member from each squad to review
-
 ## Configuring the Domain
 
 **Don't use the GH Pages Settings**, but change the [CNAME file instead](build/site/CNAME). This is because the GH Settings page will change the branch `gh-pages` directly, whereas we have a CI workflow to build the website. Once we run the CI, it will override anything within `build/site`. Preserving the `CNAME` file there guarantees that the CI won't override it.
