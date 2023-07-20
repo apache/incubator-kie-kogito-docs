@@ -536,7 +536,23 @@
 <p>The operator can build workflows on Kubernetes or OpenShift. On Kubernetes, it uses <a href="https://github.com/GoogleContainerTools/kaniko">Kaniko</a> and on OpenShift a <a href="https://docs.openshift.com/container-platform/4.13/cicd/builds/understanding-image-builds.html">standard BuildConfig</a>. The operator build system is not tailored for advanced use cases and you can do only a few customizations.</p>
 </div>
 <div class="sect2">
-<h3 id="_changing_the_base_build_dockerfile"><a class="anchor" href="#_changing_the_base_build_dockerfile"></a>Changing the base build Dockerfile</h3>
+<h3 id="_using_another_workflow_base_builder_image"><a class="anchor" href="#_using_another_workflow_base_builder_image"></a>Using another Workflow base builder image</h3>
+<div class="paragraph">
+<p>If your scenario has strict policies for image usage, such as security or hardening constraints, you can replace the default image used by the operator to build the final workflow container image. Alternatively, you might want to test a nightly build with a bug fix or a custom image containing your customizations.</p>
+</div>
+<div class="paragraph">
+<p>By default, the operator will use the image distributed upstream to run the workflows in the development profile. You can change this image by editing the <code>SonataFlowPlatform</code> custom resource in the namespace where you deployed your workflows:</p>
+</div>
+<div class="listingblock">
+<div class="title">Patching the current SonataFlowPlatform with the new builder image</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># use `kubectl get sonataflowplatform` to get the SonataFlowPlatform name
+kubectl patch sonataflowplatform &lt;name&gt; --patch  'spec:\n plaform:\n baseImage: &lt;your new image full name with tag&gt;' -n &lt;your_namespace&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_customize_the_base_build_dockerfile"><a class="anchor" href="#_customize_the_base_build_dockerfile"></a>Customize the base build Dockerfile</h3>
 <div class="paragraph">
 <p>The operator uses the sonataflow-operator-builder-config <code>ConfigMap</code> in the operator&#8217;s installation namespace (sonataflow-operator-system) to configure and run the workflow build process.
 You can change the <code>Dockerfile</code> entry in this <code>ConfigMap</code> to tailor the Dockerfile to your needs. Just be aware that this can break the build process.</p>
