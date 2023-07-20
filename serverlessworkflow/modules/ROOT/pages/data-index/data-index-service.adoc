@@ -1,0 +1,241 @@
+= Data Index Service
+:compat-mode!:
+// Metadata:
+:description: Data Index Service use as an independent service that allow to index and query audit data in {product_name}
+:keywords: kogito, workflow, serverless, data, dataindex, data-index, index, service
+// External pages
+:distributions_url: https://quay.io/organization/kiegroup
+:dev_services_url: https://quarkus.io/guides/dev-services
+:test_containers_url: https://www.testcontainers.org/
+// Referenced documentation pages
+//Common constants
+:data_index_ref: Data Index
+:workflow_instance: process instance
+:workflow_instances: {workflow_instance}s
+
+[#data-index-service]
+== {data_index_ref} service deployment.
+
+{data_index_ref} service can be deployed referencing directly a distributed {data_index_ref} image. There are different images provided that take into account what persistence layer is required in each case.
+In each distribution, there are some properties to configure things like the connection with the database or the communication with other services.
+The goal is to configure the container to allow to process ProcessInstances and Jobs *events* that incorporate the related audit data, to index and store that in the database and finally, to provide the xref:data-index/data-index-core-concepts.adoc#data-index-graphql[{data_index_ref} GraphQL] endpoint to consume it.
+
+[#data-index-service-distributions]
+=== {data_index_ref} distributions
+{data_index_ref} service can be deployed referencing directly a distributed {data_index_ref} image. Here there are the different {data_index_ref} image distributions that can be found in link:{distributions_url}[Quay.io/kiegroup]:
+
+image::data-index/data-index-distributions.png[Image of data-index different available distributions]
+
+=== Data Index Service deployment
+
+When the Data Index Service is deployed, a `configMap` resource is created for the `application.properties` configuration of the Data Index Service.
+
+The name of the `configMap` resource consists of the name of the Data Index Service and the suffix `-properties`, as shown in the following example:
+
+.Example `configMap` resource generated during Data Index Service deployment
+[source,yaml]
+----
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: data-index-properties
+data:
+  application.properties : |-
+    property1=value1
+    property2=value2
+----
+
+The `application.properties` data of the `configMap` resource is mounted in a volume to the container of the Data Index Service. Any runtime properties that you add to the `application.properties` section override the default application configuration properties of the Data Index Service.
+
+When the `application.properties` data of the `configMap` is changed, a rolling update modifies the deployment and configuration of the Data Index Service.
+
+---
+
+=== PostgreSQL persistence with the Data Index Service
+
+Data Index Service does not initialize its database schema automatically. To initialize the database schema, you need to either enable automatic schema initialization using Hibernate or enabling flyway migration enabling QUARKUS_FLYWAY_MIGRATE_AT_START.
+
+Automatic schema initialization using Hibernate can be enabled using the `quarkus.hibernate-orm.database.generation` property. For possible values of `quarkus.hibernate-orm.database.generation` property, see https://quarkus.io/guides/hibernate-orm#quarkus-hibernate-orm_quarkus.hibernate-orm.database.generation[Quarkus docs for database generation options]. The value can also be set as an environment variable `QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION`.
+
+.Example `DataIndex` resource with PostgreSQL persistence enabled (requires Kafka KogitoInfra to be available):
+[source,yaml]
+----
+apiVersion: app.kiegroup.org/v1beta1
+kind: KogitoSupportingService
+metadata:
+  name: data-index
+spec:
+  serviceType: DataIndex
+  image: quay.io/kiegroup/kogito-data-index-postgresql:latest
+  infra:
+    - kogito-kafka-infra
+  env:
+    - name: QUARKUS_DATASOURCE_DB-KIND
+      value: postgresql
+    - name: QUARKUS_DATASOURCE_USERNAME
+      value: postgres
+    - name: QUARKUS_DATASOURCE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: kogito-postgresql
+          key: postgresql-password
+    - name: QUARKUS_DATASOURCE_JDBC_URL
+      value: jdbc:postgresql://kogito-postgresql.default.svc.cluster.local:5432/kogito
+    - name: QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION
+      value:
+    - name: QUARKUS_FLYWAY_MIGRATE_AT_START
+      value: "true"
+
+----
+
+[#data-index-dev-service-details]
+== {data_index_ref} as a Quarkus Development Service
+When you use the {product_name} Process Quarkus extension, a temporary {data_index_ref} Service is automatically provisioned while the Quarkus application is running in development mode. When you use one of the following Quarkus extensions, the Dev Service is set up for immediate use:
+
+.Quarkus extension in {product_name}
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-quarkus</artifactId>
+</dependency>
+----
+
+.Quarkus extension in {product_name}
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-quarkus-processes</artifactId>
+</dependency>
+----
+
+When you start your Quarkus project in development mode, an in-memory instance of the Data Index Service is automatically started in the background. This feature is enabled by link:{dev_services_url}[Quarkus Dev Services], and leverages link:{test_containers_url}[Testcontainers] to start an image of the Data Index Service.
+
+The {product_name} Process Quarkus extension sets up your Quarkus application to automatically replicate any {product_name} messaging events related to {workflow_instances} or jobs into the provisioned Data Index instance.
+
+Once the service is up and running, you can query the GraphQL interface directly using `http://localhost:8180/graphql` or using the Quarkus Dev UI console `http://localhost:8080/q/dev`.
+
+The {data_index_ref} GraphQL endpoint can query for `ProcessInstances` and `Jobs`. For more information about operations and attributes to query, see xref:data-index/data-index-core-concepts.adoc#data-index-graphql[GraphQL endpoint provided by {data_index_ref}] section.
+
+You can share the same {data_index_ref} instance across multiple {product_name} services during development. Sharing Data Index instances is enabled by default, therefore, only one Data Index instance is started. This behaviour can be adjusted to start multiple instances using the `quarkus.kogito.devservices.shared` property.
+
+The Quarkus Dev Service also allows further configuration options including:
+
+* To disable Data Index Dev Service, use the `quarkus.kogito.devservices.enabled=false` property.
+* To change the port where the Data Index Service runs, use the `quarkus.kogito.devservices.port=8180` property.
+* To adjust the provisioned image, use `quarkus.kogito.devservices.imageName=quay.io/kiegroup/kogito-data-index-ephemeral` property.
+* To disable sharing the Data Index instance across multiple Quarkus applications, use `quarkus.kogito.devservices.shared=false` property.
+
+For more information about Quarkus Dev Services, see link:{dev_services_url}[Dev Services guide].
+
+[#data-index-service-configuration-properties]
+== Data Index Service configuration properties
+The following table serves as a quick reference for commonly {data_index_ref} configuration properties supported.
+
+.Common configuration properties
+[cols="40%,35%,10%,10%,5%", options="header"]
+|===
+|Property|Description|Type|Default value|Override at runtime
+
+|`QUARKUS_DATASOURCE_JDBC_URL`
+| The datasource URL
+| string
+|
+| Yes
+
+|`QUARKUS_DATASOURCE_USERNAME`
+| The datasource username
+| string
+|
+| Yes
+
+|`QUARKUS_DATASOURCE_PASSWORD`
+| The datasource password
+| string
+|
+| Yes
+
+|`QUARKUS_DATASOURCE_DB_KIND`
+a|The kind of database to connect: `postgresql`,..
+|string
+|
+|Yes
+
+|`QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION`
+a| Select whether the database schema is generated or not. This defaults to 'none', however if Dev Services is in use and no other extensions that manage the schema are present this will default to 'drop-and-create'. Accepted values:
+
+* none
+* create
+* drop-and-create
+* drop
+* update
+* validate
+
+| string
+| none
+| Yes
+
+|`QUARKUS_FLYWAY_MIGRATE_AT_START`
+| `true` to execute Flyway automatically when the application starts, false otherwise.
+| boolean
+| false
+| Yes
+
+|`KOGITO_DATA_INDEX_QUARKUS_PROFILE`
+a| (Only when referencing an image distribution)
+
+Allows to change the event connection type. The possible values are:
+
+* `kafka-events-support`
+* `http-events-support`
+
+| string
+| `kafka-events-support`
+| Yes
+
+|`kogito.persistence.query.timeout.millis`
+|Defines timeout for a query execution.
+|long
+|`10000`
+|Yes
+
+|`quarkus.kogito.devservices.enabled`
+|Enables or disables the Dev Services for Kogito. By default, the Dev Services are enabled, unless an existing configuration is present.
+|boolean
+|`true`
+|No
+
+|`quarkus.kogito.devservices.port`
+|Defines the optional fixed port that the Dev Services listen to.
+|int
+|`8180`
+|No
+
+|`quarkus.kogito.devservices.image-name`
+|Defines the Data Index image to use in dev service.
+|string
+|`quay.io/kiegroup/kogito-data-index-ephemeral:{page-component-version}`
+|No
+
+|`quarkus.kogito.devservices.shared`
+|Indicates if the Data Index instance, which is managed by Quarkus Dev Services, is shared.
+|boolean
+|`true`
+|No
+
+|`quarkus.kogito.devservices.service-name`
+|Defines the value of the label that is attached to the started container. This property is used when `shared` is set to `true`.
+|string
+|`kogito-data-index`
+|No
+
+
+|===
+
+== Additional resources
+
+* xref:core/timeouts-support.adoc[Timeouts in {product_name}]
+* xref:use-cases/timeout-showcase-example.adoc[Timeout example in {product_name}]
+
+include::../_common-content/report-issue.adoc[]
