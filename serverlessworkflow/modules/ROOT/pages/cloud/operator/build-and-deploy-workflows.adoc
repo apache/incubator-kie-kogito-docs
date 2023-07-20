@@ -33,7 +33,20 @@ Follow the <<building-kubernetes, Kubernetes>> or <<building-openshift, OpenShif
 
 The operator can build workflows on Kubernetes or OpenShift. On Kubernetes, it uses link:{kaniko_url}[Kaniko] and on OpenShift a link:{openshift_build_url}[standard BuildConfig]. The operator build system is not tailored for advanced use cases and you can do only a few customizations.
 
-=== Changing the base build Dockerfile
+=== Using another Workflow base builder image
+
+If your scenario has strict policies for image usage, such as security or hardening constraints, you can replace the default image used by the operator to build the final workflow container image. Alternatively, you might want to test a nightly build with a bug fix or a custom image containing your customizations.
+
+By default, the operator will use the image distributed upstream to run the workflows in the development profile. You can change this image by editing the `SonataFlowPlatform` custom resource in the namespace where you deployed your workflows:
+
+.Patching the current SonataFlowPlatform with the new builder image
+[source,bash,subs="attributes+"]
+----
+# use `kubectl get sonataflowplatform` to get the SonataFlowPlatform name
+kubectl patch sonataflowplatform <name> --patch  'spec:\n plaform:\n baseImage: <your new image full name with tag>' -n <your_namespace>
+----
+
+=== Customize the base build Dockerfile
 
 The operator uses the sonataflow-operator-builder-config `ConfigMap` in the operator's installation namespace ({operator_installation_namespace}) to configure and run the workflow build process. 
 You can change the `Dockerfile` entry in this `ConfigMap` to tailor the Dockerfile to your needs. Just be aware that this can break the build process.
