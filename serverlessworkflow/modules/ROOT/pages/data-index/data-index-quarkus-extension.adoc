@@ -1,4 +1,4 @@
-= Data Index Quarkus Extension
+= Data Index Quarkus extension
 :compat-mode!:
 // Metadata:
 :description: Data Index Service to allow to index and query audit data in {product_name}
@@ -14,48 +14,57 @@
 :mongo_url: https://www.mongodb.com/
 :postgresql_url: https://www.postgresql.org/
 
+//Common constants
+:data_index_ref: Data Index
+:workflow_instance: process instance
+:workflow_instances: {workflow_instance}s
 
-This document describes how you add the Data Index features to your runtime service. You simply need to add the Data Index extension to the runtime and
-all the audit data will be collected and stored in the database, and the graphQL endpoint will be available to execute queries and perform management operation over the workflows instances.
 
+This document describes how you add the {data_index_ref} features to your runtime service. You simply need to add the {data_index_ref} extension to the runtime and
+the workflow related data will be collected and stored in the database, enabling the GraphQL endpoint to execute queries and perform management operations over the {workflow_instances}.
 The example described in this document is based on the link:{kogito_sw_timeouts_showcase_embedded_example_url}[`serverless-workflow-timeouts_showcase_embedded`] example application.
 
 [[data-index-ext-overview]]
 == Overview
 
-The Data Index service has been designed to store and manage audit data from different workflows that may be hosted in different runtimes.
-Communication with the service is through events that contain the audit data and the service is responsible for storing them and exposing a GRAPHQL endpoint to allow queries and maintenance operations on the different instances of Workflows.
+The {data_index_ref} service has been designed to store and manage data from different workflows that can be hosted in different runtimes.
+Communication with the service is through events that contain the workflows related data and the service is responsible for storing them and exposing a GraphQL endpoint to allow queries and maintenance operations on the different workflow instances.
 
-Sometimes, to avoid deploying the service separately, it could be interesting to have the audit storage functionality and the query possibility embedded in the same application.
-For this purpose, we have the Quarkus Data Index extension that can be plugged to any workflow application and incorporates the Data Index functionality into the same application with no need of an external Data Index Service.
-These extensions can be found distributed as Kogito addons: `kogito-addons-quarkus-data-index`.
+In specific use cases, to avoid deploying the service separately, it could be useful to have the indexing functionality and the query capabilities embedded in the same application.
+For this purpose, the Quarkus {data_index_ref} extension can be added to any workflow application and incorporates the {data_index_ref} functionality into the same application without needing an external {data_index_ref} service.
+These extensions are distributed as addons ready to work with different types of persistence:
+
+* kogito-addons-quarkus-data-index-inmemory (inmemory PostgreSQL)
+* kogito-addons-quarkus-data-index-postgresql
+* kogito-addons-quarkus-data-index-infinispan
+* kogito-addons-quarkus-data-index-mongodb
 
 [NOTE]
 ====
-The Data Index extensions are provided as addons for each kind of supported persistence relying on the link:{quarkus_guides_base_url}/writing-extensions[Quarkus extensions] mechanism.
+The {data_index_ref} extensions are provided as addons for each kind of supported persistence relying on the link:{quarkus_guides_base_url}/writing-extensions[Quarkus extensions] mechanism.
 ====
 
-Once one of these `kogito-addons-quarkus-data-index` addons is added to a Workflow application, that service incorporates the functionality to store all the audit data and also incorporates the GraphQL endpoint to perform queries and management operations.
+Once one of these `kogito-addons-quarkus-data-index` addons is added to a Workflow application, that service incorporates the functionality to index and store the workflow data and also incorporates the GraphQL endpoint to perform queries and management operations.
 
-In the same way as the Data Index Service, there is a specific addon for each type of persistence you want to work with. Currently, we can find Data Index addons for: link:{postgresql_url}[PostgreSQL]
+In the same way as the {data_index_ref} service, there is a specific addon for each type of persistence you want to work with. Currently, we can find {data_index_ref} addons for: link:{postgresql_url}[PostgreSQL]
 link:{infinispan_url}[Infinispan] and  link:{mongo_url}[MongoDB]
 
 [IMPORTANT]
 ====
-The `kogito-addons-quarkus-data-index` addon distribution added to the application should match with the application kind of persistence, regarding the audit data will be stored in the same database.
-The addon will share the data-source used by the application where it is added, and it will create separated audit tables for that purpose.
+The {data_index_ref} addon distribution added to the application must match the application's kind of persistence, regarding the indexed data, which can be stored in the same database.
+The addon will share the data source used by the application where it is added, and it will create separate tables for that purpose.
 ====
 
-When any of the data index addons is added:
+When any of the {data_index_ref} addons is added:
 
-* The communication with the workflow application is direct, the audit data are *not* transmitted or consumed through events, they are stored directly in the configured DB.
+* The communication with the workflow application is direct, the workflows data is *not* transmitted or consumed through events, they are stored directly in the configured database.
 There is no need to configure the events connection for this purpose.
 * A new GraphQL endpoint is added to perform queries and management operations
 
 [[data-index-ext-use]]
-== Adding Data Index extension to a workflow application
+== Adding {data_index_ref} extension to a workflow application
 
-You can add the Data Index quarkus extension as an Addon:
+You can add the {data_index_ref} quarkus extension as an Addon:
 
 .Prerequisites
 * Your workflow application is working and has persistence enabled.
@@ -63,10 +72,10 @@ You can add the Data Index quarkus extension as an Addon:
 For more information about creating a workflow application, see {getting_started_create_first_workflow_guide}[Creating your first workflow service]. You also can find more details about enabling persistence in {persistence_with_postgresql_guide}[Running a workflow service using PostgreSQL]
 
 .Procedure
-. Add the required Data Index addon dependencies to the `pom.xml` file of your workflow application:
+. Add the required {data_index_ref} addon dependencies to the `pom.xml` file of your workflow application:
 +
 --
-.Add Data Index Addon dependencies to `pom.xml` file
+.Add {data_index_ref} Addon dependencies to `pom.xml` file
 [source,xml]
 ----
 <dependency>
@@ -75,23 +84,12 @@ For more information about creating a workflow application, see {getting_started
 </dependency>
 ----
 
-[NOTE]
-====
-In the example the Workflow Application is using PostgreSQL persistence, that's the reason to include the kogito-addons-quarkus-data-index-postgresql,
-but this addon is distributed ready to work with other types of persistence:
-
-* kogito-addons-quarkus-data-index-inmemory (inmemory PostgreSQL)
-* kogito-addons-quarkus-data-index-postgresql
-* kogito-addons-quarkus-data-index-infinispan
-* kogito-addons-quarkus-data-index-mongodb
-====
-
 --
 
 . Configure the Data Index Addon properties.
 +
 --
-Prepare the application to run in dev mode, avoiding to start the DataIndex dev service and specify if the GraphQL UI needs to be available.
+Prepare the application to run in dev mode, avoid starting the {data_index_ref} Quarkus Dev service, and specify if the GraphQL UI needs to be available.
 
 .Example adding Data Index addon properties in `application.properties` file
 [source,properties]
