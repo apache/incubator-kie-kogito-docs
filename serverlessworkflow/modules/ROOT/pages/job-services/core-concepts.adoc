@@ -4,7 +4,10 @@
 :description: Job Service to control timeouts in {product_name}
 :keywords: sonataflow, workflow, serverless, timeout, timer, expiration, job service
 // links
-:jobs_service_image_url: https://quay.io/repository/kiegroup/kogito-jobs-service-allinone
+:jobs_service_image_allinone_url: https://quay.io/repository/kiegroup/kogito-jobs-service-allinone
+:jobs_service_image_ephemeral_url: https://quay.io/repository/kiegroup/kogito-jobs-service-ephemeral
+:jobs_service_image_postgresql_url: https://quay.io/repository/kiegroup/kogito-jobs-service-postgresql
+:jobs_service_image_infinispan_url: https://quay.io/repository/kiegroup/kogito-jobs-service-infinispan
 :jobs_service_image_usage_url: https://github.com/kiegroup/kogito-images#jobs-services-all-in-one
 :knative_eventing_url: https://knative.dev/docs/eventing/
 :knative_eventing_trigger_url: https://knative.dev/docs/eventing/triggers/
@@ -42,11 +45,12 @@ This last is not suited for serverless architectures, where the applications mig
 Since the main goal of the Job Service is to work with the active jobs, such as the scheduled jobs that needs to be executed, when a job reaches a final state, it is removed from the Job Service.
 However, in some cases where you want to keep the information about the jobs in a permanent repository, you can configure the Job Service to produce status change events, that can be collected by the xref:/data-index/data-index-service.adoc[Data Index Service], where they can be indexed and made available by GraphQL queries.
 
+[#executing]
 == Executing
 
 To execute the Job Service in your docker or kubernetes environment, you must use the following image:
 
-* link:{jobs_service_image_url}[kogito-jobs-service-allinone]
+* link:{jobs_service_image_allinone_url}[kogito-jobs-service-allinone]
 
 In the next topics you can see the different configuration parameters that you must use, for example, to configure the <<job-service-persistence,persistence mechanism>>, the <<job-service-eventing-api, eventing system>>, etc.
 More information on this image can be found link:{jobs_service_image_usage_url}[here].
@@ -193,6 +197,14 @@ Using system properties with java like names::
 An important configuration aspect of the Job Service is the persistence mechanism, it is where all the jobs information is stored, and guarantees no information is lost upon service restarts.
 
 The Job Service image is shipped with the <<job-service-postgresql, PostgreSQL>>, <<job-service-ephemeral, Ephemeral>>, and <<job-service-infinispan, Infinispan>> persistence mechanisms, that can be switched by setting the JOBS_SERVICE_PERSISTENCE environment variable to any of these values `postgresql`, `ephemeral`, or `infinispan`. If not set, it defaults to the `ephemeral` option.
+
+[NOTE]
+====
+The <<executing, kogito-jobs-service-allinone>> image is a composite packaging that include one different image per each persistence mechanism, making it clearly bigger sized than the individual ones. If that size represents an issue in your installation you can use the individual ones instead.
+Finally, if you use this alternative, the JOBS_SERVICE_PERSISTENCE must not be used, since the persistence mechanism is auto-determined.
+
+These are the individual images: {jobs_service_image_postgresql_url}[kogito-jobs-service-postgresql], {jobs_service_image_ephemeral_url}[kogito-jobs-service-ephemeral], or {jobs_service_image_infinispan_url}[kogito-jobs-service-infinispan]
+====
 
 [#job-service-postgresql]
 === PostgreSQL
