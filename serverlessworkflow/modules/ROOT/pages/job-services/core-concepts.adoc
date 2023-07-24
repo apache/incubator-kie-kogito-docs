@@ -9,9 +9,6 @@
 :knative_eventing_url: https://knative.dev/docs/eventing/
 :knative_eventing_trigger_url: https://knative.dev/docs/eventing/triggers/
 :knative_eventing_sink_binding_url: https://knative.dev/docs/eventing/sinks/#sink-parameter-example
-:quarkus_infinispan_client_reference_url: https://quarkus.io/guides/infinispan-client-reference
-:quarkus_kafka_url: https://quarkus.io/guides/kafka
-:quarkus_config_reference_url: https://quarkus.io/guides/config-reference
 
 The Job Service facilitates the scheduled execution of tasks in a cloud environment. These tasks are implemented by independent services, and can be started by using any of the Job Service supported interaction modes, based on Http calls or Knative Events delivery.
 
@@ -43,8 +40,7 @@ This last is not suited for serverless architectures, where the applications mig
 == Jobs life-span
 
 Since the main goal of the Job Service is to work with the active jobs, such as the scheduled jobs that needs to be executed, when a job reaches a final state, it is removed from the Job Service.
-However, in cases where you want to keep the information about the jobs in a permanent repository, you can configure the Job Service to produce status change events, that can be collected by the {product_name} `Data
-Index Service`, where they can be indexed and made available by GraphQL queries.
+However, in some cases where you want to keep the information about the jobs in a permanent repository, you can configure the Job Service to produce status change events, that can be collected by the xref:/data-index/data-index-service.adoc[Data Index Service], where they can be indexed and made available by GraphQL queries.
 
 == Executing
 
@@ -112,7 +108,7 @@ quay.io/kiegroup/kogito-jobs-service-allinone:latest
 
 [NOTE]
 ====
-I case that you need to convert a java like property name, to the corresponding environment variable name, to use the environment variables configuration alternative, you must apply the naming convention defined in the link:{quarkus_config_reference_url}#environment-variables[Quarkus Configuration Reference].
+I case that you need to convert a java like property name, to the corresponding environment variable name, to use the environment variables configuration alternative, you must apply the naming convention defined in the link:{quarkus_guides_config_reference_url}#environment-variables[Quarkus Configuration Reference].
 For example, the name `quarkus.datasource.jdbc.url` must be converted to `QUARKUS_DATASOURCE_JDBC_URL`.
 ====
 
@@ -291,7 +287,7 @@ Using environment variables::
 |Sets SASL mechanism used by authentication
 |<<infinispan-client-config-note, see>>
 
-|vQUARKUS_INFINISPAN_CLIENT_AUTH_REALM`
+|`QUARKUS_INFINISPAN_CLIENT_AUTH_REALM`
 |Sets realm used by authentication
 |<<infinispan-client-config-note, see>>
 
@@ -348,7 +344,7 @@ Using system properties with java like names::
 [NOTE]
 ====
 The Infinispan client configuration parameters that you must configure depends on your local Infinispan service.
-And thus, the table above shows only a sub-set of all the available options. To see the list of all the options supported by the quarkus infinispan client you must read the link:{quarkus_infinispan_client_reference_url}[Quarkus Infinispan Client Reference].
+And thus, the table above shows only a sub-set of all the available options. To see the list of all the options supported by the quarkus infinispan client you must read the link:{quarkus_guides_infinispan_client_reference_url}[Quarkus Infinispan Client Reference].
 ====
 
 [#job-service-eventing-api]
@@ -363,7 +359,7 @@ This API is useful in deployment scenarios where you want to use an event based 
 By default, the Job Service Eventing API is prepared to work in a link:{knative_eventing_url}[knative eventing] system. This means that by adding no additional configurations parameters, it'll be able to receive cloud events via the link:{knative_eventing_url}[knative eventing] system to manage the jobs.
 However, you must still prepare your link:{knative_eventing_url}[knative eventing] environment to ensure these events are properly delivered to the Job Service, see <<knative-eventing-supporting-resources, knative eventing supporting resources>>.
 
-Finally, the only configuration parameter that you must set, when needed, is to enable the propagation of the Job Status Change events, for example, if you want to register these events in the Data Index Service.
+Finally, the only configuration parameter that you must set, when needed, is to enable the propagation of the Job Status Change events, for example, if you want to register these events in the xref:/data-index/data-index-service.adoc[Data Index Service]
 
 [tabs]
 ====
@@ -405,7 +401,7 @@ Additionally, if you have enabled the Job Status Change events propagation you m
 .Knative eventing supporting resources
 image::job-services/Knative-Eventing-API-Resources.png[]
 
-The following snippets shows an example on how you can configure these resources. Consider that these configurations might need to be adjusted in you local kubernetes cluster.
+The following snippets shows an example on how you can configure these resources. Consider that these configurations might need to be adjusted to your local kubernetes cluster.
 
 [NOTE]
 ====
@@ -433,8 +429,6 @@ spec:
     uri: /v2/jobs/events
 ----
 
-For more information about triggers link:{knative_eventing_trigger_url}[see].
-
 [#knative-eventing-supporting-resources-trigger-delete]
 .Delete Job event trigger configuration example
 [source,yaml]
@@ -456,7 +450,7 @@ spec:
     uri: /v2/jobs/events
 ----
 
-For more information about triggers link:{knative_eventing_trigger_url}[see].
+For more information about triggers, see link:{knative_eventing_trigger_url}[Knative Triggers].
 
 [#knative-eventing-supporting-resources-sink-binding]
 .Job Service sink binding configuration example
@@ -481,7 +475,7 @@ spec:
         app.kubernetes.io/version: 2.0.0-SNAPSHOT
 ----
 
-For more information about sink bindings link:{knative_eventing_sink_binding_url}[see].
+For more information about sink bindings, see link:{knative_eventing_sink_binding_url}[Knative Sink Bindings].
 
 [#kafka-messaging]
 === Kafka messaging
@@ -553,7 +547,7 @@ Using system properties with java like names::
 [NOTE]
 ====
 Depending on your Kafka messaging system configuration you might need to apply additional Kafka configurations to connect to the Kafka broker, etc.
-To see the list of all the supported configurations you must read the link:{quarkus_kafka_url}[Quarkus Apache Kafka Reference Guide].
+To see the list of all the supported configurations you must read the link:{quarkus_guides_kafka_url}[Quarkus Apache Kafka Reference Guide].
 ====
 
 
@@ -582,3 +576,5 @@ This leader election mechanism uses the underlying persistence backend, which cu
 There is no need for any configuration to support this feature, the only requirement is to have the supported database with the data schema up-to-date as described in the <<job-service-postgresql>> section.
 
 In case the underlying persistence does not support this feature, you must guarantee that just one single instance of the Job Service is running at the same time.
+
+include::../../pages/_common-content/report-issue.adoc[]

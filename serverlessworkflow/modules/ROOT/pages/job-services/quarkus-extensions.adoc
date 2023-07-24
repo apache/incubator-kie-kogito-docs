@@ -4,15 +4,6 @@
 // Metadata:
 :description: Job Service Quarkus extensions in {product_name}
 :keywords: sonataflow, workflow, serverless, job service, quarkus extensions
-// links
-:jobs_service_image_url: https://quay.io/repository/kiegroup/kogito-jobs-service-allinone
-:jobs_service_image_usage_url: https://github.com/kiegroup/kogito-images#jobs-services-all-in-one
-:knative_eventing_url: https://knative.dev/docs/eventing/
-:knative_eventing_trigger_url: https://knative.dev/docs/eventing/triggers/
-:knative_eventing_sink_binding_url: https://knative.dev/docs/eventing/sinks/#sink-parameter-example
-:quarkus_infinispan_client_reference_url: https://quarkus.io/guides/infinispan-client-reference
-:quarkus_kafka_url: https://quarkus.io/guides/kafka
-:quarkus_config_reference_url: https://quarkus.io/guides/config-reference
 
 The interaction xref:job-services/core-concepts.adoc#integration-with-the-workflows[between the workflows and the Job Service] is handled by the different Job Service Quarkus Extensions. Each extension is designed to work with a different communication alternative.
 
@@ -97,9 +88,9 @@ mvn clean install
 
 [source, bash]
 ----
-kubectl apply -f /target/kogito.yml
+kubectl apply -f target/kogito.yml
 
-kubectl apply -f /target/knative.yml
+kubectl apply -f target/knative.yml
 ----
 
 You can see a full example of this interaction mode configuration in the xref:use-cases/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] example project.
@@ -243,3 +234,5 @@ quarkus extension add kogito-addons-quarkus-jobs-management
 . Build and deploy your workflow application using any of the available procedures.
 
 You can see a full example of Job Service embedded usage in the xref:use-cases/timeout-showcase-example.adoc#execute-quarkus-project-embedded-services[Quarkus Workflow Project with embedded services] example project.
+
+include::../../pages/_common-content/report-issue.adoc[]
