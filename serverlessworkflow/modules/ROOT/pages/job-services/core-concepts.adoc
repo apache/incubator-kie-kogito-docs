@@ -84,9 +84,40 @@ If used, these values must always be passed as environment variables.
 
 To configure the image by using environment variables you must pass one environment variable per each parameter.
 
+.Job Service image configuration for docker execution example
 [source, bash]
 ----
 docker run -it -e JOBS_SERVICE_PERSISTENCE=postgresql -e VARIABLE_NAME=value quay.io/kiegroup/kogito-jobs-service-allinone:latest
+----
+
+.Job Service image configuration for Kubernetes execution example
+[source, yaml]
+----
+spec:
+  containers:
+    - name: jobs-service-postgresql
+      image: quay.io/kiegroup/kogito-jobs-service-allinone-nightly:latest
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+      env:
+        # Set the image parameters as environment variables in the container definition.
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: JOBS_SERVICE_PERSISTENCE
+          value: "postgresql"
+        - name: QUARKUS_DATASOURCE_USERNAME
+          value: postgres
+        - name: QUARKUS_DATASOURCE_PASSWORD
+          value: pass
+        - name: QUARKUS_DATASOURCE_JDBC_URL
+          value: jdbc:postgresql://timeouts-showcase-database:5432/postgres?currentSchema=jobs-service
+        - name: QUARKUS_DATASOURCE_REACTIVE_URL
+          value: postgresql://timeouts-showcase-database:5432/postgres?search_path=jobs-service
 ----
 
 [NOTE]
@@ -100,6 +131,7 @@ The timeouts showcase example xref:use-cases/timeout-showcase-example.adoc#execu
 
 To configure the image by using system properties you must pass one property per parameter, however, in this case, all these properties are passed as part of a single environment with the name `JAVA_OPTIONS`.
 
+.Job Service image configuration for docker execution example
 [source, bash]
 ----
 docker run -it -e JOBS_SERVICE_PERSISTENCE=postgresql -e JAVA_OPTIONS='-Dmy.sys.prop1=value1 -Dmy.sys.prop2=value2' \
