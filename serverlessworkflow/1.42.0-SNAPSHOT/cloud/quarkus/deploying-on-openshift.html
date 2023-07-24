@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Deploying your Kogito Serverless Workflow application on OpenShift :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Deploying Serverless Application on Minikube">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, kn, oc, openshift">
+    <meta name="generator" content="Antora 3.1.4">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+<link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../../_/css/search.css">
+<link rel="stylesheet" href="../../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../../_/css/home.css"><script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../../..">
+                    <img src="../../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.42.0-SNAPSHOT">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../release_notes.html">Release notes</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../getting-started/create-your-first-workflow-service.html">Creating a Quarkus Workflow Project</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/cncf-serverless-workflow-specification-support.html">Serverless Workflow Specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/handling-events-on-workflows.html">Events</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/working-with-callbacks.html">Callbacks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/understanding-jq-expressions.html">jq Expressions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/understanding-workflow-error-handling.html">Error handling</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/configuration-properties.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/defining-an-input-schema-for-workflows.html">Input Schema</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/custom-functions-support.html">Custom Functions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/timeouts-support.html">Timeouts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/working-with-parallelism.html">Parallelism</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../tooling/serverless-workflow-editor/swf-editor-overview.html">Editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome extension for GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">Integration with GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">Integration with OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Integration with Service Registries</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deployment</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../service-orchestration/orchestration-of-openapi-based-services.html">OpenAPI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../service-orchestration/configuring-openapi-services-endpoints.html">Advanced Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../service-orchestration/working-with-openapi-callbacks.html">Callbacks</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../service-orchestration/orchestration-of-grpc-services.html">gRPC</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Event Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../eventing/orchestration-of-asyncapi-based-services.html">AsyncAPI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../eventing/event-correlation-with-workflows.html">Event Correlation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../eventing/consume-producing-events-with-kafka.html">Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../eventing/consume-produce-events-with-knative-eventing.html">Knative Eventing</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Client Authentication</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../security/authention-support-for-openapi-services.html">OpenAPI Authentication</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../security/orchestrating-third-party-services-with-oauth2.html">OpenAPI OAuth2</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing, Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing and Testing Workflows</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Developer UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-custom-dashboard-page.html">Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../testing-and-troubleshooting/kn-plugin-workflow-overview.html">Command Line</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing with REST Assured</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../persistence/persistence-with-postgresql.html">PostgreSQL Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../persistence/postgresql-flyway-migration.html">PostgreSQL Database Migration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../persistence/integration-tests-with-postgresql.html">Integration Tests with PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../index.html">Cloud</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Operator</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../operator/install-serverless-operator.html">Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../operator/developing-workflows.html">Development Mode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../operator/referencing-resource-files.html">Referencing Workflow Resources</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../operator/configuring-workflows.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../operator/build-and-deploy-workflows.html">Building and Deploying Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../operator/workflow-status-conditions.html">Custom Resource Status</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../operator/known-issues.html">Known Issues</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="build-workflow-image-with-quarkus-cli.html">Building Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deploying-on-minikube.html">Deploying on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deploying-on-kubernetes.html">Deploying on Kubernetes</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="deploying-on-openshift.html">Deploying on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="kubernetes-service-discovery.html">Service Discovery</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../integrations/camel-routes-integration.html">Camel Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../integrations/custom-functions-knative.html">Knative Serving</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../integrations/expose-metrics-to-prometheus.html">Exposing Prometheus Metrics</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow Data in Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Job Service</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../job-services/core-concepts.html">Core Concepts</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../use-cases/orchestration-based-saga-pattern.html">Saga Orchestration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../use-cases/timeout-showcase-example.html">Timeouts Showcase</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.42-RC</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-current">
+          <a href="../../index.html">1.42-RC</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../../latest/index.html">1.41</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.40.0.Final/index.html">1.40</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.40.0-SNAPSHOT/index.html">1.40-RC</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.39.0.Final/index.html">1.39</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.38.0.Final/index.html">1.38</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.37.0.Final/index.html">1.37</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.36.1.Final/index.html">1.36</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.35.0.Final/index.html">1.35</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.34.0.Final/index.html">1.34</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.33.0.Final/index.html">1.33</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.32.0.Final/index.html">1.32</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.31.1.Final/index.html">1.31</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.30.0.Final/index.html">1.30</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.29.0.Final/index.html">1.29</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.28.0.Final/index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../../../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li><a href="../index.html">Cloud</a></li>
+    <li>Quarkus</li>
+    <li><a href="deploying-on-openshift.html">Deploying on OpenShift</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.42-RC</button>
+  <div class="version-menu">
+    <a class="version" href="../../../main/cloud/quarkus/deploying-on-openshift.html">snapshot</a>
+    <a class="version is-current" href="deploying-on-openshift.html">1.42-RC</a>
+    <a class="version" href="../../../latest/cloud/quarkus/deploying-on-openshift.html">1.41</a>
+    <a class="version" href="../../../1.40.0.Final/cloud/quarkus/deploying-on-openshift.html">1.40</a>
+    <a class="version" href="../../../1.40.0-SNAPSHOT/cloud/quarkus/deploying-on-openshift.html">1.40-RC</a>
+    <a class="version is-missing" href="../../../1.39.0.Final/index.html">1.39</a>
+    <a class="version is-missing" href="../../../1.38.0.Final/index.html">1.38</a>
+    <a class="version is-missing" href="../../../1.37.0.Final/index.html">1.37</a>
+    <a class="version is-missing" href="../../../1.36.1.Final/index.html">1.36</a>
+    <a class="version is-missing" href="../../../1.35.0.Final/index.html">1.35</a>
+    <a class="version is-missing" href="../../../1.34.0.Final/index.html">1.34</a>
+    <a class="version is-missing" href="../../../1.33.0.Final/index.html">1.33</a>
+    <a class="version is-missing" href="../../../1.32.0.Final/index.html">1.32</a>
+    <a class="version is-missing" href="../../../1.31.1.Final/index.html">1.31</a>
+    <a class="version is-missing" href="../../../1.30.0.Final/index.html">1.30</a>
+    <a class="version is-missing" href="../../../1.29.0.Final/index.html">1.29</a>
+    <a class="version is-missing" href="../../../1.28.0.Final/index.html">1.28</a>
+    <a class="version is-missing" href="../../../1.27.0.Final/index.html">1.27</a>
+    <a class="version is-missing" href="../../../1.26.0.Final/index.html">1.26</a>
+    <a class="version is-missing" href="../../../1.25.0.Final/index.html">1.25</a>
+    <a class="version is-missing" href="../../../1.24.1.Final/index.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.42.x/serverlessworkflow/modules/ROOT/pages/cloud/quarkus/deploying-on-openshift.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Deploying your Kogito Serverless Workflow application on OpenShift</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes how to deploy a Kogito Serverless Workflow application using a OpenShift cluster, along with a procedure to run the OpenShift Serverless Operator, which is based on Knative.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Your <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Kogito Serverless Workflow application</a> is ready to use.</p>
+</li>
+<li>
+<p><a href="https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html#cli-about-cli_cli-developer-commands">OpenShift CLI</a> is installed.</p>
+</li>
+<li>
+<p><a href="https://docs.openshift.com/container-platform/4.12/serverless/install/installing-kn.html">Knative CLI</a> is installed.</p>
+</li>
+<li>
+<p><a href="../../testing-and-troubleshooting/kn-plugin-workflow-overview.html" class="xref page">Knative CLI workflow plugin</a> is installed.</p>
+</li>
+<li>
+<p><a href="https://docs.podman.io/en/latest/">Podman</a><br>
+If you are using <a href="https://docs.docker.com/engine/install/">Docker</a>, you might need to update the commands accordingly.</p>
+</li>
+<li>
+<p>(Optional) <a href="https://quarkus.io/guides/cli-tooling">Quarkus CLI</a> is installed.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For the following steps we will be using the <a href="https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.17">OpenShift Local</a>. However, the steps described here can be used on any OpenShift 4.x version that has support for OpenShift Serverless.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-install-openshift-local"><a class="anchor" href="#proc-install-openshift-local"></a>Installing OpenShift Local</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>If you already have an OpenShift cluster available you can skip this section.</em></p>
+</div>
+<div class="paragraph">
+<p>Instructions to install Openshift Local can be found <a href="https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.17/html/getting_started_guide/installation_gsg">here</a>.</p>
+</div>
+<div class="paragraph">
+<p>Once you have OpenShift Local running, proceed to the next topic.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you are running OpenShift Local on Mac with M1 processors, you might not find the OpenShift Serverless Operator available.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Before proceeding further, make sure that you have access to the OpenShift cluster, the OpenShift Serverless operator is properly installed and the <code>Knative Serving</code> is ready for use. For more information on each topic, please refer the following guides:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Installing <a href="https://docs.openshift.com/serverless/1.29/install/install-serverless-operator.html">OpenShift Serverless Operator</a>.</p>
+</li>
+<li>
+<p>Installing <a href="https://docs.openshift.com/container-platform/4.12/serverless/install/installing-knative-serving.html">Knative Serving</a>.</p>
+</li>
+<li>
+<p>Installing <a href="https://docs.openshift.com/container-platform/4.12/serverless/install/installing-knative-eventing.html">Knative Eventing</a>. Knative Eventing is not required for this guide, however it is important to mention how to install it, if required by your Kogito Serverless Workflow application.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you get error messages related to <code>Istio</code>, this <a href="https://access.redhat.com/solutions/4791871">article</a> might be helpful.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="proc-deploy-sw-application-openshift"><a class="anchor" href="#proc-deploy-sw-application-openshift"></a>Deploying your workflow application on OpenShift</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Once <code>Knative Serving</code> is ready, you can initiate the process of deploying your Kogito Serverless Workflow application on OpenShift.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>OpenShift with Red Hat OpenShift Serverless is ready.</p>
+</li>
+<li>
+<p>Knative is ready.<br>
+For more information, see <a href="https://docs.openshift.com/container-platform/4.12/serverless/install/installing-knative-serving.html">Knative Serving</a>.</p>
+</li>
+<li>
+<p>Knative CLI is installed.</p>
+</li>
+<li>
+<p>(Optional) Quarkus CLI is installed.<br>
+For more information, see <a href="https://quarkus.io/guides/cli-tooling">Building Quarkus Apps with Quarkus command line interface (CLI)</a>.</p>
+</li>
+<li>
+<p>Your <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Kogito Serverless Workflow application</a> is ready to use.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>After checking the prerequisites, prepare the project that will be used to deploy your application:</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Create project</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">oc new-project kogito-serverless</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Set the Kubernetes context to the newly created namespace using the following command:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Set OpenShift current project</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">oc project kogito-serverless</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can use the <a href="build-workflow-image-with-quarkus-cli.html#proc-building-serverless-workflow-application-using-native-image">native image</a> for a faster startup.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_preparing_the_openshifts_registry"><a class="anchor" href="#_preparing_the_openshifts_registry"></a>Preparing the OpenShift&#8217;s Registry</h3>
+<div class="paragraph">
+<p>OpenShift comes with a registry where you can push your images built locally to be deployed.</p>
+</div>
+<div class="paragraph">
+<p>First, let&#8217;s check if the Registry is already exposed, to do that, check if the route is exposed:</p>
+</div>
+<div class="listingblock">
+<div class="title">Check whether the OpenShift registry is exposed</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If no information or an error is returned, it does mean that the registry is not exposed. To expose the registry follow <a href="https://docs.openshift.com/container-platform/4.12/registry/securing-exposing-registry.html">these</a> steps.</p>
+</div>
+<div class="paragraph">
+<p>Now that we have the OpenShift registry exposed, let&#8217;s store into the <code>OPENSHIFT_REGISTRY_URL</code> environment variable, so we can use it easily in the next steps:</p>
+</div>
+<div class="listingblock">
+<div class="title">Retrieve the OpenShift registry</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">OPENSHIFT_REGISTRY_URL=$(oc get route default-route -n openshift-image-registry --template='{{ .spec.host }}')</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The OpenShift&#8217;s registry requires you to be logged in to be allowed to push Container Images. If you are already logged in the cluster you can use your token to authenticate to the OpenShift&#8217;s registry:</p>
+</div>
+<div class="listingblock">
+<div class="title">Log in to the OpenShift&#8217;s registry</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">podman login -u &lt;USERNAME&gt; -p $(oc whoami -t) --tls-verify=false $OPENSHIFT_REGISTRY_URL</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If everything is working, you should get the <strong>Login Succeeded!</strong> message.</p>
+</div>
+<div class="paragraph">
+<div class="title">Pushing Kogito Serverless Workflow Application To OpenShift&#8217;s registry</div>
+<p>First step, get the Container Image tag built previously:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">podman images</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With the Container Image, use the following command to tag the application image with the OpenShift&#8217;s registry and
+the namespace being used:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">podman tag &lt;IMAGE_TAG&gt; $OPENSHIFT_REGISTRY_URL/kogito-serverless/serverless-workflow-greeting-quarkus:1.0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, push:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">podman push $OPENSHIFT_REGISTRY_URL/kogito-serverless/serverless-workflow-greeting-quarkus:1.0</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The kogito-serverless is the current project/namespace created earlier to deploy your Kogito Serverless Workflow application.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The next step is to deploy your workflow application and execute it.
+You can read further the next sections which explain different approaches to deploy your Kogito Serverless Workflow application:</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In the next steps you will notice the value <strong>image-registry.openshift-image-registry.svc:5000</strong> being used. It is the internal OpenShift&#8217;s registry address where the images of the deployments will pulled from. Note that, the Container Image pushed in the previous step will be queried as  <code>image-registry.openshift-image-registry.svc:5000/kogito-serverless/serverless-workflow-greeting-quarkus:1.0</code></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#proc-deploy-sw-application-knative-cli">Using Knative CLI (kn)</a></p>
+</li>
+<li>
+<p><a href="#proc-deploy-sw-application-openfhift-client">Using OpenShift command-line tool</a></p>
+</li>
+<li>
+<p><a href="#proc-deploy-sw-application-quarkus-cli">Using Quarkus CLI</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="proc-deploy-sw-application-knative-cli"><a class="anchor" href="#proc-deploy-sw-application-knative-cli"></a>Deploying your workflow application using Knative CLI</h3>
+<div class="paragraph">
+<p>Once you have pushed your workflow application into the OpenShift&#8217;s registry, you can use the command-line tools, such as Knative CLI or <code>OpenShift CLI</code> to initiate the deployment process.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Workflow application is installed.</p>
+</li>
+<li>
+<p>Knative CLI is installed.<br>
+For more information, see <a href="https://knative.dev/docs/client/install-kn/">Install the Knative CLI</a>.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>In a command terminal, execute the following command to deploy your workflow application using Knative CLI:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example of deploying workflow application using Knative CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service create hello-workflow \
+    --image=image-registry.openshift-image-registry.svc:5000/kogito-serverless/serverless-workflow-greeting-quarkus:1.0 \
+    --pull-policy=IfNotPresent \
+    --port 8080</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">Creating service 'hello-workflow' in namespace 'serverless-workflow-greeting-quarkus':
+
+  0.066s The Route is still working to reflect the latest desired specification.
+  0.099s ...
+  0.322s Configuration "hello-workflow" is waiting for a Revision to become ready.
+  4.885s ...
+  5.061s Ingress has not yet been reconciled.
+  5.322s Waiting for load balancer to be ready
+  5.460s Ready to serve.
+
+Service 'hello-workflow' created to latest revision 'hello-workflow-00001' is available at URL:
+http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Depending on the cluster type where you have deployed the workflow application, the service URL might be different. Pay attention to the output to use the correct URL in the next topic.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Verify if the workflow application is deployed correctly:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_on-openshift-cli"></a>On OpenShift CLI</p>
+</li>
+<li>
+<p><a id="tabset1_on-knative-cli"></a>On Knative CLI</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_on-openshift-cli">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">oc get services.serving.knative.dev hello-workflow</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_on-knative-cli">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service list hello-workflow</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">NAME             URL                                                                                LATEST                 AGE    CONDITIONS   READY   REASON
+hello-workflow   http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   hello-workflow-00001   7m6s   3 OK / 3     True</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="openblock">
+<div class="title">Use the URL in the output to send request to your workflow application.</div>
+<div class="content">
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{"id":"0f77abce-837e-4bd2-b4f1-a0e5e0265fcb","workflowdata":{"name":"John","language":"English","greeting":"Hello from JSON Workflow, "}}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="proc-deploy-sw-application-openfhift-client"><a class="anchor" href="#proc-deploy-sw-application-openfhift-client"></a>Deploying your workflow application using OpenShift CLI</h3>
+<div class="paragraph">
+<p>You can also use <code>oc</code> command-line interface and plain Kubernetes objects to deploy your workflow application.<br>
+And, instead of creating <code>knative</code> <code>yaml|json</code> descriptors, you can leverage the Quarkus Kubernetes extension and Kogito Knative add-on to generate the descriptors.</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Kogito Workflow application ready to use.</p>
+</li>
+<li>
+<p><code>OpenShift CLI</code> command-line tool is installed.</p>
+</li>
+<li>
+<p>(Optional) Quarkus CLI is installed<br>
+For more information about installing the Quarkus CLI, see <a href="https://quarkus.io/guides/cli-tooling#installing-the-cli">Installing the Quarkus CLI</a>.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Add the Quarkus extensions to generate <code>knative</code> <code>yaml|json</code> descriptors.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>To use the Quarkus Kubernetes extension and Kogito Knative add-on, ensure that the following dependencies are available in the <code>pom.xml</code> file and Gradle:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_pom-xml"></a>pom.xml</p>
+</li>
+<li>
+<p><a id="tabset2_gradle"></a>Gradle</p>
+</li>
+<li>
+<p><a id="tabset2_quarkus-cli"></a>Quarkus CLI</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_pom-xml">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+  &lt;artifactId&gt;kogito-addons-quarkus-knative-eventing&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
+  &lt;artifactId&gt;quarkus-openshift&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_gradle">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus-kubernetes 'io.quarkus:quarkus-openshift:2.16.8.Final'
+quarkus-kubernetes 'org.kie.kogito:kogito-addons-quarkus-knative-eventing:1.42.0-SNAPSHOT'</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_quarkus-cli">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus ext add org.kie.kogito:kogito-addons-quarkus-knative-eventing quarkus-openshift1.42.0-SNAPSHOT'</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>To generate the <code>knative</code> <code>yaml|json</code> descriptors, set the following properties in the <code>application.properties</code> file of your workflow application:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">System properties to generate knative descriptors</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus.kubernetes.deployment-target=knative
+quarkus.knative.name=hello-workflow</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Build your workflow application.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Once you have built your application, you can find the generated descriptors files in the <code>target/kubernetes</code> directory:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>knative.json</code></p>
+</li>
+<li>
+<p><code>knative.yml</code></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The image used in this section is the one built in the following guide: <a href="build-workflow-image-with-quarkus-cli.html" class="xref page">Build Workflow Image with Quarkus CLI</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Following is an example of the generated files:</p>
+</div>
+<div class="listingblock">
+<div class="title">Knative descriptor example for a workflow application</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    app.quarkus.io/commit-id: 06c3fe8e2dfc42e2211cbcc41224f5a3d6bd1f26
+    app.quarkus.io/build-timestamp: 2022-06-23 - 23:53:38 +0000
+  labels:
+    app.kubernetes.io/name: hello-workflow
+  name: hello-workflow
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hello-workflow
+    spec:
+      containerConcurrency: 0
+      containers:
+        - image: image-registry.openshift-image-registry.svc:5000/kogito-serverless/serverless-workflow-greeting-quarkus:1.0-native
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/live
+              port: null
+              scheme: HTTP
+            initialDelaySeconds: 0
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+          name: hello-workflow
+          ports:
+            - containerPort: 8080
+              name: http1
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/ready
+              port: null
+              scheme: HTTP
+            initialDelaySeconds: 0
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Once the files are generated, you must add the <code>imagePullPolicy</code> manually before deploying the workflow application.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Enter the following command to deploy the workflow application using <code>oc</code>:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Deploy the workflow application using <code>oc</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">oc apply -f target/kubernetes/knative.yml</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Verify if the workflow application is deployed correctly:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset3_on-openshift-cli"></a>On OpenShift CLI</p>
+</li>
+<li>
+<p><a id="tabset3_on-knative-cli"></a>On Knative CLI</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset3_on-openshift-cli">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">oc get services.serving.knative.dev hello-workflow</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_on-knative-cli">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service list hello-workflow</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">NAME             URL                                                                                LATEST                 AGE    CONDITIONS   READY   REASON
+hello-workflow   http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   hello-workflow-00001   7m6s   3 OK / 3     True</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="openblock">
+<div class="title">Use the URL in the output to send request to your workflow application.</div>
+<div class="content">
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{"id":"0f77abce-837e-4bd2-b4f1-a0e5e0265fcb","workflowdata":{"name":"John","language":"English","greeting":"Hello from JSON Workflow, "}}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="proc-deploy-sw-application-quarkus-cli"><a class="anchor" href="#proc-deploy-sw-application-quarkus-cli"></a>Deploying your workflow application using Quarkus CLI</h3>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Workflow application is ready.</p>
+</li>
+<li>
+<p>Quarkus CLI is installed.<br>
+For more information, see <a href="https://quarkus.io/guides/cli-tooling">Building Quarkus Apps with Quarkus command line interface (CLI)</a>.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Add the Quarkus extensions to deploy the <code>knative</code> service.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>You can add the OpenShift and the Kogito Knative extensions to your project with the Quarkus CLI:</p>
+</div>
+<div class="listingblock">
+<div class="title">Add OpenShift and Kogito Knative extensions to the project with Quarkus CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus ext add quarkus-openshift kogito-addons-quarkus-knative-eventing</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>To deploy the workflow application using Quarkus CLI, set the following system properties in <code>application.properties</code> file:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Required system properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.knative.name=hello-workflow <i class="conum" data-value="1"></i><b>(1)</b>
+quarkus.kubernetes.deployment-target=knative <i class="conum" data-value="2"></i><b>(2)</b>
+quarkus.kubernetes.deploy=true <i class="conum" data-value="3"></i><b>(3)</b>
+quarkus.container-image.push=true <i class="conum" data-value="4"></i><b>(4)</b>
+quarkus.container-image.group=kogito-serverless <i class="conum" data-value="5"></i><b>(5)</b>
+quarkus.container-image.registry=image-registry.openshift-image-registry.svc:5000 <i class="conum" data-value="6"></i><b>(6)</b>
+quarkus.container-image.tag=1.0-SNAPSHOT <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Property to set the Knative service name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Property to set the target deployment type</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Property to set whether or not deploy on an active OpenShift cluster</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>This property should be removed if deploying on OpenShift Clusters</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Property to define which registry group/namespace the built image belongs to</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Property to define to which registry the built image will be pushed to</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Sets the built Container Image tag</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This feature works with Quarkus 2.10.2.Final or later. For more information, see
+<a href="https://github.com/quarkusio/quarkus/issues/26385">link</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">Build and Deploy your workflow application</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus build -DskipTests</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <code>kogito-examples</code> already have this extension added by default, and can be activated with the <code>container</code> Maven profile.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Verify if the workflow application is deployed correctly:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset4_on-openshift-cli"></a>On OpenShift CLI</p>
+</li>
+<li>
+<p><a id="tabset4_on-knative-cli"></a>On Knative CLI</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset4_on-openshift-cli">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">oc get services.serving.knative.dev hello-workflow</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset4_on-knative-cli">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn service list hello-workflow</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example output</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">NAME             URL                                                                                LATEST                 AGE    CONDITIONS   READY   REASON
+hello-workflow   http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io   hello-workflow-00001   7m6s   3 OK / 3     True</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="openblock">
+<div class="title">Use the URL in the output to send request to your workflow application.</div>
+<div class="content">
+<div class="listingblock">
+<div class="title">Example request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://hello-workflow.serverless-workflow-greeting-quarkus.10.103.94.37.sslip.io/jsongreet</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{"id":"0f77abce-837e-4bd2-b4f1-a0e5e0265fcb","workflowdata":{"name":"John","language":"English","greeting":"Hello from JSON Workflow, "}}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/tabsBehavior.js"></script>
+<script src="../../../../_/js/vendor/lunr.js"></script>
+<script src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.." data-snippet-length="100" data-stylesheet="../../../../_/css/search.css"></script>
+<script async src="../../../../search-index.js"></script>
+  </body>
+</html>

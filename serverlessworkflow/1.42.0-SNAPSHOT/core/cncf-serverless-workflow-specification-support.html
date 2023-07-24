@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Serverless Workflow Specification :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="CNCF Serverless Workflow Specification Support">
+    <meta name="keywords" content="kogito, workflow, serverless, cncf, specification">
+    <meta name="generator" content="Antora 3.1.4">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.42.0-SNAPSHOT">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../release_notes.html">Release notes</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating a Quarkus Workflow Project</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="cncf-serverless-workflow-specification-support.html">Serverless Workflow Specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="handling-events-on-workflows.html">Events</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="working-with-callbacks.html">Callbacks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="understanding-jq-expressions.html">jq Expressions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="understanding-workflow-error-handling.html">Error handling</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="configuration-properties.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="defining-an-input-schema-for-workflows.html">Input Schema</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="custom-functions-support.html">Custom Functions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timeouts-support.html">Timeouts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="working-with-parallelism.html">Parallelism</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-overview.html">Editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome extension for GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">Integration with GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">Integration with OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Integration with Service Registries</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deployment</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">OpenAPI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Advanced Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../service-orchestration/working-with-openapi-callbacks.html">Callbacks</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">gRPC</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Event Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/orchestration-of-asyncapi-based-services.html">AsyncAPI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event Correlation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Knative Eventing</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Client Authentication</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">OpenAPI Authentication</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">OpenAPI OAuth2</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing, Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing and Testing Workflows</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Developer UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-custom-dashboard-page.html">Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/kn-plugin-workflow-overview.html">Command Line</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing with REST Assured</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">PostgreSQL Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../persistence/postgresql-flyway-migration.html">PostgreSQL Database Migration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../persistence/integration-tests-with-postgresql.html">Integration Tests with PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../cloud/index.html">Cloud</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Operator</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/install-serverless-operator.html">Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/developing-workflows.html">Development Mode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/referencing-resource-files.html">Referencing Workflow Resources</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/configuring-workflows.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/build-and-deploy-workflows.html">Building and Deploying Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/workflow-status-conditions.html">Custom Resource Status</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/known-issues.html">Known Issues</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/build-workflow-image-with-quarkus-cli.html">Building Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-minikube.html">Deploying on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-kubernetes.html">Deploying on Kubernetes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-openshift.html">Deploying on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/kubernetes-service-discovery.html">Service Discovery</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/camel-routes-integration.html">Camel Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/custom-functions-knative.html">Knative Serving</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing Prometheus Metrics</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow Data in Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Job Service</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../job-services/core-concepts.html">Core Concepts</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga Orchestration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/timeout-showcase-example.html">Timeouts Showcase</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.42-RC</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">1.42-RC</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../latest/index.html">1.41</a>
+        </li>
+        <li class="version">
+          <a href="../../1.40.0.Final/index.html">1.40</a>
+        </li>
+        <li class="version">
+          <a href="../../1.40.0-SNAPSHOT/index.html">1.40-RC</a>
+        </li>
+        <li class="version">
+          <a href="../../1.39.0.Final/index.html">1.39</a>
+        </li>
+        <li class="version">
+          <a href="../../1.38.0.Final/index.html">1.38</a>
+        </li>
+        <li class="version">
+          <a href="../../1.37.0.Final/index.html">1.37</a>
+        </li>
+        <li class="version">
+          <a href="../../1.36.1.Final/index.html">1.36</a>
+        </li>
+        <li class="version">
+          <a href="../../1.35.0.Final/index.html">1.35</a>
+        </li>
+        <li class="version">
+          <a href="../../1.34.0.Final/index.html">1.34</a>
+        </li>
+        <li class="version">
+          <a href="../../1.33.0.Final/index.html">1.33</a>
+        </li>
+        <li class="version">
+          <a href="../../1.32.0.Final/index.html">1.32</a>
+        </li>
+        <li class="version">
+          <a href="../../1.31.1.Final/index.html">1.31</a>
+        </li>
+        <li class="version">
+          <a href="../../1.30.0.Final/index.html">1.30</a>
+        </li>
+        <li class="version">
+          <a href="../../1.29.0.Final/index.html">1.29</a>
+        </li>
+        <li class="version">
+          <a href="../../1.28.0.Final/index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Core Concepts</li>
+    <li><a href="cncf-serverless-workflow-specification-support.html">Serverless Workflow Specification</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.42-RC</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/core/cncf-serverless-workflow-specification-support.html">snapshot</a>
+    <a class="version is-current" href="cncf-serverless-workflow-specification-support.html">1.42-RC</a>
+    <a class="version" href="../../latest/core/cncf-serverless-workflow-specification-support.html">1.41</a>
+    <a class="version is-missing" href="../../1.40.0.Final/index.html">1.40</a>
+    <a class="version is-missing" href="../../1.40.0-SNAPSHOT/index.html">1.40-RC</a>
+    <a class="version is-missing" href="../../1.39.0.Final/index.html">1.39</a>
+    <a class="version is-missing" href="../../1.38.0.Final/index.html">1.38</a>
+    <a class="version is-missing" href="../../1.37.0.Final/index.html">1.37</a>
+    <a class="version is-missing" href="../../1.36.1.Final/index.html">1.36</a>
+    <a class="version is-missing" href="../../1.35.0.Final/index.html">1.35</a>
+    <a class="version is-missing" href="../../1.34.0.Final/index.html">1.34</a>
+    <a class="version is-missing" href="../../1.33.0.Final/index.html">1.33</a>
+    <a class="version is-missing" href="../../1.32.0.Final/index.html">1.32</a>
+    <a class="version is-missing" href="../../1.31.1.Final/index.html">1.31</a>
+    <a class="version is-missing" href="../../1.30.0.Final/index.html">1.30</a>
+    <a class="version is-missing" href="../../1.29.0.Final/index.html">1.29</a>
+    <a class="version is-missing" href="../../1.28.0.Final/index.html">1.28</a>
+    <a class="version is-missing" href="../../1.27.0.Final/index.html">1.27</a>
+    <a class="version is-missing" href="../../1.26.0.Final/index.html">1.26</a>
+    <a class="version is-missing" href="../../1.25.0.Final/index.html">1.25</a>
+    <a class="version is-missing" href="../../1.24.1.Final/index.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.42.x/serverlessworkflow/modules/ROOT/pages/core/cncf-serverless-workflow-specification-support.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Serverless Workflow Specification</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes the information about the implementation of the <a href="https://serverlessworkflow.io/">Cloud Native Computing Foundation (CNCF) Serverless Workflow</a> specification. Kogito Serverless Workflow implements version <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md">0.8</a> of the Serverless Workflow specification.</p>
+</div>
+<div class="paragraph">
+<p>The following table shows the implementation status for each Serverless Workflow specification feature.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Kogito Serverless Workflow does not support <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Retry-Definition">Retries</a>, <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#sleep-state">Sleep
+State</a>, and has a limited support of <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-timeouts">Timeouts</a> features of Serverless Workflow
+specification.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Implementation status icons</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Icon</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fully implemented feature and compliant with the Serverless Workflow specification</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f317.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Partially implemented feature</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f6a7.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not implemented</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Implementation status of the Serverless Workflow specification features</caption>
+<colgroup>
+<col style="width: 35%;">
+<col style="width: 30%;">
+<col style="width: 35%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Feature</th>
+<th class="tableblock halign-left valign-top">Status</th>
+<th class="tableblock halign-left valign-top">Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#states">States</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-states">Workflow States</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#functions">Functions</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f317.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Function-Definition">Function Definition</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#events">Events</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f317.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-Definition">Event Definition</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#workflow_data">Serverless Workflow data</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Workflow-Data">Workflow Data</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#expressions">Expressions</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Workflow-Expressions">Workflow Expressions</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#error_handling">Error handling</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Workflow-Error-Handling">Workflow Error Handling</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#retries">Retries</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f6a7.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Retry-Definition">Retry Definition</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#timeouts">Timeouts</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f317.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-timeouts">Workflow Timeouts</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#compensation">Compensation</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Workflow-Compensation">Workflow Compensation</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#constants">Constants</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-constants">Workflow Constants</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#secrets">Secrets</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-secrets">Workflow Secrets</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="states"><a class="anchor" href="#states"></a>States</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#parallel-state">Parallel State</a> of the workflow states feature works in a single thread. This means that a Parallel State does not create one thread per branch, simulating an actual parallel behavior.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>If an exclusive property is set to `false`, you should not use the link:{spec_doc_url}#event-state[Event State] of the workflow states feature as the starting state. In case, if it is specified that way, then it will behave as if an exclusive property was set to `true`.</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Kogito Serverless Workflow does not support the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#sleep-state">Sleep State</a> feature. However, this feature will be supported in a future release.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The following table shows all the workflow states that Kogito Serverless Workflow supports in the Serverless Workflow specification 0.8 version:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. Workflow States implementation status</caption>
+<colgroup>
+<col style="width: 35%;">
+<col style="width: 30%;">
+<col style="width: 35%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">State</th>
+<th class="tableblock halign-left valign-top">Status</th>
+<th class="tableblock halign-left valign-top">Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Event</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f317.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-State">Event State</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Operation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Operation-State">Operation State</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Switch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Switch-State">Switch State</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sleep</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f6a7.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#sleep-state">Sleep State</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parallel</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f317.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Parallel-State">Parallel State</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inject</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Inject-State">Inject State</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ForEach</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#ForEach-State">ForEach State</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Callback</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Callback-State">Callback State</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following table shows the status of the workflow functions that Kogito Serverless Workflow supports:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. Workflow Functions implementation status</caption>
+<colgroup>
+<col style="width: 35%;">
+<col style="width: 30%;">
+<col style="width: 35%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Status</th>
+<th class="tableblock halign-left valign-top">Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#using-functions-for-restful-service-invocations">Using Functions for RESTful Service Invocations</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RPC</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#using-functions-for-rpc-service-invocations">Using Functions for RPC Service Invocations</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Expression</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#using-functions-for-expression-evaluation">Using Functions for Expression Evaluation</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Async API</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f6a7.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#using-functions-for-async-api-service-invocations">Using Functions for Async API Service Invocations</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GraphQL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f6a7.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#using-functions-for-graphql-service-invocations">Using Functions for GraphQL Service Invocations</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OData</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f6a7.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#using-functions-for-odata-service-invocations">Using Functions for OData Service Invocations</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Custom</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><img class="emoji" draggable="false" height="24px" width="24px" src="https://twemoji.maxcdn.com/2/svg/1f315.svg" /></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#defining-custom-function-types">Defining custom function types</a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>For additional functions, the Serverless Workflow specification support the <code>custom</code> function type, such as <code>sysout</code> and <code>java</code>. For more information about these custom function types, see <a href="custom-functions-support.html" class="xref page">Custom functions for your Kogito Serverless Workflow service</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="events"><a class="anchor" href="#events"></a>Events</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito Serverless Workflow supports events of the workflow model as defined in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Event-Definition">Serverless Workflow specification definition</a>, except the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>resultEventRef</code> property in <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#eventref-definition"><code>EventRefDefinition</code></a> is not implemented and, if specified, this property is ignored. The same functionality can be achieved by using <a href="working-with-callbacks.html" class="xref page">Callback</a> state.</p>
+</li>
+<li>
+<p><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#correlation-definition">Correlation</a> has limited support, that evaluates correlation rules matching a single event consumed per time with a workflow instance. The correlation among <code>N</code> different events to be consumed and matched with a workflow instance is not supported in Kogito Serverless Workflow. For more information about event correlation, see <a href="../eventing/event-correlation-with-workflows.html" class="xref page">Event correlation in Kogito Serverless Workflow</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="workflow_data"><a class="anchor" href="#workflow_data"></a>Serverless Workflow data</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito Serverless Workflow supports the implementation of the data manipulation feature using <code>jq</code> (default) or <code>jsonpath</code> expressions.</p>
+</div>
+<div class="paragraph">
+<p><code>jsonpath</code> expressions can have limitations in specific scenarios of complex data manipulation. For more information, see <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-data">Workflow Data</a> section in the Serverless Workflow specification documentation.</p>
+</div>
+<div class="paragraph">
+<p>Kogito Serverless Workflow also supports data filtering. For more information about the data filtering, see <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#state-data-filters">State data filters</a> section in the Serverless Workflow specification documentation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="expressions"><a class="anchor" href="#expressions"></a>Expressions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito Serverless Workflow supports <code>jq</code> or <code>jsonpath</code> to define the workflow expressions. <code>jq</code> is the default expression language, however, if you want to use <code>jsonpath</code>, set the <code>expressionLang</code> attribute in the workflow definition as shown in the following example:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of changing the default expression language</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "myworkflow",
+  "version": "1.0",
+  "expressionLang": "jsonpath",
+  "name": "Workflow example",
+  "description": "An example of how to use jsonpath expressions"
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>jsonpath</code> expression is not recommended because of the limitations of the language for data manipulation. Instead, you can use <code>jq</code> in various use cases.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="error_handling"><a class="anchor" href="#error_handling"></a>Error handling</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito Serverless Workflow supports the error handling feature as described in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-error-handling">Serverless Workflow specification definition</a>.</p>
+</div>
+<div class="paragraph">
+<p>For more information about error handling, see <a href="understanding-workflow-error-handling.html" class="xref page">Error handling in Kogito Serverless Workflow</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="retries"><a class="anchor" href="#retries"></a>Retries</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito Serverless Workflow does not support Retries feature, however, it will be implemented in a future release.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can use <a href="understanding-workflow-error-handling.html" class="xref page">Error handling in Kogito Serverless Workflow</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="timeouts"><a class="anchor" href="#timeouts"></a>Timeouts</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito Serverless Workflow has limited support for the timeouts feature, which covers only workflow and event timeouts.</p>
+</div>
+<div class="paragraph">
+<p>For start event state the <code>exclusive</code> property is not supported if set to <code>false</code>, therefore the timeout is not supported for the event state when starting a workflow.</p>
+</div>
+<div class="paragraph">
+<p>For more information about timeouts, see <a href="timeouts-support.html" class="xref page">Timeouts on events for Kogito Serverless Workflow</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="compensation"><a class="anchor" href="#compensation"></a>Compensation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito Serverless Workflow supports workflow compensation as described in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#Workflow-Compensation">Serverless Workflow specification definition</a>.</p>
+</div>
+<div class="paragraph">
+<p>For more information about compensations, see <a href="../use-cases/orchestration-based-saga-pattern.html" class="xref page">Saga orchestration example in Kogito Serverless Workflow</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="constants"><a class="anchor" href="#constants"></a>Constants</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito Serverless Workflow supports workflow constants as described in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-constants">Serverless Workflow specification definition</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="secrets"><a class="anchor" href="#secrets"></a>Secrets</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito Serverless Workflow supports workflow secrets as described in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-secrets">Serverless Workflow specification definition</a>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Secrets are associated with the <a href="https://quarkus.io/guides/config-reference">Quarkus Configuration</a> module. This means that any form of configuration that Quarkus supports is also supported in Kogito Serverless Workflow.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow service</a></p>
+</li>
+<li>
+<p><a href="../getting-started/getting-familiar-with-our-tooling.html" class="xref page">Getting familiar with Kogito Serverless Workflow tooling</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

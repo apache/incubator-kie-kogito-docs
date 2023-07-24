@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Running a Quarkus Workflow Application using PostgreSQL :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Running Quarkus Workflow Application using PostgresSQL">
+    <meta name="keywords" content="kogito, workflow, quarkus, serverless, quarkus-cli, persistence, postgresql">
+    <meta name="generator" content="Antora 3.1.4">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.42.0-SNAPSHOT">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../release_notes.html">Release notes</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating a Quarkus Workflow Project</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/cncf-serverless-workflow-specification-support.html">Serverless Workflow Specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/handling-events-on-workflows.html">Events</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/working-with-callbacks.html">Callbacks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-jq-expressions.html">jq Expressions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-workflow-error-handling.html">Error handling</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/configuration-properties.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/defining-an-input-schema-for-workflows.html">Input Schema</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/custom-functions-support.html">Custom Functions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/timeouts-support.html">Timeouts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/working-with-parallelism.html">Parallelism</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-overview.html">Editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome extension for GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">Integration with GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">Integration with OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Integration with Service Registries</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deployment</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">OpenAPI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Advanced Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../service-orchestration/working-with-openapi-callbacks.html">Callbacks</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">gRPC</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Event Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/orchestration-of-asyncapi-based-services.html">AsyncAPI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event Correlation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Knative Eventing</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Client Authentication</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">OpenAPI Authentication</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">OpenAPI OAuth2</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing, Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing and Testing Workflows</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Developer UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-custom-dashboard-page.html">Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/kn-plugin-workflow-overview.html">Command Line</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing with REST Assured</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="persistence-with-postgresql.html">PostgreSQL Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="postgresql-flyway-migration.html">PostgreSQL Database Migration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="integration-tests-with-postgresql.html">Integration Tests with PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../cloud/index.html">Cloud</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Operator</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/install-serverless-operator.html">Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/developing-workflows.html">Development Mode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/referencing-resource-files.html">Referencing Workflow Resources</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/configuring-workflows.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/build-and-deploy-workflows.html">Building and Deploying Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/workflow-status-conditions.html">Custom Resource Status</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/known-issues.html">Known Issues</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/build-workflow-image-with-quarkus-cli.html">Building Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-minikube.html">Deploying on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-kubernetes.html">Deploying on Kubernetes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-openshift.html">Deploying on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/kubernetes-service-discovery.html">Service Discovery</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/camel-routes-integration.html">Camel Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/custom-functions-knative.html">Knative Serving</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing Prometheus Metrics</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow Data in Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Job Service</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../job-services/core-concepts.html">Core Concepts</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga Orchestration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/timeout-showcase-example.html">Timeouts Showcase</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.42-RC</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">1.42-RC</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../latest/index.html">1.41</a>
+        </li>
+        <li class="version">
+          <a href="../../1.40.0.Final/index.html">1.40</a>
+        </li>
+        <li class="version">
+          <a href="../../1.40.0-SNAPSHOT/index.html">1.40-RC</a>
+        </li>
+        <li class="version">
+          <a href="../../1.39.0.Final/index.html">1.39</a>
+        </li>
+        <li class="version">
+          <a href="../../1.38.0.Final/index.html">1.38</a>
+        </li>
+        <li class="version">
+          <a href="../../1.37.0.Final/index.html">1.37</a>
+        </li>
+        <li class="version">
+          <a href="../../1.36.1.Final/index.html">1.36</a>
+        </li>
+        <li class="version">
+          <a href="../../1.35.0.Final/index.html">1.35</a>
+        </li>
+        <li class="version">
+          <a href="../../1.34.0.Final/index.html">1.34</a>
+        </li>
+        <li class="version">
+          <a href="../../1.33.0.Final/index.html">1.33</a>
+        </li>
+        <li class="version">
+          <a href="../../1.32.0.Final/index.html">1.32</a>
+        </li>
+        <li class="version">
+          <a href="../../1.31.1.Final/index.html">1.31</a>
+        </li>
+        <li class="version">
+          <a href="../../1.30.0.Final/index.html">1.30</a>
+        </li>
+        <li class="version">
+          <a href="../../1.29.0.Final/index.html">1.29</a>
+        </li>
+        <li class="version">
+          <a href="../../1.28.0.Final/index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Persistence</li>
+    <li>Quarkus</li>
+    <li><a href="persistence-with-postgresql.html">PostgreSQL Configuration</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.42-RC</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/persistence/persistence-with-postgresql.html">snapshot</a>
+    <a class="version is-current" href="persistence-with-postgresql.html">1.42-RC</a>
+    <a class="version" href="../../latest/persistence/persistence-with-postgresql.html">1.41</a>
+    <a class="version" href="../../1.40.0.Final/persistence/persistence-with-postgresql.html">1.40</a>
+    <a class="version" href="../../1.40.0-SNAPSHOT/persistence/persistence-with-postgresql.html">1.40-RC</a>
+    <a class="version" href="../../1.39.0.Final/persistence/persistence-with-postgresql.html">1.39</a>
+    <a class="version" href="../../1.38.0.Final/persistence/persistence-with-postgresql.html">1.38</a>
+    <a class="version" href="../../1.37.0.Final/persistence/persistence-with-postgresql.html">1.37</a>
+    <a class="version" href="../../1.36.1.Final/persistence/persistence-with-postgresql.html">1.36</a>
+    <a class="version" href="../../1.35.0.Final/persistence/persistence-with-postgresql.html">1.35</a>
+    <a class="version" href="../../1.34.0.Final/persistence/persistence-with-postgresql.html">1.34</a>
+    <a class="version" href="../../1.33.0.Final/persistence/persistence-with-postgresql.html">1.33</a>
+    <a class="version" href="../../1.32.0.Final/persistence/persistence-with-postgresql.html">1.32</a>
+    <a class="version" href="../../1.31.1.Final/persistence/persistence-with-postgresql.html">1.31</a>
+    <a class="version" href="../../1.30.0.Final/persistence/persistence-with-postgresql.html">1.30</a>
+    <a class="version" href="../../1.29.0.Final/persistence/persistence-with-postgresql.html">1.29</a>
+    <a class="version" href="../../1.28.0.Final/persistence/persistence-with-postgresql.html">1.28</a>
+    <a class="version" href="../../1.27.0.Final/persistence/persistence-with-postgresql.html">1.27</a>
+    <a class="version" href="../../1.26.0.Final/persistence/persistence-with-postgresql.html">1.26</a>
+    <a class="version" href="../../1.25.0.Final/persistence/persistence-with-postgresql.html">1.25</a>
+    <a class="version" href="../../1.24.1.Final/persistence/persistence-with-postgresql.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.42.x/serverlessworkflow/modules/ROOT/pages/persistence/persistence-with-postgresql.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Running a Quarkus Workflow Application using PostgreSQL</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes how you can run your workflow application using PostgreSQL persistence.</p>
+</div>
+<div class="paragraph">
+<p>When your workflow execution requires <code>wait</code> states, then running your workflow application with persistence enabled is a recommended approach.</p>
+</div>
+<div class="paragraph">
+<p>For example, when a process reaches a <code>callback</code> or needs to wait for an event, then the execution of the process is paused and the engine takes a snapshot of the workflow data. The snapshot is persisted in the database as a binary format along with process metadata information. The process metadata information includes process ID, process instance ID, and process version.</p>
+</div>
+<div class="paragraph">
+<p>Runtime persistence is used for storing data, which is required to resume the workflow execution of a process instance. Once a process is completed, the related data is removed from the database. This means that only required data to resume the execution is persisted.</p>
+</div>
+<div class="paragraph">
+<p>In Kogito Serverless Workflow, you can enable persistence using add-ons. This document describes the use of the <code>kogito-addons-quarkus-persistence-jdbc</code> add-on, which is based on Java Database Connectivity (JDBC) along with PostgreSQL.</p>
+</div>
+<div class="paragraph">
+<p>The <code>kogito-addons-quarkus-persistence-jdbc</code> add-on also extends on the Quarkus capabilities and you can use the available features directly from Quarkus JDBC support. For more information about Quarkus and JDBC, see <a href="https://quarkus.io/guides/datasource">Quarkus Datasources</a>.</p>
+</div>
+<div class="paragraph">
+<p>You can also see the <code>serverless-workflow-callback-quarkus</code> example application in GitHub repository. To execute the <code>serverless-workflow-callback-quarkus</code> example application, you can follow the instructions mentioned in the <code>README</code> file. To clone the <code>kogito-example</code> repository, use the following command:</p>
+</div>
+<div class="listingblock">
+<div class="title">Clone <code>kogito-examples</code> repository</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">git clone git@github.com:kiegroup/kogito-examples.git</code></pre>
+</div>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>A workflow project is created.</p>
+<div class="paragraph">
+<p>For more information about creating a workflow project, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first Serverless Workflow service</a>.</p>
+</div>
+</li>
+<li>
+<p>Docker is installed.</p>
+</li>
+<li>
+<p><a href="https://www.postgresql.org/">PostgreSQL</a> is installed. For information about PostgreSQL installation and configuration, see <a href="https://www.postgresql.org/docs/current/">PostgreSQL documentation</a>.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This document relies on running PostgreSQL as a Docker service, even though PostgreSQL installation is mentioned as a prerequisite.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Add required dependencies to the <code>pom.xml</code> file of your project to use the persistence add-on:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">JDBC persistence add-on</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+  &lt;artifactId&gt;kogito-addons-quarkus-persistence-jdbc&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Quarkus JDBC PostgreSQL</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
+  &lt;artifactId&gt;quarkus-jdbc-postgresql&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Quarkus Agroal data source</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
+  &lt;artifactId&gt;quarkus-agroal&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Add the following properties to the <code>application.properties</code> file of your project:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Persistence property</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">kogito.persistence.type=jdbc</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Quarkus properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.datasource.db-kind=postgresql
+quarkus.datasource.username=postgres
+quarkus.datasource.password=pass
+quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/postgres</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Create PostgreSQL database schema.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The persistence add-on uses <a href="https://flywaydb.org/">Flyway</a> to create the database schema. To enable the database schema creation during the runtime startup, you must set the following properties in the <code>application.properties</code> file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.flyway.migrate-at-start=true
+quarkus.datasource.db-kind=postgresql</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can find more details regarding the PostgreSQL database schema migration in the <a href="postgresql-flyway-migration.html" class="xref page">Flyway migration guide</a>.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Optional: To handle the concurrent requests to shared workflow instances, enable the persistence-enabled optimistic locking for concurrency control using the version field in the database.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Add <code>kogito.persistence.optimistic.lock=true</code> property in the <code>application.properties</code> file of your project to enable the optimistic locking.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Change the version in the workflow file.</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">Example workflow file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "applicantworkflow",
+  "name": "Applicant Workflow",
+  "version": "1.0"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The versioning strategy is used to allow different workflow applications to run different versions of a process at the same time. The different versions of a process share the same database. This is useful when you migrate a process from one version to another. When allowing workflow instances to finish executing, a new version can be deployed using a new workflow application setup.</p>
+</div>
+<div class="paragraph">
+<p>By default, the engine considers the <code>version</code> specified in the workflow file as the current version of the asset. Therefore, you need to manually change the <code>version</code> in the workflow file, making the engine consider the specified version as a new version.</p>
+</div>
+<div class="paragraph">
+<p>As an alternative, you can set the <code>kogito.workflow.version-strategy=project</code> property in the <code>application.properties</code> file of your project. This enables the engine to consider the Maven or Gradle project version as the version of all workflows in the project. For instance, when you release a new version of your Maven project, the version in the workflow file is automatically updated.</p>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ref-postgresql-persistence-configuration"><a class="anchor" href="#ref-postgresql-persistence-configuration"></a>Persistence configuration quick reference</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following table serves as a quick reference of commonly used persistence configuration properties supported in Kogito Serverless Workflow. You can define these properties in the <code>application.properties</code> file of your project.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Persistence properties</caption>
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 30%;">
+<col style="width: 30%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Configuration property</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.persistence.type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.persistence.query.timeout.millis</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">long</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>10000</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.persistence.optimistic.lock</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.workflow.version-strategy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>workflow</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="postgresql-persistence-additional-resources"><a class="anchor" href="#postgresql-persistence-additional-resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="integration-tests-with-postgresql.html" class="xref page">Kogito Serverless Workflow integration test using PostgreSQL</a></p>
+</li>
+<li>
+<p><a href="postgresql-flyway-migration.html" class="xref page">Migrating Your PostgreSQL Database with a Kogito upgrade</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>

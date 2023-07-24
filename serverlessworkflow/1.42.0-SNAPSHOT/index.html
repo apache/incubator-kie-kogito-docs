@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Kogito Serverless Workflow Guides :: Kogito Serverless Workflow Guides</title>
+    <meta name="generator" content="Antora 3.1.4">
+    <link rel="stylesheet" href="../../_/css/site.css">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../_/css/search.css">
+<link rel="stylesheet" href="../../_/css/menu.css">
+<link rel="stylesheet" href="../../_/css/tabs.css">
+<link rel="stylesheet" href="../../_/css/navbar.css">
+<link rel="stylesheet" href="../../_/css/custom.css">
+<link rel="stylesheet" href="../../_/css/home.css"><script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../..">
+                    <img src="../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.42.0-SNAPSHOT">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="release_notes.html">Release notes</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="getting-started/create-your-first-workflow-service.html">Creating a Quarkus Workflow Project</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="core/cncf-serverless-workflow-specification-support.html">Serverless Workflow Specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="core/handling-events-on-workflows.html">Events</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="core/working-with-callbacks.html">Callbacks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="core/understanding-jq-expressions.html">jq Expressions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="core/understanding-workflow-error-handling.html">Error handling</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="core/configuration-properties.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="core/defining-an-input-schema-for-workflows.html">Input Schema</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="core/custom-functions-support.html">Custom Functions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="core/timeouts-support.html">Timeouts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="core/working-with-parallelism.html">Parallelism</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="tooling/serverless-workflow-editor/swf-editor-overview.html">Editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome extension for GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">Integration with GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">Integration with OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Integration with Service Registries</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deployment</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="service-orchestration/orchestration-of-openapi-based-services.html">OpenAPI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="service-orchestration/configuring-openapi-services-endpoints.html">Advanced Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="service-orchestration/working-with-openapi-callbacks.html">Callbacks</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="service-orchestration/orchestration-of-grpc-services.html">gRPC</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Event Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="eventing/orchestration-of-asyncapi-based-services.html">AsyncAPI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="eventing/event-correlation-with-workflows.html">Event Correlation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="eventing/consume-producing-events-with-kafka.html">Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="eventing/consume-produce-events-with-knative-eventing.html">Knative Eventing</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Client Authentication</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="security/authention-support-for-openapi-services.html">OpenAPI Authentication</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="security/orchestrating-third-party-services-with-oauth2.html">OpenAPI OAuth2</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing, Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing and Testing Workflows</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Developer UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-custom-dashboard-page.html">Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="testing-and-troubleshooting/kn-plugin-workflow-overview.html">Command Line</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing with REST Assured</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="persistence/persistence-with-postgresql.html">PostgreSQL Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="persistence/postgresql-flyway-migration.html">PostgreSQL Database Migration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="persistence/integration-tests-with-postgresql.html">Integration Tests with PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="cloud/index.html">Cloud</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Operator</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cloud/operator/install-serverless-operator.html">Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cloud/operator/developing-workflows.html">Development Mode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cloud/operator/referencing-resource-files.html">Referencing Workflow Resources</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cloud/operator/configuring-workflows.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cloud/operator/build-and-deploy-workflows.html">Building and Deploying Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cloud/operator/workflow-status-conditions.html">Custom Resource Status</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cloud/operator/known-issues.html">Known Issues</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cloud/quarkus/build-workflow-image-with-quarkus-cli.html">Building Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cloud/quarkus/deploying-on-minikube.html">Deploying on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cloud/quarkus/deploying-on-kubernetes.html">Deploying on Kubernetes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cloud/quarkus/deploying-on-openshift.html">Deploying on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="cloud/quarkus/kubernetes-service-discovery.html">Service Discovery</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="integrations/camel-routes-integration.html">Camel Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="integrations/custom-functions-knative.html">Knative Serving</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="integrations/expose-metrics-to-prometheus.html">Exposing Prometheus Metrics</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow Data in Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Job Service</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="job-services/core-concepts.html">Core Concepts</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="use-cases/orchestration-based-saga-pattern.html">Saga Orchestration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="use-cases/timeout-showcase-example.html">Timeouts Showcase</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.42-RC</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-current">
+          <a href="index.html">1.42-RC</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../latest/index.html">1.41</a>
+        </li>
+        <li class="version">
+          <a href="../1.40.0.Final/index.html">1.40</a>
+        </li>
+        <li class="version">
+          <a href="../1.40.0-SNAPSHOT/index.html">1.40-RC</a>
+        </li>
+        <li class="version">
+          <a href="../1.39.0.Final/index.html">1.39</a>
+        </li>
+        <li class="version">
+          <a href="../1.38.0.Final/index.html">1.38</a>
+        </li>
+        <li class="version">
+          <a href="../1.37.0.Final/index.html">1.37</a>
+        </li>
+        <li class="version">
+          <a href="../1.36.1.Final/index.html">1.36</a>
+        </li>
+        <li class="version">
+          <a href="../1.35.0.Final/index.html">1.35</a>
+        </li>
+        <li class="version">
+          <a href="../1.34.0.Final/index.html">1.34</a>
+        </li>
+        <li class="version">
+          <a href="../1.33.0.Final/index.html">1.33</a>
+        </li>
+        <li class="version">
+          <a href="../1.32.0.Final/index.html">1.32</a>
+        </li>
+        <li class="version">
+          <a href="../1.31.1.Final/index.html">1.31</a>
+        </li>
+        <li class="version">
+          <a href="../1.30.0.Final/index.html">1.30</a>
+        </li>
+        <li class="version">
+          <a href="../1.29.0.Final/index.html">1.29</a>
+        </li>
+        <li class="version">
+          <a href="../1.28.0.Final/index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Kogito Serverless Workflow Guides</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.42-RC</button>
+  <div class="version-menu">
+    <a class="version" href="../main/index.html">snapshot</a>
+    <a class="version is-current" href="index.html">1.42-RC</a>
+    <a class="version" href="../latest/index.html">1.41</a>
+    <a class="version" href="../1.40.0.Final/index.html">1.40</a>
+    <a class="version" href="../1.40.0-SNAPSHOT/index.html">1.40-RC</a>
+    <a class="version" href="../1.39.0.Final/index.html">1.39</a>
+    <a class="version" href="../1.38.0.Final/index.html">1.38</a>
+    <a class="version" href="../1.37.0.Final/index.html">1.37</a>
+    <a class="version" href="../1.36.1.Final/index.html">1.36</a>
+    <a class="version" href="../1.35.0.Final/index.html">1.35</a>
+    <a class="version" href="../1.34.0.Final/index.html">1.34</a>
+    <a class="version" href="../1.33.0.Final/index.html">1.33</a>
+    <a class="version" href="../1.32.0.Final/index.html">1.32</a>
+    <a class="version" href="../1.31.1.Final/index.html">1.31</a>
+    <a class="version" href="../1.30.0.Final/index.html">1.30</a>
+    <a class="version" href="../1.29.0.Final/index.html">1.29</a>
+    <a class="version" href="../1.28.0.Final/index.html">1.28</a>
+    <a class="version" href="../1.27.0.Final/index.html">1.27</a>
+    <a class="version" href="../1.26.0.Final/index.html">1.26</a>
+    <a class="version" href="../1.25.0.Final/index.html">1.25</a>
+    <a class="version" href="../1.24.1.Final/index.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.42.x/serverlessworkflow/modules/ROOT/pages/index.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Kogito Serverless Workflow Guides</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kogito Serverless Workflow is a tool for building cloud-native workflow applications. You can use it to do the services and events orchestration and choreography. Currently, with Kogito Serverless Workflow you can integrate with services and events in your architecture using:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>CloudEvents</strong>. Ideal for an Event-Driven architecture where the services are ready to consume and produce events working in a more reactive way.</p>
+</li>
+<li>
+<p><strong>Sync or Async REST services invocations via OpenAPI/Async API</strong>. There are options even to directly call a REST service in the architecture or ecosystem. Either async or sync methods are supported depending on your requirements.</p>
+</li>
+<li>
+<p><strong>Internal Service execution or invocation</strong>. Kogito Serverless Workflow is also a workflow framework to build applications. You can use it to create custom services in the same thread to run a lightweight workflow-based application within the same instance.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You can learn how to create, manage, and deploy your workflow applications with the following guides.</p>
+</div>
+</div>
+</div>
+<div class="sect1 card-section">
+<h2 id="_getting_started"><a class="anchor" href="#_getting_started"></a>Getting started</h2>
+<div class="sectionbody">
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="getting-started/create-your-first-workflow-service.html" class="xref page">Creating a Quarkus Workflow Project</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to create your first Quarkus Workflow Project</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 card-section">
+<h2 id="_core_concepts"><a class="anchor" href="#_core_concepts"></a>Core Concepts</h2>
+<div class="sectionbody">
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="core/cncf-serverless-workflow-specification-support.html" class="xref page">Serverless Workflow Specification</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn about the CNCF Serverless Workflow Specification implementation</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="core/handling-events-on-workflows.html" class="xref page">Events in Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to use the Event state in your workflow application</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="core/working-with-callbacks.html" class="xref page">Callbacks in Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to use the Callback state in your workflow application</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="core/understanding-jq-expressions.html" class="xref page">jq Expressions</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to create jq expressions to manipulate data within a workflow execution</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="core/understanding-workflow-error-handling.html" class="xref page">Error handling in Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to handle errors in your workflow application</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="core/configuration-properties.html" class="xref page">Configuration properties in Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Quick reference of configuration properties in workflow</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="core/defining-an-input-schema-for-workflows.html" class="xref page">Input and Output schema definition for Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn about the input schema definition used to validate the workflow data input against a defined JSON Schema</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="core/custom-functions-support.html" class="xref page">Custom functions for your Kogito Serverless Workflow service</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn about the custom functions supported by Serverless Workflow</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="core/timeouts-support.html" class="xref page">Timeouts in Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to configure timeouts in the workflow</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="core/working-with-parallelism.html" class="xref page">Parallelism in Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Working with parallelism in your workflow project</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 card-section">
+<h2 id="_tooling"><a class="anchor" href="#_tooling"></a>Tooling</h2>
+<div class="sectionbody">
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="tooling/serverless-workflow-editor/swf-editor-overview.html" class="xref page">Serverless Workflow editor</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to install and use the Serverless Workflow editor</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="tooling/serverless-workflow-editor/swf-editor-vscode-extension.html" class="xref page">VS Code extension for Serverless Workflow editor</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to install and use the VS Code extension for Serverless Workflow editor for creating workflows.</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html" class="xref page">Serverless Logic Web Tools</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to use Serverless Logic Web Tools for creating and managing workflows, decisions, and dashboards.</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="tooling/serverless-workflow-editor/swf-editor-chrome-extension.html" class="xref page">Chrome extension for Serverless Workflow editor on GitHub</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to install and use the Chrome extension for Serverless Workflow editor to view and edit workflows directly in Github.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 card-section">
+<h2 id="_service_orchestration"><a class="anchor" href="#_service_orchestration"></a>Service Orchestration</h2>
+<div class="sectionbody">
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="service-orchestration/orchestration-of-openapi-based-services.html" class="xref page">Orchestrating OpenAPI Services</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to orchestrate REST services using OpenAPI specification descriptors</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="service-orchestration/working-with-openapi-callbacks.html" class="xref page">OpenAPI Callback in Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to use the OpenAPI Callback in your workflow application</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="service-orchestration/orchestration-of-grpc-services.html" class="xref page">Orchestrating gRPC based Services</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn about orchestrating gRPC services</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 card-section">
+<h2 id="_event_orchestration"><a class="anchor" href="#_event_orchestration"></a>Event Orchestration</h2>
+<div class="sectionbody">
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="eventing/orchestration-of-asyncapi-based-services.html" class="xref page">Orchestrating AsyncAPI Services</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to trigger and consume events using AsyncAPI specification descriptors</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="eventing/event-correlation-with-workflows.html" class="xref page">Event correlation in Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to configure event correlation in your workflow application</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="eventing/consume-producing-events-with-kafka.html" class="xref page">Consuming and producing events using Apache Kafka in Quarkus</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to configure your Quarkus Workflow Project to produce and consume events using Apache Kafka</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="eventing/consume-produce-events-with-knative-eventing.html" class="xref page">Consuming and producing events on Knative Eventing in Quarkus</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to configure your Quarkus Workflow Project to produce and consume events on Knative Eventing</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 card-section">
+<h2 id="_security"><a class="anchor" href="#_security"></a>Security</h2>
+<div class="sectionbody">
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="security/authention-support-for-openapi-services.html" class="xref page">Authentication for OpenAPI services in Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to use authentication methods when calling REST services using OpenAPI specification</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="security/orchestrating-third-party-services-with-oauth2.html" class="xref page">Orchestration of third-party services using OAuth 2.0 authentication</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn about the OAuth2 method support when orchestrating REST services using your workflow application</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 card-section">
+<h2 id="_executing_testing_and_troubleshooting"><a class="anchor" href="#_executing_testing_and_troubleshooting"></a>Executing, Testing and Troubleshooting</h2>
+<div class="sectionbody">
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html" class="xref page">Kogito Serverless Workflow Tools extension in Quarkus Dev UI</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to use the Serverless Workflow extension in Quarkus Dev UI</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="testing-and-troubleshooting/kn-plugin-workflow-overview.html" class="xref page">Kogito Serverless Workflow plug-in for Knative CLI</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to install the Kogito Serverless Workflow plug-in for Knative CLI</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html" class="xref page">Mocking HTTP CloudEvents sink using WireMock</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Testing Quarkus Workflow Project that uses HTTP CloudEvents and Knative Sink Binding</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html" class="xref page">Mocking OpenAPI services using WireMock</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to mock external REST requests when testing your Quarkus Workflow Project</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="testing-and-troubleshooting/basic-integration-tests-with-restassured.html" class="xref page">Testing your Quarkus Workflow Application using REST Assured</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to add unit tests in your Quarkus Workflow Project using RestAssured</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 card-section">
+<h2 id="_persistence"><a class="anchor" href="#_persistence"></a>Persistence</h2>
+<div class="sectionbody">
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="persistence/persistence-with-postgresql.html" class="xref page">Running a Quarkus Workflow Application using PostgreSQL</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Running Quarkus Workflow Applications using PostgresSQL</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="persistence/postgresql-flyway-migration.html" class="xref page">PostgreSQL Database Migration</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Migrating your existing PostgreSQL Database with changes from the Kogito Serverless Workflow upgrade using Flyway</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="persistence/integration-tests-with-postgresql.html" class="xref page">Kogito Serverless Workflow integration test using PostgreSQL</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to integrate tests on Quarkus Workflow Applications that use PostgreSQL as a persistence storage</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 card-section">
+<h2 id="_cloud"><a class="anchor" href="#_cloud"></a>Cloud</h2>
+<div class="sectionbody">
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="cloud/index.html" class="xref page">Kogito Serverless Workflow in the Cloud</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn about the options to deploy workflow applications in Kubernetes</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 card-section">
+<h2 id="_integrations"><a class="anchor" href="#_integrations"></a>Integrations</h2>
+<div class="sectionbody">
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="integrations/camel-routes-integration.html" class="xref page">Integrating with Camel routes</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to use Camel Routes within your workflow application</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="integrations/custom-functions-knative.html" class="xref page">Invoking Knative services from Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to invoke Knative Services from Kogito Serverless Workflow custom functions</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="integrations/expose-metrics-to-prometheus.html" class="xref page">Exposing Workflow base metrics to Prometheus</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Exposing the workflow base metrics to Prometheus</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="integrations/serverless-dashboard-with-runtime-data.html" class="xref page">Displaying Workflow Data in Dashboards</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how to use dashboards to display the runtime data of your workflow application</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 card-section">
+<h2 id="_job_service"><a class="anchor" href="#_job_service"></a>Job Service</h2>
+<div class="sectionbody">
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="job-services/core-concepts.html" class="xref page">Job Services Core Concepts</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Details about Job Service to control timers in Kogito Serverless Workflow</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 card-section">
+<h2 id="_use_cases"><a class="anchor" href="#_use_cases"></a>Use Cases</h2>
+<div class="sectionbody">
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="use-cases/orchestration-based-saga-pattern.html" class="xref page">Saga orchestration example in Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how and when to use the SAGA pattern in your workflow projects</p>
+</div>
+</div>
+</div>
+<div class="openblock card">
+<div class="content">
+<div class="paragraph card-title">
+<p><a href="use-cases/timeout-showcase-example.html" class="xref page">Timeouts Showcase in Kogito Serverless Workflow</a></p>
+</div>
+<div class="paragraph card-description">
+<p>Learn how and when to use timeout in your workflow projects</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script src="../../_/js/tabsBehavior.js"></script>
+<script src="../../_/js/vendor/lunr.js"></script>
+<script src="../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../.." data-snippet-length="100" data-stylesheet="../../_/css/search.css"></script>
+<script async src="../../search-index.js"></script>
+  </body>
+</html>

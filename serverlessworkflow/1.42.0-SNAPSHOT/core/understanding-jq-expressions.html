@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>jq Expressions :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="jq expressions in Serverless Workflow">
+    <meta name="keywords" content="kogito, workflow, serverless, jq, expression">
+    <meta name="generator" content="Antora 3.1.4">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.42.0-SNAPSHOT">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../release_notes.html">Release notes</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating a Quarkus Workflow Project</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core Concepts</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="cncf-serverless-workflow-specification-support.html">Serverless Workflow Specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="handling-events-on-workflows.html">Events</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="working-with-callbacks.html">Callbacks</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="understanding-jq-expressions.html">jq Expressions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="understanding-workflow-error-handling.html">Error handling</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="configuration-properties.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="defining-an-input-schema-for-workflows.html">Input Schema</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="custom-functions-support.html">Custom Functions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="timeouts-support.html">Timeouts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="working-with-parallelism.html">Parallelism</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-overview.html">Editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome extension for GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">Integration with GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">Integration with OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Integration with Service Registries</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deployment</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">OpenAPI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Advanced Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../service-orchestration/working-with-openapi-callbacks.html">Callbacks</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">gRPC</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Event Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/orchestration-of-asyncapi-based-services.html">AsyncAPI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event Correlation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Knative Eventing</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Client Authentication</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">OpenAPI Authentication</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">OpenAPI OAuth2</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing, Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing and Testing Workflows</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Developer UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-custom-dashboard-page.html">Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/kn-plugin-workflow-overview.html">Command Line</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing with REST Assured</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">PostgreSQL Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../persistence/postgresql-flyway-migration.html">PostgreSQL Database Migration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../persistence/integration-tests-with-postgresql.html">Integration Tests with PostgreSQL</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../cloud/index.html">Cloud</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Operator</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/install-serverless-operator.html">Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/developing-workflows.html">Development Mode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/referencing-resource-files.html">Referencing Workflow Resources</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/configuring-workflows.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/build-and-deploy-workflows.html">Building and Deploying Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/workflow-status-conditions.html">Custom Resource Status</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/known-issues.html">Known Issues</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/build-workflow-image-with-quarkus-cli.html">Building Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-minikube.html">Deploying on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-kubernetes.html">Deploying on Kubernetes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-openshift.html">Deploying on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/kubernetes-service-discovery.html">Service Discovery</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/camel-routes-integration.html">Camel Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/custom-functions-knative.html">Knative Serving</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing Prometheus Metrics</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow Data in Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Job Service</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../job-services/core-concepts.html">Core Concepts</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga Orchestration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/timeout-showcase-example.html">Timeouts Showcase</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.42-RC</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">1.42-RC</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../latest/index.html">1.41</a>
+        </li>
+        <li class="version">
+          <a href="../../1.40.0.Final/index.html">1.40</a>
+        </li>
+        <li class="version">
+          <a href="../../1.40.0-SNAPSHOT/index.html">1.40-RC</a>
+        </li>
+        <li class="version">
+          <a href="../../1.39.0.Final/index.html">1.39</a>
+        </li>
+        <li class="version">
+          <a href="../../1.38.0.Final/index.html">1.38</a>
+        </li>
+        <li class="version">
+          <a href="../../1.37.0.Final/index.html">1.37</a>
+        </li>
+        <li class="version">
+          <a href="../../1.36.1.Final/index.html">1.36</a>
+        </li>
+        <li class="version">
+          <a href="../../1.35.0.Final/index.html">1.35</a>
+        </li>
+        <li class="version">
+          <a href="../../1.34.0.Final/index.html">1.34</a>
+        </li>
+        <li class="version">
+          <a href="../../1.33.0.Final/index.html">1.33</a>
+        </li>
+        <li class="version">
+          <a href="../../1.32.0.Final/index.html">1.32</a>
+        </li>
+        <li class="version">
+          <a href="../../1.31.1.Final/index.html">1.31</a>
+        </li>
+        <li class="version">
+          <a href="../../1.30.0.Final/index.html">1.30</a>
+        </li>
+        <li class="version">
+          <a href="../../1.29.0.Final/index.html">1.29</a>
+        </li>
+        <li class="version">
+          <a href="../../1.28.0.Final/index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Core Concepts</li>
+    <li><a href="understanding-jq-expressions.html">jq Expressions</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.42-RC</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/core/understanding-jq-expressions.html">snapshot</a>
+    <a class="version is-current" href="understanding-jq-expressions.html">1.42-RC</a>
+    <a class="version" href="../../latest/core/understanding-jq-expressions.html">1.41</a>
+    <a class="version" href="../../1.40.0.Final/core/understanding-jq-expressions.html">1.40</a>
+    <a class="version" href="../../1.40.0-SNAPSHOT/core/understanding-jq-expressions.html">1.40-RC</a>
+    <a class="version" href="../../1.39.0.Final/core/understanding-jq-expressions.html">1.39</a>
+    <a class="version" href="../../1.38.0.Final/core/understanding-jq-expressions.html">1.38</a>
+    <a class="version" href="../../1.37.0.Final/core/understanding-jq-expressions.html">1.37</a>
+    <a class="version" href="../../1.36.1.Final/core/understanding-jq-expressions.html">1.36</a>
+    <a class="version" href="../../1.35.0.Final/core/understanding-jq-expressions.html">1.35</a>
+    <a class="version" href="../../1.34.0.Final/core/understanding-jq-expressions.html">1.34</a>
+    <a class="version" href="../../1.33.0.Final/core/understanding-jq-expressions.html">1.33</a>
+    <a class="version" href="../../1.32.0.Final/core/understanding-jq-expressions.html">1.32</a>
+    <a class="version" href="../../1.31.1.Final/core/understanding-jq-expressions.html">1.31</a>
+    <a class="version" href="../../1.30.0.Final/core/understanding-jq-expressions.html">1.30</a>
+    <a class="version" href="../../1.29.0.Final/core/understanding-jq-expressions.html">1.29</a>
+    <a class="version" href="../../1.28.0.Final/core/understanding-jq-expressions.html">1.28</a>
+    <a class="version" href="../../1.27.0.Final/core/understanding-jq-expressions.html">1.27</a>
+    <a class="version" href="../../1.26.0.Final/core/understanding-jq-expressions.html">1.26</a>
+    <a class="version" href="../../1.25.0.Final/core/understanding-jq-expressions.html">1.25</a>
+    <a class="version" href="../../1.24.1.Final/core/understanding-jq-expressions.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.42.x/serverlessworkflow/modules/ROOT/pages/core/understanding-jq-expressions.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">jq Expressions</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Each workflow instance is associated with a data model. A data model consists of a JSON object regardless of whether the workflow file contains YAML or JSON. The initial content of the JSON object depends on how the workflow is started. If the workflow is created using the <a href="https://cloudevents.io/">Cloud Event</a>, then the workflow content is taken from the <code>data</code> property. However, if the workflow is started through an HTTP POST request, then the workflow content is taken from the request body.</p>
+</div>
+<div class="paragraph">
+<p>The workflow expressions in the <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-expressions">Serverless Workflow specification</a> are used to interact with the data model. The supported expression languages include <a href="https://github.com/json-path/JsonPath/">JsonPath</a> and <a href="https://stedolan.github.io/jq/manual/">jq</a>. jq expression language is the default language. However, you can change the expression language to JsonPath using the <code>expressionLang</code> property.</p>
+</div>
+<div class="paragraph">
+<p>This document describes the usage of jq expressions in switch state conditions, action function arguments, and data filtering.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ref-example-jq-expression-switch-conditions"><a class="anchor" href="#ref-example-jq-expression-switch-conditions"></a>Example of jq expressions in switch conditions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The conditions occurring in a switch state enable the workflow designer to select the path that workflow follows based on the data model content.</p>
+</div>
+<div class="paragraph">
+<p>A condition in a switch state is an expression, which returns a boolean value when evaluated against the data model. If a condition associated with a state transition returns true, then the workflow must follow that transition.</p>
+</div>
+<div class="paragraph">
+<p>For example, in the <a href="https://github.com/kiegroup/kogito-examples/tree/1.42.x/serverless-workflow-examples/serverless-workflow-greeting-quarkus"><code>serverless-workflow-greeting-quarkus</code></a> example application, a message is displayed depending on the selected language, that is English or Spanish.</p>
+</div>
+<div class="paragraph">
+<p>If the value of the <code>language</code> property is English, the constant literal injected on the <code>message</code> property is <em>Hello from</em>, otherwise the constant value injected on the <code>message</code> property is <em>Saludos desde…</em>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/core/switch_condition.png" alt="switch condition">
+</div>
+</div>
+<div class="paragraph">
+<p>The switch state in the <code>serverless-workflow-greeting-quarkus</code> example application contains the following conditions, which in turn contains two jq expressions returning a boolean.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example conditions in <code>serverless-workflow-greeting-quarkus</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"dataConditions": [
+        {
+          "condition": "${ .language == \"English\" }",
+          "transition": "GreetInEnglish"
+        },
+        {
+          "condition": "${ .language == \"Spanish\" }",
+          "transition": "GreetInSpanish"
+        }
+      ]</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The Serverless Workflow specification requires all the expressions to be embedded within <code>${… }</code>. However, Kogito Serverless Workflow figures out whether or not a string is an expression. Therefore, you can save characters and skip <code>${</code> in the beginning and <code>}</code> in the end. In case of portability, you must embed the expressions within <code>${… }</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ref-example-jq-expression-function-arguments"><a class="anchor" href="#ref-example-jq-expression-function-arguments"></a>Example of jq expressions in function arguments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the Serverless Workflow specification, you can define <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-functions">workflow functions</a>, which can be invoked several times by the workflow states. Each workflow function call might contain different arguments, which are specified using the function arguments.</p>
+</div>
+<div class="paragraph">
+<p>For example, you can see the <a href="https://github.com/kiegroup/kogito-examples/tree/1.42.x/serverless-workflow-examples/serverless-workflow-temperature-conversion/conversion-workflow/src/main/resources/fahrenheit-to-celsius.sw.json">temperature conversion</a> function definition in <code>serverless-workflow-temperature-conversion</code> example application. The temperature conversion function performs OpenAPI invocations to convert Fahrenheit to Celsius. For more information about OpenAPI, see <a href="../service-orchestration/orchestration-of-openapi-based-services.html" class="xref page">Orchestrating the OpenAPI services</a>.</p>
+</div>
+<div class="paragraph">
+<p>Following is the <code>subtraction</code> function in <code>serverless-workflow-temperature-conversion</code> example application:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example <code>subtraction</code> function in <code>serverless-workflow-temperature-conversion</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"functions": [
+{
+  "name": "subtraction",
+  "operation": "specs/subtraction.yaml#doOperation"
+}]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The arguments in <code>subtraction</code> function are expressed as a JSON object, and the property values of the JSON object are either a string containing an expression or a <a href="https://www.w3schools.com/js/js_json_datatypes.asp">JSON data type</a>, such as string, number, or boolean.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example arguments in <code>subtraction</code> function</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"functionRef":
+{
+  "refName": "subtraction",
+  "arguments":
+  {
+    "leftElement": ".fahrenheit",
+    "rightElement": ".subtractValue"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example, the left number is equal to the <code>fahrenheit</code> property (an input number that invokes the workflow), and the right number is equal to the <code>subtractValue</code> property (a constant number that is injected to the workflow model by <code>SetConstants</code> state). Once the expression evaluation is resolved for all properties that contain an expression, the resulting object is passed in the OpenAPI request. Based on the OpenAPI definition, the properties in the JSON object are used as body, path, query, or header of the upcoming REST invocation.</p>
+</div>
+<div class="paragraph">
+<p>Following is an example of function arguments defined as string that contains an expression, returning a JSON object:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example function arguments defined as string</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"functionRef": {
+  "refName": "subtraction",
+  "arguments": "{leftElement: .fahrenheit, rightElement : .subtractValue}"
+ }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example, the result of the expression evaluation is the same JSON object than in the first case, which is passed as arguments of the OpenAPI request.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ref-example-jq-expression-data-filtering"><a class="anchor" href="#ref-example-jq-expression-data-filtering"></a>Example of jq expressions in data filtering</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Serverless Workflow specification defines the following filtering mechanisms to select which information must be part of the workflow data model:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#action-data-filters">Action data filters</a>: Select the part of the action result that is merged into the data model, which overrides the properties that share the name with the selected action result.</p>
+</li>
+<li>
+<p><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#event-data-filters">Event data filters</a>: Similar to the action data filters, but apply to the events instead of actions.</p>
+</li>
+<li>
+<p><a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#state-data-filters">State data filters</a>: Define the workflow model to the JSON object, which is returned by the expression and discards an existing property.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">State and Action data filter example</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>You can see <a href="https://github.com/kiegroup/kogito-examples/tree/1.42.x/serverless-workflow-examples/serverless-workflow-expression-quarkus"><code>serverless-workflow-expression-quarkus</code></a> example application, in which actions and state data filters are used.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/core/expression_diagram.png" alt="expression diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Following is an expression function in <code>serverless-workflow-expression-quarkus</code> example application:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example expression function in <code>serverless-workflow-expression-quarkus</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"functions": [
+    {
+      "name": "max",
+      "type": "expression",
+      "operation": "{max: .numbers | max_by(.x), min: .numbers | min_by(.y)}"
+    }
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the previous example, an array of complex numbers (<code>x</code> is real coordinate and <code>y</code> is imaginary coordinate) is accepted and an expression function is defined to calculate the maximum value of <code>x</code> and minimum value of <code>y</code> for the <code>numbers</code> array.</p>
+</div>
+<div class="paragraph">
+<p>Also, the <code>serverless-workflow-expression-quarkus</code> example application contains an action data filter defined inside <code>squareState</code> action and a state data filter defined inside <code>finish</code> state. The action data filter selects the maximum value of <code>x</code> to be merged to the workflow model, and the state data filter defines the maximum value as the entire workflow model that is returned as the workflow response.</p>
+</div>
+<div class="paragraph">
+<p>The previous example expression also contains a <code>max</code> function of type expression and an <code>operation</code> property containing a string of jq expression. This jq expression returns a JSON object, in which the <code>max</code> property is the maximum value of the <code>x</code> coordinate and the <code>min</code> property is the minimum value of the <code>y</code> coordinate.</p>
+</div>
+<div class="paragraph">
+<p>Following is an action data filter in <code>serverless-workflow-expression-quarkus</code> example application:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example action data filter in <code>serverless-workflow-expression-quarkus</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"actions": [
+        {
+          "name": "maxAction",
+          "functionRef": {
+            "refName": "max"
+          },
+          "actionDataFilter": {
+             "results" : ".max.x",
+             "toStateData" : ".number"
+          }
+        }
+ ]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In case the previous example of action data filter is not added in the <code>serverless-workflow-expression-quarkus</code>, then the entire JSON object returned by the function is merged into the workflow model. The previous action data filter contains the following properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>results</code>, selecting the attribute from the data returned by the action.</p>
+</li>
+<li>
+<p><code>toStateData</code>, indicating the name of the target property inside the workflow model. If the target property does not exist, then a target property is added.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Therefore, after executing the action, the workflow model consists of a <code>number</code> property, containing the maximum value of <code>x</code> and the original <code>numbers</code> array. After that, the workflow transitions to the <code>finish</code> state.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example state data filter in <code>serverless-workflow-expression-quarkus</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"name": "finish",
+"type": "operation",
+"stateDataFilter": {
+   "input": "{result: .number}"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The original <code>numbers</code> array should not be returned as a result of the workflow execution, therefore the final stage consists of a state data filter defining the content of the output model. The output model should contain a <code>result</code> property and the value of <code>result</code> property should be the maximum number that is stored by the previous state in the <code>number</code> property.</p>
+</div>
+<div class="paragraph">
+<p>In the previous example, the workflow model is changed by the <code>input</code> property of the filter, which means that the output model is updated before the state is executed. As a final result, the output model consists of a <code>result</code> property, containing the maximum value of <code>x</code>.</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Event data filter example</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>You can find an example of event data filtering in the <a href="https://github.com/kiegroup/kogito-examples/tree/1.42.x/serverless-workflow-examples/serverless-workflow-callback-quarkus"><code>serverless-workflow-callback-quarkus</code></a> example application.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example event filter</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  "eventRef": "waitEvent",
+  "eventDataFilter": {
+     "data": ".result",
+     "toStateData": ".move"
+   }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The previous example of the event filter copies the content of CloudEvent data <code>result</code> field into the workflow model <code>move</code> field.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../service-orchestration/configuring-openapi-services-endpoints.html" class="xref page">Configuring the OpenAPI services endpoints</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>
