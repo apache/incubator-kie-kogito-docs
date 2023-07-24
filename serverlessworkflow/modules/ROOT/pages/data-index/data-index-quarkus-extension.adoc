@@ -2,7 +2,7 @@
 :compat-mode!:
 // Metadata:
 :description: Data Index Service to allow to index and query audit data in {product_name}
-:keywords: kogito, workflow, serverless, data, dataindex, data-index, index, service, extension, quarkus
+:keywords: workflow, serverless, data, dataindex, data-index, index, service, extension, quarkus
 // Referenced documentation pages
 :persistence_with_postgresql_guide: xref:persistence/persistence-with-postgresql.adoc
 :data-index-core-concepts_guide: xref:data-index/data-index-core-concepts.adoc
@@ -20,8 +20,8 @@
 :workflow_instances: {workflow_instance}s
 
 
-This document describes how you add the {data_index_ref} features to your runtime service. You simply need to add the {data_index_ref} extension to the runtime and
-the workflow related data will be collected and stored in the database, enabling the GraphQL endpoint to execute queries and perform management operations over the {workflow_instances}.
+This document describes how you add the {data_index_ref} features to your workflow. You simply need to add the {data_index_ref} extension to the workflow and
+the related data will be collected and stored in the database, enabling the GraphQL endpoint to execute queries and perform management operations over the {workflow_instances}.
 The example described in this document is based on the link:{kogito_sw_timeouts_showcase_embedded_example_url}[`serverless-workflow-timeouts_showcase_embedded`] example application.
 
 [[data-index-ext-overview]]
@@ -44,20 +44,19 @@ These extensions are distributed as addons ready to work with different types of
 The {data_index_ref} extensions are provided as addons for each kind of supported persistence relying on the link:{quarkus_guides_base_url}/writing-extensions[Quarkus extensions] mechanism.
 ====
 
-Once one of these `kogito-addons-quarkus-data-index` addons is added to a Workflow application, that service incorporates the functionality to index and store the workflow data and also incorporates the GraphQL endpoint to perform queries and management operations.
+Once one of these `kogito-addons-quarkus-data-index` addons is added to a workflow, it incorporates the functionality to index and store the workflow data and also incorporates the GraphQL endpoint to perform queries and management operations.
 
-In the same way as the {data_index_ref} service, there is a specific addon for each type of persistence you want to work with. Currently, we can find {data_index_ref} addons for: link:{postgresql_url}[PostgreSQL]
-link:{infinispan_url}[Infinispan] and  link:{mongo_url}[MongoDB]
+In the same way as the {data_index_ref} service, there is a specific addon for each type of persistence you want to work with. Currently, you can find {data_index_ref} addons for: link:{postgresql_url}[PostgreSQL], link:{infinispan_url}[Infinispan], and link:{mongo_url}[MongoDB]
 
 [IMPORTANT]
 ====
-The {data_index_ref} addon distribution added to the application must match the application's kind of persistence, regarding the indexed data, which can be stored in the same database.
-The addon will share the data source used by the application where it is added, and it will create separate tables for that purpose.
+The {data_index_ref} addon distribution added to the workflow must match the workflow's persistence type regarding the indexed data, which can be stored in the same database.
+The addon will share the data source used by the workflow where it is added, and it will create separate tables for that purpose.
 ====
 
 When any of the {data_index_ref} addons is added:
 
-* The communication with the workflow application is direct, the workflows data is *not* transmitted or consumed through events, they are stored directly in the configured database.
+* The communication with the workflow is direct, the workflow data is *not* transmitted or consumed through events, they are stored directly in the configured database.
 There is no need to configure the events connection for this purpose.
 * A new GraphQL endpoint is added to perform queries and management operations
 
@@ -67,12 +66,12 @@ There is no need to configure the events connection for this purpose.
 You can add the {data_index_ref} quarkus extension as an Addon:
 
 .Prerequisites
-* Your workflow application is working and has persistence enabled.
+* Your workflow is running and has persistence enabled.
 +
-For more information about creating a workflow application, see {getting_started_create_first_workflow_guide}[Creating your first workflow service]. You also can find more details about enabling persistence in {persistence_with_postgresql_guide}[Running a workflow service using PostgreSQL]
+For more information about creating a workflow, see {getting_started_create_first_workflow_guide}[Creating your first workflow]. You also can find more details about enabling persistence in {persistence_with_postgresql_guide}[Running a workflow using PostgreSQL]
 
 .Procedure
-. Add the required {data_index_ref} addon dependencies to the `pom.xml` file of your workflow application:
+. Add the required {data_index_ref} addon dependencies to the `pom.xml` file of your workflow:
 +
 --
 .Add {data_index_ref} Addon dependencies to `pom.xml` file
@@ -89,7 +88,7 @@ For more information about creating a workflow application, see {getting_started
 . Configure the Data Index Addon properties.
 +
 --
-Prepare the application to run in dev mode, avoid starting the {data_index_ref} Quarkus Dev service, and specify if the GraphQL UI needs to be available.
+Prepare the workflow to run in dev mode, avoid starting the {data_index_ref} Quarkus Dev service, and specify if the GraphQL UI needs to be available.
 
 .Example adding Data Index addon properties in `application.properties` file
 [source,properties]
@@ -97,8 +96,8 @@ Prepare the application to run in dev mode, avoid starting the {data_index_ref} 
 <1>
   quarkus.kogito.data-index.graphql.ui.always-include=true <2>
 ----
-<1> By default, when an application is running in dev mode, automatically a Data Index Dev Service is started and a temporary dev service Database is created.
-When we are adding the addon to the application, we need to disable it by setting `quarkus.kogito.devservices.enabled` to `false`in the `application.properties` file.
+<1> By default, when a workflow is running in dev mode, automatically a Data Index Dev Service is started and a temporary dev service Database is created.
+When adding the addon to the workflow, you need to disable it by setting `quarkus.kogito.devservices.enabled` to `false` in the `application.properties` file.
 <2> The addon allows to expose a simple UI to interact with the GraphQL endpoint, it only will be available when this property is set to `true`, and it will be placed in '<applicationURL>/graphql-ui/`
 
 For more information, see `application.properties` file of link:{kogito_sw_timeouts_showcase_embedded_example_application_properties_url}[`serverless-timeouts_showcase_embedded`] example application.

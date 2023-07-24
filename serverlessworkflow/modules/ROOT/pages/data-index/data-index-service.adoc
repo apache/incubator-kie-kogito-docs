@@ -2,7 +2,7 @@
 :compat-mode!:
 // Metadata:
 :description: Data Index Service use as an independent service that allow to index and query audit data in {product_name}
-:keywords: kogito, workflow, serverless, data, dataindex, data-index, index, service
+:keywords:  workflow, serverless, data, dataindex, data-index, index, service, standalone
 // External pages
 :distributions_url: https://quay.io/organization/kiegroup
 :dev_services_url: https://quarkus.io/guides/dev-services
@@ -53,9 +53,9 @@ When the `application.properties` data of the `configMap` is changed, a rolling 
 
 === {data_index_ref} service using PostgreSQL persistence
 
-{data_index_ref} service does not initialise its database schema automatically. To initialise the database schema, you need to enable Flyway migration by setting QUARKUS_FLYWAY_MIGRATE_AT_START=true.
+{data_index_ref} service does not initialize its database schema automatically. To initialize the database schema, you need to enable Flyway migration by setting QUARKUS_FLYWAY_MIGRATE_AT_START=true.
 
-.Example `DataIndex` resource with PostgreSQL persistence enabled (requires Kafka KogitoInfra to be available):
+.Example `DataIndex` resource with PostgreSQL persistence enabled:
 [source,yaml]
 ----
 apiVersion: app.kiegroup.org/v1beta1
@@ -185,7 +185,7 @@ Allows to change the event connection type. The possible values are:
 |Yes
 
 |`quarkus.kogito.devservices.enabled`
-|Enables or disables the Dev Services for Kogito. By default, the Dev Services are enabled, unless an existing configuration is present.
+|Enables or disables the Dev Services for workflows. By default, the Dev Services are enabled, unless an existing configuration is present.
 |boolean
 |`true`
 |No
