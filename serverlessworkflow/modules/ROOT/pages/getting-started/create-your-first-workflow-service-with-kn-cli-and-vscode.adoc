@@ -1,0 +1,92 @@
+= Creating and running workflow projects using KN CLI and Visual Studio Code
+
+This guide showcases the use of our Knative Workflow CLI and Visual Studio code to run {product_name} projects.
+
+.Prerequisites
+* xref:tooling/kn-plugin-workflow-overview.adoc[Knative Workflow CLI] {kn_cli_version} is installed.
+* Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
+
+.Preparing your environment 
+* Install https://docs.docker.com/engine/install/[Docker] or https://podman.io/docs/installation[Podman].
+* Install https://minikube.sigs.k8s.io/docs/start/[minikube].
+* Install https://kubernetes.io/docs/tasks/tools/[kubectl].
+* Start minikube. Depending on your environment, set `--driver` flag to `podman` or `docker`
+[source,bash]
+----
+minikube start --cpus 4 --memory 8096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"  --driver=docker
+----
+* (optional) Install https://k9scli.io/[k9scli.io] 
+* Install the https://operatorhub.io/operator/sonataflow-operator[Sonataflow Operator]
+* Install https://github.com/kiegroup/kie-tools/releases/tag/0.30.3[KN Workflow CLI] by downloading the correct distrubiton for your development environment and adding it to the PATH.
+
+[[proc-creating-app-with-kn-cli]]
+== Creating a workflow project with Visual Studio Code and KN CLI
+* Navigate to you development directory and create your project
+[source,bash]
+----
+kn workflow create -n my-sonataflow-project
+----
+* This will create a folder with name `my-sonataflow-project` and a sample workflow `wokrflow.sw.json`
+[source,bash]
+----
+cd ./my-sonataflow-project
+----
+* Open the folder in Visual Studo Code and examine the created `worklow.sw.json` using our extension.
+
+Now we can run the project.
+
+[[proc-running-app-with-kn-cli]]
+== Running a workflow project with Visual Studio Code and KN CLI
+
+* Run the project. This will start a `kogito-swf-devmode-nightly` image and map your local folder to this image.
+[source,bash]
+----
+kn workflow run
+----
+* You can now work on your project. Any changes will be picked up by the hot reload feature.
+* Once you are done developing your project navigate to terminal that is running `kn workflow run` command and hit `Ctlr+C` to stop the development environment.
+
+To deploy the finished project to cluster, proceed to next section.
+
+[[proc-deploying-app-with-kn-cli]]
+== Deploying a workflow project with Visual Studio Code and KN CLI
+
+* Deploy to minikube
+[source,bash]
+----
+kn workflow deploy
+----
+* Using k9scli you can examine your deployment.
+* In a different Terminal, create a port mapping:
+[source,bash]
+----
+minikube service hello --namespace default --url
+----
+* Use this URL to access your workflow instance in the Developer UI
+** <RETURNED_URL>/q/dev/org.kie.kogito.kogito-quarkus-serverless-workflow-devui/workflowInstances
+
+* To stop the deployment:
+[source,bash]
+----
+kn worklow undeploy
+----
+* You can validate your pod is terminating using k9s cli.
+
+
+[[proc-testing-application]]
+== Testing your workflow application
+
+To test your workflow application, you can follow the instructions in the
+xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Testing your workflow application using REST Assured].
+
+== Additional resources
+
+* xref:testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.adoc[Kogito Serverless Workflow Tools extension in Quarkus Dev UI]: View, manage, and start the workflow instances.
+* xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {product_name} tooling]
+* xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services]
+
+include::../../pages/_common-content/report-issue.adoc[]
+
+ifeval::["{kogito_version_redhat}" != ""]
+include::../../pages/_common-content/downstream-project-setup-instructions.adoc[]
+endif::[]
