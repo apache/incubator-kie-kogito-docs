@@ -1,6 +1,6 @@
 = Creating and running workflow projects using KN CLI and Visual Studio Code
 
-This guide showcases the use of our Knative Workflow CLI and Visual Studio code to run {product_name} projects.
+This guide showcases the use of our Knative Workflow CLI plugin and Visual Studio code to create & run {product_name} projects.
 
 .Prerequisites
 * xref:tooling/kn-plugin-workflow-overview.adoc[Knative Workflow CLI] {kn_cli_version} is installed.
@@ -21,7 +21,10 @@ minikube start --cpus 4 --memory 8096 --addons registry --addons metrics-server 
 
 [[proc-creating-app-with-kn-cli]]
 == Creating a workflow project with Visual Studio Code and KN CLI
-* Navigate to you development directory and create your project
+
+Use the `create`` command with kn workflow to scaffold a new Sonata Flow project.
+
+* Navigate to you development directory and create your project.
 [source,bash]
 ----
 kn workflow create -n my-sonataflow-project
@@ -33,45 +36,51 @@ cd ./my-sonataflow-project
 ----
 * Open the folder in Visual Studo Code and examine the created `worklow.sw.json` using our extension.
 
-Now we can run the project.
+Now we can run the project and execute your workflow.
 
 [[proc-running-app-with-kn-cli]]
 == Running a workflow project with Visual Studio Code and KN CLI
+
+Use the `run` command with kn workflow to build and run the Sonata Flow project in local development mode.
 
 * Run the project. This will start a `kogito-swf-devmode-nightly` image and map your local folder to this image.
 [source,bash]
 ----
 kn workflow run
 ----
+* The Development UI wil be accesible at `localhost:8080/q/dev`
 * You can now work on your project. Any changes will be picked up by the hot reload feature.
+* See xref:testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances.adoc[Workflow instances] guide on how to run workflows via Development UI.
 * Once you are done developing your project navigate to terminal that is running `kn workflow run` command and hit `Ctlr+C` to stop the development environment.
 
-To deploy the finished project to cluster, proceed to next section.
+To deploy the finished project to a local cluster, proceed to next section.
 
 [[proc-deploying-app-with-kn-cli]]
 == Deploying a workflow project with Visual Studio Code and KN CLI
+
+Use the `deploy` command with kn workflow to deploy the Sonata Flow project into your local cluster.
 
 * Deploy to minikube
 [source,bash]
 ----
 kn workflow deploy
 ----
-* Using k9scli you can examine your deployment.
-* In a different Terminal, create a port mapping:
+* (Optional) Using k9scli you can examine your deployment.
+* In a different bash instance, create a port mapping:
 [source,bash]
 ----
 minikube service hello --namespace default --url
 ----
-* Use this URL to access your workflow instance in the Developer UI
+* Use this URL to access your workflow instances using the Developer UI
 ** <RETURNED_URL>/q/dev/org.kie.kogito.kogito-quarkus-serverless-workflow-devui/workflowInstances
+* To update the image run the `deploy` again, note that this may take some time.
 
-* To stop the deployment:
+* To stop the deployment, use the `undeploy` command:
 [source,bash]
 ----
 kn worklow undeploy
 ----
 * You can validate your pod is terminating using k9s cli.
-
 
 [[proc-testing-application]]
 == Testing your workflow application
