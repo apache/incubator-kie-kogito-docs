@@ -57,7 +57,7 @@ You can follow the deployment of the {product_name} Operator:
 .Watch the {product_name} Operator pod
 [source,shell,subs="attributes+"]
 ----
-kubectl get pod -n kogito-serverless-operator-system --watch
+kubectl get pod -n sonataflow-operator-system --watch
 ----
 
 A successful installation should have an output like this:
@@ -65,10 +65,9 @@ A successful installation should have an output like this:
 .Successful Installation Output
 [source]
 ----
-NAME                                                            READY   STATUS              RESTARTS   AGE
-kogito-serverless-operator-controller-manager-948547ffd-sr2j2   0/2     ContainerCreating   0          6s
-kogito-serverless-operator-controller-manager-948547ffd-sr2j2   1/2     Running             0          7s
-kogito-serverless-operator-controller-manager-948547ffd-sr2j2   2/2     Running             0          20s
+NAME                                                     READY   STATUS    RESTARTS   AGE
+sonataflow-operator-controller-manager-ff89c46f6-hfdgh   2/2     Running   0          4m43s
+
 ----
 
 You can also follow the operator’s log:
@@ -76,7 +75,7 @@ You can also follow the operator’s log:
 .Watch the {product_name} Operator pod logs
 [source,shell,subs="attributes+"]
 ----
-kubectl logs deployment/kogito-serverless-operator-controller-manager -n kogito-serverless-operator-system -f
+kubectl logs deployment/sonataflow-operator-controller-manager -n sonataflow-operator-system -f
 ----
 
 Once the operator is running, it will watch for instances of the {product_name} Custom Resources (CR). Using CRs, you can configure your {product_name} environment and define Workflows and builds to be handled by the operator.
@@ -114,9 +113,9 @@ To uninstall the correct version of the operator, first you must get the current
 .Getting the operator version
 [source,shell,subs="attributes+"]
 ----
-kubectl get deployment kogito-serverless-operator-controller-manager -n kogito-serverless-operator-system -o jsonpath="{.spec.template.spec.containers[?(@.name=='manager')].image}"
+kubectl get deployment sonataflow-operator-controller-manager -n sonataflow-operator-system -o jsonpath="{.spec.template.spec.containers[?(@.name=='manager')].image}"
 
-quay.io/kiegroup/kogito-serverless-operator-nightly:1.34.0
+quay.io/kiegroup/kogito-serverless-operator:1.41
 ----
 
 The operator manager image reflects the current operator's version. Replace the major and minor version names in the command below. For example, if the image version is `1.34.0` use `1.34` in the placeholder:
