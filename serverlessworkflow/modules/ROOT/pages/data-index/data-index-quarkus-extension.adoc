@@ -63,7 +63,7 @@ There is no need to configure the events connection for this purpose.
 [[data-index-ext-use]]
 == Adding {data_index_ref} extension to a workflow application
 
-You can add the {data_index_ref} quarkus extension as an Addon:
+You can add the {data_index_ref} quarkus extension as an addon:
 
 .Prerequisites
 * Your workflow is running and has persistence enabled.
@@ -93,8 +93,8 @@ Prepare the workflow to run in dev mode, avoid starting the {data_index_ref} Qua
 .Example adding Data Index addon properties in `application.properties` file
 [source,properties]
 ----
-<1>
-  quarkus.kogito.data-index.graphql.ui.always-include=true <2>
+quarkus.kogito.devservices.enabled=false <1>
+quarkus.kogito.data-index.graphql.ui.always-include=true <2>
 ----
 <1> By default, when a workflow is running in dev mode, automatically a Data Index Dev Service is started and a temporary dev service Database is created.
 When adding the addon to the workflow, you need to disable it by setting `quarkus.kogito.devservices.enabled` to `false` in the `application.properties` file.
@@ -105,9 +105,9 @@ For more information, see `application.properties` file of link:{kogito_sw_timeo
 
 == Additional resources
 
-* {getting_started_create_first_workflow_guide}[Creating your first workflow service]
-* {data-index-core-concepts_guide}[Data Index Core Concepts]
-* {persistence_with_postgresql_guide}[Running a workflow service using PostgreSQL]
+* xref:getting-started/create-your-first-workflow-service.adoc[]
+* xref:persistence/persistence-with-postgresql.adoc[]
+* xref:data-index/data-index-core-concepts.adoc[]
 
 include::../../pages/_common-content/report-issue.adoc[]
 
