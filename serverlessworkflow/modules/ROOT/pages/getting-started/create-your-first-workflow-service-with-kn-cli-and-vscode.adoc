@@ -1,6 +1,6 @@
 = Creating and running workflow projects using KN CLI and Visual Studio Code
 
-This guide showcases the use of our Knative Workflow CLI plugin and Visual Studio code to create & run {product_name} projects.
+This guide showcases using the Knative Workflow CLI plugin and Visual Studio code to create & run {product_name} projects.
 
 .Prerequisites
 * xref:tooling/kn-plugin-workflow-overview.adoc[Knative Workflow CLI] {kn_cli_version} is installed.
@@ -16,32 +16,32 @@ This guide showcases the use of our Knative Workflow CLI plugin and Visual Studi
 minikube start --cpus 4 --memory 8096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"  --driver=docker
 ----
 * (optional) Install https://k9scli.io/[k9scli.io] 
-* Install the https://operatorhub.io/operator/sonataflow-operator[Sonataflow Operator]
+* Install the xref:cloud/operator/install-serverless-operator[Sonataflow Operator] or 
 * Install https://github.com/kiegroup/kie-tools/releases/tag/0.30.3[KN Workflow CLI] by downloading the correct distrubiton for your development environment and adding it to the PATH.
 
 [[proc-creating-app-with-kn-cli]]
 == Creating a workflow project with Visual Studio Code and KN CLI
 
-Use the `create`` command with kn workflow to scaffold a new Sonata Flow project.
+Use the `create` command with kn workflow to scaffold a new Sonata Flow project.
 
 * Navigate to you development directory and create your project.
 [source,bash]
 ----
 kn workflow create -n my-sonataflow-project
 ----
-* This will create a folder with name `my-sonataflow-project` and a sample workflow `wokrflow.sw.json`
+* This will create a folder with name `my-sonataflow-project` and a sample workflow `workflow.sw.json`
 [source,bash]
 ----
 cd ./my-sonataflow-project
 ----
-* Open the folder in Visual Studo Code and examine the created `worklow.sw.json` using our extension.
+* Open the folder in Visual Studo Code and examine the created `workflow.sw.json` using our extension.
 
-Now we can run the project and execute your workflow.
+Now you can run the project and execute the workflow.
 
 [[proc-running-app-with-kn-cli]]
-== Running a workflow project with Visual Studio Code and KN CLI
+== Running a Workflow project with Visual Studio Code and KN CLI
 
-Use the `run` command with kn workflow to build and run the Sonata Flow project in local development mode.
+Use the `run` command with kn workflow to build and run the {product_name} project in local development mode.
 
 * Run the project. This will start a `kogito-swf-devmode-nightly` image and map your local folder to this image.
 [source,bash]
@@ -51,14 +51,14 @@ kn workflow run
 * The Development UI wil be accesible at `localhost:8080/q/dev`
 * You can now work on your project. Any changes will be picked up by the hot reload feature.
 * See xref:testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances.adoc[Workflow instances] guide on how to run workflows via Development UI.
-* Once you are done developing your project navigate to terminal that is running `kn workflow run` command and hit `Ctlr+C` to stop the development environment.
+* Once you are done developing your project navigate to the terminal that is running the `kn workflow run` command and hit `Ctlr+C` to stop the development environment.
 
 To deploy the finished project to a local cluster, proceed to next section.
 
 [[proc-deploying-app-with-kn-cli]]
 == Deploying a workflow project with Visual Studio Code and KN CLI
 
-Use the `deploy` command with kn workflow to deploy the Sonata Flow project into your local cluster.
+Use the `deploy` command with kn workflow to deploy the {product_name} project into your local cluster.
 
 * Deploy to minikube
 [source,bash]
@@ -90,9 +90,9 @@ xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[T
 
 == Additional resources
 
-* xref:testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.adoc[Kogito Serverless Workflow Tools extension in Quarkus Dev UI]: View, manage, and start the workflow instances.
-* xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {product_name} tooling]
-* xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services]
+* xref:testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.adoc[]
+* xref:getting-started/getting-familiar-with-our-tooling.adoc[]
+* xref:service-orchestration/orchestration-of-openapi-based-services.adoc[]
 
 include::../../pages/_common-content/report-issue.adoc[]
 
