@@ -1,77 +1,616 @@
-= Job Services Core Concepts
+= Introduction
 :compat-mode!:
 // Metadata:
 :description: Job Service to control timeouts in {product_name}
-:keywords: kogito, workflow, serverless, timeout, timer, expiration, job service
+:keywords: sonataflow, workflow, serverless, timeout, timer, expiration, job service
 // links
-:jobs_service_image_url: https://quay.io/repository/kiegroup/kogito-jobs-service-allinone
+:jobs_service_image_allinone_url: https://quay.io/repository/kiegroup/kogito-jobs-service-allinone
+:jobs_service_image_ephemeral_url: https://quay.io/repository/kiegroup/kogito-jobs-service-ephemeral
+:jobs_service_image_postgresql_url: https://quay.io/repository/kiegroup/kogito-jobs-service-postgresql
+:jobs_service_image_infinispan_url: https://quay.io/repository/kiegroup/kogito-jobs-service-infinispan
 :jobs_service_image_usage_url: https://github.com/kiegroup/kogito-images#jobs-services-all-in-one
+:knative_eventing_url: https://knative.dev/docs/eventing/
+:knative_eventing_trigger_url: https://knative.dev/docs/eventing/triggers/
+:knative_eventing_sink_binding_url: https://knative.dev/docs/eventing/sinks/#sink-parameter-example
 
-In {product_name} architecture there is a dedicated supporting service that is responsible for controlling the execution of
-time-triggered actions, also known as jobs.
+The Job Service facilitates the scheduled execution of tasks in a cloud environment. These tasks are implemented by independent services, and can be started by using any of the Job Service supported interaction modes, based on Http calls or Knative Events delivery.
 
-The job execution is a callback to the {product_name} runtime application. This callback can be configured in different ways as described in the <<job-service-communication, communication>> section.
+To schedule the execution of a task you must create a Job, that is configured with the following information:
 
-[#job-service]
-== Job Service configuration
+* `Schedule`: the job triggering periodicity.
+* `Recipient`: the entity that is called on the job execution for the given interaction mode, and  receives the execution parameters.
 
-All timer nodes that might be declared in a workflow, are handled by the job service, which is responsible for managing, scheduling, and firing all actions (jobs) to be executed in the workflows.
+image::job-services/Job-Service-Generic-Diagram.png[]
+
+[#integration-with-the-workflows]
+== Integration with the Workflows
+
+In the context of the {product_name}s, the Job Service is responsible for controlling the execution of the time-triggered actions. And thus, all the time-base states that you can use in a workflow, are handled by the interaction between the workflow and the Job Service.
+
+For example, every time the workflow execution reaches a state with a configured timeout, a corresponding job is created in the Job Service, and when the timeout is met, a http callback is executed to notify the workflow.
+
+image::job-services/Time-Based-States-And-Job-Service-Interaction.png[]
+
+To set up this integration you can use different xref:job-services/quarkus-extensions.adoc#job-service-quarkus-extensions[communication alternatives], that must be configured by combining the Job Service and the Quarkus Workflow Project configurations.
 
 [NOTE]
 ====
-Suppose the workflow service is not configured to use the Job Service or there is no such service running.
-In that case, all timer-related actions use an embedded in-memory implementation of the Job Service, which should not be used in production, since when the application shutdown, all timers are lost, which in a serverless architecture is a very common behavior with the scale to zero approach.
-That said, the usage of in-memory Job Service can only be done for testing or development, but not for production.
+If the project is not configured to use the Job Service, all time-based actions will use an in-memory implementation of that service.
+However, this setup must not be used in production, since every time the application is restarted, all the timers are lost.
+This last is not suited for serverless architectures, where the applications might scale to zero at any time, etc.
 ====
 
-The main goal of the Job Service is to work with only active jobs. The Job Service tracks only the jobs that are scheduled and that need to be executed. When a job reaches a final state, the job is removed from the Job Service.
+== Jobs life-span
 
-When configured in your environment, all the jobs information and status changes are sent to the {product_name} `Data
-Index Service`, where they can be indexed and made available by GraphQL queries.
+Since the main goal of the Job Service is to work with the active jobs, such as the scheduled jobs that needs to be executed, when a job reaches a final state, it is removed from the Job Service.
+However, in some cases where you want to keep the information about the jobs in a permanent repository, you can configure the Job Service to produce status change events, that can be collected by the xref:/data-index/data-index-service.adoc[Data Index Service], where they can be indexed and made available by GraphQL queries.
+
+[#executing]
+== Executing
+
+To execute the Job Service in your docker or kubernetes environment, you must use the following image:
+
+* link:{jobs_service_image_allinone_url}[kogito-jobs-service-allinone]
+
+In the next topics you can see the different configuration parameters that you must use, for example, to configure the <<job-service-persistence,persistence mechanism>>, the <<job-service-eventing-api, eventing system>>, etc.
+More information on this image can be found link:{jobs_service_image_usage_url}[here].
+
+We recommend that you follow this procedure:
+
+1. Identify the <<job-service-persistence,persistence mechanism>> to use and see the required configuration parameters.
+2. Identify if the <<job-service-eventing-api, Eventing API>> is required for your needs and see the required configuration parameters.
+3. Identify if the project containing your workflows is configured with the appropriate xref:job-services/quarkus-extensions.adoc#job-service-quarkus-extensions[Job Service Quarkus Extension].
+
+Finally, to run the image, you must use the <<exposed-environment-variables, environment variables exposed by the image>>, and other configurations that you can set using <<using-environent-variables, additional environment variables>> or using <<using-java-like-system-properties, system properties with java like names>>.
+
+[#exposed-environment-variables]
+=== Exposed environment variables
+
+[cols="1,2"]
+|===
+|Variable | Description
+
+|`SCRIPT_DEBUG`
+|Enable debug level of the image and its operations.
+
+|`JOBS_SERVICE_PERSISTENCE`
+|Any of the following values:  `postgresql`, `ephemeral`, or `infinispan` to select the persistence mechanism to use, <<job-service-persistence, see>>.
+
+|===
 
 [NOTE]
 ====
-Data index service and the support for jobs information will be available in future releases.
+If used, these values must always be passed as environment variables.
 ====
 
-=== Job Service persistence
+[#using-environent-variables]
+=== Using environment variables
 
-An important configuration aspect of the Job Service is the persistence mechanism, where all job information is stored in a database that makes this information durable upon service restarts and guarantees no information is lost.
+To configure the image by using environment variables you must pass one environment variable per each parameter.
+
+.Job Service image configuration for docker execution example
+[source, bash]
+----
+docker run -it -e JOBS_SERVICE_PERSISTENCE=postgresql -e VARIABLE_NAME=value quay.io/kiegroup/kogito-jobs-service-allinone:latest
+----
+
+.Job Service image configuration for Kubernetes execution example
+[source, yaml]
+----
+spec:
+  containers:
+    - name: jobs-service-postgresql
+      image: quay.io/kiegroup/kogito-jobs-service-allinone-nightly:latest
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+      env:
+        # Set the image parameters as environment variables in the container definition.
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: JOBS_SERVICE_PERSISTENCE
+          value: "postgresql"
+        - name: QUARKUS_DATASOURCE_USERNAME
+          value: postgres
+        - name: QUARKUS_DATASOURCE_PASSWORD
+          value: pass
+        - name: QUARKUS_DATASOURCE_JDBC_URL
+          value: jdbc:postgresql://timeouts-showcase-database:5432/postgres?currentSchema=jobs-service
+        - name: QUARKUS_DATASOURCE_REACTIVE_URL
+          value: postgresql://timeouts-showcase-database:5432/postgres?search_path=jobs-service
+----
+
+[NOTE]
+====
+This is the recommended approach when you execute the Job Service in kubernetes.
+The timeouts showcase example xref:use-cases/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] contains an example of this configuration, https://github.com/kiegroup/kogito-examples/blob/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase-extended/kubernetes/jobs-service-postgresql.yml#L65[see].
+====
+
+[#using-java-like-system-properties]
+=== Using system properties with java like names
+
+To configure the image by using system properties you must pass one property per parameter, however, in this case, all these properties are passed as part of a single environment with the name `JAVA_OPTIONS`.
+
+.Job Service image configuration for docker execution example
+[source, bash]
+----
+docker run -it -e JOBS_SERVICE_PERSISTENCE=postgresql -e JAVA_OPTIONS='-Dmy.sys.prop1=value1 -Dmy.sys.prop2=value2' \
+quay.io/kiegroup/kogito-jobs-service-allinone:latest
+----
+
+[NOTE]
+====
+I case that you need to convert a java like property name, to the corresponding environment variable name, to use the environment variables configuration alternative, you must apply the naming convention defined in the link:{quarkus_guides_config_reference_url}#environment-variables[Quarkus Configuration Reference].
+For example, the name `quarkus.datasource.jdbc.url` must be converted to `QUARKUS_DATASOURCE_JDBC_URL`.
+====
+
+[#job-service-global-configurations]
+== Global configurations
+
+Global configurations that affects the job execution retries, startup procedure, etc.
+
+[tabs]
+====
+Using environment variables::
++
+
+[cols="2,1,1"]
+|===
+|Name |Description |Default
+
+|`KOGITO_JOBS_SERVICE_BACKOFFRETRYMILLIS`
+|A long value that defines the retry back-off time in milliseconds between job execution attempts, in case the execution fails.
+|`1000`
+
+|`KOGITO_JOBS_SERVICE_MAXINTERVALLIMITTORETRYMILLIS`
+|A long value that defines the maximum interval in milliseconds when retrying to execute jobs, in case the execution fails.
+|`60000`
+
+|===
+
+Using system properties with java like names::
++
+
+[cols="2,1,1"]
+|===
+|Name |Description |Default
+
+|`kogito.jobs-service.backoffRetryMillis`
+|A long value that defines the retry back-off time in milliseconds between job execution attempts, in case the execution fails.
+|`1000`
+
+|`kogito.jobs-service.maxIntervalLimitToRetryMillis`
+|A long value that defines the maximum interval in milliseconds when retrying to execute jobs, in case the execution fails.
+|`60000`
+
+|===
+
+====
+
+[#job-service-persistence]
+== Persistence
+
+An important configuration aspect of the Job Service is the persistence mechanism, it is where all the jobs information is stored, and guarantees no information is lost upon service restarts.
+
+The Job Service image is shipped with the <<job-service-postgresql, PostgreSQL>>, <<job-service-ephemeral, Ephemeral>>, and <<job-service-infinispan, Infinispan>> persistence mechanisms, that can be switched by setting the JOBS_SERVICE_PERSISTENCE environment variable to any of these values `postgresql`, `ephemeral`, or `infinispan`. If not set, it defaults to the `ephemeral` option.
+
+[NOTE]
+====
+The <<executing, kogito-jobs-service-allinone>> image is a composite packaging that include one different image per each persistence mechanism, making it clearly bigger sized than the individual ones. If that size represents an issue in your installation you can use the individual ones instead.
+Finally, if you use this alternative, the JOBS_SERVICE_PERSISTENCE must not be used, since the persistence mechanism is auto-determined.
+
+These are the individual images: {jobs_service_image_postgresql_url}[kogito-jobs-service-postgresql], {jobs_service_image_ephemeral_url}[kogito-jobs-service-ephemeral], or {jobs_service_image_infinispan_url}[kogito-jobs-service-infinispan]
+====
 
 [#job-service-postgresql]
-==== PostgreSQL
+=== PostgreSQL
 
 PostgreSQL is the recommended database to use with the Job Service.
-Additionally, it provides an initialization procedure that integrates link:https://flywaydb.org[Flyway] for the database initialization. It automatically controls the database schema, in this way all tables are created by the service.
+Additionally, it provides an initialization procedure that integrates Flyway for the database initialization. Which automatically controls the database schema, in this way, the tables are created or updated by the service when required.
 
 In case you need to externally control the database schema, you can check and apply the DDL scripts for the Job Service in the same way as described in
 xref:persistence/postgresql-flyway-migration.adoc#manually-executing-scripts[Manually executing scripts] guide.
 
-You need to set the proper configuration parameters when starting the Job Service.
-The xref:use-cases/timeout-showcase-example.adoc[timeout showcase example] shows how to run PostgreSQL as a Kubernetes deployment, but you can run it the way it fits in your environment, the important part is to set all the configuration parameters points to your running instance of PostgreSQL.
+To configure the PostgreSQL persistence you must provide these configurations:
 
-==== Ephemeral
-Alternatively, there is an in-memory database support that does not require any external database configuration. It can be used for testing and development purposes, but it is not recommended for production, since all jobs are lost upon a service restart or failure.
+[tabs]
+====
+Using environment variables::
++
+
+[cols="2,1,1"]
+|===
+|Variable | Description| Example value
+
+|`JOBS_SERVICE_PERSISTENCE`
+|Configure the persistence mechanism that must be used.
+|`postgresql`
+
+|`QUARKUS_DATASOURCE_USERNAME`
+|Username to connect to the database.
+|`postgres`
+
+|`QUARKUS_DATASOURCE_PASSWORD`
+|Password to connect to the database
+|`pass`
+
+|`QUARKUS_DATASOURCE_JDBC_URL`
+| JDBC datasource url used by Flyway to connect to the database.
+|`jdbc:postgresql://timeouts-showcase-database:5432/postgres?currentSchema=jobs-service`
+
+|`QUARKUS_DATASOURCE_REACTIVE_URL`
+|Reactive datasource url used by the Job Service to connect to the database.
+|`postgresql://timeouts-showcase-database:5432/postgres?search_path=jobs-service`
+
+|===
+
+Using system properties with java like names::
++
+
+[cols="2,1,1"]
+|===
+|Variable | Description| Example value
+
+|`JOBS_SERVICE_PERSISTENCE`
+|**Always an environment variable**
+|`postgresql`
+
+|`quarkus.datasource.username`
+|Username to connect to the database.
+|`postgres`
+
+|`quarkus.datasource.password`
+|Password to connect to the database
+|`pass`
+
+|`quarkus.datasource.jdbc.url`
+| JDBC datasource url used by Flyway to connect to the database.
+|`jdbc:postgresql://timeouts-showcase-database:5432/postgres?currentSchema=jobs-service`
+
+|`quarkus.datasource.reactive.url`
+|Reactive datasource url used by the Job Service to connect to the database.
+|`postgresql://timeouts-showcase-database:5432/postgres?search_path=jobs-service`
+
+|===
+====
+
+The timeouts showcase example xref:use-cases/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services], shows how to run a PostgreSQL based Job Service as a Kubernetes deployment.
+In your local environment you might have to change some of these values to point to your own PostgreSQL database.
+
+[#job-service-ephemeral]
+=== Ephemeral
+
+The Ephemeral persistence mechanism is based on an embedded PostgresSQL database and does not require any external configuration. However, the database is recreated on each service restart, and thus, it must be used only for testing purposes.
+
+[cols="2,1,1"]
+|===
+|Variable | Description| Example value
+
+|`JOBS_SERVICE_PERSISTENCE`
+|Configure the persistence mechanism that must be used.
+|`ephemeral`
+
+|===
 
 [NOTE]
 ====
-The Job Service link:{jobs_service_image_url}[image] is equipped with the PostgreSQL and Ephemeral (InMemory) options that can be switched using the `JOBS_SERVICE_PERSISTENCE`. If not set, it defaults to the `ephemeral` option. For more information about the Job Service, the container image can be found link:{jobs_service_image_usage_url}[here].
+If the image is started by not configuring any persistence mechanism, the Ephemeral will be defaulted.
 ====
 
-== Job service leader election
+[#job-service-infinispan]
+=== Infinispan
 
-Currently, the Job Service works in a single instance manner where there should be just one active instance of the service.
+To configure the Infinispan persistence you must provide these configurations:
 
-To avoid issues when deploying the service in the cloud, where it is common to eventually have more than one instance deployed, the Job Service supports a leader instance election process. Only the instance that becomes the leader activates the external communication to receive and schedule jobs.
+[tabs]
+====
+Using environment variables::
++
 
-In all instances who are not leaders, stay inactive in a kind of wait state and try to become the leader continuously.
+[cols="2,1,1"]
+|===
+|Variable | Description| Example value
+
+|`JOBS_SERVICE_PERSISTENCE`
+|Configure the persistence mechanism that must be used.
+|`infinispan`
+
+|`QUARKUS_INFINISPAN_CLIENT_HOSTS`
+|Sets the host name/port to connect to. Each one is separated by a semicolon.
+|`host1:11222;host2:11222`
+
+|`QUARKUS_INFINISPAN_CLIENT_USE_AUTH`
+|Enables or disables authentication. Set it to `false` when connecting to an Infinispan Server without authentication.
+|The enablement of this parameter depends on your local infinispan installation. If not set, the default value is `true`.
+
+|`QUARKUS_INFINISPAN_CLIENT_SASL_MECHANISM`
+|Sets SASL mechanism used by authentication. For more information about this parameter, see link:{quarkus_guides_infinispan_client_reference_url}#quarkus-infinispan-client_quarkus.infinispan-client.sasl-mechanism[Quarkus Infinispan Client Reference].
+|When the authentication is enabled the default value is `DIGEST-MD5`.
+
+|`QUARKUS_INFINISPAN_CLIENT_AUTH_REALM`
+|Sets realm used by authentication.
+|When the authentication is enabled the default value is `default`.
+
+|`QUARKUS_INFINISPAN_CLIENT_USERNAME`
+|Sets username used by authentication.
+|Use this property if the authentication is enabled.
+
+|`QUARKUS_INFINISPAN_CLIENT_PASSWORD`
+|Sets password used by authentication.
+|Use this property if the authentication is enabled.
+
+|===
+
+Using system properties with java like names::
++
+
+[cols="2,1,1"]
+|===
+|Variable | Description| Example value
+
+|`JOBS_SERVICE_PERSISTENCE`
+|**Always an environment variable**
+|`infinispan`
+
+|`quarkus.infinispan-client.hosts`
+|Sets the host name/port to connect to. Each one is separated by a semicolon.
+|`host1:11222;host2:11222`
+
+|`quarkus.infinispan-client.use-auth`
+|Enables or disables authentication. Set it to `false` when connecting to an Infinispan Server without authentication.
+|The enablement of this parameter depends on your local infinispan installation. If not set, the default value is `true`.
+
+|`quarkus.infinispan-client.sasl-mechanism`
+|Sets SASL mechanism used by authentication. For more information about this parameter, see link:{quarkus_guides_infinispan_client_reference_url}#quarkus-infinispan-client_quarkus.infinispan-client.sasl-mechanism[Quarkus Infinispan Client Reference].
+|When the authentication is enabled the default value is `DIGEST-MD5`.
+
+|`quarkus.infinispan-client.auth-realm`
+|Sets realm used by authentication.
+|When the authentication is enabled the default value is `default`.
+
+|`quarkus.infinispan-client.username`
+|Sets username used by authentication.
+|Use this property if the authentication is enabled.
+
+|`quarkus.infinispan-client.password`
+|Sets password used by authentication.
+|Use this property if the authentication is enabled.
+
+|===
+
+====
+
+[#infinispan-client-config-note]
+[NOTE]
+====
+The Infinispan client configuration parameters that you must configure depends on your local Infinispan service.
+And thus, the table above shows only a sub-set of all the available options. To see the list of all the options supported by the quarkus infinispan client you must read the link:{quarkus_guides_infinispan_client_reference_url}[Quarkus Infinispan Client Reference].
+====
+
+[#job-service-eventing-api]
+== Eventing API
+
+The Job Service provides a Cloud Event based API that can be used to create and delete jobs.
+This API is useful in deployment scenarios where you want to use an event based communication from the workflow runtime to the Job Service. For the transport of these events you can use the <<knative-eventing, knative eventing>> system or the <<kafka-messaging, kafka messaging>> system.
+
+[#knative-eventing]
+=== Knative eventing
+
+By default, the Job Service Eventing API is prepared to work in a link:{knative_eventing_url}[knative eventing] system. This means that by adding no additional configurations parameters, it'll be able to receive cloud events via the link:{knative_eventing_url}[knative eventing] system to manage the jobs.
+However, you must still prepare your link:{knative_eventing_url}[knative eventing] environment to ensure these events are properly delivered to the Job Service, see <<knative-eventing-supporting-resources, knative eventing supporting resources>>.
+
+Finally, the only configuration parameter that you must set, when needed, is to enable the propagation of the Job Status Change events, for example, if you want to register these events in the xref:/data-index/data-index-service.adoc[Data Index Service]
+
+[tabs]
+====
+Using environment variables::
++
+
+[cols="2,1,1"]
+|===
+|Variable | Description| Default value
+
+|`KOGITO_JOBS_SERVICE_HTTP_JOB_STATUS_CHANGE_EVENTS`
+| `true` to establish if the Job Status Change events must be propagated. If you set this value to `true` you must be sure that the <<knative-eventing-supporting-resources-sink-binding, sink binding>> was created.
+| `false`
+
+|===
+
+Using system properties with java like names::
++
+
+[cols="2,1,1"]
+|===
+|Variable | Description| Default value
+
+|`kogito.jobs-service.http.job-status-change-events`
+| `true` to establish if the Job Status Change events must be propagated. If you set this value to `true` you must be sure that the <<knative-eventing-supporting-resources-sink-binding, sink binding>> was created.
+| `false`
+
+|===
+
+====
+
+
+[#knative-eventing-supporting-resources]
+==== Knative eventing supporting resources
+
+To ensure the Job Service receives the knative events to manage the jobs, you must create the <<knative-eventing-supporting-resources-trigger-create, create job events>> and <<knative-eventing-supporting-resources-trigger-delete, delete job events>> triggers shown in the diagram below.
+Additionally, if you have enabled the Job Status Change events propagation you must create the <<knative-eventing-supporting-resources-sink-binding, sink binding>>.
+
+.Knative eventing supporting resources
+image::job-services/Knative-Eventing-API-Resources.png[]
+
+The following snippets shows an example on how you can configure these resources. Consider that these configurations might need to be adjusted to your local kubernetes cluster.
+
+[NOTE]
+====
+We recommend that you visit this example xref:use-cases/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] to see a full setup of all these configurations.
+====
+
+[#knative-eventing-supporting-resources-trigger-create]
+.Create Job event trigger configuration example
+[source,yaml]
+----
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: jobs-service-postgresql-create-job-trigger
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: job.create
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: jobs-service-postgresql
+    uri: /v2/jobs/events
+----
+
+[#knative-eventing-supporting-resources-trigger-delete]
+.Delete Job event trigger configuration example
+[source,yaml]
+----
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: jobs-service-postgresql-delete-job-trigger
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: job.delete
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: jobs-service-postgresql
+    uri: /v2/jobs/events
+----
+
+For more information about triggers, see link:{knative_eventing_trigger_url}[Knative Triggers].
+
+[#knative-eventing-supporting-resources-sink-binding]
+.Job Service sink binding configuration example
+[source, yaml]
+----
+apiVersion: sources.knative.dev/v1
+kind: SinkBinding
+metadata:
+  name: jobs-service-postgresql-sb
+spec:
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: default
+  subject:
+    apiVersion: apps/v1
+    kind: Deployment
+    selector:
+      matchLabels:
+        app.kubernetes.io/name: jobs-service-postgresql
+        app.kubernetes.io/version: 2.0.0-SNAPSHOT
+----
+
+For more information about sink bindings, see link:{knative_eventing_sink_binding_url}[Knative Sink Bindings].
+
+[#kafka-messaging]
+=== Kafka messaging
+
+To enable the Job Service Eventing API via the Kafka messaging system you must provide these configurations:
+
+[tabs]
+====
+Using environment variables::
++
+
+[cols="2,1,1"]
+|===
+|Variable | Description| Default value
+
+|`QUARKUS_PROFILE`
+|Set the quarkus profile with the value `kafka-events_support` to enable the kafka messaging based Job Service Eventing API.
+|By default the kafka eventing api is disabled.
+
+|`KOGITO_JOBS_SERVICE_KAFKA_JOB_STATUS_CHANGE_EVENTS`
+|`true` to establish if the Job Status Change events must be propagated.
+|`true` when the `kafka-events-support` profile is set.
+
+|`KAFKA_BOOTSTRAP_SERVERS`
+|A comma-separated list of host:port to use for establishing the initial connection to the Kafka cluster.
+|`localhost:9092` when the `kafka-events-support` profile is set.
+
+|`MP_MESSAGING_INCOMING_KOGITO_JOB_SERVICE_JOB_REQUEST_EVENTS_V2_TOPIC`
+|Kafka topic for events API incoming events. I general you don't need to change this value.
+|`kogito-job-service-job-request-events-v2` when the `kafka-events_support` profile is set.
+
+|`MP_MESSAGING_OUTGOING_KOGITO_JOB_SERVICE_JOB_STATUS_EVENTS_TOPIC`
+|Kafka topic for job status change outgoing events. I general you don't need to change this value.
+|`kogito-jobs-events` when the `kafka-events_support` profile is set.
+
+|===
+
+Using system properties with java like names::
++
+
+[cols="2,1,1"]
+|===
+|Variable | Description| Default value
+
+|quarkus.profile
+|Set the quarkus profile with the value `kafka-events_support` to enable the kafka messaging based Job Service Eventing API.
+|By default the kafka eventing api is disabled.
+
+|`kogito.jobs-service.kafka.job-status-change-events`
+|`true` to establish if the Job Status Change events must be propagated.
+|`true` when the `kafka-events-support` profile is set.
+
+|`kafka.bootstrap.servers`
+|A comma-separated list of host:port to use for establishing the initial connection to the Kafka cluster.
+|`localhost:9092` when the `kafka-events-support` profile is set.
+
+|`mp.messaging.incoming.kogito-job-service-job-request-events-v2.topic`
+|Kafka topic for events API incoming events. I general you don't need to change this value.
+|`kogito-job-service-job-request-events-v2` when the `kafka-events_support` profile is set.
+
+|`mp.messaging.outgoing.kogito-job-service-job-status-events.topic`
+|Kafka topic for job status change outgoing events. I general you don't need to change this value.
+|`kogito-jobs-events` when the `kafka-events_support` profile is set.
+
+|===
+
+====
+
+[NOTE]
+====
+Depending on your Kafka messaging system configuration you might need to apply additional Kafka configurations to connect to the Kafka broker, etc.
+To see the list of all the supported configurations you must read the link:{quarkus_guides_kafka_url}[Quarkus Apache Kafka Reference Guide].
+====
+
+
+
+== Leader election
+
+Currently, the Job Service is a singleton service, and thus, just one active instance of the service can be scheduling and executing the jobs.
+
+To avoid issues when it is deployed in the cloud, where it is common to eventually have more than one instance deployed, the Job Service supports a leader instance election process.
+Only the instance that becomes the leader activates the external communication to receive and schedule jobs.
+
+All the instances that are not leaders, stay inactive in a wait state and try to become the leader continuously.
 
 When a new instance of the service is started, it is not set as a leader at startup time but instead, it starts the process to become one.
 
 When an instance that is the leader for any issue stays unresponsive or is shut down, one of the other running instances becomes the leader.
 
 .Job Service leader election
-image::core/job-service-leader.png[]
+image::job-services/job-service-leader.png[]
 
 [NOTE]
 ====
@@ -81,27 +620,5 @@ This leader election mechanism uses the underlying persistence backend, which cu
 There is no need for any configuration to support this feature, the only requirement is to have the supported database with the data schema up-to-date as described in the <<job-service-postgresql>> section.
 
 In case the underlying persistence does not support this feature, you must guarantee that just one single instance of the Job Service is running at the same time.
-that just one single instance of the Job Service is running at the same time.
-
-[#job-service-communication]
-== Job Service communication
-
-[NOTE]
-====
-The Job Service does not execute a job but triggers a callback that might be an HTTP request or a Cloud Event that is
-managed by the configured xref:core/timeouts-support.adoc#job-addon-configuration[jobs addon] in the workflow application.
-====
-
-=== Knative Eventing
-
-To configure the communication between the Job Service and the workflow runtime through the Knative eventing system, you must provide a set of configurations.
-
-The Job Service configuration is accomplished through the deployment descriptor shown in the xref:use-cases/timeout-showcase-example.adoc#job-service-deploy[example].
-
-
-== Additional resources
-
-* xref:core/timeouts-support.adoc[Timeouts in {product_name}]
-* xref:use-cases/timeout-showcase-example.adoc[Timeout example in {product_name}]
 
 include::../../pages/_common-content/report-issue.adoc[]
