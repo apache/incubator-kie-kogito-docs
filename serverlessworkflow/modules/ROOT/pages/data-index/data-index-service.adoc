@@ -8,6 +8,7 @@
 :dev_services_url: https://quarkus.io/guides/dev-services
 :test_containers_url: https://www.testcontainers.org/
 :kubernetes_configmap_url: https://kubernetes.io/docs/concepts/configuration/configmap/
+:quarkus_container_image_customizing_url: https://quarkus.io/guides/container-image#customizing
 //Common constants
 :data_index_ref: Data Index
 :workflow_instance: process instance
@@ -36,7 +37,7 @@ There are several ways to deploy the {data_index_ref} service. But there are som
 
 ==== {data_index_ref} deployment resource example using Kafka eventing:
 
-Here you can see in example, how the {data_index_ref} resource definition as part of a docker-compose definition
+Here you can see in example, how the {data_index_ref} resource definition can be deployed as part of a docker-compose definition
 
 .Example of `DataIndex` resource in a docker-compose deployment using Kafka eventing:
 [source,yaml]
@@ -63,24 +64,40 @@ Here you can see in example, how the {data_index_ref} resource definition as par
 
 <1> Reference the right {data_index_ref} image to match with the type of Database, in this case `quay.io/kiegroup/kogito-data-index-postgresql:latest`
 <2> Provide the database connection properties.
-<3> When `KOGITO_DATA_INDEX_QUARKUS_PROFILE=kafka-events-support` or is not present, the {data_index_ref} is configured to use Kafka eventing.
+<3> When `KOGITO_DATA_INDEX_QUARKUS_PROFILE` is not present, the {data_index_ref} is configured to use Kafka eventing.
 <4> To initialize the database schema at start using flyway.
 
+When Kafka eventing is used, workflow applications need to be configured to send the events to the Kafka topic `kogito-processinstances-events` allowing {data_index_ref} service to consume the generated events.
 
-When kafka eventing is used, workflow applications need to be configured to send the events to the kafka topic `kogito-processinstances-events` allowing {data_index_ref} service to consume that, adding to application.properties:
+In this case {data_index_ref} is ready to consume the events sent to the topics: `kogito-processinstances-events` and `kogito-jobs-events`.
+
+[IMPORTANT]
+====
+It is important to configure the workflows application to send the events to the topic `kogito-processinstances-events`  using the connector `smallrye-kafka`. More information about how to configure workflows Kafka eventing is available in xref:eventing/consume-producing-events-with-kafka.adoc[] guide.
+
+To explore the specific configuration to add to the workflow to connect with {data_index_ref} using Kafka eventing see xref:data-index/data-index-core-concepts.adoc#_kafka_eventing[{data_index_ref} Kafka eventing]
+
+.Example of configuration in {product_name} application passed in application.properties to configure connection with {data_index_ref} using Kafka connector:
 [source,properties]
 ----
 mp.messaging.outgoing.kogito-processinstances-events.connector=smallrye-kafka
 mp.messaging.outgoing.kogito-processinstances-events.topic=kogito-processinstances-events
 mp.messaging.outgoing.kogito-processinstances-events.value.serializer=org.apache.kafka.common.serialization.StringSerializer
 ----
----
+====
+
+[NOTE]
+====
+Usually, when using docker-compose the workflow application generates the container image that is added to docker-compose. If the Kafka eventing configuration values weren't there before the container image creation, they need to be passed as image extra environment variables.
+
+More details about customizing Quarkus generated images can be found in {quarkus_container_image_customizing_url}[Quarkus Container Images Customizing] guide.
+====
 
 ==== {data_index_ref} deployment resource example using Knative eventing:
 
-This deployment definition resource shows how the {data_index_ref} service configured and deployed to connect with an existing PostgreSQL database and to consume Knative events.
+This deployment definition resource shows how the {data_index_ref} service configured and deployed can connect with an existing PostgreSQL database and to consume Knative events.
 
-.Example `DataIndex` resource with PostgreSQL persistence and Knative eventing in a minikube environment :
+.Example `DataIndex` resource with PostgreSQL persistence and Knative eventing in a kubernetes environment :
 [source,yaml]
 ----
 apiVersion: v1
@@ -189,13 +206,18 @@ spec:
 ----
 <1> Reference the right {data_index_ref} image to match with the type of Database, in this case `quay.io/kiegroup/kogito-data-index-postgresql:latest`
 <2> Provide the database connection properties
-<3> KOGITO_DATA_INDEX_QUARKUS_PROFILE: http-events-support to use the http-connector.
+<3> KOGITO_DATA_INDEX_QUARKUS_PROFILE: http-events-support to use the http-connector with Knative eventing.
 <4> To initialize the database schema at start using flyway
 <5> Trigger definition to filter the events that arrive to the Sink and pass them to {data_index_ref}
 <6> Type of event to filter
 <7> The URI where the {data_index_ref} service is expecting to consume those types of events.
 
-This deployment is using KOGITO_DATA_INDEX_QUARKUS_PROFILE: http-events-support. Workflow applications need to configure the connector to use `quarkus-http` and send the events to the Knative `K_SINK`:
+This deployment is using `KOGITO_DATA_INDEX_QUARKUS_PROFILE: http-events-support`. Workflow applications need to configure the connector to use `quarkus-http` and send the events to the Knative `K_SINK`.
+You can find more information about Knative eventing and `K_SINK` environment variable in xref:eventing/consume-produce-events-with-knative-eventing.adoc[]
+
+To explore the specific configuration to add to the workflow to connect with {data_index_ref} using Knative eventing see xref:data-index/data-index-core-concepts.adoc#_knative_eventing[{data_index_ref} Knative eventing]
+
+.Example of configuration in {product_name} application `application.properties` file to send events to {data_index_ref} using Knative eventing
 [source,properties]
 ----
 mp.messaging.outgoing.kogito-processinstances-events.connector=quarkus-http
@@ -205,31 +227,10 @@ mp.messaging.outgoing.kogito-processinstances-events.method=POST
 
 [NOTE]
 ====
-You can find more information about Knative eventing and `K_SINK` environment variable in xref:eventing/consume-produce-events-with-knative-eventing.adoc[]
+If that configuration values weren't there before the container image creation, they need to be passed as image extra environment variables. More details about customizing Quarkus generated images can be found in {quarkus_container_image_customizing_url}[Quarkus Container Images Customizing] guide.
 ====
 
 A full example where the {data_index_ref} service standalone is deployed using Knative eventing can be found as part of xref:use-cases/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] guide.
-
-When this {data_index_ref} service is deployed, a link:{kubernetes_configmap_url}[`configMap`] resource is created for the `application.properties` configuration of the {data_index_ref} service.
-
-The name of the `configMap` resource consists of the name of the {data_index_ref} service and the suffix `-properties`, as shown in the following example:
-
-.Example `configMap` resource generated during {data_index_ref} service deployment
-[source,yaml]
-----
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: data-index-properties
-data:
-  application.properties : |-
-    property1=value1
-    property2=value2
-----
-
-The `application.properties` data of the `configMap` resource is mounted in a volume to the container of the {data_index_ref} service. Any runtime properties that you add to the `application.properties` section override the default application configuration properties of the {data_index_ref} service.
-
-When the `application.properties` data of the `configMap` is changed, a rolling update modifies the deployment and configuration of the {data_index_ref} service.
 
 ---
 
