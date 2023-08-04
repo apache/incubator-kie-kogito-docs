@@ -342,8 +342,22 @@ The above function will send a `POST` request to the http://custom-function-knat
 
 [NOTE]
 ====
-`GET` requests are not yet supported.
+You can also send `GET` requests by setting `method=GET` in `operation`.
 ====
+
+.Example of a `GET` request
+[source,json]
+----
+  "functions": [
+    {
+      "name": "greet",
+      "type": "custom",
+      "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service?path=/plainJsonFunction&method=GET", <1>
+    }
+  ]
+----
+
+<1> `GET` request
 
 [[about-namespaces]]
 ==== About namespaces
