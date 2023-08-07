@@ -3,7 +3,7 @@
 This guide showcases using the Knative Workflow CLI plugin and Visual Studio code to create & run {product_name} projects.
 
 .Prerequisites
-* xref:tooling/kn-plugin-workflow-overview.adoc[Knative Workflow CLI] {kn_cli_version} is installed.
+* xref:testing-and-troubleshooting/kn-plugin-workflow-overview.adoc[Knative Workflow CLI] {kn_cli_version} is installed.
 * Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
 
 .Preparing your environment 
@@ -17,12 +17,12 @@ minikube start --cpus 4 --memory 8096 --addons registry --addons metrics-server 
 ----
 * (optional) Install https://k9scli.io/[k9scli.io] 
 * xref:cloud/operator/install-serverless-operator.adoc[]
-* Install https://github.com/kiegroup/kie-tools/releases/tag/0.30.3[KN Workflow CLI] by downloading the correct distrubiton for your development environment and adding it to the PATH.
+* Install https://github.com/kiegroup/kie-tools/releases/tag/0.30.3[KN Workflow CLI] by downloading the correct distribution for your development environment and adding it to the PATH.
 
 [[proc-creating-app-with-kn-cli]]
 == Creating a workflow project with Visual Studio Code and KN CLI
 
-Use the `create` command with kn workflow to scaffold a new Sonata Flow project.
+Use the `create` command with kn workflow to scaffold a new SonataFlow project.
 
 * Navigate to you development directory and create your project.
 [source,bash]
@@ -43,14 +43,14 @@ Now you can run the project and execute the workflow.
 
 Use the `run` command with kn workflow to build and run the {product_name} project in local development mode.
 
-* Run the project. This will start a `kogito-swf-devmode-nightly` image and map your local folder to this image.
+* Run the project.  
 [source,bash]
 ----
 kn workflow run
 ----
 * The Development UI wil be accesible at `localhost:8080/q/dev`
 * You can now work on your project. Any changes will be picked up by the hot reload feature.
-* See xref:testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances.adoc[Workflow instances] guide on how to run workflows via Development UI.
+* See xref:testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.adoc[Workflow instances] guide on how to run workflows via Development UI.
 * Once you are done developing your project navigate to the terminal that is running the `kn workflow run` command and hit `Ctlr+C` to stop the development environment.
 
 To deploy the finished project to a local cluster, proceed to next section.
@@ -88,7 +88,7 @@ kn worklow undeploy
 To test your workflow application you can use any capable REST client out there. All that is needeed is the URL of your deployed worklow project.
 
 .Prerequisites
-* You have your workflow project deployed  using <<proc-deploying-app-with-kn-cli>> and you have the URL where it is deployed handy.
+* You have your workflow project deployed using <<proc-deploying-app-with-kn-cli>> and you have the URL where it is deployed handy.
 
 .Testing your workflow application
 * To test your workflow project, access the Swagger UI on `<URL>/q/swagger-ui` to examine available endpoints.
@@ -104,7 +104,7 @@ curl -X 'POST' \
 }'
 ----
 * To examine executed instance you can use the GraphQL UI by navigating to
-`<URL>/q/graphl-ui` or calling additional REST queries.
+`<URL>/q/graphl-ui`.
 
 
 == Additional resources
