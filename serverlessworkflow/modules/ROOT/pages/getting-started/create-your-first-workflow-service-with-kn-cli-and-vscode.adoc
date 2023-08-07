@@ -85,8 +85,27 @@ kn worklow undeploy
 [[proc-testing-application]]
 == Testing your workflow application
 
-To test your workflow application, you can follow the instructions in the
-xref:testing-and-troubleshooting/basic-integration-tests-with-restassured.adoc[Testing your workflow application using REST Assured].
+To test your workflow application you can use any capable REST client out there. All that is needeed is the URL of your deployed worklow project.
+
+.Prerequisites
+* You have your workflow project deployed  using <<proc-deploying-app-with-kn-cli>> and you have the URL where it is deployed handy.
+
+.Testing your workflow application
+* To test your workflow project, access the Swagger UI on `<URL>/q/swagger-ui` to examine available endpoints.
+* In order to execute the workflow once, run: 
+[source,bash]
+----
+curl -X 'POST' \
+  '<URL>/hello' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "workflowdata": {}
+}'
+----
+* To examine executed instance you can use the GraphQL UI by navigating to
+`<URL>/q/graphl-ui` or calling additional REST queries.
+
 
 == Additional resources
 
