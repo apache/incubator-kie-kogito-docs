@@ -595,7 +595,7 @@
 <div class="listingblock">
 <div class="title">Watch the Kogito Serverless Workflow Operator pod</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get pod -n kogito-serverless-operator-system --watch</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get pod -n sonataflow-operator-system --watch</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -604,10 +604,10 @@
 <div class="listingblock">
 <div class="title">Successful Installation Output</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">NAME                                                            READY   STATUS              RESTARTS   AGE
-kogito-serverless-operator-controller-manager-948547ffd-sr2j2   0/2     ContainerCreating   0          6s
-kogito-serverless-operator-controller-manager-948547ffd-sr2j2   1/2     Running             0          7s
-kogito-serverless-operator-controller-manager-948547ffd-sr2j2   2/2     Running             0          20s</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">NAME                                                     READY   STATUS              RESTARTS   AGE
+sonataflow-operator-controller-manager-948547ffd-sr2j2   0/2     ContainerCreating   0          6s
+sonataflow-operator-controller-manager-948547ffd-sr2j2   1/2     Running             0          7s
+sonataflow-operator-controller-manager-948547ffd-sr2j2   2/2     Running             0          20s</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -616,7 +616,7 @@ kogito-serverless-operator-controller-manager-948547ffd-sr2j2   2/2     Running 
 <div class="listingblock">
 <div class="title">Watch the Kogito Serverless Workflow Operator pod logs</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl logs deployment/kogito-serverless-operator-controller-manager -n kogito-serverless-operator-system -f</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl logs deployment/sonataflow-operator-controller-manager -n sonataflow-operator-system -f</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -662,13 +662,13 @@ kubectl delete --all sonataflowplatform --all-namespaces</code></pre>
 <div class="listingblock">
 <div class="title">Getting the operator version</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get deployment kogito-serverless-operator-controller-manager -n kogito-serverless-operator-system -o jsonpath="{.spec.template.spec.containers[?(@.name=='manager')].image}"
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get deployment sonataflow-operator-controller-manager -n sonataflow-operator-system -o jsonpath="{.spec.template.spec.containers[?(@.name=='manager')].image}"
 
-quay.io/kiegroup/kogito-serverless-operator-nightly:1.34.0</code></pre>
+quay.io/kiegroup/kogito-serverless-operator-nightly:1.41.0</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The operator manager image reflects the current operator&#8217;s version. Replace the major and minor version names in the command below. For example, if the image version is <code>1.34.0</code> use <code>1.34</code> in the placeholder:</p>
+<p>The operator manager image reflects the current operator&#8217;s version. Replace the major and minor version names in the command below. For example, if the image version is <code>1.41.0</code> use <code>1.41</code> in the placeholder:</p>
 </div>
 <div class="listingblock">
 <div class="title">Uninstalling the operator</div>
