@@ -86,7 +86,7 @@ Use "kn [command] --help" for more information about a command.
 [[proc-create-sw-project-kn-cli]]
 == Creating a workflow project using Knative CLI
 
-After installing the {product_name} plug-in, you can use the `create` command with `kn workflow` to scaffold a new workflow project in your current directory.
+After installing the {product_name} plug-in, you can use the `create` command with `kn workflow` to scaffold a new {product_name} project in your current directory.
 
 The `create` command sets up {product_name} project containing minimal a "hello world" `workflow.sw.json` file in your `./<project-name>` directory.
 
@@ -132,6 +132,8 @@ For more information about installing the plug-in, see <<proc-install-sw-plugin-
 * A workflow project is created.
 +
 For more information about creating a workflow project, see <<proc-create-sw-project-kn-cli, Creating workflow project using Knative CLI>>.
+* Minikube cluster is running locally.
+
 
 .Procedure
 . In Knative CLI, enter the following command to build and run your workflow project:
@@ -159,9 +161,7 @@ For more information about installing the plug-in, see <<proc-install-sw-plugin-
 +
 For more information about created a workflow project, see <<proc-create-sw-project-kn-cli, Creating workflow project using Knative CLI>>.
 
-* A workflow project is built.
-+
-For more information about building your workflow project, see <<proc-build-sw-project-kn-cli, Building workflow project using Knative CLI>>.
+* A minikube cluster is running locally.
 
 .Procedure
 . In Knative CLI, enter the following command to deploy your workflow project:
@@ -187,8 +187,217 @@ You can use the `kubectl` command line if you want to use a complex deployment s
 ====
 --
 
+[[proc-create-quarkus-sw-project-kn-cli]]
+== Creating a Quarkus Workflow project using Knative CLI
+
+After installing the {product_name} plug-in, you can use the `quarkus create` command with `kn workflow` to scaffold a new Quarkus Workflow project in your current directory.
+
+The `quarkus create` command sets up {product_name} project containing minimal extensions to build a workflow project. Also, the generated workflow project contains a "hello world" `workflow.sw.json` file in your `./<project-name>` directory.
+
+.Prerequisites
+* {product_name} plug-in for Knative CLI is installed.
+For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plug-in for Knative CLI>>.
+ifeval::["{kogito_version_redhat}" != ""]
+* You followed the steps in xref:getting-started/create-your-first-workflow-service.adoc#proc-configuring-maven-rhbq[Configuring your Maven project to Red Hat build of Quarkus and OpenShift Serverless Logic]
+endif::[]
+
+.Procedure
+. In Knative CLI, enter the following command to create a new project:
++
+--
+.Creates a project named `new-project`
+[source,shell]
+----
+kn workflow quarkus create
+----
+
+By default, the generated project is named as `new-project`. You can overwrite the project name by using the `[-n|--name]` flag as follows:
+
+.Create a project named `my-project`
+[source,shell]
+----
+kn workflow create --name my-project
+----
+--
+
+. Add more extensions to the Quarkus project during its creation by using the `[-e|--extension]` flag as follows:
++
+--
+.Create a project with `quarkus-jsonp and quarkus-smallrye-openai` extensions
+[source,shell]
+----
+kn workflow quarkus create --extension quarkus-jsonp,quarkus-smallrye-openapi
+----
+You can add multiple extensions using the comma-separated names of the extensions in the previous command.
+[NOTE]
+====
+When you run the `create` command for the first time, it might take a while due to the necessity of downloading the required dependencies for the Quarkus project.
+====
+--
+
+[[proc-build-quarkus-sw-project-kn-cli]]
+== Building a workflow project using Knative CLI
+
+After creating your workflow project, you can use the `quarkus build` command with `kn workflow` to build your workflow project in your current directory and to generate a container image. 
+
+The process of building your workflow project produces a `knative.yml` file in the `./target/kubernetes` folder. If your workflow contains events, then the building process also generates a `kogito.yml` file.
+
+.Prerequisites
+* {product_name} plug-in for Knative CLI is installed.
++
+For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plug-in for Knative CLI>>.
+
+* A workflow project is created.
++
+For more information about creating a workflow project, see <<proc-create-sw-project-kn-cli, Creating workflow project using Knative CLI>>.
+
+.Procedure
+. In Knative CLI, enter the following command to build your workflow project:
++
+--
+.Build the project and generate a local image named `dev.local/my-project`
+[source,shell]
+----
+kn workflow quarkus build --image dev.local/my-project
+----
+
+[NOTE]
+====
+By using `dev.local` as repository, you can deploy your {product_name} project in a local environment without having to push the image to a container registry.
+====
+
+To use the `quarkus build` command, you need to provide either `--image` or `--image-name` flag. In the previous command, you can use the `[-i|--image]` in several ways, such as:
+
+* --image=[name]
+* --image=[name]:[tag]
+* --image=[repository]/[name]
+* --image=[repository]/[name]:[tag]
+* --image=[registry]/[repository]/[name]
+* --image=[registry]/[repository]/[name]:[tag]
+
+[NOTE]
+====
+The default value for `registry` and `tag` is `quay.io` and `latest` respectively.
+====
+
+Also, you can use specific flags to compose the full name of the image as follows:
+
+* `--image-registry`
+* `--image-repository`
+* `--image-name`
+* `--image-tag`
+
+In case the `--image` flag is composed with specific flags as shown in the following command, then the specific value overrides the `--image` flag:
+
+.Build the project and generate a local image named `quay.io/other-user/my-project:1.0.1`
+[source,shell]
+----
+kn workflow quarkus build --image my-user/my-project:1.0.0 --image-repository other-user --image-tag 1.0.1
+----
+--
+
+[[con-build-strategy-kn-cli]]
+=== Strategy for building a workflow project
+
+You can use the following strategies to build a workflow project and to generate the container image:
+
+Using Jib::
++
+--
+link:https://github.com/GoogleContainerTools/jib[Jib] is an extension that builds a container image without the necessity of a container runtime. When using the Jib extension, the rebuilds are fast and the resultant container image is optimized.
+
+You can use the following commands to build a workflow project and to generate a local image using Jib:
+
+.Build a project and generate a local image using Jib
+[source,shell]
+----
+kn workflow quarkus build --image dev.local/my-project --jib
+----
+The generated container image can be saved in the Docker runtime.
+
+.Build a project and generate a local image using Jib
+[source,shell]
+----
+kn workflow quarkus build --image dev.local/my-project --jib-podman
+----
+Using the previous command, the generated container image can be saved in the Podman runtime.
+
+If you do not want to use any container runtime, then use `--push` to push the generated container image to the respective registry as shown in the following command:
+
+.Build a project and push the image using Jib
+[source,shell]
+----
+kn workflow quarkus build --image my-project --jib --push
+----
+
+[IMPORTANT]
+====
+Before using the `--push` option, ensure that you have access to your registry. You can get the access using Docker or Podman login.
+====
+--
+
+Using Docker::
++
+--
+The process of building your workflow project using Docker is straightforward and also a default approach. 
+
+When using Docker, you can automatically push the container image to the respective registry by using the `--push` option as shown in the following command:
+
+.Build a project and push the image using Docker
+[source,shell]
+----
+kn workflow quarkus build --image my-project --push
+----
+--
+
+[[proc-deploy-quarkus-sw-project-kn-cli]]
+== Deploying a workflow project using Knative CLI
+
+You can use the `deploy` command combined with `kn workflow` to deploy your workflow project in your current directory. However, before deploying the project, you must build your workflow project as the build process produces deployment files, such as `knative.yml` and `kogito.yml` (In case of events) in the `./target/kubernetes` folder.
+
+.Prerequisites
+* {product_name} plug-in for Knative CLI is installed.
++
+For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plug-in for Knative CLI>>.
+
+* A workflow project is created.
++
+For more information about created a workflow project, see <<proc-create-sw-project-kn-cli, Creating workflow project using Knative CLI>>.
+
+* A workflow project is built.
++
+For more information about building your workflow project, see <<proc-build-sw-project-kn-cli, Building workflow project using Knative CLI>>.
+
+.Procedure
+. In Knative CLI, enter the following command to deploy your workflow project:
++
+--
+.Deploy a workflow project
+[source,shell]
+----
+kn workflow quarkus deploy
+----
+
+If the deployment files (`knative.yml` and `kogito.yml`) are saved in any other folder instead of `./target/kubernetes`, then you can override the path using the `--path` flag with deployment command as follows:
+
+.Deploy a workflow project using `--path`
+[source,shell]
+----
+kn workflow quarkus deploy --path other-path
+----
+
+Also, ensure that you have access to your cluster and your cluster can access the generated container image.
+
+[NOTE]
+====
+You can use the `kubectl` command line if you want to use a complex deployment setup for your workflow project.
+====
+--
+
+
 == Additional resources
 
-* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first workflow service]
+* xref:getting-started/create-your-first-workflow-service.adoc[Creating your first Quarkus Workflow project]
+* xref:getting-started/create-your-first-workflow-service-with-kn-cli-and-vscode.adoc[Creating your first SonataFlow project]
 
 include::../../pages/_common-content/report-issue.adoc[]
