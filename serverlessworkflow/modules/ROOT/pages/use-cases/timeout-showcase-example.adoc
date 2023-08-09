@@ -10,9 +10,37 @@ While all the scenarios contain the same set of workflows, they are provided as 
 
 The following workflows are provided:
 
+* <<workflow_timeouts_workflow, `workflow_timeouts`>>
 * <<callback_state_timeouts_workflow, `callback_state_timeouts`>>
 * <<switch_state_timeouts_workflow, `switch_state_timeouts`>>
 * <<event_state_timeouts_workflow, `event_state_timeouts`>>
+
+[#workflow_timeouts_workflow]
+== `workflow_timeouts` workflow
+
+It is a simple workflow that, rather than configuring a timeout for a particular state, it is configured for the hole execution of the workflow.
+This can be done by using the `workflowExecTimeout` property, which defines the maximum workflow execution time. If this time is surpassed and the workflow has not finished, it will be automatically cancelled.
+
+See the xref:core/timeouts-support.adoc#workflow-timeout[workflow timeout definition] for more information.
+
+.workflow_timeouts workflow
+image::use-cases/timeouts-showcase/workflow-timeouts-decorated.svg[]
+
+.Workflow execution timeout definition
+[source,json]
+----
+{
+  "id": "workflow_timeouts",
+  "version": "1.0",
+  "name": "Workflow Timeouts",
+  "description": "Simple workflow to show the workflowExecTimeout working",
+  "start": "PrintStartMessage",
+  "timeouts": {
+    "workflowExecTimeout": "PT1H"
+  }
+...
+}
+----
 
 [#callback_state_timeouts_workflow]
 == `callback_state_timeouts` workflow
@@ -200,7 +228,7 @@ To execute the workflows you can use any of the available deployment scenarios:
 [#execute-operator-dev-profile]
 === {product_name} Operator Dev Profile
 
-When you work with the {operator_name} Dev Profile, the operator will automatically provision an execution environment that contains an embedded job service instance, as well as an instance of the data index service.
+When you work with the {operator_name} Dev Profile, the operator will automatically provision an execution environment that contains an embedded {job_service_xref}[job service] instance, as well as an instance of the {data_index_xref}[data index service].
 And thus, there is no need for additional configurations when you use timeouts.
 
 To execute the workflows you must:
@@ -217,7 +245,7 @@ cd kogito-examples/serverless-workflow-examples/serverless-workflow-timeouts-sho
 [#execute-quarkus-project-embedded-services]
 === Quarkus Workflow Project with embedded services
 
-Similar to the <<#execute-operator-dev-profile, {operator_name} Dev Profile>>, this scenario shows how to configure the embedded job service and data index service, when you work with a Quarkus Workflow Project. And is also intended for development purposes.
+Similar to the <<#execute-operator-dev-profile, {operator_name} Dev Profile>>, this scenario shows how to configure the embedded {job_service_xref}[job service] and {data_index_xref}[data index service], when you work with a Quarkus Workflow Project. And is also intended for development purposes.
 
 In a command terminal, clone the `kogito-examples` repository, navigate to the cloned directory, and follow link:{kogito_sw_examples_url}/serverless-workflow-timeouts-showcase-embedded/README.md[these steps]:
 
@@ -232,8 +260,8 @@ cd kogito-examples/serverless-workflow-examples/serverless-workflow-timeouts-sho
 [#execute-quarkus-project-standalone-services]
 === Quarkus Workflow Project with standalone services
 
-This is the most complex and close to a production scenario. In this case, the workflows, the job service, the data index service, and the database, are deployed as standalone services in the kubernetes/knative cluster.
-Additionally, the communications from the workflows to the job service, and from the jobs service to the data index service, are resolved via the knative eventing system.
+This is the most complex and close to a production scenario. In this case, the workflows, the {job_service_xref}[job service], the {data_index_xref}[data index service], and the database, are deployed as standalone services in the kubernetes/knative cluster.
+Additionally, the communications from the workflows to the {job_service_xref}[job service], and from the {job_service_xref}[job service] to the {data_index_xref}[data index service], are resolved via the knative eventing system.
 
 [NOTE]
 ====
@@ -245,9 +273,9 @@ By using the knative eventing system the underlying low level communication syst
 
 The following diagram shows the architecture for this use case:
 
-. Every time a workflow needs to program a timer for a given timeout, a cloud event is sent to the job service for that purpose.
+. Every time a workflow needs to program a timer for a given timeout, a cloud event is sent to the {job_service_xref}#integration-with-the-workflows[job service] for that purpose.
 . When a timer is overdue, a rest call is executed to notify the workflow, which then must execute accordingly to the given state semantic.
-. Workflow and job status changes are propagated to the Data Index Service via cloud events.
+. Workflow and job status changes are propagated to the {data_index_xref}[data index service] via cloud events.
 
 .Knative Workflow with Job Service architecture
 image::use-cases/timeouts-showcase/timeouts-showcase-extended-architecture.png[]

@@ -10,6 +10,7 @@ For example, you can configure how long a workflow can wait for an event to arri
 Regardless of its application scope (workflow or state), the timeouts must be configured as an amount of time (a duration), which is considered to start when the referred scope becomes active. Timeouts use the link:https://en.wikipedia.org/wiki/ISO_8601[`ISO 8601` data and time standard] to specify a duration of time and follow the format `PnDTnHnMn.nS` with days considered to be exactly 24 hours.
 For instance, `PT15M` configures 15 minutes, and `P2DT3H4M` defines 2 days, 3 hours and 4 minutes.
 
+[#workflow-timeout]
 == Workflow timeout 
 To configure the maximum amount of time a workflow can be running before being canceled, you can use the workflow timeout.
 This is configured in the header section of the workflow, by using the link:{spec_doc_url}#workflowexectimeout-definition[WorkflowExecTimeout definition]. Only the `duration` property is currently implemented.
@@ -21,11 +22,11 @@ For example, to cancel the workflow after an hour of execution, you must use the
 [source,json]
 ----
 {
-  "id": "workflow_timeout",
+  "id": "workflow_timeouts",
   "version": "1.0",
-  "name": "Workflow timeout example",
-  "description": "An example of how workflow timeout works",
-  "start": "printWaitMessage",
+  "name": "Workflow Timeouts",
+  "description": "Simple workflow to show the workflowExecTimeout working",
+  "start": "PrintStartMessage",
   "timeouts": {
     "workflowExecTimeout": "PT1H"
   } ...
@@ -195,12 +196,12 @@ For more information about Event state timeout, see link:{spec_doc_url}#event-ti
 
 == Deploying a timed-based workflow
 
-To deploy a workflow that uses timeouts, or any other timer-based action, it is necessary to have a job service running in your environment, which is an independent service responsible to control the workflows timers, see the xref:job-services/core-concepts.adoc#job-service[job service] for more information.
+To deploy a workflow that uses timeouts, or any other timer-based action, it is necessary to have a {job_service_xref}[job service] running in your environment, which is an independent service responsible to control the workflows timers, see the {job_service_xref}#integration-with-the-workflows[job service] for more information.
 The provisioning of this service depends on the work mode that you are using.
 
 === {operator_name} Dev Profile
 
-When you work with the {operator_name} Dev Profile, the operator will automatically provide an execution environment that contains an embedded job service instance, as well as an instance of the data index service.
+When you work with the {operator_name} Dev Profile, the operator will automatically provide an execution environment that contains an embedded {job_service_xref}[job service] instance, as well as an instance of the {data_index_xref}[data index service].
 And thus, there is no need for additional configurations.
 
 In the <<timeouts-showcase, timeouts showcase>> you can see the details of how to work with timeouts and the {operator_name} Dev Profile.
@@ -213,7 +214,7 @@ When you work with a standalone Quarkus Workflow Project, you must:
 
 2. Ensure that a jobs service instance is available in your environment.
 
-In the xref:job-services/core-concepts.adoc#job-service[job service] guide you can see all the available add-dons and configuration alternatives for this case.
+In the {job_service_xref}[job service] guide you can see all the available add-dons and configuration alternatives for this case.
 
 [#timeouts-showcase]
 == Timeouts showcase
