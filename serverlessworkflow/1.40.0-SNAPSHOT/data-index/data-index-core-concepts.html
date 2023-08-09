@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Data Index Core Concepts :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Data Index Service to allow to index and query audit data in Kogito Serverless Workflow">
+    <meta name="keywords" content="workflow, serverless, data, dataindex, data-index, index, service">
+    <meta name="generator" content="Antora 3.1.4">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.40.0-SNAPSHOT">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../release_notes.html">Release notes</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/getting-familiar-with-our-tooling.html">Getting familiar with tooling</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-jq-expressions.html">jq expressions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-workflow-error-handling.html">Error handling</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/working-with-parallelism.html">Parallelism</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/configuration-properties.html">Configuration properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/defining-an-input-schema-for-workflows.html">Input schema definition</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/custom-functions-support.html">Custom functions for your workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/timeouts-support.html">Timeouts Support</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-overview.html">Editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome extension for GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">Integration with GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">Integration with OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Integration with Service Registries</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deployment</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">Orchestrating the OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Configuring the OpenAPI services endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-asyncapi-based-services.html">Orchestrating the AsyncAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Eventing</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/handling-events-on-workflows.html">Event State</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event Correlation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/working-with-callbacks.html">Callback State</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/working-with-openapi-callbacks.html">OpenAPI Callback</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Client Authentication</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">OpenAPI Authentication</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">OpenAPI OAuth2</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing, Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing and Testing Workflows</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Developer UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-custom-dashboard-page.html">Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/kn-plugin-workflow-overview.html">Command Line</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing with REST Assured</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/postgresql-flyway-migration.html">Migrate your PostgreSQL database</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../cloud/index.html">Cloud</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Operator</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/install-serverless-operator.html">Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/developing-workflows.html">Development Mode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/referencing-resource-files.html">Referencing Workflow Resources</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/configuring-workflows.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/build-and-deploy-workflows.html">Building and Deploying Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/workflow-status-conditions.html">Custom Resource Status</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/known-issues.html">Known Issues</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-openshift.html">Deploying Workflows on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-minikube.html">Deploying Workflows on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-kubernetes.html">Deploying Workflows on Kubernetes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/kubernetes-service-discovery.html">Kubernetes service discovery</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/camel-routes-integration.html">Camel Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/custom-functions-knative.html">Knative Serving</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing Prometheus Metrics</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow Data in Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Job Service</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#job-services/core-concepts.adoc">Core Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#job-services/quarkus-extensions.adoc">Quarkus Extensions</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Data Index</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="data-index-core-concepts.html">Core concepts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="data-index-service.html">Standalone service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="data-index-quarkus-extension.html">Quarkus Extension</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga Orchestration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/timeout-showcase-example.html">Timeouts Showcase</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.40-RC</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../latest/index.html">1.42</a>
+        </li>
+        <li class="version">
+          <a href="../../1.41.0.Final/index.html">1.41</a>
+        </li>
+        <li class="version">
+          <a href="../../1.40.0.Final/index.html">1.40</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">1.40-RC</a>
+        </li>
+        <li class="version">
+          <a href="../../1.39.0.Final/index.html">1.39</a>
+        </li>
+        <li class="version">
+          <a href="../../1.38.0.Final/index.html">1.38</a>
+        </li>
+        <li class="version">
+          <a href="../../1.37.0.Final/index.html">1.37</a>
+        </li>
+        <li class="version">
+          <a href="../../1.36.1.Final/index.html">1.36</a>
+        </li>
+        <li class="version">
+          <a href="../../1.35.0.Final/index.html">1.35</a>
+        </li>
+        <li class="version">
+          <a href="../../1.34.0.Final/index.html">1.34</a>
+        </li>
+        <li class="version">
+          <a href="../../1.33.0.Final/index.html">1.33</a>
+        </li>
+        <li class="version">
+          <a href="../../1.32.0.Final/index.html">1.32</a>
+        </li>
+        <li class="version">
+          <a href="../../1.31.1.Final/index.html">1.31</a>
+        </li>
+        <li class="version">
+          <a href="../../1.30.0.Final/index.html">1.30</a>
+        </li>
+        <li class="version">
+          <a href="../../1.29.0.Final/index.html">1.29</a>
+        </li>
+        <li class="version">
+          <a href="../../1.28.0.Final/index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Data Index</li>
+    <li><a href="data-index-core-concepts.html">Core concepts</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.40-RC</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/data-index/data-index-core-concepts.html">snapshot</a>
+    <a class="version" href="../../latest/data-index/data-index-core-concepts.html">1.42</a>
+    <a class="version" href="../../1.41.0.Final/data-index/data-index-core-concepts.html">1.41</a>
+    <a class="version" href="../../1.40.0.Final/data-index/data-index-core-concepts.html">1.40</a>
+    <a class="version is-current" href="data-index-core-concepts.html">1.40-RC</a>
+    <a class="version is-missing" href="../../1.39.0.Final/index.html">1.39</a>
+    <a class="version is-missing" href="../../1.38.0.Final/index.html">1.38</a>
+    <a class="version is-missing" href="../../1.37.0.Final/index.html">1.37</a>
+    <a class="version is-missing" href="../../1.36.1.Final/index.html">1.36</a>
+    <a class="version is-missing" href="../../1.35.0.Final/index.html">1.35</a>
+    <a class="version is-missing" href="../../1.34.0.Final/index.html">1.34</a>
+    <a class="version is-missing" href="../../1.33.0.Final/index.html">1.33</a>
+    <a class="version is-missing" href="../../1.32.0.Final/index.html">1.32</a>
+    <a class="version is-missing" href="../../1.31.1.Final/index.html">1.31</a>
+    <a class="version is-missing" href="../../1.30.0.Final/index.html">1.30</a>
+    <a class="version is-missing" href="../../1.29.0.Final/index.html">1.29</a>
+    <a class="version is-missing" href="../../1.28.0.Final/index.html">1.28</a>
+    <a class="version is-missing" href="../../1.27.0.Final/index.html">1.27</a>
+    <a class="version is-missing" href="../../1.26.0.Final/index.html">1.26</a>
+    <a class="version is-missing" href="../../1.25.0.Final/index.html">1.25</a>
+    <a class="version is-missing" href="../../1.24.1.Final/index.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.40.x-prod/serverlessworkflow/modules/ROOT/pages/data-index/data-index-core-concepts.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Data Index Core Concepts</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In Kogito Serverless Workflow platform there is a dedicated supporting service that stores the data related to the workflow instances and their associated jobs called <strong>Data Index</strong> service.
+This service also provides a GraphQL endpoint allowing users to query that data and perform operations, also known as mutations in GraphQL terms.</p>
+</div>
+<div class="paragraph">
+<p>The data processed by the Data Index service is usually received via events. The events consumed can be generated by any workflow or the <a href="#:job-services/core-concepts.adoc" class="xref unresolved">Job service</a> itself.
+This event communication can be configured in different ways as described in the <a href="#data-index-service-communication">Data Index communication configuration</a> section.</p>
+</div>
+<div class="paragraph">
+<p>The Data Index service uses Apache Kafka or Knative eventing to consume <a href="https://cloudevents.io/">CloudEvents</a> messages from workflows.
+The event data is indexed and stored in the database for querying via GraphQL. These events contain information about units of work executed for a workflow.
+The Data Index service is at the core of all Kogito Serverless Workflow search, insight, and management capabilities.</p>
+</div>
+<div class="paragraph">
+<p>The Kogito Serverless Workflow Data Index Service has the following key attributes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Flexible data structure</p>
+</li>
+<li>
+<p>Distributable and cloud-ready format</p>
+</li>
+<li>
+<p>Message-based communication with workflows (Apache Kafka, Knative, CloudEvents)</p>
+</li>
+<li>
+<p>Powerful querying API using GraphQL</p>
+</li>
+<li>
+<p>Management capabilities using the Gateway API, to perform actions using GraphQL syntax on remote runtimes with a single entrypoint</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_data_index_service_in_kogito_serverless_workflow"><a class="anchor" href="#_data_index_service_in_kogito_serverless_workflow"></a>Data Index service in Kogito Serverless Workflow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Kogito Serverless Workflow Data Index Service is a Quarkus application, based on <a href="https://vertx.io/">Vert.x</a> with <a href="https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/3.3">Reactive Messaging</a>, that exposes a <a href="https://graphql.org">GraphQL</a> endpoint that client applications use to access indexed data and perform management operations related to running workflow instances.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The indexing functionality in the Data Index service is provided by choosing one of the following persistence providers:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://www.postgresql.org/">PostgreSQL</a></p>
+</li>
+<li>
+<p><a href="https://infinispan.org/">Infinispan</a></p>
+</li>
+<li>
+<p><a href="https://www.mongodb.com/">MongoDB</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The Data Index Service has been thought of as an application to store and query the existing workflow data. The data comes contained in events. The service allows multiple connection options as described in the <a href="#data-index-service-communication">Data Index service communication configuration</a> section.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="data-index-deployments"><a class="anchor" href="#data-index-deployments"></a>Data Index scenarios</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Data Index is distributed in different ways to allow deployment in different topologies, and depending on how the data is indexed.</p>
+</div>
+<div class="paragraph">
+<p>The following sections describe the different options of Data Index deployments.</p>
+</div>
+<div class="sect2">
+<h3 id="_data_index_as_a_standalone_service"><a class="anchor" href="#_data_index_as_a_standalone_service"></a>Data Index as a standalone service</h3>
+<div class="paragraph">
+<p>It can be deployed explicitly referencing the <strong>image</strong>, starting a separated service inside a container. See <a href="data-index-service.html" class="xref page">Data Index standalone</a>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/data-index/data-index-standalone-service.png" alt="Image of data-index deployment an external service">
+</div>
+</div>
+<div class="paragraph">
+<p>This type of deployment requires to choose the right image depending on the persistence, specify the database connection properties, and the event consumption configuration.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="data-index-dev-service"><a class="anchor" href="#data-index-dev-service"></a>Data Index service as Quarkus Development service</h3>
+<div class="paragraph">
+<p>It also can be deployed, transparently as a <strong>Quarkus Development Service</strong> when the Quarkus Dev mode is used in the Kogito Serverless Workflow application.
+When you use the Kogito Serverless Workflow Process Quarkus extension, a temporary Data Index Service is automatically provisioned while the Quarkus application is running in development mode and the Dev Service is set up for immediate use.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/data-index/data-index-dev-service.png" alt="Image of data-index deployment an Quarkus Dev Service">
+</div>
+</div>
+<div class="paragraph">
+<p>More details are provided in the <a href="data-index-service.html#data-index-dev-service-details" class="xref page">Data Index as a Quarkus Development service</a> section.</p>
+</div>
+<div class="paragraph">
+<p>The Kogito Serverless Workflow Process Quarkus extension sets up your Quarkus application to automatically replicate any Kogito Serverless Workflow messaging events related to workflow instances or jobs into the provisioned Data Index instance.</p>
+</div>
+<div class="paragraph">
+<p>For more information about Quarkus Dev Services, see <a href="https://quarkus.io/guides/dev-services">Dev Services guide</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_data_index_service_as_quarkus_extension"><a class="anchor" href="#_data_index_service_as_quarkus_extension"></a>Data Index service as Quarkus extension</h3>
+<div class="paragraph">
+<p>It can be included as part of the same Kogito Serverless Workflow application using the <strong>Data Index extension</strong>, through the provided addons.</p>
+</div>
+<div class="paragraph">
+<p>This scenario is specific to add the Data Index data indexing features and the GraphQL endpoint exposure inside a workflow application.</p>
+</div>
+<div class="paragraph">
+<p>The communication with the workflow where the extension is added, is something internal to the application, allowing to simplify the communication between services and avoiding extra configuration for that purpose.</p>
+</div>
+<div class="paragraph">
+<p>In this case, the indexation has some limitations: it is only able to index data from the workflows deployed in the same application.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/data-index/data-index-addon.png" alt="Image of data-index as a Quarkus Extension">
+</div>
+</div>
+<div class="paragraph">
+<p>More details are available in the <a href="data-index-quarkus-extension.html" class="xref page">Data Index Quarkus Extension</a> section.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="data-index-storage"><a class="anchor" href="#data-index-storage"></a>Data Index storage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to store the indexed data, Data Index needs some specific tables to be created. Data Index is ready to use <a href="https://quarkus.io/guides/flyway">Quarkus flyway</a> for that purpose.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s necessary to activate the migrate-at-start option to migrate the Data Index schema automatically.</p>
+</div>
+<div class="paragraph">
+<p>For more details about Flyway migrations, see <a href="../persistence/postgresql-flyway-migration.html" class="xref page">Migrating Your PostgreSQL Database with a Kogito upgrade</a> section</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="data-index-graphql"><a class="anchor" href="#data-index-graphql"></a>Data Index GraphQL endpoint</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Data Index provides GraphQL endpoint that allows users to interact with the stored data.
+For more information about GraphQL see <a href="https://graphql.org">GraphQL</a></p>
+</div>
+<div class="sect2">
+<h3 id="data-index-ext-queries"><a class="anchor" href="#data-index-ext-queries"></a>GraphQL queries for workflow instances and jobs</h3>
+<div class="paragraph">
+<p>This guide provides as examples, some GraphQL queries that allow to retrieve data about workflow instances and jobs.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Retrieve data from workflow instances</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>You can retrieve data about a specified instance from your workflow definition.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example query</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">{
+  ProcessInstances {
+    id
+    processId
+    state
+    parentProcessInstanceId
+    rootProcessId
+    rootProcessInstanceId
+    variables
+    nodes {
+      id
+      name
+      type
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Retrieve data from jobs</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>You can retrieve data from a specified job instance.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example query</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">{
+  Jobs {
+    id
+    status
+    priority
+    processId
+    processInstanceId
+    executionCounter
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Filter query results using the <code>where</code> parameter</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>You can use the <code>where</code> parameter with multiple combinations to filter query results based on workflow attributes.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example query</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">{
+  ProcessInstances(where: {state: {equal: ACTIVE}}) {
+    id
+    processId
+    processName
+    start
+    state
+    variables
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example query</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">{
+  ProcessInstances(where: {id: {equal: "d43a56b6-fb11-4066-b689-d70386b9a375"}}) {
+    id
+    processId
+    processName
+    start
+    state
+    variables
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By default, all filtered attributes are executed as <code>AND</code> operations in queries. You can modify this behavior by combining filters with an <code>AND</code> or <code>OR</code> operator.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example query</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">{
+  ProcessInstances(where: {or: {state: {equal: ACTIVE}, rootProcessId: {isNull: false}}}) {
+    id
+    processId
+    processName
+    start
+    end
+    state
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example query</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">{
+  ProcessInstances(where: {and: {processId: {equal: "travels"}, or: {state: {equal: ACTIVE}, rootProcessId: {isNull: false}}}}) {
+    id
+    processId
+    processName
+    start
+    end
+    state
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Depending on the attribute type, the following operators are also available:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>String array argument:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>contains</code> : String</p>
+</li>
+<li>
+<p><code>containsAll</code>: Array of strings</p>
+</li>
+<li>
+<p><code>containsAny</code>: Array of strings</p>
+</li>
+<li>
+<p><code>isNull</code>: Boolean (<code>true</code> or <code>false</code>)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>String argument:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>in</code>: Array of strings</p>
+</li>
+<li>
+<p><code>like</code>: String</p>
+</li>
+<li>
+<p><code>isNull</code>: Boolean (<code>true</code> or <code>false</code>)</p>
+</li>
+<li>
+<p><code>equal</code>: String</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ID argument:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>in</code>: Array of strings</p>
+</li>
+<li>
+<p><code>equal</code>: String</p>
+</li>
+<li>
+<p><code>isNull</code>: Boolean (<code>true</code> or <code>false</code>)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Boolean argument:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>isNull</code>: Boolean (<code>true</code> or <code>false</code>)</p>
+</li>
+<li>
+<p><code>equal</code>: Boolean (<code>true</code> or <code>false</code>)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Numeric argument:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>in</code>: Array of integers</p>
+</li>
+<li>
+<p><code>isNull</code>: Boolean</p>
+</li>
+<li>
+<p><code>equal</code>: Integer</p>
+</li>
+<li>
+<p><code>greaterThan</code>: Integer</p>
+</li>
+<li>
+<p><code>greaterThanEqual</code>: Integer</p>
+</li>
+<li>
+<p><code>lessThan</code>: Integer</p>
+</li>
+<li>
+<p><code>lessThanEqual</code>: Integer</p>
+</li>
+<li>
+<p><code>between</code>: Numeric range</p>
+</li>
+<li>
+<p><code>from</code>: Integer</p>
+</li>
+<li>
+<p><code>to</code>: Integer</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Date argument:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>isNull</code>: Boolean (<code>true</code> or <code>false</code>)</p>
+</li>
+<li>
+<p><code>equal</code>: Date time</p>
+</li>
+<li>
+<p><code>greaterThan</code>: Date time</p>
+</li>
+<li>
+<p><code>greaterThanEqual</code>: Date time</p>
+</li>
+<li>
+<p><code>lessThan</code>: Date time</p>
+</li>
+<li>
+<p><code>lessThanEqual</code>: Date time</p>
+</li>
+<li>
+<p><code>between</code>: Date range</p>
+</li>
+<li>
+<p><code>from</code>: Date time</p>
+</li>
+<li>
+<p><code>to</code>: Date time</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Sort query results using the <code>orderBy</code> parameter</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>You can use the <code>orderBy</code> parameter to sort query results based on workflow attributes. You can also specify the direction of sorting in ascending <code>ASC</code> order or descending <code>DESC</code> order. Multiple attributes are applied to the database query in the order they are specified in the query filter.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example query</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">{
+  ProcessInstances(where: {state: {equal: ACTIVE}}, orderBy: {start: ASC}) {
+    id
+    processId
+    processName
+    start
+    end
+    state
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Limit and offset query results using the <code>pagination</code> parameter</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>You can use the <code>pagination</code> parameter to specify a <code>limit</code> and <code>offset</code> for query results.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example query</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">{
+  ProcessInstances(where: {state: {equal: ACTIVE}}, orderBy: {start: ASC}, pagination: {limit: 10, offset: 0}) {
+    id
+    processId
+    processName
+    start
+    end
+    state
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="data-index-gateway-api"><a class="anchor" href="#data-index-gateway-api"></a>Data Index service Gateway API</h3>
+<div class="paragraph">
+<p>Data Index incorporates a set of queries or mutations that allow firing operations on workflow endpoints using GraphQL notation.</p>
+</div>
+<div class="paragraph">
+<p>The Data Index Gateway API enables you to perform the following operations:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Abort a workflow instance</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Retrieves a workflow instance with the ID passed as a parameter and launches the abort operation on related Kogito Serverless Workflow service.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example mutation for abort operation</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">mutation {
+    ProcessInstanceAbort (id:"66e05e9c-eaab-47af-a83e-156498b7096d")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Retry a workflow instance</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Retrieves a workflow instance with the id passed as a parameter and launches the retry operation on related Kogito Serverless Workflow service.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example mutation for retry operation</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">mutation {
+    ProcessInstanceRetry (id:"66e05e9c-eaab-47af-a83e-156498b7096d")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Skip a workflow instance</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Retrieves a workflow instance with the ID passed as a parameter and launches the skip operation on related Kogito Serverless Workflow service.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example mutation for skip operation</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">mutation {
+    ProcessInstanceSkip (id:"66e05e9c-eaab-47af-a83e-156498b7096d")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Retrieve workflow instance nodes</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Retrieves the nodes of a workflow instance that are coming from the process definition. When the <code>nodeDefinitions</code> field of a workflow instance is queried, a call to a specific Kogito Serverless Workflow service is generated to retrieve the requested list of available nodes.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example query to retrieve workflow instance nodes</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">{ProcessInstances(where: { id: {equal: "1017afb1-5749-440e-8b9b-6b876bb5894d"}}){
+  diagram
+}}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Update workflow instance variables</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Updates the variables of a workflow instance using the <code>id</code> passed as a parameter. Retrieves a workflow instance using the <code>id</code> passed as a parameter and launches the update operation on related Kogito Serverless Workflow service with the new values passed in <code>variables</code> parameter.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example mutation to update workflow instance variables</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">mutation {
+    ProcessInstanceUpdateVariables
+        (id:"23147fcc-da82-43a2-a577-7a36b26094bd",
+         variables:"{\"it_approval\":true,\"candidate\":{\"name\":\"Joe\",\"email\":\"jdoe@ts.com\",\"salary\":30000,\"skills\":\"java\"},\"hr_approval\":true}")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Trigger a node instance</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Triggers a node instance using the node definition <code>nodeId</code>. The <code>nodeId</code> is included in the <code>nodeInstances</code> of a workflow instance using the <code>id</code> passed as parameter.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example mutation to trigger a node instance</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">mutation{
+  NodeInstanceTrigger(
+    id: "9674e3ed-8c13-4c3f-870e-7465d9ca7ca7",
+    nodeId:"_B8C4F63C-81AD-4291-9C1B-84967277EEF6")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Retrigger a node instance</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Retriggers a node instance using the <code>id</code>, which is similar to <code>nodeInstanceId</code> related to a workflow instance. The <code>id</code> of the workflow instance is passed as a parameter.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example mutation to retrigger a node instance</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">mutation{
+  NodeInstanceRetrigger(
+    id: "9674e3ed-8c13-4c3f-870e-7465d9ca7ca7",
+    nodeInstanceId:"01756ba2-ac16-4cf1-9d74-154ae8f2df21")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Cancel a node instance</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Cancels a node instance with the <code>id</code>, which is similar to <code>nodeInstanceId</code> related to a workflow instance. The <code>id</code> of the workflow instance is passed as a parameter.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example mutation to cancel a node instance</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">mutation{
+  NodeInstanceCancel(
+    id: "9674e3ed-8c13-4c3f-870e-7465d9ca7ca7",
+    nodeInstanceId:"01756ba2-ac16-4cf1-9d74-154ae8f2df21")
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>To enable described management operations on workflow instances, make sure your project is configured to have the <code>kogito-addons-quarkus-process-management</code> dependency on its <code>pom.xml</code> file to have this management operations enabled, like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+  &lt;artifactId&gt;kogito-addons-quarkus-process-management&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Retrieve the workflow instance source file content</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Retrieves the workflow instance source file. When the <code>source</code> field of a workflow instance is queried, a call to a specific Kogito Serverless Workflow service is generated to retrieve the requested workflow instance source file content.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example query to retrieve a workflow instance source file content</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">{ProcessInstances(where: { id: {equal: "1017afb1-5749-440e-8b9b-6b876bb5894d"}}){
+  source
+}}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The workflow instance source field only will be available when <code>kogito-addons-quarkus-source-files</code> dependency is added on Kogito Serverless Workflow runtime service <code>pom.xml</code> file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">    &lt;dependency&gt;
+      &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+      &lt;artifactId&gt;kogito-addons-quarkus-source-files&lt;/artifactId&gt;
+    &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Reschedule a job</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Reschedules a job using the <code>id</code>. The job <code>id</code> and other information are passed in the <code>data</code> parameter.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example mutation to reschedule a job</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">mutation{
+  JobReschedule(
+    id: "9674e3ed-8c13-4c3f-870e-7465d9ca7ca7",
+    data:"{\"expirationTime\": \"2033-06-27T04:35:54.631Z\",\"retries\": 2}")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Cancel a job</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Cancels a job using the <code>id</code> passed as a parameter.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example mutation to cancel a job</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">mutation{
+  JobCancel(
+    id: "9674e3ed-8c13-4c3f-870e-7465d9ca7ca7")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="data-index-graphql-ui"><a class="anchor" href="#data-index-graphql-ui"></a>Data Index GraphQL UI</h3>
+<div class="paragraph">
+<p>Data Index GraphQL UI is provided to interact with GraphQL endpoint.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/data-index/data-index-graphql-ui.png" alt="Image of data-index GraphQL UI">
+</div>
+</div>
+<div class="paragraph">
+<p>When the Data Index is deployed as a standalone service, this UI will be available at <code>/graphiql/</code> endpoint (i.e: at <a href="http://localhost:8180/graphiql/" class="bare">http://localhost:8180/graphiql/</a>)</p>
+</div>
+<div class="paragraph">
+<p>To have the GraphQL UI available when the Data Index extension is deployed the property <code>quarkus.kogito.data-index.graphql.ui.always-include</code> needs to be enabled.</p>
+</div>
+<div class="paragraph">
+<p>It will be accessible at: &lt;quarkus.http.root-path&gt;&lt;quarkus.http.non-application-root-path&gt;/graphql-ui/ (i.e: <a href="http://localhost:8080/q/graphql-ui/" class="bare">http://localhost:8080/q/graphql-ui/</a>)</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <code>quarkus.http.root-path' and `quarkus.http.non-application-root-path</code> belong to the workflow application where the Data Index extension has been added. <a href="https://quarkus.io/blog/path-resolution-in-quarkus/#defaults">Here</a> there are more details about those properties and their default values.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="data-index-service-communication"><a class="anchor" href="#data-index-service-communication"></a>Data Index service communication configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to index the data, Data Index allows multiple connection options to be able to consume the information provided by the different workflows.</p>
+</div>
+<div class="paragraph">
+<p>The final goal is to receive the application-generated data related to the workflow instances and jobs. The information that comes inside events, is indexed and stored in the database allowing it to be consumed through the provided GraphQL endpoint.</p>
+</div>
+<div class="sect2">
+<h3 id="_knative_eventing"><a class="anchor" href="#_knative_eventing"></a>Knative Eventing</h3>
+<div class="paragraph">
+<p>In order to interact with the Data Index separated service, use the Knative eventing system eventing:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add the Data Index service and deployment, defining the Database connection properties and setting the <code>KOGITO_DATA_INDEX_QUARKUS_PROFILE</code> to <code>http-events-support</code>.</p>
+</li>
+<li>
+<p>Specify the Knative Triggers to filter the Data Index events.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">Example <code>DataIndex</code> resource with triggers definition (requires Knative):</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: data-index-service-postgresql-processes-trigger
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: ProcessInstanceEvent
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: data-index-service-postgresql
+    uri: /processes
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: data-index-service-postgresql-jobs-trigger
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: JobEvent
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: data-index-service-postgresql
+    uri: /jobs</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Configure the workflow to use the K_SINK as outgoing connection url</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">Example of configuration in Kogito Serverless Workflow application <code>application.properties</code> file to communicate with Knative</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">mp.messaging.outgoing.kogito-processinstances-events.connector=quarkus-http
+mp.messaging.outgoing.kogito-processinstances-events.url=${K_SINK}
+mp.messaging.outgoing.kogito-processinstances-events.method=POST</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><strong>Job service</strong> needs also to be configured to send the events to the Knative K_SINK to have them available for Data Index related triggers.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_kafka_eventing"><a class="anchor" href="#_kafka_eventing"></a>Kafka eventing</h3>
+<div class="paragraph">
+<p>To configure the communication between the Data Index Service and the workflow through Kafka, you must provide a set of configurations.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add the Data Index service and deployment, defining the Database connection properties and setting the <code>KOGITO_DATA_INDEX_QUARKUS_PROFILE</code> to <code>kafka-events-support</code> (this value is set by default).</p>
+</li>
+<li>
+<p>Configure the Kogito Serverless Workflow application to use the smallrye-kafka connector and the expected topic.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">Example of configuration in Kogito Serverless Workflow application <code>application.properties</code> file to communicate with Kafka</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">mp.messaging.outgoing.kogito-processinstances-events.connector=smallrye-kafka
+mp.messaging.outgoing.kogito-processinstances-events.topic=kogito-processinstances-events
+mp.messaging.outgoing.kogito-processinstances-events.value.serializer=org.apache.kafka.common.serialization.StringSerializer</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><strong>Job service</strong> is configured to send the JobEvents to the kafka topic <code>kogito-jobs-events</code> to have them available for Data Index consumption.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_data_index_quarkus_extension_and_jobs_embedded_addon"><a class="anchor" href="#_data_index_quarkus_extension_and_jobs_embedded_addon"></a>Data Index Quarkus extension and Jobs embedded addon</h3>
+<div class="paragraph">
+<p>When Data Index functionality is added as a Quarkus extension to the workflow, there is no event configuration.
+In this case, the data indexation is done internally, and all interactions are through the Data Index Gateway API.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../eventing/consume-producing-events-with-kafka.html" class="xref page">Consuming and producing events using Apache Kafka</a></p>
+</li>
+<li>
+<p><a href="../eventing/consume-produce-events-with-knative-eventing.html" class="xref page">Consuming and producing events on Knative Eventing</a></p>
+</li>
+<li>
+<p><a href="../use-cases/timeout-showcase-example.html" class="xref page">Timeouts Showcase in Kogito Serverless Workflow</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>
