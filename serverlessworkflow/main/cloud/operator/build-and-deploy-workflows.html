@@ -301,6 +301,9 @@
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="known-issues.html">Known Issues</a>
   </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="migration-guide.html">Migration Guide</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="2">
@@ -569,7 +572,7 @@
 <div class="title">Patching the current SonataFlowPlatform with the new builder image</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># use `kubectl get sonataflowplatform` to get the SonataFlowPlatform name
-kubectl patch sonataflowplatform &lt;name&gt; --patch  'spec:\n plaform:\n baseImage: &lt;your new image full name with tag&gt;' -n &lt;your_namespace&gt;</code></pre>
+kubectl patch sonataflowplatform &lt;name&gt; --patch  'spec:\n    build:\n    config:\n    baseImage: &lt;your new image full name with tag&gt;' -n &lt;your_namespace&gt;</code></pre>
 </div>
 </div>
 </div>
@@ -632,13 +635,14 @@ metadata:
   name: sonataflow-platform
 spec:
   build:
-    resources:
-      requests:
-        memory: "64Mi"
-        cpu: "250m"
-      limits:
-        memory: "128Mi"
-        cpu: "500m"</code></pre>
+    template:
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "250m"
+        limits:
+          memory: "128Mi"
+          cpu: "500m"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -670,10 +674,10 @@ metadata:
   name: my-workflow
 spec:
     resources:
-        requests:
+      requests:
         memory: "64Mi"
         cpu: "250m"
-        limits:
+      limits:
         memory: "128Mi"
         cpu: "500m"</code></pre>
 </div>
@@ -787,12 +791,13 @@ kind: SonataFlowPlatform
 metadata:
   name: sonataflow-platform
 spec:
-  platform:
-    buildStrategyOptions:
-      KanikoBuildCacheEnabled: "true"
-    registry:
-      address: quay.io/kiegroup <i class="conum" data-value="1"></i><b>(1)</b>
-      secret: regcred <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+  build:
+    config:
+      strategyOptions:
+        KanikoBuildCacheEnabled: "true"
+      registry:
+        address: quay.io/kiegroup <i class="conum" data-value="1"></i><b>(1)</b>
+        secret: regcred <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -818,9 +823,10 @@ kind: SonataFlowPlatform
 metadata:
   name: sonataflow-platform
 spec:
-  platform:
-    buildStrategyOptions:
-      KanikoBuildCacheEnabled: "true"</code></pre>
+  build:
+    config:
+      strategyOptions:
+        KanikoBuildCacheEnabled: "true"</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -831,7 +837,7 @@ spec:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The <code>spec.platform.buildStrategyOptions.KanikoBuildCacheEnabled</code> enables the internal Kaniko process to cache builder images to try to speed up the bulding execution.</p>
+<p>The <code>spec.build.config.strategyOptions.KanikoBuildCacheEnabled</code> enables the internal Kaniko process to cache builder images to try to speed up the building execution.</p>
 </div>
 </td>
 </tr>
