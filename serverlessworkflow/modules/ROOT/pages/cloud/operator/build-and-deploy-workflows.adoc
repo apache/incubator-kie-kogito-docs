@@ -43,7 +43,7 @@ By default, the operator will use the image distributed upstream to run the work
 [source,bash,subs="attributes+"]
 ----
 # use `kubectl get sonataflowplatform` to get the SonataFlowPlatform name
-kubectl patch sonataflowplatform <name> --patch  'spec:\n plaform:\n baseImage: <your new image full name with tag>' -n <your_namespace>
+kubectl patch sonataflowplatform <name> --patch  'spec:\n    build:\n    config:\n    baseImage: <your new image full name with tag>' -n <your_namespace>
 ----
 
 === Customize the base build Dockerfile
@@ -93,13 +93,14 @@ metadata:
   name: sonataflow-platform
 spec:
   build:
-    resources:
-      requests:
-        memory: "64Mi"
-        cpu: "250m"
-      limits:
-        memory: "128Mi"
-        cpu: "500m"
+    template:
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "250m"
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
 ----
 
 Every build process will reuse this configuration and start new instances based on it from now on.
@@ -120,10 +121,10 @@ metadata:
   name: my-workflow
 spec:
     resources:
-        requests:
+      requests:
         memory: "64Mi"
         cpu: "250m"
-        limits:
+      limits:
         memory: "128Mi"
         cpu: "500m"
 ----
@@ -197,12 +198,13 @@ kind: SonataFlowPlatform
 metadata:
   name: sonataflow-platform
 spec:
-  platform:
-    buildStrategyOptions:
-      KanikoBuildCacheEnabled: "true"
-    registry:
-      address: quay.io/kiegroup <1>
-      secret: regcred <2>
+  build:
+    config:
+      strategyOptions:
+        KanikoBuildCacheEnabled: "true"
+      registry:
+        address: quay.io/kiegroup <1>
+        secret: regcred <2>
 ----
 
 <1> Your registry address
@@ -218,14 +220,15 @@ kind: SonataFlowPlatform
 metadata:
   name: sonataflow-platform
 spec:
-  platform:
-    buildStrategyOptions:
-      KanikoBuildCacheEnabled: "true"
+  build:
+    config:
+      strategyOptions:
+        KanikoBuildCacheEnabled: "true"
 ----
 
 [TIP]
 ====
-The `spec.platform.buildStrategyOptions.KanikoBuildCacheEnabled` enables the internal Kaniko process to cache builder images to try to speed up the bulding execution.
+The `spec.build.config.strategyOptions.KanikoBuildCacheEnabled` enables the internal Kaniko process to cache builder images to try to speed up the building execution.
 ====
 
 You can save this file locally and run the following command:

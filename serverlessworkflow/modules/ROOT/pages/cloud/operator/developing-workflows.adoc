@@ -221,7 +221,7 @@ By default, the operator will use the image distributed upstream to run the work
 [source,bash,subs="attributes+"]
 ----
 # use `kubectl get sonataflowplatform` to get the SonataFlowPlatform name
-kubectl patch sonataflowplatform <name> --patch  'spec:\n devBaseImage: <your new image full name with tag>' -n <your_namespace>
+kubectl patch sonataflowplatform <name> --patch  'spec:\n devMode:\n    baseImage: <your new image full name with tag>' -n <your_namespace>
 ----
 
 From now on, every deployment in the development profile will use this image to run the workflow.
