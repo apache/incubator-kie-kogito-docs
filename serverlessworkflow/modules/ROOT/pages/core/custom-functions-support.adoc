@@ -507,13 +507,13 @@ You must declare a `functionRef` like the following: (Do not forget to set `asCl
 
 ==== Request timeout
 
-By default, the Knative service must respond within 10 seconds. You can use the `kogito.addon.knative-serving.request-timeout` property to configure this value.
+By default, the Knative service must respond within 10 seconds. You can use the `kogito.sw.functions.<function_name>.timeout` property to configure this value.
 
 For instance, if you want to reduce the request timeout to 5 seconds, you must add the following to your `application.properties` file:
 
 [source,properties]
 ----
-kogito.addon.knative-serving.request-timeout=5000 <1>
+kogito.sw.functions.greet.timeout=5000 <1>
 ----
 <1> Time in milliseconds
 
