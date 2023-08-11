@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Introduction :: Kogito Serverless Workflow Guides</title>
+    <meta name="description" content="Job Service to control timeouts in Kogito Serverless Workflow">
+    <meta name="keywords" content="sonataflow, workflow, serverless, timeout, timer, expiration, job service">
+    <meta name="generator" content="Antora 3.1.4">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="../../../_/css/search.css">
+<link rel="stylesheet" href="../../../_/css/menu.css">
+<link rel="stylesheet" href="../../../_/css/tabs.css">
+<link rel="stylesheet" href="../../../_/css/navbar.css">
+<link rel="stylesheet" href="../../../_/css/custom.css">
+<link rel="stylesheet" href="../../../_/css/home.css"><script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <a href="../../..">
+                    <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
+                </a>
+                <a class="navbar-item" href="../../..">
+                    Kogito Serverless Workflow Guides
+                </a>
+            </div>
+                <div class="navbar-item search hide-for-print">
+                    <div id="search-field" class="field">
+                        <input id="search-input" type="text" placeholder="Search docs">
+                    </div>
+                </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                       target="_blank" title="Follow KIE on GitHub">
+                        <div class="github-icon"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="serverlessworkflow" data-version="1.40.0-SNAPSHOT">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../release_notes.html">Release notes</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Getting Started</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/create-your-first-workflow-service.html">Creating your first workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/cncf-serverless-workflow-specification-support.html">CNCF Serverless Workflow specification</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started/getting-familiar-with-our-tooling.html">Getting familiar with tooling</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Core</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-jq-expressions.html">jq expressions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/understanding-workflow-error-handling.html">Error handling</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/working-with-parallelism.html">Parallelism</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/configuration-properties.html">Configuration properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/defining-an-input-schema-for-workflows.html">Input schema definition</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/custom-functions-support.html">Custom functions for your workflow service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../core/timeouts-support.html">Timeouts Support</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Tooling</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-overview.html">Editor</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-vscode-extension.html">VS Code extension</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../tooling/serverless-workflow-editor/swf-editor-chrome-extension.html">Chrome extension for GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-overview.html">Serverless Logic Web Tools</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-github-integration.html">Integration with GitHub</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-openshift-integration.html">Integration with OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-redhat-application-services-integration.html">Integration with Service Registries</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../tooling/serverless-logic-web-tools/serverless-logic-web-tools-deploy-projects.html">Deployment</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Service Orchestration</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-openapi-based-services.html">Orchestrating the OpenAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/configuring-openapi-services-endpoints.html">Configuring the OpenAPI services endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-asyncapi-based-services.html">Orchestrating the AsyncAPI services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">Orchestration of gRPC based services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Eventing</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/handling-events-on-workflows.html">Event State</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/consume-produce-events-with-knative-eventing.html">Consuming and producing events on Knative Eventing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/event-correlation-with-workflows.html">Event Correlation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/working-with-callbacks.html">Callback State</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../eventing/working-with-openapi-callbacks.html">OpenAPI Callback</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Security</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Client Authentication</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../security/authention-support-for-openapi-services.html">OpenAPI Authentication</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../security/orchestrating-third-party-services-with-oauth2.html">OpenAPI OAuth2</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing, Testing and Troubleshooting</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Executing and Testing Workflows</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.html">Developer UI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.html">Workflow Instances</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-definition-page.html">Workflow Definitions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="../testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-custom-dashboard-page.html">Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/kn-plugin-workflow-overview.html">Command Line</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-http-cloudevents-with-wiremock.html">Mocking HTTP CloudEvents</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/mocking-openapi-services-with-wiremock.html">Mocking OpenAPI Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../testing-and-troubleshooting/basic-integration-tests-with-restassured.html">Testing with REST Assured</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Persistence</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/persistence-with-postgresql.html">Running a workflow service using PostgreSQL</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../persistence/postgresql-flyway-migration.html">Migrate your PostgreSQL database</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../cloud/index.html">Cloud</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Operator</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/install-serverless-operator.html">Installation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/developing-workflows.html">Development Mode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/referencing-resource-files.html">Referencing Workflow Resources</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/configuring-workflows.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/build-and-deploy-workflows.html">Building and Deploying Workflow Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/workflow-status-conditions.html">Custom Resource Status</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/known-issues.html">Known Issues</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Quarkus</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/build-workflow-image-with-quarkus-cli.html">Building workflow images using Quarkus CLI</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-openshift.html">Deploying Workflows on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-minikube.html">Deploying Workflows on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/deploying-on-kubernetes.html">Deploying Workflows on Kubernetes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/quarkus/kubernetes-service-discovery.html">Kubernetes service discovery</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Integrations</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/camel-routes-integration.html">Camel Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/custom-functions-knative.html">Knative Serving</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/expose-metrics-to-prometheus.html">Exposing Prometheus Metrics</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../integrations/serverless-dashboard-with-runtime-data.html">Displaying workflow Data in Dashboards</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Job Service</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="core-concepts.html">Core Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="quarkus-extensions.html">Quarkus Extensions</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Data Index</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../data-index/data-index-core-concepts.html">Core concepts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../data-index/data-index-service.html">Standalone service</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../data-index/data-index-quarkus-extension.html">Quarkus Extension</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Use Cases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/orchestration-based-saga-pattern.html">Saga Orchestration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../use-cases/timeout-showcase-example.html">Timeouts Showcase</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="version">1.40-RC</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../../latest/index.html">Kogito Serverless Workflow Guides</a>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../main/index.html">snapshot</a>
+        </li>
+        <li class="version is-latest">
+          <a href="../../latest/index.html">1.42</a>
+        </li>
+        <li class="version">
+          <a href="../../1.41.0.Final/index.html">1.41</a>
+        </li>
+        <li class="version">
+          <a href="../../1.40.0.Final/index.html">1.40</a>
+        </li>
+        <li class="version is-current">
+          <a href="../index.html">1.40-RC</a>
+        </li>
+        <li class="version">
+          <a href="../../1.39.0.Final/index.html">1.39</a>
+        </li>
+        <li class="version">
+          <a href="../../1.38.0.Final/index.html">1.38</a>
+        </li>
+        <li class="version">
+          <a href="../../1.37.0.Final/index.html">1.37</a>
+        </li>
+        <li class="version">
+          <a href="../../1.36.1.Final/index.html">1.36</a>
+        </li>
+        <li class="version">
+          <a href="../../1.35.0.Final/index.html">1.35</a>
+        </li>
+        <li class="version">
+          <a href="../../1.34.0.Final/index.html">1.34</a>
+        </li>
+        <li class="version">
+          <a href="../../1.33.0.Final/index.html">1.33</a>
+        </li>
+        <li class="version">
+          <a href="../../1.32.0.Final/index.html">1.32</a>
+        </li>
+        <li class="version">
+          <a href="../../1.31.1.Final/index.html">1.31</a>
+        </li>
+        <li class="version">
+          <a href="../../1.30.0.Final/index.html">1.30</a>
+        </li>
+        <li class="version">
+          <a href="../../1.29.0.Final/index.html">1.29</a>
+        </li>
+        <li class="version">
+          <a href="../../1.28.0.Final/index.html">1.28</a>
+        </li>
+        <li class="version">
+          <a href="../../1.27.0.Final/index.html">1.27</a>
+        </li>
+        <li class="version">
+          <a href="../../1.26.0.Final/index.html">1.26</a>
+        </li>
+        <li class="version">
+          <a href="../../1.25.0.Final/index.html">1.25</a>
+        </li>
+        <li class="version">
+          <a href="../../1.24.1.Final/index.html">1.24</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../latest/index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li>Job Service</li>
+    <li><a href="core-concepts.html">Core Concepts</a></li>
+  </ul>
+</nav>
+<div class="page-versions">
+  <button class="version-menu-toggle" title="Show other versions of page">1.40-RC</button>
+  <div class="version-menu">
+    <a class="version" href="../../main/job-services/core-concepts.html">snapshot</a>
+    <a class="version" href="../../latest/job-services/core-concepts.html">1.42</a>
+    <a class="version" href="../../1.41.0.Final/job-services/core-concepts.html">1.41</a>
+    <a class="version" href="../../1.40.0.Final/job-services/core-concepts.html">1.40</a>
+    <a class="version is-current" href="core-concepts.html">1.40-RC</a>
+    <a class="version is-missing" href="../../1.39.0.Final/index.html">1.39</a>
+    <a class="version is-missing" href="../../1.38.0.Final/index.html">1.38</a>
+    <a class="version is-missing" href="../../1.37.0.Final/index.html">1.37</a>
+    <a class="version is-missing" href="../../1.36.1.Final/index.html">1.36</a>
+    <a class="version is-missing" href="../../1.35.0.Final/index.html">1.35</a>
+    <a class="version is-missing" href="../../1.34.0.Final/index.html">1.34</a>
+    <a class="version is-missing" href="../../1.33.0.Final/index.html">1.33</a>
+    <a class="version is-missing" href="../../1.32.0.Final/index.html">1.32</a>
+    <a class="version is-missing" href="../../1.31.1.Final/index.html">1.31</a>
+    <a class="version is-missing" href="../../1.30.0.Final/index.html">1.30</a>
+    <a class="version is-missing" href="../../1.29.0.Final/index.html">1.29</a>
+    <a class="version is-missing" href="../../1.28.0.Final/index.html">1.28</a>
+    <a class="version is-missing" href="../../1.27.0.Final/index.html">1.27</a>
+    <a class="version is-missing" href="../../1.26.0.Final/index.html">1.26</a>
+    <a class="version is-missing" href="../../1.25.0.Final/index.html">1.25</a>
+    <a class="version is-missing" href="../../1.24.1.Final/index.html">1.24</a>
+  </div>
+</div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/1.40.x-prod/serverlessworkflow/modules/ROOT/pages/job-services/core-concepts.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Introduction</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Job Service facilitates the scheduled execution of tasks in a cloud environment. These tasks are implemented by independent services, and can be started by using any of the Job Service supported interaction modes, based on Http calls or Knative Events delivery.</p>
+</div>
+<div class="paragraph">
+<p>To schedule the execution of a task you must create a Job, that is configured with the following information:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Schedule</code>: the job triggering periodicity.</p>
+</li>
+<li>
+<p><code>Recipient</code>: the entity that is called on the job execution for the given interaction mode, and  receives the execution parameters.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/job-services/Job-Service-Generic-Diagram.png" alt="Job Service Generic Diagram">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="integration-with-the-workflows"><a class="anchor" href="#integration-with-the-workflows"></a>Integration with the Workflows</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the context of the Kogito Serverless Workflows, the Job Service is responsible for controlling the execution of the time-triggered actions. And thus, all the time-base states that you can use in a workflow, are handled by the interaction between the workflow and the Job Service.</p>
+</div>
+<div class="paragraph">
+<p>For example, every time the workflow execution reaches a state with a configured timeout, a corresponding job is created in the Job Service, and when the timeout is met, a http callback is executed to notify the workflow.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/job-services/Time-Based-States-And-Job-Service-Interaction.png" alt="Time Based States And Job Service Interaction">
+</div>
+</div>
+<div class="paragraph">
+<p>To set up this integration you can use different <a href="quarkus-extensions.html#job-service-quarkus-extensions" class="xref page">communication alternatives</a>, that must be configured by combining the Job Service and the Quarkus Workflow Project configurations.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If the project is not configured to use the Job Service, all time-based actions will use an in-memory implementation of that service.
+However, this setup must not be used in production, since every time the application is restarted, all the timers are lost.
+This last is not suited for serverless architectures, where the applications might scale to zero at any time, etc.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_jobs_life_span"><a class="anchor" href="#_jobs_life_span"></a>Jobs life-span</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Since the main goal of the Job Service is to work with the active jobs, such as the scheduled jobs that needs to be executed, when a job reaches a final state, it is removed from the Job Service.
+However, in some cases where you want to keep the information about the jobs in a permanent repository, you can configure the Job Service to produce status change events, that can be collected by the <a href="../data-index/data-index-service.html" class="xref page">Data Index Service</a>, where they can be indexed and made available by GraphQL queries.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="executing"><a class="anchor" href="#executing"></a>Executing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To execute the Job Service in your docker or kubernetes environment, you must use the following image:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://quay.io/repository/kiegroup/kogito-jobs-service-allinone">kogito-jobs-service-allinone</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In the next topics you can see the different configuration parameters that you must use, for example, to configure the <a href="#job-service-persistence">persistence mechanism</a>, the <a href="#job-service-eventing-api">eventing system</a>, etc.
+More information on this image can be found <a href="https://github.com/kiegroup/kogito-images#jobs-services-all-in-one">here</a>.</p>
+</div>
+<div class="paragraph">
+<p>We recommend that you follow this procedure:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Identify the <a href="#job-service-persistence">persistence mechanism</a> to use and see the required configuration parameters.</p>
+</li>
+<li>
+<p>Identify if the <a href="#job-service-eventing-api">Eventing API</a> is required for your needs and see the required configuration parameters.</p>
+</li>
+<li>
+<p>Identify if the project containing your workflows is configured with the appropriate <a href="quarkus-extensions.html#job-service-quarkus-extensions" class="xref page">Job Service Quarkus Extension</a>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Finally, to run the image, you must use the <a href="#exposed-environment-variables">environment variables exposed by the image</a>, and other configurations that you can set using <a href="#using-environent-variables">additional environment variables</a> or using <a href="#using-java-like-system-properties">system properties with java like names</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="exposed-environment-variables"><a class="anchor" href="#exposed-environment-variables"></a>Exposed environment variables</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Variable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SCRIPT_DEBUG</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enable debug level of the image and its operations.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JOBS_SERVICE_PERSISTENCE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Any of the following values:  <code>postgresql</code>, <code>ephemeral</code>, or <code>infinispan</code> to select the persistence mechanism to use, <a href="#job-service-persistence">see</a>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If used, these values must always be passed as environment variables.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="using-environent-variables"><a class="anchor" href="#using-environent-variables"></a>Using environment variables</h3>
+<div class="paragraph">
+<p>To configure the image by using environment variables you must pass one environment variable per each parameter.</p>
+</div>
+<div class="listingblock">
+<div class="title">Job Service image configuration for docker execution example</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker run -it -e JOBS_SERVICE_PERSISTENCE=postgresql -e VARIABLE_NAME=value quay.io/kiegroup/kogito-jobs-service-allinone:latest</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Job Service image configuration for Kubernetes execution example</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">spec:
+  containers:
+    - name: jobs-service-postgresql
+      image: quay.io/kiegroup/kogito-jobs-service-allinone-nightly:latest
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+      env:
+        # Set the image parameters as environment variables in the container definition.
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: JOBS_SERVICE_PERSISTENCE
+          value: "postgresql"
+        - name: QUARKUS_DATASOURCE_USERNAME
+          value: postgres
+        - name: QUARKUS_DATASOURCE_PASSWORD
+          value: pass
+        - name: QUARKUS_DATASOURCE_JDBC_URL
+          value: jdbc:postgresql://timeouts-showcase-database:5432/postgres?currentSchema=jobs-service
+        - name: QUARKUS_DATASOURCE_REACTIVE_URL
+          value: postgresql://timeouts-showcase-database:5432/postgres?search_path=jobs-service</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is the recommended approach when you execute the Job Service in kubernetes.
+The timeouts showcase example <a href="../use-cases/timeout-showcase-example.html#execute-quarkus-project-standalone-services" class="xref page">Quarkus Workflow Project with standalone services</a> contains an example of this configuration, <a href="https://github.com/kiegroup/kogito-examples/blob/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase-extended/kubernetes/jobs-service-postgresql.yml#L65">see</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="using-java-like-system-properties"><a class="anchor" href="#using-java-like-system-properties"></a>Using system properties with java like names</h3>
+<div class="paragraph">
+<p>To configure the image by using system properties you must pass one property per parameter, however, in this case, all these properties are passed as part of a single environment with the name <code>JAVA_OPTIONS</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Job Service image configuration for docker execution example</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker run -it -e JOBS_SERVICE_PERSISTENCE=postgresql -e JAVA_OPTIONS='-Dmy.sys.prop1=value1 -Dmy.sys.prop2=value2' \
+quay.io/kiegroup/kogito-jobs-service-allinone:latest</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>I case that you need to convert a java like property name, to the corresponding environment variable name, to use the environment variables configuration alternative, you must apply the naming convention defined in the <a href="https://quarkus.io/guides/config-reference#environment-variables">Quarkus Configuration Reference</a>.
+For example, the name <code>quarkus.datasource.jdbc.url</code> must be converted to <code>QUARKUS_DATASOURCE_JDBC_URL</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="job-service-global-configurations"><a class="anchor" href="#job-service-global-configurations"></a>Global configurations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Global configurations that affects the job execution retries, startup procedure, etc.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_using-environment-variables"></a>Using environment variables</p>
+</li>
+<li>
+<p><a id="tabset1_using-system-properties-with-java-like-names"></a>Using system properties with java like names</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_using-environment-variables">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KOGITO_JOBS_SERVICE_BACKOFFRETRYMILLIS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A long value that defines the retry back-off time in milliseconds between job execution attempts, in case the execution fails.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1000</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KOGITO_JOBS_SERVICE_MAXINTERVALLIMITTORETRYMILLIS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A long value that defines the maximum interval in milliseconds when retrying to execute jobs, in case the execution fails.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>60000</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_using-system-properties-with-java-like-names">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.jobs-service.backoffRetryMillis</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A long value that defines the retry back-off time in milliseconds between job execution attempts, in case the execution fails.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1000</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.jobs-service.maxIntervalLimitToRetryMillis</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A long value that defines the maximum interval in milliseconds when retrying to execute jobs, in case the execution fails.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>60000</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="job-service-persistence"><a class="anchor" href="#job-service-persistence"></a>Persistence</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An important configuration aspect of the Job Service is the persistence mechanism, it is where all the jobs information is stored, and guarantees no information is lost upon service restarts.</p>
+</div>
+<div class="paragraph">
+<p>The Job Service image is shipped with the <a href="#job-service-postgresql">PostgreSQL</a>, <a href="#job-service-ephemeral">Ephemeral</a>, and <a href="#job-service-infinispan">Infinispan</a> persistence mechanisms, that can be switched by setting the JOBS_SERVICE_PERSISTENCE environment variable to any of these values <code>postgresql</code>, <code>ephemeral</code>, or <code>infinispan</code>. If not set, it defaults to the <code>ephemeral</code> option.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <a href="#executing">kogito-jobs-service-allinone</a> image is a composite packaging that include one different image per each persistence mechanism, making it clearly bigger sized than the individual ones. If that size represents an issue in your installation you can use the individual ones instead.
+Finally, if you use this alternative, the JOBS_SERVICE_PERSISTENCE must not be used, since the persistence mechanism is auto-determined.</p>
+</div>
+<div class="paragraph">
+<p>These are the individual images: <a href="https://quay.io/repository/kiegroup/kogito-jobs-service-postgresql">kogito-jobs-service-postgresql</a>, <a href="https://quay.io/repository/kiegroup/kogito-jobs-service-ephemeral">kogito-jobs-service-ephemeral</a>, or <a href="https://quay.io/repository/kiegroup/kogito-jobs-service-infinispan">kogito-jobs-service-infinispan</a></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="job-service-postgresql"><a class="anchor" href="#job-service-postgresql"></a>PostgreSQL</h3>
+<div class="paragraph">
+<p>PostgreSQL is the recommended database to use with the Job Service.
+Additionally, it provides an initialization procedure that integrates Flyway for the database initialization. Which automatically controls the database schema, in this way, the tables are created or updated by the service when required.</p>
+</div>
+<div class="paragraph">
+<p>In case you need to externally control the database schema, you can check and apply the DDL scripts for the Job Service in the same way as described in
+<a href="../persistence/postgresql-flyway-migration.html#manually-executing-scripts" class="xref page">Manually executing scripts</a> guide.</p>
+</div>
+<div class="paragraph">
+<p>To configure the PostgreSQL persistence you must provide these configurations:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_using-environment-variables"></a>Using environment variables</p>
+</li>
+<li>
+<p><a id="tabset2_using-system-properties-with-java-like-names"></a>Using system properties with java like names</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_using-environment-variables">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Variable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Example value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JOBS_SERVICE_PERSISTENCE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configure the persistence mechanism that must be used.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postgresql</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QUARKUS_DATASOURCE_USERNAME</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Username to connect to the database.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postgres</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QUARKUS_DATASOURCE_PASSWORD</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Password to connect to the database</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pass</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QUARKUS_DATASOURCE_JDBC_URL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JDBC datasource url used by Flyway to connect to the database.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc:postgresql://timeouts-showcase-database:5432/postgres?currentSchema=jobs-service</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QUARKUS_DATASOURCE_REACTIVE_URL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reactive datasource url used by the Job Service to connect to the database.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postgresql://timeouts-showcase-database:5432/postgres?search_path=jobs-service</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_using-system-properties-with-java-like-names">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Variable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Example value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JOBS_SERVICE_PERSISTENCE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Always an environment variable</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postgresql</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.datasource.username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Username to connect to the database.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postgres</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.datasource.password</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Password to connect to the database</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pass</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.datasource.jdbc.url</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JDBC datasource url used by Flyway to connect to the database.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc:postgresql://timeouts-showcase-database:5432/postgres?currentSchema=jobs-service</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.datasource.reactive.url</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reactive datasource url used by the Job Service to connect to the database.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postgresql://timeouts-showcase-database:5432/postgres?search_path=jobs-service</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The timeouts showcase example <a href="../use-cases/timeout-showcase-example.html#execute-quarkus-project-standalone-services" class="xref page">Quarkus Workflow Project with standalone services</a>, shows how to run a PostgreSQL based Job Service as a Kubernetes deployment.
+In your local environment you might have to change some of these values to point to your own PostgreSQL database.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="job-service-ephemeral"><a class="anchor" href="#job-service-ephemeral"></a>Ephemeral</h3>
+<div class="paragraph">
+<p>The Ephemeral persistence mechanism is based on an embedded PostgresSQL database and does not require any external configuration. However, the database is recreated on each service restart, and thus, it must be used only for testing purposes.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Variable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Example value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JOBS_SERVICE_PERSISTENCE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configure the persistence mechanism that must be used.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ephemeral</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If the image is started by not configuring any persistence mechanism, the Ephemeral will be defaulted.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="job-service-infinispan"><a class="anchor" href="#job-service-infinispan"></a>Infinispan</h3>
+<div class="paragraph">
+<p>To configure the Infinispan persistence you must provide these configurations:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset3_using-environment-variables"></a>Using environment variables</p>
+</li>
+<li>
+<p><a id="tabset3_using-system-properties-with-java-like-names"></a>Using system properties with java like names</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset3_using-environment-variables">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Variable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Example value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JOBS_SERVICE_PERSISTENCE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configure the persistence mechanism that must be used.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>infinispan</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QUARKUS_INFINISPAN_CLIENT_HOSTS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the host name/port to connect to. Each one is separated by a semicolon.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>host1:11222;host2:11222</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QUARKUS_INFINISPAN_CLIENT_USE_AUTH</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables or disables authentication. Set it to <code>false</code> when connecting to an Infinispan Server without authentication.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The enablement of this parameter depends on your local infinispan installation. If not set, the default value is <code>true</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QUARKUS_INFINISPAN_CLIENT_SASL_MECHANISM</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets SASL mechanism used by authentication. For more information about this parameter, see <a href="https://quarkus.io/guides/infinispan-client-reference#quarkus-infinispan-client_quarkus.infinispan-client.sasl-mechanism">Quarkus Infinispan Client Reference</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">When the authentication is enabled the default value is <code>DIGEST-MD5</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QUARKUS_INFINISPAN_CLIENT_AUTH_REALM</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets realm used by authentication.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">When the authentication is enabled the default value is <code>default</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QUARKUS_INFINISPAN_CLIENT_USERNAME</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets username used by authentication.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use this property if the authentication is enabled.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QUARKUS_INFINISPAN_CLIENT_PASSWORD</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets password used by authentication.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use this property if the authentication is enabled.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_using-system-properties-with-java-like-names">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Variable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Example value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>JOBS_SERVICE_PERSISTENCE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Always an environment variable</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>infinispan</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.infinispan-client.hosts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the host name/port to connect to. Each one is separated by a semicolon.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>host1:11222;host2:11222</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.infinispan-client.use-auth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables or disables authentication. Set it to <code>false</code> when connecting to an Infinispan Server without authentication.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The enablement of this parameter depends on your local infinispan installation. If not set, the default value is <code>true</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.infinispan-client.sasl-mechanism</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets SASL mechanism used by authentication. For more information about this parameter, see <a href="https://quarkus.io/guides/infinispan-client-reference#quarkus-infinispan-client_quarkus.infinispan-client.sasl-mechanism">Quarkus Infinispan Client Reference</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">When the authentication is enabled the default value is <code>DIGEST-MD5</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.infinispan-client.auth-realm</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets realm used by authentication.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">When the authentication is enabled the default value is <code>default</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.infinispan-client.username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets username used by authentication.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use this property if the authentication is enabled.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quarkus.infinispan-client.password</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets password used by authentication.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use this property if the authentication is enabled.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="infinispan-client-config-note" class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The Infinispan client configuration parameters that you must configure depends on your local Infinispan service.
+And thus, the table above shows only a sub-set of all the available options. To see the list of all the options supported by the quarkus infinispan client you must read the <a href="https://quarkus.io/guides/infinispan-client-reference">Quarkus Infinispan Client Reference</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="job-service-eventing-api"><a class="anchor" href="#job-service-eventing-api"></a>Eventing API</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Job Service provides a Cloud Event based API that can be used to create and delete jobs.
+This API is useful in deployment scenarios where you want to use an event based communication from the workflow runtime to the Job Service. For the transport of these events you can use the <a href="#knative-eventing">knative eventing</a> system or the <a href="#kafka-messaging">kafka messaging</a> system.</p>
+</div>
+<div class="sect2">
+<h3 id="knative-eventing"><a class="anchor" href="#knative-eventing"></a>Knative eventing</h3>
+<div class="paragraph">
+<p>By default, the Job Service Eventing API is prepared to work in a <a href="https://knative.dev/docs/eventing/">knative eventing</a> system. This means that by adding no additional configurations parameters, it&#8217;ll be able to receive cloud events via the <a href="https://knative.dev/docs/eventing/">knative eventing</a> system to manage the jobs.
+However, you must still prepare your <a href="https://knative.dev/docs/eventing/">knative eventing</a> environment to ensure these events are properly delivered to the Job Service, see <a href="#knative-eventing-supporting-resources">knative eventing supporting resources</a>.</p>
+</div>
+<div class="paragraph">
+<p>Finally, the only configuration parameter that you must set, when needed, is to enable the propagation of the Job Status Change events, for example, if you want to register these events in the <a href="../data-index/data-index-service.html" class="xref page">Data Index Service</a></p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset4_using-environment-variables"></a>Using environment variables</p>
+</li>
+<li>
+<p><a id="tabset4_using-system-properties-with-java-like-names"></a>Using system properties with java like names</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset4_using-environment-variables">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Variable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KOGITO_JOBS_SERVICE_HTTP_JOB_STATUS_CHANGE_EVENTS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> to establish if the Job Status Change events must be propagated. If you set this value to <code>true</code> you must be sure that the <a href="#knative-eventing-supporting-resources-sink-binding">sink binding</a> was created.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tab-pane" aria-labelledby="tabset4_using-system-properties-with-java-like-names">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Variable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.jobs-service.http.job-status-change-events</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> to establish if the Job Status Change events must be propagated. If you set this value to <code>true</code> you must be sure that the <a href="#knative-eventing-supporting-resources-sink-binding">sink binding</a> was created.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="knative-eventing-supporting-resources"><a class="anchor" href="#knative-eventing-supporting-resources"></a>Knative eventing supporting resources</h4>
+<div class="paragraph">
+<p>To ensure the Job Service receives the knative events to manage the jobs, you must create the <a href="#knative-eventing-supporting-resources-trigger-create">create job events</a> and <a href="#knative-eventing-supporting-resources-trigger-delete">delete job events</a> triggers shown in the diagram below.
+Additionally, if you have enabled the Job Status Change events propagation you must create the <a href="#knative-eventing-supporting-resources-sink-binding">sink binding</a>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/job-services/Knative-Eventing-API-Resources.png" alt="Knative Eventing API Resources">
+</div>
+<div class="title">Figure 1. Knative eventing supporting resources</div>
+</div>
+<div class="paragraph">
+<p>The following snippets shows an example on how you can configure these resources. Consider that these configurations might need to be adjusted to your local kubernetes cluster.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>We recommend that you visit this example <a href="../use-cases/timeout-showcase-example.html#execute-quarkus-project-standalone-services" class="xref page">Quarkus Workflow Project with standalone services</a> to see a full setup of all these configurations.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="knative-eventing-supporting-resources-trigger-create" class="listingblock">
+<div class="title">Create Job event trigger configuration example</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: jobs-service-postgresql-create-job-trigger
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: job.create
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: jobs-service-postgresql
+    uri: /v2/jobs/events</code></pre>
+</div>
+</div>
+<div id="knative-eventing-supporting-resources-trigger-delete" class="listingblock">
+<div class="title">Delete Job event trigger configuration example</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: jobs-service-postgresql-delete-job-trigger
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: job.delete
+  subscriber:
+    ref:
+      apiVersion: v1
+      kind: Service
+      name: jobs-service-postgresql
+    uri: /v2/jobs/events</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For more information about triggers, see <a href="https://knative.dev/docs/eventing/triggers/">Knative Triggers</a>.</p>
+</div>
+<div id="knative-eventing-supporting-resources-sink-binding" class="listingblock">
+<div class="title">Job Service sink binding configuration example</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: sources.knative.dev/v1
+kind: SinkBinding
+metadata:
+  name: jobs-service-postgresql-sb
+spec:
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: default
+  subject:
+    apiVersion: apps/v1
+    kind: Deployment
+    selector:
+      matchLabels:
+        app.kubernetes.io/name: jobs-service-postgresql
+        app.kubernetes.io/version: 2.0.0-SNAPSHOT</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For more information about sink bindings, see <a href="https://knative.dev/docs/eventing/sinks/#sink-parameter-example">Knative Sink Bindings</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="kafka-messaging"><a class="anchor" href="#kafka-messaging"></a>Kafka messaging</h3>
+<div class="paragraph">
+<p>To enable the Job Service Eventing API via the Kafka messaging system you must provide these configurations:</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset5_using-environment-variables"></a>Using environment variables</p>
+</li>
+<li>
+<p><a id="tabset5_using-system-properties-with-java-like-names"></a>Using system properties with java like names</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset5_using-environment-variables">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Variable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QUARKUS_PROFILE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the quarkus profile with the value <code>kafka-events_support</code> to enable the kafka messaging based Job Service Eventing API.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">By default the kafka eventing api is disabled.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KOGITO_JOBS_SERVICE_KAFKA_JOB_STATUS_CHANGE_EVENTS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> to establish if the Job Status Change events must be propagated.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> when the <code>kafka-events-support</code> profile is set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KAFKA_BOOTSTRAP_SERVERS</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A comma-separated list of host:port to use for establishing the initial connection to the Kafka cluster.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>localhost:9092</code> when the <code>kafka-events-support</code> profile is set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MP_MESSAGING_INCOMING_KOGITO_JOB_SERVICE_JOB_REQUEST_EVENTS_V2_TOPIC</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kafka topic for events API incoming events. I general you don&#8217;t need to change this value.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito-job-service-job-request-events-v2</code> when the <code>kafka-events_support</code> profile is set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MP_MESSAGING_OUTGOING_KOGITO_JOB_SERVICE_JOB_STATUS_EVENTS_TOPIC</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kafka topic for job status change outgoing events. I general you don&#8217;t need to change this value.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito-jobs-events</code> when the <code>kafka-events_support</code> profile is set.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tab-pane" aria-labelledby="tabset5_using-system-properties-with-java-like-names">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Variable</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the quarkus profile with the value <code>kafka-events_support</code> to enable the kafka messaging based Job Service Eventing API.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">By default the kafka eventing api is disabled.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito.jobs-service.kafka.job-status-change-events</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> to establish if the Job Status Change events must be propagated.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code> when the <code>kafka-events-support</code> profile is set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kafka.bootstrap.servers</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A comma-separated list of host:port to use for establishing the initial connection to the Kafka cluster.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>localhost:9092</code> when the <code>kafka-events-support</code> profile is set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>mp.messaging.incoming.kogito-job-service-job-request-events-v2.topic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kafka topic for events API incoming events. I general you don&#8217;t need to change this value.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito-job-service-job-request-events-v2</code> when the <code>kafka-events_support</code> profile is set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>mp.messaging.outgoing.kogito-job-service-job-status-events.topic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kafka topic for job status change outgoing events. I general you don&#8217;t need to change this value.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>kogito-jobs-events</code> when the <code>kafka-events_support</code> profile is set.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Depending on your Kafka messaging system configuration you might need to apply additional Kafka configurations to connect to the Kafka broker, etc.
+To see the list of all the supported configurations you must read the <a href="https://quarkus.io/guides/kafka">Quarkus Apache Kafka Reference Guide</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_leader_election"><a class="anchor" href="#_leader_election"></a>Leader election</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Currently, the Job Service is a singleton service, and thus, just one active instance of the service can be scheduling and executing the jobs.</p>
+</div>
+<div class="paragraph">
+<p>To avoid issues when it is deployed in the cloud, where it is common to eventually have more than one instance deployed, the Job Service supports a leader instance election process.
+Only the instance that becomes the leader activates the external communication to receive and schedule jobs.</p>
+</div>
+<div class="paragraph">
+<p>All the instances that are not leaders, stay inactive in a wait state and try to become the leader continuously.</p>
+</div>
+<div class="paragraph">
+<p>When a new instance of the service is started, it is not set as a leader at startup time but instead, it starts the process to become one.</p>
+</div>
+<div class="paragraph">
+<p>When an instance that is the leader for any issue stays unresponsive or is shut down, one of the other running instances becomes the leader.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/job-services/job-service-leader.png" alt="job service leader">
+</div>
+<div class="title">Figure 2. Job Service leader election</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This leader election mechanism uses the underlying persistence backend, which currently is only supported in the PostgreSQL implementation.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>There is no need for any configuration to support this feature, the only requirement is to have the supported database with the data schema up-to-date as described in the <a href="#job-service-postgresql">PostgreSQL</a> section.</p>
+</div>
+<div class="paragraph">
+<p>In case the underlying persistence does not support this feature, you must guarantee that just one single instance of the Job Service is running at the same time.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
+We really appreciate it!</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/tabsBehavior.js"></script>
+<script src="../../../_/js/vendor/lunr.js"></script>
+<script src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.." data-snippet-length="100" data-stylesheet="../../../_/css/search.css"></script>
+<script async src="../../../search-index.js"></script>
+  </body>
+</html>
