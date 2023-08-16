@@ -1000,9 +1000,29 @@ custom-function-knative-service   http://custom-function-knative-service.default
 </td>
 <td class="content">
 <div class="paragraph">
-<p><code>GET</code> requests are not yet supported.</p>
+<p>You can also send <code>GET</code> requests by setting <code>method=GET</code> in <code>operation</code>. In this case, the arguments are forwarded over a query string.</p>
 </div>
 </td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example of a <code>GET</code> request</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  "functions": [
+    {
+      "name": "greet",
+      "type": "custom",
+      "operation": "knative:services.v1.serving.knative.dev/custom-function-knative-service?path=/plainJsonFunction&amp;method=GET", <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+  ]</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>GET</code> request</td>
 </tr>
 </table>
 </div>
