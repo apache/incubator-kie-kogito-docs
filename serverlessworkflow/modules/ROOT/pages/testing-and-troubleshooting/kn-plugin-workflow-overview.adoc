@@ -192,7 +192,7 @@ You can use the `kubectl` command line if you want to use a complex deployment s
 
 After installing the {product_name} plug-in, you can use the `quarkus create` command with `kn workflow` to scaffold a new Quarkus Workflow project in your current directory.
 
-The `quarkus create` command sets up {product_name} project containing minimal extensions to build a workflow project. Also, the generated workflow project contains a "hello world" `workflow.sw.json` file in your `./<project-name>` directory.
+The `quarkus create` command sets up {product_name} project containing minimal extensions to build a workflow project. The `create` command sets up Quarkus project containing minimal extensions to build a workflow project. Also, the generated workflow project contains a "hello world" `workflow.sw.json` file in your `./<project-name>/src/main/resources` directory.
 
 .Prerequisites
 * {product_name} plug-in for Knative CLI is installed.
@@ -216,7 +216,7 @@ By default, the generated project is named as `new-project`. You can overwrite t
 .Create a project named `my-project`
 [source,shell]
 ----
-kn workflow create --name my-project
+kn workflow quarkus create --name my-project
 ----
 --
 
@@ -236,7 +236,7 @@ When you run the `create` command for the first time, it might take a while due 
 --
 
 [[proc-build-quarkus-sw-project-kn-cli]]
-== Building a workflow project using Knative CLI
+== Building a Quarkus workflow project using Knative CLI
 
 After creating your workflow project, you can use the `quarkus build` command with `kn workflow` to build your workflow project in your current directory and to generate a container image. 
 
@@ -297,7 +297,7 @@ kn workflow quarkus build --image my-user/my-project:1.0.0 --image-repository ot
 --
 
 [[con-build-strategy-kn-cli]]
-=== Strategy for building a workflow project
+=== Strategy for building a Quarkus workflow project
 
 You can use the following strategies to build a workflow project and to generate the container image:
 
@@ -351,9 +351,9 @@ kn workflow quarkus build --image my-project --push
 --
 
 [[proc-deploy-quarkus-sw-project-kn-cli]]
-== Deploying a workflow project using Knative CLI
+== Deploying a Quarkus workflow project using Knative CLI
 
-You can use the `deploy` command combined with `kn workflow` to deploy your workflow project in your current directory. However, before deploying the project, you must build your workflow project as the build process produces deployment files, such as `knative.yml` and `kogito.yml` (In case of events) in the `./target/kubernetes` folder.
+You can use the `quarkus deploy` command combined with `kn workflow` to deploy your workflow project in your current directory. However, before deploying the project, you must build your workflow project as the build process produces deployment files, such as `knative.yml` and `kogito.yml` (In case of events) in the `./target/kubernetes` folder.
 
 .Prerequisites
 * {product_name} plug-in for Knative CLI is installed.
