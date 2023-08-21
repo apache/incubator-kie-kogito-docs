@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Custom functions for your Kogito Serverless Workflow service :: Kogito Serverless Workflow Guides</title>
+    <title>Custom functions for your SonataFlow service :: SonataFlow Guides</title>
     <meta name="generator" content="Antora 3.1.4">
     <link rel="stylesheet" href="../../../_/css/site.css">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -24,7 +24,7 @@
                     <img src="../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
                 </a>
                 <a class="navbar-item" href="../../..">
-                    Kogito Serverless Workflow Guides
+                    SonataFlow Guides
                 </a>
             </div>
                 <div class="navbar-item search hide-for-print">
@@ -56,7 +56,7 @@
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+    <h3 class="title"><a href="../index.html">SonataFlow Guides</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
@@ -480,7 +480,7 @@
   <a href="../../latest/index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li><a href="../index.html">SonataFlow Guides</a></li>
     <li>Core Concepts</li>
     <li><a href="custom-functions-support.html">Custom Functions</a></li>
   </ul>
@@ -519,14 +519,14 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Custom functions for your Kogito Serverless Workflow service</h1>
+<h1 class="page">Custom functions for your SonataFlow service</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>The Cloud Native Computing Foundation (CNCF) specification <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#defining-custom-function-types">supports the <code>custom</code> function type</a>, which enables the implementations to extend the function definition capability.</p>
 </div>
 <div class="paragraph">
-<p>Kogito Serverless Workflow supports the <code>java</code> and <code>sysout</code> custom types.</p>
+<p>SonataFlow supports the <code>java</code> and <code>sysout</code> custom types.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -603,7 +603,7 @@
 <h2 id="con-func-java"><a class="anchor" href="#con-func-java"></a>Java custom function</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Kogito Serverless Workflow supports the <code>java</code> functions within an Apache Maven project, in which you define your workflow service.</p>
+<p>SonataFlow supports the <code>java</code> functions within an Apache Maven project, in which you define your workflow service.</p>
 </div>
 <div class="sect2">
 <h3 id="_function_definition"><a class="anchor" href="#_function_definition"></a>Function Definition</h3>
@@ -823,7 +823,7 @@ public JsonNode myMethod(JsonNode workflowData, KogitoProcessContext context ) {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>camel:direct:myendpoint</code> is the custom operation definition. In this definition, <code>camel</code> is the reserved keyword followed by the <code>direct</code> endpoint. <a href="https://camel.apache.org/camel-quarkus/2.14.x/reference/extensions/direct.html">Camel Direct</a> is the only supported consumer by Kogito Serverless Workflow. Finally, <code>myendpoint</code> is the endpoint URI name found in the route within your project&#8217;s context.</td>
+<td><code>camel:direct:myendpoint</code> is the custom operation definition. In this definition, <code>camel</code> is the reserved keyword followed by the <code>direct</code> endpoint. <a href="https://camel.apache.org/camel-quarkus/2.14.x/reference/extensions/direct.html">Camel Direct</a> is the only supported consumer by SonataFlow. Finally, <code>myendpoint</code> is the endpoint URI name found in the route within your project&#8217;s context.</td>
 </tr>
 </table>
 </div>
@@ -931,7 +931,7 @@ public JsonNode myMethod(JsonNode workflowData, KogitoProcessContext context ) {
 <h2 id="con-func-knative"><a class="anchor" href="#con-func-knative"></a>Knative custom function</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Kogito Serverless Workflow provides an implementation of a custom function through the <code>knative-serving</code> add-on to invoke Knative services. It allows you to have a static URI, defining a Knative service, which is used to perform HTTP requests. The Knative service defined in the URI is queried in the current Knative cluster and translated to a valid URL.</p>
+<p>SonataFlow provides an implementation of a custom function through the <code>knative-serving</code> add-on to invoke Knative services. It allows you to have a static URI, defining a Knative service, which is used to perform HTTP requests. The Knative service defined in the URI is queried in the current Knative cluster and translated to a valid URL.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -960,7 +960,7 @@ custom-function-knative-service   http://custom-function-knative-service.default
 </div>
 </div>
 <div class="paragraph">
-<p>You can declare a Kogito Serverless Workflow custom function using the Knative service name, like the following:</p>
+<p>You can declare a SonataFlow custom function using the Knative service name, like the following:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -990,7 +990,7 @@ custom-function-knative-service   http://custom-function-knative-service.default
 </table>
 </div>
 <div class="paragraph">
-<p>The above function will send a <code>POST</code> request to the <a href="http://custom-function-knative-service.default.10.109.169.193.sslip.io/plainJsonFunction" class="bare">http://custom-function-knative-service.default.10.109.169.193.sslip.io/plainJsonFunction</a> URL. If you don&#8217;t specify a path, Kogito Serverless Workflow will use the root path (/).</p>
+<p>The above function will send a <code>POST</code> request to the <a href="http://custom-function-knative-service.default.10.109.169.193.sslip.io/plainJsonFunction" class="bare">http://custom-function-knative-service.default.10.109.169.193.sslip.io/plainJsonFunction</a> URL. If you don&#8217;t specify a path, SonataFlow will use the root path (/).</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1029,7 +1029,7 @@ custom-function-knative-service   http://custom-function-knative-service.default
 <div class="sect3">
 <h4 id="about-namespaces"><a class="anchor" href="#about-namespaces"></a>About namespaces</h4>
 <div class="paragraph">
-<p>Note that in the above example, you declared only the name of the service you wanted to call, but not a namespace. In this case, Kogito Serverless Workflow will look for a Knative service in the same namespace the workflow service is running.</p>
+<p>Note that in the above example, you declared only the name of the service you wanted to call, but not a namespace. In this case, SonataFlow will look for a Knative service in the same namespace the workflow service is running.</p>
 </div>
 <div class="paragraph">
 <p>In case you need to call a Knative service in a different namespace, you can declare the function as:</p>
@@ -1046,7 +1046,7 @@ custom-function-knative-service   http://custom-function-knative-service.default
 </div>
 </div>
 <div class="paragraph">
-<p>In the above example, Kogito Serverless Workflow will look for the <code>custom-function-knative-service</code> in the <code>my_different_namespace</code> namespace.</p>
+<p>In the above example, SonataFlow will look for the <code>custom-function-knative-service</code> in the <code>my_different_namespace</code> namespace.</p>
 </div>
 </div>
 </div>
@@ -1105,10 +1105,10 @@ custom-function-knative-service   http://custom-function-knative-service.default
 <div class="sect3">
 <h4 id="sending-cloudevents"><a class="anchor" href="#sending-cloudevents"></a>Sending a CloudEvent</h4>
 <div class="paragraph">
-<p>By default, Kogito Serverless Workflow sends the payload of a Knative function as a regular JSON object and <code>Content-Type</code> as <code>application/json</code>. However, you can tell Kogito Serverless Workflow to send the payload as a CloudEvent. In that case, Kogito Serverless Workflow will check if the CloudEvent has all mandatory attributes set and use <code>application/cloudevents+json; charset=UTF-8</code> in <code>Content-Type</code>.</p>
+<p>By default, SonataFlow sends the payload of a Knative function as a regular JSON object and <code>Content-Type</code> as <code>application/json</code>. However, you can tell SonataFlow to send the payload as a CloudEvent. In that case, SonataFlow will check if the CloudEvent has all mandatory attributes set and use <code>application/cloudevents+json; charset=UTF-8</code> in <code>Content-Type</code>.</p>
 </div>
 <div class="paragraph">
-<p>To tell Kogito Serverless Workflow you want to send the payload as a CloudEvent, you must define your function as follows:</p>
+<p>To tell SonataFlow you want to send the payload as a CloudEvent, you must define your function as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1125,7 +1125,7 @@ custom-function-knative-service   http://custom-function-knative-service.default
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Tells Kogito Serverless Workflow to send the payload as a CloudEvent. Default is <code>false</code></td>
+<td>Tells SonataFlow to send the payload as a CloudEvent. Default is <code>false</code></td>
 </tr>
 </table>
 </div>
@@ -1137,7 +1137,7 @@ custom-function-knative-service   http://custom-function-knative-service.default
 </td>
 <td class="content">
 <div class="paragraph">
-<p>If you do not set the <code>asCloudEvent</code> attribute to <code>true</code>,  you can not send a CloudEvent. If you do so, Kogito Serverless Workflow will throw an error.</p>
+<p>If you do not set the <code>asCloudEvent</code> attribute to <code>true</code>,  you can not send a CloudEvent. If you do so, SonataFlow will throw an error.</p>
 </div>
 </td>
 </tr>
@@ -1209,7 +1209,7 @@ custom-function-knative-service   http://custom-function-knative-service.default
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Kogito Serverless Workflow generates a CloudEvent ID based on the <code>source</code> and the workflow instance ID. In case you decide to set an ID, Kogito Serverless Workflow will use it and you must ensure it&#8217;s unique. Refer to the following example on how to set a CloudEvent ID:</p>
+<p>SonataFlow generates a CloudEvent ID based on the <code>source</code> and the workflow instance ID. In case you decide to set an ID, SonataFlow will use it and you must ensure it&#8217;s unique. Refer to the following example on how to set a CloudEvent ID:</p>
 </div>
 </td>
 </tr>
@@ -1444,7 +1444,7 @@ void init () {
 <p><a href="cncf-serverless-workflow-specification-support.html" class="xref page">CNCF Serverless Workflow specification</a></p>
 </li>
 <li>
-<p><a href="understanding-jq-expressions.html" class="xref page">jq expressions in Kogito Serverless Workflow</a></p>
+<p><a href="understanding-jq-expressions.html" class="xref page">jq expressions in SonataFlow</a></p>
 </li>
 </ul>
 </div>

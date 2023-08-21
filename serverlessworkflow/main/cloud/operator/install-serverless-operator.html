@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Install the SonataFlow Operator :: Kogito Serverless Workflow Guides</title>
+    <title>Install the SonataFlow Operator :: SonataFlow Guides</title>
     <meta name="description" content="Install the operator on Kubernetes clusters">
     <meta name="keywords" content="kogito, sonataflow, workflow, serverless, operator, kubernetes, minikube, openshift, containers">
     <meta name="generator" content="Antora 3.1.4">
@@ -26,7 +26,7 @@
                     <img src="../../../../_/img/kogitoLogo_default_64px.png" height="50px" alt="Kogito logo"/>
                 </a>
                 <a class="navbar-item" href="../../../..">
-                    Kogito Serverless Workflow Guides
+                    SonataFlow Guides
                 </a>
             </div>
                 <div class="navbar-item search hide-for-print">
@@ -58,7 +58,7 @@
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="../../index.html">Kogito Serverless Workflow Guides</a></h3>
+    <h3 class="title"><a href="../../index.html">SonataFlow Guides</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
@@ -482,7 +482,7 @@
   <a href="../../../latest/index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li><a href="../../index.html">SonataFlow Guides</a></li>
     <li><a href="../index.html">Cloud</a></li>
     <li>Operator</li>
     <li><a href="install-serverless-operator.html">Installation</a></li>
@@ -526,13 +526,13 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This guide describes how to install the SonataFlow Operator in a Kubernetes cluster. The operator is in an <a href="known-issues.html" class="xref page">early development stage</a> (community only) and has been tested on Kubernetes 1.22+, and <a href="https://minikube.sigs.k8s.io">Minikube</a>.</p>
+<p>This guide describes how to install the SonataFlow Operator in a Kubernetes or OpenShift cluster. The operator is in an <a href="known-issues.html" class="xref page">early development stage</a> (community only) and has been tested on OpenShift 4.11+, Kubernetes 1.22+, and <a href="https://minikube.sigs.k8s.io">Minikube</a>.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
 <li>
-<p>A Kubernetes cluster with admin privileges. Alternatively, you can use Minikube or KIND.</p>
+<p>A Kubernetes or OpenShift cluster with admin privileges. Alternatively, you can use Minikube or KIND.</p>
 </li>
 <li>
 <p><code>kubectl</code> command-line tool is installed. Otherwise, Minikube provides it.</p>
@@ -542,13 +542,66 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="_prepare_a_minikube_instance"><a class="anchor" href="#_prepare_a_minikube_instance"></a>Prepare a Minikube Instance</h2>
+<h2 id="_sonataflow_operator_openshift_installation"><a class="anchor" href="#_sonataflow_operator_openshift_installation"></a>SonataFlow Operator OpenShift installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To install the operator on OpenShift refer to the "<a href="https://docs.openshift.com/container-platform/4.13/operators/admin/olm-adding-operators-to-cluster.html">Adding Operators to a cluster</a>" from the OpenShift&#8217;s documentation.</p>
+</div>
+<div class="paragraph">
+<p>When searching for the operator in the <strong>Filter by keyword</strong> field, use the word <code>sonataflow</code>. If you&#8217;re installing from the CLI, the operator&#8217;s catalog name is <code>sonataflow-operator</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="_uninstall"><a class="anchor" href="#_uninstall"></a>Uninstall</h3>
+<div class="paragraph">
+<p>To remove the operator on OpenShift refer to the "<a href="https://docs.openshift.com/container-platform/4.13/operators/admin/olm-deleting-operators-from-cluster.html">Deleting Operators from a cluster</a>" from the OpenShift&#8217;s documentation.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sonataflow_operator_kubernetes_installation"><a class="anchor" href="#_sonataflow_operator_kubernetes_installation"></a>SonataFlow Operator Kubernetes installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To install the operator on Kubernetes refer to the  "<a href="https://operatorhub.io/how-to-install-an-operator">How to install an Operator from OperatorHub.io</a>" from the OperatorHub&#8217;s documentation.</p>
+</div>
+<div class="paragraph">
+<p>When <a href="https://operatorhub.io/">searching for the operator in the <strong>Search OperatorHub</strong> field</a>, use the word <code>sonataflow</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="_uninstall_2"><a class="anchor" href="#_uninstall_2"></a>Uninstall</h3>
+<div class="paragraph">
+<p>To remove the operator on Kubernetes follow the document "<a href="https://olm.operatorframework.io/docs/tasks/uninstall-operator/">Uninstall your operator</a>" from the OLM&#8217;s documentation.</p>
+</div>
+<div class="paragraph">
+<p>When searching for the subscription to remove, use the word <code>my-sonataflow-operator</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sonataflow_operator_manual_installation"><a class="anchor" href="#_sonataflow_operator_manual_installation"></a>SonataFlow Operator Manual Installation</h2>
 <div class="sectionbody">
 <div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
 <i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you&#8217;re running on Kubernetes or OpenShift, it is highly recommended to install the operator from the OperatorHub or OpenShift Console instead since the installation is managed by OLM. Use this method only if you need a snapshot version or you&#8217;re running locally on Minikube or KIND.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_prepare_a_minikube_instance"><a class="anchor" href="#_prepare_a_minikube_instance"></a>Prepare a Minikube instance</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
 <div class="paragraph">
@@ -601,24 +654,22 @@
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_install_the_kogito_serverless_workflow_operator"><a class="anchor" href="#_install_the_kogito_serverless_workflow_operator"></a>Install the Kogito Serverless Workflow Operator</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_install"><a class="anchor" href="#_install"></a>Install</h3>
 <div class="paragraph">
-<p>To install the Kogito Serverless Workflow Operator, you can use the following command:</p>
+<p>To install the SonataFlow Operator, you can use the following command:</p>
 </div>
 <div class="listingblock">
-<div class="title">Install Kogito Serverless Workflow Operator on Kubernetes</div>
+<div class="title">Install SonataFlow Operator on Kubernetes</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/operator.yaml</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You can follow the deployment of the Kogito Serverless Workflow Operator:</p>
+<p>You can follow the deployment of the SonataFlow Operator:</p>
 </div>
 <div class="listingblock">
-<div class="title">Watch the Kogito Serverless Workflow Operator pod</div>
+<div class="title">Watch the SonataFlow Operator pod</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get pod -n sonataflow-operator-system --watch</code></pre>
 </div>
@@ -639,39 +690,25 @@ sonataflow-operator-controller-manager-948547ffd-sr2j2   2/2     Running        
 <p>You can also follow the operator’s log:</p>
 </div>
 <div class="listingblock">
-<div class="title">Watch the Kogito Serverless Workflow Operator pod logs</div>
+<div class="title">Watch the SonataFlow Operator pod logs</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl logs deployment/sonataflow-operator-controller-manager -n sonataflow-operator-system -f</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Once the operator is running, it will watch for instances of the Kogito Serverless Workflow Custom Resources (CR). Using CRs, you can configure your Kogito Serverless Workflow environment and define Workflows and builds to be handled by the operator.</p>
+<p>Once the operator is running, it will watch for instances of the SonataFlow Custom Resources (CR). Using CRs, you can configure your SonataFlow environment and define Workflows and builds to be handled by the operator.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_uninstall_3"><a class="anchor" href="#_uninstall_3"></a>Uninstall</h3>
 <div class="paragraph">
-<p>For the operator to correctly manage the CR instances, you must first install the Kogito Serverless Workflow Custom Resource Definitions (CRDs). To check if the CRDs are correctly installed, try running:</p>
-</div>
-<div class="listingblock">
-<div class="title">Check if the CRDs are correctly installed</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get crds | grep sonataflow
-sonataflowbuilds.sonataflow.org      2023-03-08T18:31:15Z
-sonataflowplatforms.sonataflow.org   2023-03-08T18:31:15Z
-sonataflows.sonataflow.org   2023-03-08T18:31:15Z</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_uninstall_the_operator"><a class="anchor" href="#_uninstall_the_operator"></a>Uninstall the Operator</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To uninstall the SonataFlow Operator, first, you must delete all the Kogito Serverless Workflow Custom Resources (CR) instances managed by it. Once the CRs are deleted, you can then delete all resources created during the operator installation.</p>
+<p>To uninstall the SonataFlow Operator, first, you must delete all the SonataFlow Custom Resources (CR) instances managed by it. Once the CRs are deleted, you can then delete all resources created during the operator installation.</p>
 </div>
 <div class="paragraph">
 <p>To delete every CR managed by the operator in your cluster, you can run these series of commands:</p>
 </div>
 <div class="listingblock">
-<div class="title">Delete all Kogito Serverless Workflow CR instances</div>
+<div class="title">Delete all SonataFlow CR instances</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl delete --all workflow --all-namespaces
 kubectl delete --all sonataflowbuild --all-namespaces
@@ -714,6 +751,7 @@ quay.io/kiegroup/kogito-serverless-operator-nightly:1.41.0</code></pre>
 </td>
 </tr>
 </table>
+</div>
 </div>
 </div>
 </div>
