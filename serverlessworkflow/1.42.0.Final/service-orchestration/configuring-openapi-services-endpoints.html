@@ -56,7 +56,7 @@
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+    <h3 class="title"><a href="../index.html">SonataFlow Guides</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
@@ -394,12 +394,12 @@
 </div>
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
-    <span class="title">Kogito Serverless Workflow Guides</span>
+    <span class="title">SonataFlow Guides</span>
     <span class="version">1.42</span>
   </div>
   <ul class="components">
     <li class="component is-current">
-      <a class="title" href="../index.html">Kogito Serverless Workflow Guides</a>
+      <a class="title" href="../index.html">SonataFlow Guides</a>
       <ul class="versions">
         <li class="version">
           <a href="../../main/index.html">snapshot</a>
@@ -480,7 +480,7 @@
   <a href="../index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li><a href="../index.html">SonataFlow Guides</a></li>
     <li>Service Orchestration</li>
     <li><a href="orchestration-of-openapi-based-services.html">OpenAPI</a></li>
     <li><a href="configuring-openapi-services-endpoints.html">Advanced Configuration</a></li>
@@ -524,7 +524,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can configure OpenAPI service endpoints in Kogito Serverless Workflow.</p>
+<p>This document describes how you can configure OpenAPI service endpoints in SonataFlow.</p>
 </div>
 </div>
 </div>
@@ -532,15 +532,15 @@
 <h2 id="con-config-openapi-services-endpoints"><a class="anchor" href="#con-config-openapi-services-endpoints"></a>Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Kogito Serverless Workflow leverages MicroProfile REST Client to invoke OpenAPI services. Therefore, you can configure the OpenAPI services by following the MicroProfile Config specification. For the list of properties to configure in the MicroProfile REST Client specification, see <a href="https://download.eclipse.org/microprofile/microprofile-rest-client-2.0/microprofile-rest-client-spec-2.0.html#mpconfig">Support for MicroProfile Config</a> in MicroProfile REST Client documentation.</p>
+<p>SonataFlow leverages MicroProfile REST Client to invoke OpenAPI services. Therefore, you can configure the OpenAPI services by following the MicroProfile Config specification. For the list of properties to configure in the MicroProfile REST Client specification, see <a href="https://download.eclipse.org/microprofile/microprofile-rest-client-2.0/microprofile-rest-client-spec-2.0.html#mpconfig">Support for MicroProfile Config</a> in MicroProfile REST Client documentation.</p>
 </div>
 <div class="paragraph">
-<p>Kogito Serverless Workflow follows the strategy defined in the <code>kogito.sw.operationIdStrategy</code> property to generate the REST Client. The possible values of the <code>kogito.sw.operationIdStrategy</code> property include:</p>
+<p>SonataFlow follows the strategy defined in the <code>kogito.sw.operationIdStrategy</code> property to generate the REST Client. The possible values of the <code>kogito.sw.operationIdStrategy</code> property include:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>FILE_NAME</code>(Default value): Kogito Serverless Workflow uses the configuration key based on the OpenAPI document file name as shown in the following example:</p>
+<p><code>FILE_NAME</code>(Default value): SonataFlow uses the configuration key based on the OpenAPI document file name as shown in the following example:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -550,13 +550,13 @@
 </div>
 </div>
 <div class="paragraph">
-<p>In the previous example, Kogito Serverless Workflow uses <code>stock_portfolio_svc_yaml</code> as configuration key as the OpenAPI document is available at <code>src/main/resources/openapi/stock-portfolio-svc.yaml</code>.</p>
+<p>In the previous example, SonataFlow uses <code>stock_portfolio_svc_yaml</code> as configuration key as the OpenAPI document is available at <code>src/main/resources/openapi/stock-portfolio-svc.yaml</code>.</p>
 </div>
 </div>
 </div>
 </li>
 <li>
-<p><code>FULL_URI</code>: Kogito Serverless Workflow uses the full URI path as configuration key as shown in the following example:</p>
+<p><code>FULL_URI</code>: SonataFlow uses the full URI path as configuration key as shown in the following example:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -589,13 +589,13 @@
 </div>
 </div>
 <div class="paragraph">
-<p>In the previous example, Kogito Serverless Workflow uses <code>apicatalog_apis_123_document</code> as configuration key.</p>
+<p>In the previous example, SonataFlow uses <code>apicatalog_apis_123_document</code> as configuration key.</p>
 </div>
 </div>
 </div>
 </li>
 <li>
-<p><code>FUNCTION_NAME</code>: Kogito Serverless Workflow uses the workflow ID and the function name that references the OpenAPI document as shown in the following examples:</p>
+<p><code>FUNCTION_NAME</code>: SonataFlow uses the workflow ID and the function name that references the OpenAPI document as shown in the following examples:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -620,13 +620,13 @@
 </div>
 </div>
 <div class="paragraph">
-<p>In the previous example, Kogito Serverless Workflow uses <code>"myworkflow_myfunction"</code> as configuration key.</p>
+<p>In the previous example, SonataFlow uses <code>"myworkflow_myfunction"</code> as configuration key.</p>
 </div>
 </div>
 </div>
 </li>
 <li>
-<p><code>SPEC_TITLE</code>: Kogito Serverless Workflow uses the value of <code>info.title</code> in the OpenAPI document as shown in the following examples:</p>
+<p><code>SPEC_TITLE</code>: SonataFlow uses the value of <code>info.title</code> in the OpenAPI document as shown in the following examples:</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -649,7 +649,7 @@ paths:
 </div>
 </div>
 <div class="paragraph">
-<p>In the previous example, Kogito Serverless Workflow uses <code>stock-service_API</code> as configuration key.</p>
+<p>In the previous example, SonataFlow uses <code>stock-service_API</code> as configuration key.</p>
 </div>
 </div>
 </div>
@@ -704,7 +704,7 @@ paths:
 </div>
 </div>
 <div class="paragraph">
-<p>In the previous example, Kogito Serverless Workflow uses <code>remoteCatalog</code> as configuration key.</p>
+<p>In the previous example, SonataFlow uses <code>remoteCatalog</code> as configuration key.</p>
 </div>
 </div>
 </div>
@@ -833,7 +833,7 @@ paths:
 </table>
 </div>
 <div class="paragraph">
-<p>Kogito Serverless Workflow leverages Quarkus profiles to configure the workflow application depending on the target environment.</p>
+<p>SonataFlow leverages Quarkus profiles to configure the workflow application depending on the target environment.</p>
 </div>
 <div class="paragraph">
 <p>To set properties for different profiles, each property needs to be prefixed with a percentage (%) followed by the profile name and a period (.) in the syntax as <code>%&lt;profile-name&gt;.config.name</code>. By default, Quarkus provides the following profiles that activate automatically in certain conditions:</p>
