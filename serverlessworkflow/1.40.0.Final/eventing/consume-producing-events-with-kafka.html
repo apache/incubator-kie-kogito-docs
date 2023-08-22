@@ -58,7 +58,7 @@
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+    <h3 class="title"><a href="../index.html">SonataFlow Guides</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
@@ -464,7 +464,7 @@
   <a href="../../latest/index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li><a href="../index.html">SonataFlow Guides</a></li>
     <li>Eventing</li>
     <li><a href="consume-producing-events-with-kafka.html">Consuming and producing events using Apache Kafka</a></li>
   </ul>
@@ -510,7 +510,7 @@
 <p>This document describes how you can configure a workflow to interact with <a href="https://kafka.apache.org/documentation/">Apache Kafka</a>. Apache Kafka uses an abstraction called topic to classify events. Events are published to a topic, and events are consumed from a topic.</p>
 </div>
 <div class="paragraph">
-<p>Kogito Serverless Workflow uses <a href="https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/3.3/connectors/connectors.html">Smallrye connectors</a> to encapsulate access to several brokers, enabling Kogito Serverless Workflow to support different brokers by changing the configuration and classpath dependencies. However, Smallrye connectors also introduce an entity called channel. The Smallrye channels are unidirectional and need to be declared as input (<code>incoming</code>) or output (<code>outgoing</code>). When using Apache Kafka, the Smallrye channels must be mapped to Apache Kafka topics through configuration.</p>
+<p>SonataFlow uses <a href="https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/3.3/connectors/connectors.html">Smallrye connectors</a> to encapsulate access to several brokers, enabling SonataFlow to support different brokers by changing the configuration and classpath dependencies. However, Smallrye connectors also introduce an entity called channel. The Smallrye channels are unidirectional and need to be declared as input (<code>incoming</code>) or output (<code>outgoing</code>). When using Apache Kafka, the Smallrye channels must be mapped to Apache Kafka topics through configuration.</p>
 </div>
 <div class="paragraph">
 <p>You need to add the Kafka Quarkus Smallrye connector dependency to indicate that you are using Apache Kafka. To enable a workflow to use Apache Kafka Smallrye connector, add the following dependency to the <code>pom.xml</code> file of your project if using Apache Maven:</p>
@@ -525,7 +525,7 @@
 </div>
 </div>
 <div class="paragraph">
-<p>The messaging capabilities are included in the Quarkus Serverless Workflow extension, even though the messaging capabilities are optional. This means you do not need to explicitly add the messaging add-on dependency when using Kogito Serverless Workflow.</p>
+<p>The messaging capabilities are included in the Quarkus Serverless Workflow extension, even though the messaging capabilities are optional. This means you do not need to explicitly add the messaging add-on dependency when using SonataFlow.</p>
 </div>
 </div>
 </div>
@@ -536,7 +536,7 @@
 <p>You can configure Smallrye channels for a workflow using event definitions. The Smallrye channels are defined using <a href="https://quarkus.io/guides/config">Quarkus configuration</a>. The format for Smallrye channel properties is <code>mp.messaging.[incoming|outgoing].&lt;channel name&gt;.&lt;property_name&gt;</code>.</p>
 </div>
 <div class="paragraph">
-<p>Kogito Serverless Workflow allows the following channel mapping strategies:</p>
+<p>SonataFlow allows the following channel mapping strategies:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -552,7 +552,7 @@
 </ul>
 </div>
 <div class="paragraph">
-<p>Kogito Serverless Workflow first searches for a channel name in the properties that is same as CloudEvent type. If the channel name is found, Kogito Serverless Workflow uses the channel for that CloudEvent type. However, if the channel name is not found, Kogito Serverless Workflow searches for the default channel definition. In case the default channel definition is not existing, then an error is reported.</p>
+<p>SonataFlow first searches for a channel name in the properties that is same as CloudEvent type. If the channel name is found, SonataFlow uses the channel for that CloudEvent type. However, if the channel name is not found, SonataFlow searches for the default channel definition. In case the default channel definition is not existing, then an error is reported.</p>
 </div>
 <div class="paragraph">
 <p>The default incoming channel is <code>kogito_incoming_stream</code> and the default outgoing channel is <code>kogito_outgoing_stream</code>.</p>
@@ -700,10 +700,10 @@ kogito.addon.messaging.emitter.wait.buffer-size=100</code></pre>
 <p><a href="consume-produce-events-with-knative-eventing.html" class="xref page">Consuming and producing events on Knative Eventing</a></p>
 </li>
 <li>
-<p><a href="event-correlation-with-workflows.html" class="xref page">Event correlation in Kogito Serverless Workflow</a></p>
+<p><a href="event-correlation-with-workflows.html" class="xref page">Event correlation in SonataFlow</a></p>
 </li>
 <li>
-<p><a href="working-with-callbacks.html" class="xref page">Callback state in Kogito Serverless Workflow</a></p>
+<p><a href="working-with-callbacks.html" class="xref page">Callback state in SonataFlow</a></p>
 </li>
 </ul>
 </div>

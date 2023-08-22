@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Data Index standalone service :: SonataFlow Guides</title>
-    <meta name="description" content="Data Index Service use as an independent service that allow to index and query audit data in Kogito Serverless Workflow">
+    <meta name="description" content="Data Index Service use as an independent service that allow to index and query audit data in SonataFlow">
     <meta name="keywords" content="workflow, serverless, data, dataindex, data-index, index, service, standalone">
     <meta name="generator" content="Antora 3.1.4">
     <link rel="stylesheet" href="../../../_/css/site.css">
@@ -58,7 +58,7 @@
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="../index.html">Kogito Serverless Workflow Guides</a></h3>
+    <h3 class="title"><a href="../index.html">SonataFlow Guides</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
@@ -464,7 +464,7 @@
   <a href="../../latest/index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../index.html">Kogito Serverless Workflow Guides</a></li>
+    <li><a href="../index.html">SonataFlow Guides</a></li>
     <li>Data Index</li>
     <li><a href="data-index-service.html">Standalone service</a></li>
   </ul>
@@ -609,7 +609,7 @@ The goal is to configure the container to allow to process ProcessInstances and 
 <p>To explore the specific configuration to add to the workflow to connect with Data Index using Kafka eventing see <a href="data-index-core-concepts.html#_kafka_eventing" class="xref page">Data Index Kafka eventing</a></p>
 </div>
 <div class="listingblock">
-<div class="title">Example of configuration in Kogito Serverless Workflow application passed in application.properties to configure connection with Data Index using Kafka connector:</div>
+<div class="title">Example of configuration in SonataFlow application passed in application.properties to configure connection with Data Index using Kafka connector:</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">mp.messaging.outgoing.kogito-processinstances-events.connector=smallrye-kafka
 mp.messaging.outgoing.kogito-processinstances-events.topic=kogito-processinstances-events
@@ -791,7 +791,7 @@ You can find more information about Knative eventing and <code>K_SINK</code> env
 <p>To explore the specific configuration to add to the workflow to connect with Data Index using Knative eventing see <a href="data-index-core-concepts.html#_knative_eventing" class="xref page">Data Index Knative eventing</a></p>
 </div>
 <div class="listingblock">
-<div class="title">Example of configuration in Kogito Serverless Workflow application <code>application.properties</code> file to send events to Data Index using Knative eventing</div>
+<div class="title">Example of configuration in SonataFlow application <code>application.properties</code> file to send events to Data Index using Knative eventing</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">mp.messaging.outgoing.kogito-processinstances-events.connector=quarkus-http
 mp.messaging.outgoing.kogito-processinstances-events.url=${K_SINK}
@@ -824,10 +824,10 @@ mp.messaging.outgoing.kogito-processinstances-events.method=POST</code></pre>
 <h2 id="data-index-dev-service-details"><a class="anchor" href="#data-index-dev-service-details"></a>Data Index as a Quarkus Development service</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When you use the Kogito Serverless Workflow Process Quarkus extension, a temporary Data Index service is automatically provisioned while the Quarkus application is running in development mode. When you use one of the following Quarkus extensions, the Dev Service is set up for immediate use:</p>
+<p>When you use the SonataFlow Process Quarkus extension, a temporary Data Index service is automatically provisioned while the Quarkus application is running in development mode. When you use one of the following Quarkus extensions, the Dev Service is set up for immediate use:</p>
 </div>
 <div class="listingblock">
-<div class="title">Kogito Serverless Workflow main Quarkus extension</div>
+<div class="title">SonataFlow main Quarkus extension</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
   &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
@@ -836,7 +836,7 @@ mp.messaging.outgoing.kogito-processinstances-events.method=POST</code></pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">Kogito Serverless Workflow Quarkus extension</div>
+<div class="title">SonataFlow Quarkus extension</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
   &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
@@ -848,7 +848,7 @@ mp.messaging.outgoing.kogito-processinstances-events.method=POST</code></pre>
 <p>When you start your Quarkus project in development mode, an in-memory instance of the Data Index service is automatically started in the background. This feature is enabled by <a href="https://quarkus.io/guides/dev-services">Quarkus Dev Services</a>, and leverages <a href="https://www.testcontainers.org/">Testcontainers</a> to start an image of the Data Index service.</p>
 </div>
 <div class="paragraph">
-<p>The Kogito Serverless Workflow Process Quarkus extension sets up your Quarkus application to automatically replicate any Kogito Serverless Workflow messaging events related to process instances or jobs into the provisioned Data Index instance.</p>
+<p>The SonataFlow Process Quarkus extension sets up your Quarkus application to automatically replicate any SonataFlow messaging events related to process instances or jobs into the provisioned Data Index instance.</p>
 </div>
 <div class="paragraph">
 <p>Once the service is up and running, you can query the GraphQL interface directly using <code><a href="http://localhost:8180/graphql" class="bare">http://localhost:8180/graphql</a></code> or using the Quarkus Dev UI console <code><a href="http://localhost:8080/q/dev" class="bare">http://localhost:8080/q/dev</a></code>.</p>
@@ -857,7 +857,7 @@ mp.messaging.outgoing.kogito-processinstances-events.method=POST</code></pre>
 <p>The Data Index GraphQL endpoint can query for <code>ProcessInstances</code> and <code>Jobs</code>. For more information about operations and attributes to query, see <a href="data-index-core-concepts.html#data-index-graphql" class="xref page">GraphQL endpoint provided by Data Index</a> section.</p>
 </div>
 <div class="paragraph">
-<p>You can share the same Data Index instance across multiple Kogito Serverless Workflow services during development. Sharing Data Index instances is enabled by default, therefore, only one Data Index instance is started. This behavior can be adjusted to start multiple instances using the <code>quarkus.kogito.devservices.shared</code> property.</p>
+<p>You can share the same Data Index instance across multiple SonataFlow services during development. Sharing Data Index instances is enabled by default, therefore, only one Data Index instance is started. This behavior can be adjusted to start multiple instances using the <code>quarkus.kogito.devservices.shared</code> property.</p>
 </div>
 <div class="paragraph">
 <p>The Quarkus Dev Service also allows further configuration options including:</p>
@@ -1022,7 +1022,7 @@ mp.messaging.outgoing.kogito-processinstances-events.method=POST</code></pre>
 <p><a href="data-index-core-concepts.html" class="xref page">Data Index Core Concepts</a></p>
 </li>
 <li>
-<p><a href="../cloud/quarkus/deploying-on-minikube.html" class="xref page">Deploying your Kogito Serverless Workflow application on Minikube</a></p>
+<p><a href="../cloud/quarkus/deploying-on-minikube.html" class="xref page">Deploying your SonataFlow application on Minikube</a></p>
 </li>
 <li>
 <p><a href="../eventing/consume-producing-events-with-kafka.html" class="xref page">Consuming and producing events using Apache Kafka</a></p>
@@ -1031,7 +1031,7 @@ mp.messaging.outgoing.kogito-processinstances-events.method=POST</code></pre>
 <p><a href="../eventing/consume-produce-events-with-knative-eventing.html" class="xref page">Consuming and producing events on Knative Eventing</a></p>
 </li>
 <li>
-<p><a href="../use-cases/timeout-showcase-example.html" class="xref page">Timeout example in Kogito Serverless Workflow</a></p>
+<p><a href="../use-cases/timeout-showcase-example.html" class="xref page">Timeout example in SonataFlow</a></p>
 </li>
 </ul>
 </div>
