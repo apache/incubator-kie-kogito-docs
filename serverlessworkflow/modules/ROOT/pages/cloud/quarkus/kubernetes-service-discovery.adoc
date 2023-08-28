@@ -273,25 +273,45 @@ When using the Kubernetes service discovery feature, you need to balance if your
 
 If the URI pattern is not found in the application properties, then discovery is not triggered. However, the scanning is performed anyway. Therefore, a short time is required to go through the startup scan.
 
+=== Available service discovery implementations
+
+Currently, there are two implementations available.
+
 You can enable the Kubernetes service discovery by adding a service discovery implementation to the application's dependencies as shown in the following Maven dependencies:
+
+==== Fabric8 Kubernetes Service Catalog
+
+When activated, it leverages the Kubernetes Java API for service discovery, making it ideally suited for self-managed scenarios where users independently construct and deploy workflows.
 
 .Example Maven dependencies
 [source,xml]
 ----
 <dependency>
-    <!-- Service Discovery -->
-    <dependency>
-      <groupId>org.kie.kogito</groupId>
-      <artifactId>kogito-addons-quarkus-kubernetes</artifactId>
-    </dependency>
+    <groupId>org.kie.kogito</groupId>
+    <artifactId>kogito-addons-quarkus-kubernetes</artifactId>
+</dependency>
+<dependency>
     <groupId>org.kie.kogito</groupId>
     <artifactId>kogito-addons-quarkus-fabric8-kubernetes-service-catalog</artifactId>
 </dependency>
 ----
 
-=== Available service discovery implementations
+==== MicroProfile Config Kubernetes Service Catalog
 
-Currently, only `org.kie.kogito:kogito-addons-quarkus-fabric8-kubernetes-service-catalog` is available. When enabled, it uses the Kubernetes Java API to discover the services.
+This implementation retrieves information from the application's configuration, making it valuable in scenarios where users rely on the operator to provide the necessary information from the hosting platform.
+
+.Example Maven dependencies
+[source,xml]
+----
+<dependency>
+    <groupId>org.kie.kogito</groupId>
+    <artifactId>kogito-addons-quarkus-kubernetes</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.kie.kogito</groupId>
+    <artifactId>kogito-addons-quarkus-microprofile-config-service-catalog</artifactId>
+</dependency>
+----
 
 == Additional resources
 
