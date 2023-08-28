@@ -929,27 +929,51 @@ __  ____  __  _____   ___  __ ____  ______
 <div class="paragraph">
 <p>If the URI pattern is not found in the application properties, then discovery is not triggered. However, the scanning is performed anyway. Therefore, a short time is required to go through the startup scan.</p>
 </div>
+<div class="sect2">
+<h3 id="_available_service_discovery_implementations"><a class="anchor" href="#_available_service_discovery_implementations"></a>Available service discovery implementations</h3>
+<div class="paragraph">
+<p>Currently, there are two implementations available.</p>
+</div>
 <div class="paragraph">
 <p>You can enable the Kubernetes service discovery by adding a service discovery implementation to the application&#8217;s dependencies as shown in the following Maven dependencies:</p>
+</div>
+<div class="sect3">
+<h4 id="_fabric8_kubernetes_service_catalog"><a class="anchor" href="#_fabric8_kubernetes_service_catalog"></a>Fabric8 Kubernetes Service Catalog</h4>
+<div class="paragraph">
+<p>When activated, it leverages the Kubernetes Java API for service discovery, making it ideally suited for self-managed scenarios where users independently construct and deploy workflows.</p>
 </div>
 <div class="listingblock">
 <div class="title">Example Maven dependencies</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-    &lt;!-- Service Discovery --&gt;
-    &lt;dependency&gt;
-      &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
-      &lt;artifactId&gt;kogito-addons-quarkus-kubernetes&lt;/artifactId&gt;
-    &lt;/dependency&gt;
+    &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+    &lt;artifactId&gt;kogito-addons-quarkus-kubernetes&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
     &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
     &lt;artifactId&gt;kogito-addons-quarkus-fabric8-kubernetes-service-catalog&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_available_service_discovery_implementations"><a class="anchor" href="#_available_service_discovery_implementations"></a>Available service discovery implementations</h3>
+</div>
+<div class="sect3">
+<h4 id="_microprofile_config_kubernetes_service_catalog"><a class="anchor" href="#_microprofile_config_kubernetes_service_catalog"></a>MicroProfile Config Kubernetes Service Catalog</h4>
 <div class="paragraph">
-<p>Currently, only <code>org.kie.kogito:kogito-addons-quarkus-fabric8-kubernetes-service-catalog</code> is available. When enabled, it uses the Kubernetes Java API to discover the services.</p>
+<p>This implementation retrieves information from the application&#8217;s configuration, making it valuable in scenarios where users rely on the operator to provide the necessary information from the hosting platform.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example Maven dependencies</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+    &lt;artifactId&gt;kogito-addons-quarkus-kubernetes&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+    &lt;artifactId&gt;kogito-addons-quarkus-microprofile-config-service-catalog&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
