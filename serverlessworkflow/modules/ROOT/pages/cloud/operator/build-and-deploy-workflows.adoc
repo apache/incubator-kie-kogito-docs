@@ -149,6 +149,7 @@ kubectl get sfbuild/<name> -n <namespace>
 ----
 +
 2. Add to the `.spec.buildArgs` the desired arguments.
++
 .Adding buildArgs to the SonataFlowBuild instance
 [source,yaml,subs="attributes+"]
 ----
@@ -187,7 +188,7 @@ spec:
 
 [TIP]
 ====
-Since the `buildArgs` attribute is an array of link:{kubernetes_envvar_url}[Kubernetes `EnvVar`] object, you can refer to a `ConfigMap` or `Secret` to pass this value, for example. You're not restricted by a plain value. On Minikube and Kubernetes, only `ConfigMap` and `Secret` are supported duo to a restriction on the build system provided by these platforms.
+Since the `buildArgs` attribute is an array of link:{kubernetes_envvar_url}[Kubernetes `EnvVar` object], you can refer to a `ConfigMap` or `Secret` to pass this value. You're not restricted by a plain value. On Minikube and Kubernetes, only `ConfigMap` and `Secret` are supported duo to a restriction on the build system provided by these platforms.
 ====
 
 === Setting environment variables in the internal builder
@@ -211,6 +212,7 @@ kubectl get sfbuild/<name> -n <namespace>
 ----
 +
 2. Add to the `.spec.envs` the desired data.
++
 .Setting environment variables in the SonataFlowBuild instance
 [source,yaml,subs="attributes+"]
 ----
@@ -249,7 +251,7 @@ spec:
 
 [TIP]
 ====
-Since the `envs` attribute is an array of link:{kubernetes_envvar_url}[Kubernetes `EnvVar`] object, you can refer to a `ConfigMap` or `Secret` to pass this value. You're not restricted by a plain value. On Minikube and Kubernetes, only `ConfigMap` and `Secret` are supported duo to a restriction on the build system provided by these platforms.
+Since the `envs` attribute is an array of link:{kubernetes_envvar_url}[Kubernetes `EnvVar` object], you can refer to a `ConfigMap` or `Secret` to pass this value. You're not restricted by a plain value. On Minikube and Kubernetes, only `ConfigMap` and `Secret` are supported duo to a restriction on the build system provided by these platforms.
 ====
 
 [#building-kubernetes]
