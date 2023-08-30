@@ -559,6 +559,46 @@ The goal is to configure the container to allow to process ProcessInstances and 
 </li>
 </ol>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You must prepare the SonataFlow workflow to support the full communication with an external Data Index service.
+For this purpose, it is important to make sure the following addons are included:</p>
+</div>
+<div class="listingblock">
+<div class="title">SonataFlow workflow addon dependencies to support the connection with external Data Index</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+  &lt;artifactId&gt;kogito-addons-quarkus-events-process&lt;/artifactId&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+  &lt;artifactId&gt;kogito-addons-quarkus-process-management&lt;/artifactId&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Allows the workflow to send the events that can be consumed by the Data Index service.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Creates the endpoints that allow management operations on process instances.</td>
+</tr>
+</table>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="sect3">
 <h4 id="_data_index_deployment_resource_example_using_kafka_eventing"><a class="anchor" href="#_data_index_deployment_resource_example_using_kafka_eventing"></a>Data Index deployment resource example using Kafka eventing:</h4>
 <div class="paragraph">
