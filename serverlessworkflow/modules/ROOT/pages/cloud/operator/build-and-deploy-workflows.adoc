@@ -10,8 +10,10 @@
 :kaniko_url: https://github.com/GoogleContainerTools/kaniko
 :openshift_build_url: https://docs.openshift.com/container-platform/4.13/cicd/builds/understanding-image-builds.html
 :openshift_route_new_url: https://docs.openshift.com/container-platform/4.13/networking/routes/route-configuration.html#nw-creating-a-route_route-configuration
-:kubernetes_resource_management: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+:kubernetes_resource_management_url: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+:kubernetes_envvar_url: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
 :minikube_registry_url: https://minikube.sigs.k8s.io/docs/handbook/registry/#enabling-insecure-registries
+:docker_doc_arg_url: https://docs.docker.com/engine/reference/builder/#arg
 
 This document describes how to build and deploy your workflow on a cluster using the link:{kogito_serverless_operator_url}[{operator_name}] only by having a `SonataFlow` custom resource.
 
@@ -82,7 +84,7 @@ The excerpt above is just an example. The current version might have a slightly 
 
 === Changing resources requirements
 
-You can create or edit a `SonataFlowPlatform` in the workflow namespace specifying the link:{kubernetes_resource_management}[resources requirements] for the internal builder pods:
+You can create or edit a `SonataFlowPlatform` in the workflow namespace specifying the link:{kubernetes_resource_management_url}[resources requirements] for the internal builder pods:
 
 .Example of SonataFlowPlatform
 [source,yaml,subs="attributes+"]
@@ -130,6 +132,125 @@ spec:
 ----
 
 This parameters will only apply to new build instances.
+
+=== Passing arguments to the internal builder
+
+You can pass build arguments (see link:{docker_doc_arg_url}[Dockerfile ARG]) to the `SonataFlowBuild` instance.
+
+.Procedure
+
+1. Create or edit an existing `SonataFlowBuild` instance. It has the same name of the `SonataFlow` you're trying to build.
++
+.Checking if the SonataFlowBuild instance already exists
+[source,bash,subs="attributes+"]
+----
+# Check if the build exists
+kubectl get sfbuild/<name> -n <namespace>
+----
++
+2. Add to the `.spec.buildArgs` the desired arguments.
+.Adding buildArgs to the SonataFlowBuild instance
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowBuild
+metadata:
+  name: <name>
+spec:
+  buildArgs:
+    - name: ARG1
+      value: value1
+    - name: ARG2
+      value: value2
+----
++
+3. Save the file and apply it to the cluster. A new build should start soon with the new configuration.
+
+Alternatively, you can set this information in the `SonataFlowPlatform`, so that every new build instances will use it as a template. For example:
+
+.Example of a SonataFlowPlatform instance with default build args for every build within the namespace
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: <name>
+spec:
+  build:
+    template:
+      buildArgs:
+        - name: ARG1
+          value: value1
+        - name: ARG2
+          value: value2
+----
+
+[TIP]
+====
+Since the `buildArgs` attribute is an array of link:{kubernetes_envvar_url}[Kubernetes `EnvVar`] object, you can refer to a `ConfigMap` or `Secret` to pass this value, for example. You're not restricted by a plain value. On Minikube and Kubernetes, only `ConfigMap` and `Secret` are supported duo to a restriction on the build system provided by these platforms.
+====
+
+=== Setting environment variables in the internal builder
+
+You can set environment variables to the `SonataFlowBuild` internal builder pod. 
+
+[IMPORTANT]
+====
+These environment variables are valid for the build context **only**. They are not set on the final built workflow image.
+====
+
+.Procedure
+
+1. Create or edit an existing `SonataFlowBuild` instance. It has the same name of the `SonataFlow` you're trying to build.
++
+.Checking if the SonataFlowBuild instance already exists
+[source,bash,subs="attributes+"]
+----
+# Check if the build exists
+kubectl get sfbuild/<name> -n <namespace>
+----
++
+2. Add to the `.spec.envs` the desired data.
+.Setting environment variables in the SonataFlowBuild instance
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowBuild
+metadata:
+  name: <name>
+spec:
+  envs:
+    - name: MYENV1
+      value: value1
+    - name: MYENV2
+      value: value2
+----
++
+3. Save the file and apply it to the cluster. A new build should start soon with the new configuration.
+
+Alternatively, you can set this information in the `SonataFlowPlatform`, so that every new build instances will use it as a template. For example:
+
+.Example of a SonataFlowPlatform instance with default build args for every build within the namespace
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: <name>
+spec:
+  build:
+    template:
+      envs:
+        - name: MYENV1
+          value: value1
+        - name: MYENV2
+          value: value2
+----
+
+[TIP]
+====
+Since the `envs` attribute is an array of link:{kubernetes_envvar_url}[Kubernetes `EnvVar`] object, you can refer to a `ConfigMap` or `Secret` to pass this value. You're not restricted by a plain value. On Minikube and Kubernetes, only `ConfigMap` and `Secret` are supported duo to a restriction on the build system provided by these platforms.
+====
 
 [#building-kubernetes]
 == Building on Kubernetes
@@ -276,6 +397,7 @@ You can find a basic `SonataFlow` bellow:
 
 .Example of the greetings workflow example
 [source,yaml,subs="attributes+"]
+----
 apiVersion: sonataflow.org/v1alpha08
 kind: SonataFlow
 metadata:
@@ -318,6 +440,7 @@ spec:
               arguments:
                 message:  ".greeting+.name"
         end: true
+----
 
 Save a file in your local file system with this contents named `greetings-workflow.yaml` then run:
 
