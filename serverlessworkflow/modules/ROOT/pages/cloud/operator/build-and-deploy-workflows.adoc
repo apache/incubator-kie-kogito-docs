@@ -15,7 +15,6 @@
 :minikube_registry_url: https://minikube.sigs.k8s.io/docs/handbook/registry/#enabling-insecure-registries
 :docker_doc_arg_url: https://docs.docker.com/engine/reference/builder/#arg
 :quarkus_extensions_url: https://quarkus.io/extensions/
-:quarkus_cli_url: https://quarkus.io/guides/cli-tooling#using-the-cli
 
 This document describes how to build and deploy your workflow on a cluster using the link:{kogito_serverless_operator_url}[{operator_name}] only by having a `SonataFlow` custom resource.
 
@@ -169,7 +168,7 @@ spec:
 +
 3. Save the file and apply it to the cluster. A new build should start soon with the new configuration.
 
-Alternatively, you can set this information in the `SonataFlowPlatform`, so that every new build instances will use it as a template. For example:
+Alternatively, you can set this information in the `SonataFlowPlatform`, so that every new build instance will use it as a template. For example:
 
 .Example of a SonataFlowPlatform instance with default build args for every build within the namespace
 [source,yaml,subs="attributes+"]
@@ -201,7 +200,7 @@ The table below lists the Dockerfile arguments available in the default {operato
 | Argument | Description | Example
 
 |QUARKUS_EXTENSIONS | List of link:{quarkus_extensions_url}[Quarkus Extensions] separated by comma that the builder should add to the workflow. | org.kie.kogito:kogito-addons-quarkus-persistence-infinispan:2.0.0-SNAPSHOT
-|QUARKUS_ADD_EXTENSION_ARGS | Arguments passed to the Quarkus CLI when adding extensions. Enabled only when `QUARKUS_EXTENSIONS` is not empty. | See the link:{quarkus_cli_url}[Quarkus CLI documentation]
+|QUARKUS_ADD_EXTENSION_ARGS | Arguments passed to the Quarkus CLI when adding extensions. Enabled only when `QUARKUS_EXTENSIONS` is not empty. | See the link:{quarkus_cli_url}#using-the-cli[Quarkus CLI documentation]
 |===
 
 === Setting environment variables in the internal builder
