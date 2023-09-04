@@ -82,32 +82,32 @@ minikube start [...] --driver podman
 
 To install the {product_name} Operator, you can use one of the following methods:
 
-==== Install without Webhooks
+==== Install with Webhooks
 
-The webhooks are enabled by default, if you want to disable it, you can install the operator using the `operator-no-webhooks.yaml` and skip the `Cert Manager` step.
-.Install {product_name} Operator on Kubernetes with no Webhooks
-[source,shell]
-----
-curl https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/operator.yaml -o operator.yaml
-sed -i '/name: ENABLE_WEBHOOKS/{n;s/value: "true"/value: "false"/}' operator-no-webhooks.yaml
-----
+The Cert Manager is recommended in order to help on abstracting the certificates configuration, if, for some reason it can't be installed, you need to make sure that the certificates needed by the Webhooks correctly configured, more information can be found link:{kubebuilder_webhooks_url}[here].
 
 .Install Cert Manager Operator
 [source,shell,subs="attributes+"]
 ----
 kubectl apply -f {cert_manager_installer_url}
 ----
-[NOTE]
-====
-The Cert Manager is recommended in order to help on abstracting the certificates configuration, if, for some reason it can't be installed, you need to make sure that the certificates needed by the Webhooks correctly configured, more information can be found link:{kubebuilder_webhooks_url}[here].
-====
 
-==== Install with Webhooks
 .Install {product_name} Operator on Kubernetes
 [source,shell,subs="attributes+"]
 ----
 kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/operator.yaml
 ----
+
+==== Install without Webhooks
+
+The webhooks are enabled by default. If you want to disable it, you can install the operator using the `operator-no-webhooks.yaml` and skip the `Cert Manager` step.
+
+.Install {product_name} Operator on Kubernetes with no Webhooks
+[source,shell]
+----
+kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/operator-no-webhooks.yaml
+----
+
 
 You can follow the deployment of the {product_name} Operator:
 
