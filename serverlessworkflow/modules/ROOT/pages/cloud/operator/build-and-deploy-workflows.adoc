@@ -145,8 +145,7 @@ You can pass build arguments (see link:{docker_doc_arg_url}[Dockerfile ARG]) to 
 .Checking if the SonataFlowBuild instance already exists
 [source,bash,subs="attributes+"]
 ----
-# Check if the build exists
-kubectl get sfbuild/<name> -n <namespace>
+kubectl edit sonataflowbuild/<name> -n <namespace>
 ----
 +
 2. Add to the `.spec.buildArgs` the desired arguments.
@@ -159,6 +158,7 @@ kind: SonataFlowBuild
 metadata:
   name: <name>
 spec:
+  [...]
   buildArgs:
     - name: ARG1
       value: value1
@@ -166,7 +166,7 @@ spec:
       value: value2
 ----
 +
-3. Save the file and apply it to the cluster. A new build should start soon with the new configuration.
+3. Save the file and exit. A new build should start soon with the new configuration.
 
 Alternatively, you can set this information in the `SonataFlowPlatform`, so that every new build instance will use it as a template. For example:
 
@@ -219,8 +219,7 @@ These environment variables are valid for the build context **only**. They are n
 .Checking if the SonataFlowBuild instance already exists
 [source,bash,subs="attributes+"]
 ----
-# Check if the build exists
-kubectl get sfbuild/<name> -n <namespace>
+kubectl edit sonataflowbuild/<name> -n <namespace>
 ----
 +
 2. Add to the `.spec.envs` the desired data.
@@ -233,6 +232,7 @@ kind: SonataFlowBuild
 metadata:
   name: <name>
 spec:
+  [...]
   envs:
     - name: MYENV1
       value: value1
@@ -240,11 +240,11 @@ spec:
       value: value2
 ----
 +
-3. Save the file and apply it to the cluster. A new build should start soon with the new configuration.
+3. Save the file and exit. A new build should start soon with the new configuration.
 
 Alternatively, you can set this information in the `SonataFlowPlatform`, so that every new build instances will use it as a template. For example:
 
-.Example of a SonataFlowPlatform instance with default build args for every build within the namespace
+.Example of a SonataFlowPlatform instance with default envs for every build within the namespace
 [source,yaml,subs="attributes+"]
 ----
 apiVersion: sonataflow.org/v1alpha08
