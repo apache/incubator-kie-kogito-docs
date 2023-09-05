@@ -700,6 +700,208 @@ spec:
 <p>This parameters will only apply to new build instances.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_passing_arguments_to_the_internal_builder"><a class="anchor" href="#_passing_arguments_to_the_internal_builder"></a>Passing arguments to the internal builder</h3>
+<div class="paragraph">
+<p>You can pass build arguments (see <a href="https://docs.docker.com/engine/reference/builder/#arg">Dockerfile ARG</a>) to the <code>SonataFlowBuild</code> instance.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Create or edit an existing <code>SonataFlowBuild</code> instance. It has the same name of the <code>SonataFlow</code> you&#8217;re trying to build.</p>
+<div class="listingblock">
+<div class="title">Checking if the SonataFlowBuild instance already exists</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl edit sonataflowbuild/&lt;name&gt; -n &lt;namespace&gt;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add to the <code>.spec.buildArgs</code> the desired arguments.</p>
+<div class="listingblock">
+<div class="title">Adding buildArgs to the SonataFlowBuild instance</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowBuild
+metadata:
+  name: &lt;name&gt;
+spec:
+  [...]
+  buildArgs:
+    - name: ARG1
+      value: value1
+    - name: ARG2
+      value: value2</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Save the file and exit. A new build should start soon with the new configuration.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can set this information in the <code>SonataFlowPlatform</code>, so that every new build instance will use it as a template. For example:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a SonataFlowPlatform instance with default build args for every build within the namespace</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: &lt;name&gt;
+spec:
+  build:
+    template:
+      buildArgs:
+        - name: ARG1
+          value: value1
+        - name: ARG2
+          value: value2</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Since the <code>buildArgs</code> attribute is an array of <a href="https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/">Kubernetes <code>EnvVar</code> object</a>, you can refer to a <code>ConfigMap</code> or <code>Secret</code> to pass this value, for example. You&#8217;re not restricted by a plain value.</p>
+</div>
+<div class="paragraph">
+<p>On Minikube and Kubernetes only plain values, <code>ConfigMap</code> and <code>Secret</code> are supported due to a restriction on the build system provided by these platforms.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The table below lists the Dockerfile arguments available in the default SonataFlow Operator installation:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Default ARG definitions in the builder Dockerfile</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Argument</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QUARKUS_EXTENSIONS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of <a href="https://quarkus.io/extensions/">Quarkus Extensions</a> separated by comma that the builder should add to the workflow.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.kie.kogito:kogito-addons-quarkus-persistence-infinispan:2.0.0-SNAPSHOT</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QUARKUS_ADD_EXTENSION_ARGS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Arguments passed to the Quarkus CLI when adding extensions. Enabled only when <code>QUARKUS_EXTENSIONS</code> is not empty.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">See the <a href="https://quarkus.io/guides/cli-tooling#using-the-cli">Quarkus CLI documentation</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_setting_environment_variables_in_the_internal_builder"><a class="anchor" href="#_setting_environment_variables_in_the_internal_builder"></a>Setting environment variables in the internal builder</h3>
+<div class="paragraph">
+<p>You can set environment variables to the <code>SonataFlowBuild</code> internal builder pod.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>These environment variables are valid for the build context <strong>only</strong>. They are not set on the final built workflow image.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Create or edit an existing <code>SonataFlowBuild</code> instance. It has the same name of the <code>SonataFlow</code> you&#8217;re trying to build.</p>
+<div class="listingblock">
+<div class="title">Checking if the SonataFlowBuild instance already exists</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl edit sonataflowbuild/&lt;name&gt; -n &lt;namespace&gt;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add to the <code>.spec.envs</code> the desired data.</p>
+<div class="listingblock">
+<div class="title">Setting environment variables in the SonataFlowBuild instance</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowBuild
+metadata:
+  name: &lt;name&gt;
+spec:
+  [...]
+  envs:
+    - name: MYENV1
+      value: value1
+    - name: MYENV2
+      value: value2</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Save the file and exit. A new build should start soon with the new configuration.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can set this information in the <code>SonataFlowPlatform</code>, so that every new build instances will use it as a template. For example:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a SonataFlowPlatform instance with default envs for every build within the namespace</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: &lt;name&gt;
+spec:
+  build:
+    template:
+      envs:
+        - name: MYENV1
+          value: value1
+        - name: MYENV2
+          value: value2</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Since the <code>envs</code> attribute is an array of <a href="https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/">Kubernetes <code>EnvVar</code> object</a>, you can refer to a <code>ConfigMap</code> or <code>Secret</code> to pass this value, for example. You&#8217;re not restricted by a plain value.</p>
+</div>
+<div class="paragraph">
+<p>On Minikube and Kubernetes only plain values, <code>ConfigMap</code> and <code>Secret</code> are supported due to a restriction on the build system provided by these platforms.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
