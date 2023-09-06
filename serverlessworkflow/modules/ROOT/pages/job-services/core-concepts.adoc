@@ -43,7 +43,7 @@ This last is not suited for serverless architectures, where the applications mig
 == Jobs life-span
 
 Since the main goal of the Job Service is to work with the active jobs, such as the scheduled jobs that needs to be executed, when a job reaches a final state, it is removed from the Job Service.
-However, in some cases where you want to keep the information about the jobs in a permanent repository, you can configure the Job Service to produce status change events, that can be collected by the xref:/data-index/data-index-service.adoc[Data Index Service], where they can be indexed and made available by GraphQL queries.
+However, in some cases where you want to keep the information about the jobs in a permanent repository, you can configure the Job Service to produce status change events, that can be collected by the {data_index_xref}[Data Index Service], where they can be indexed and made available by GraphQL queries.
 
 [#executing]
 == Executing
@@ -403,7 +403,7 @@ This API is useful in deployment scenarios where you want to use an event based 
 By default, the Job Service Eventing API is prepared to work in a link:{knative_eventing_url}[knative eventing] system. This means that by adding no additional configurations parameters, it'll be able to receive cloud events via the link:{knative_eventing_url}[knative eventing] system to manage the jobs.
 However, you must still prepare your link:{knative_eventing_url}[knative eventing] environment to ensure these events are properly delivered to the Job Service, see <<knative-eventing-supporting-resources, knative eventing supporting resources>>.
 
-Finally, the only configuration parameter that you must set, when needed, is to enable the propagation of the Job Status Change events, for example, if you want to register these events in the xref:/data-index/data-index-service.adoc[Data Index Service]
+Finally, the only configuration parameter that you must set, when needed, is to enable the propagation of the Job Status Change events, for example, if you want to register these events in the {data_index_xref}[Data Index Service].
 
 [tabs]
 ====
