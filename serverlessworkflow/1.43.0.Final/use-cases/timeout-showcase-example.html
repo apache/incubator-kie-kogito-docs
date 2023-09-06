@@ -538,6 +538,9 @@ While all the scenarios contain the same set of workflows, they are provided as 
 <div class="ulist">
 <ul>
 <li>
+<p><a href="#workflow_timeouts_workflow"><code>workflow_timeouts</code></a></p>
+</li>
+<li>
 <p><a href="#callback_state_timeouts_workflow"><code>callback_state_timeouts</code></a></p>
 </li>
 <li>
@@ -547,6 +550,40 @@ While all the scenarios contain the same set of workflows, they are provided as 
 <p><a href="#event_state_timeouts_workflow"><code>event_state_timeouts</code></a></p>
 </li>
 </ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="workflow_timeouts_workflow"><a class="anchor" href="#workflow_timeouts_workflow"></a><code>workflow_timeouts</code> workflow</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It is a simple workflow that, rather than configuring a timeout for a particular state, is configured for the whole execution of the workflow.
+This can be done by using the <code>workflowExecTimeout</code> property, which defines the maximum workflow execution time. If this time is surpassed and the workflow has not finished, it will be automatically canceled.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="../core/timeouts-support.html#workflow-timeout" class="xref page">workflow timeout definition</a> for more information.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/use-cases/timeouts-showcase/workflow-timeouts-decorated.svg" alt="workflow timeouts decorated">
+</div>
+<div class="title">Figure 1. workflow_timeouts workflow</div>
+</div>
+<div class="listingblock">
+<div class="title">Workflow execution timeout definition</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "workflow_timeouts",
+  "version": "1.0",
+  "name": "Workflow Timeouts",
+  "description": "Simple workflow to show the workflowExecTimeout working",
+  "start": "PrintStartMessage",
+  "timeouts": {
+    "workflowExecTimeout": "PT1H"
+  }
+...
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -561,7 +598,7 @@ However, a timeout is configured to set the maximum waiting time for that event.
 <div class="content">
 <img src="../_images/use-cases/timeouts-showcase/callback-state-timeouts-decorated.svg" alt="callback state timeouts decorated">
 </div>
-<div class="title">Figure 1. callback_state_timeouts workflow</div>
+<div class="title">Figure 2. callback_state_timeouts workflow</div>
 </div>
 <div class="listingblock">
 <div class="title">Callback event definition</div>
@@ -636,7 +673,7 @@ Using this simple configuration strategy, the workflow can collect the event inf
 <div class="content">
 <img src="../_images/use-cases/timeouts-showcase/switch-state-timeouts-decorated.svg" alt="switch state timeouts decorated">
 </div>
-<div class="title">Figure 2. switch_state_timeouts workflow</div>
+<div class="title">Figure 3. switch_state_timeouts workflow</div>
 </div>
 <div class="listingblock">
 <div class="title">ChooseOneEvent definition</div>
@@ -699,7 +736,7 @@ Each event has a number of configured actions to execute, but unlike the switch 
 <div class="content">
 <img src="../_images/use-cases/timeouts-showcase/event-state-timeouts-decorated.svg" alt="event state timeouts decorated">
 </div>
-<div class="title">Figure 3. event_state_timeouts workflow</div>
+<div class="title">Figure 4. event_state_timeouts workflow</div>
 </div>
 <div class="listingblock">
 <div class="title">WaitForEvent definition</div>
@@ -780,7 +817,7 @@ Each event has a number of configured actions to execute, but unlike the switch 
 <div class="sect2">
 <h3 id="execute-operator-dev-profile"><a class="anchor" href="#execute-operator-dev-profile"></a>SonataFlow Operator Dev Profile</h3>
 <div class="paragraph">
-<p>When you work with the SonataFlow Operator Dev Profile, the operator will automatically provision an execution environment that contains an embedded job service instance, as well as an instance of the data index service.
+<p>When you work with the <a href="../cloud/operator/developing-workflows.html" class="xref page">SonataFlow Operator Dev Profile</a>, the operator will automatically provision an execution environment that contains an embedded <a href="../job-services/core-concepts.html" class="xref page">job service</a> instance, as well as an instance of the <a href="../data-index/data-index-core-concepts.html" class="xref page">data index service</a>.
 And thus, there is no need for additional configurations when you use timeouts.</p>
 </div>
 <div class="paragraph">
@@ -800,7 +837,7 @@ cd kogito-examples/serverless-workflow-examples/serverless-workflow-timeouts-sho
 <div class="sect2">
 <h3 id="execute-quarkus-project-embedded-services"><a class="anchor" href="#execute-quarkus-project-embedded-services"></a>Quarkus Workflow Project with embedded services</h3>
 <div class="paragraph">
-<p>Similar to the <a href="#execute-operator-dev-profile">SonataFlow Operator Dev Profile</a>, this scenario shows how to configure the embedded job service and data index service, when you work with a Quarkus Workflow Project. And is also intended for development purposes.</p>
+<p>Similar to the <a href="#execute-operator-dev-profile">SonataFlow Operator Dev Profile</a>, this scenario shows how to configure the embedded <a href="../job-services/core-concepts.html" class="xref page">job service</a> and <a href="../data-index/data-index-core-concepts.html" class="xref page">data index service</a>, when you work with a Quarkus Workflow project and it is also intended for development purposes.</p>
 </div>
 <div class="paragraph">
 <p>In a command terminal, clone the <code>kogito-examples</code> repository, navigate to the cloned directory, and follow <a href="https://github.com/kiegroup/kogito-examples/tree/1.43.x/serverless-workflow-examples/serverless-workflow-timeouts-showcase-embedded/README.md">these steps</a>:</p>
@@ -816,8 +853,8 @@ cd kogito-examples/serverless-workflow-examples/serverless-workflow-timeouts-sho
 <div class="sect2">
 <h3 id="execute-quarkus-project-standalone-services"><a class="anchor" href="#execute-quarkus-project-standalone-services"></a>Quarkus Workflow Project with standalone services</h3>
 <div class="paragraph">
-<p>This is the most complex and close to a production scenario. In this case, the workflows, the job service, the data index service, and the database, are deployed as standalone services in the kubernetes/knative cluster.
-Additionally, the communications from the workflows to the job service, and from the jobs service to the data index service, are resolved via the knative eventing system.</p>
+<p>This is the most complex and close to a production scenario. In this case, the workflows, the <a href="../job-services/core-concepts.html" class="xref page">job service</a>, the <a href="../data-index/data-index-core-concepts.html" class="xref page">data index service</a>, and the database are deployed as standalone services in the kubernetes or knative cluster.
+Additionally, the communications from the workflows to the <a href="../job-services/core-concepts.html" class="xref page">job service</a>, and from the <a href="../job-services/core-concepts.html" class="xref page">job service</a> to the <a href="../data-index/data-index-core-concepts.html" class="xref page">data index service</a>, are resolved via the knative eventing system.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -841,13 +878,13 @@ Additionally, the communications from the workflows to the job service, and from
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Every time a workflow needs to program a timer for a given timeout, a cloud event is sent to the job service for that purpose.</p>
+<p>Every time a workflow needs to program a timer for a given timeout, a cloud event is sent to the <a href="../job-services/core-concepts.html#integration-with-the-workflows" class="xref page">job service</a> for that purpose.</p>
 </li>
 <li>
 <p>When a timer is overdue, a rest call is executed to notify the workflow, which then must execute accordingly to the given state semantic.</p>
 </li>
 <li>
-<p>Workflow and job status changes are propagated to the Data Index Service via cloud events.</p>
+<p>Workflow and job status changes are propagated to the <a href="../data-index/data-index-core-concepts.html" class="xref page">data index service</a> via cloud events.</p>
 </li>
 </ol>
 </div>
@@ -855,7 +892,7 @@ Additionally, the communications from the workflows to the job service, and from
 <div class="content">
 <img src="../_images/use-cases/timeouts-showcase/timeouts-showcase-extended-architecture.png" alt="timeouts showcase extended architecture">
 </div>
-<div class="title">Figure 4. Knative Workflow with Job Service architecture</div>
+<div class="title">Figure 5. Knative Workflow with Job Service architecture</div>
 </div>
 <div class="ulist">
 <ul>

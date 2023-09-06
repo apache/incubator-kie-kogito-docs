@@ -539,7 +539,7 @@ For instance, <code>PT15M</code> configures 15 minutes, and <code>P2DT3H4M</code
 </div>
 </div>
 <div class="sect1">
-<h2 id="_workflow_timeout"><a class="anchor" href="#_workflow_timeout"></a>Workflow timeout</h2>
+<h2 id="workflow-timeout"><a class="anchor" href="#workflow-timeout"></a>Workflow timeout</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>To configure the maximum amount of time a workflow can be running before being canceled, you can use the workflow timeout.
@@ -553,11 +553,11 @@ Once canceled, the workflow is considered to be finished, and will not be access
 <div class="title">Example of workflow timeout</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "id": "workflow_timeout",
+  "id": "workflow_timeouts",
   "version": "1.0",
-  "name": "Workflow timeout example",
-  "description": "An example of how workflow timeout works",
-  "start": "printWaitMessage",
+  "name": "Workflow Timeouts",
+  "description": "Simple workflow to show the workflowExecTimeout working",
+  "start": "PrintStartMessage",
   "timeouts": {
     "workflowExecTimeout": "PT1H"
   } ...
@@ -755,13 +755,13 @@ If the Event state is a starting state, a new workflow instance is created.</p>
 <h2 id="_deploying_a_timed_based_workflow"><a class="anchor" href="#_deploying_a_timed_based_workflow"></a>Deploying a timed-based workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To deploy a workflow that uses timeouts, or any other timer-based action, it is necessary to have a job service running in your environment, which is an independent service responsible to control the workflows timers, see the <a href="../job-services/core-concepts.html#job-service" class="xref page">job service</a> for more information.
+<p>To deploy a workflow that uses timeouts, or any other timer-based action, it is necessary to have a <a href="../job-services/core-concepts.html" class="xref page">job service</a> running in your environment, which is an independent service responsible to control the workflows timers, see the <a href="../job-services/core-concepts.html#integration-with-the-workflows" class="xref page">job service</a> for more information.
 The provisioning of this service depends on the work mode that you are using.</p>
 </div>
 <div class="sect2">
 <h3 id="_sonataflow_operator_dev_profile"><a class="anchor" href="#_sonataflow_operator_dev_profile"></a>SonataFlow Operator Dev Profile</h3>
 <div class="paragraph">
-<p>When you work with the SonataFlow Operator Dev Profile, the operator will automatically provide an execution environment that contains an embedded job service instance, as well as an instance of the data index service.
+<p>When you work with the SonataFlow Operator Dev Profile, the operator will automatically provide an execution environment that contains an embedded <a href="../job-services/core-concepts.html" class="xref page">job service</a> instance, as well as an instance of the <a href="../data-index/data-index-core-concepts.html" class="xref page">data index service</a>.
 And thus, there is no need for additional configurations.</p>
 </div>
 <div class="paragraph">
@@ -784,7 +784,7 @@ And thus, there is no need for additional configurations.</p>
 </ol>
 </div>
 <div class="paragraph">
-<p>In the <a href="../job-services/core-concepts.html#job-service" class="xref page">job service</a> guide you can see all the available add-dons and configuration alternatives for this case.</p>
+<p>In the <a href="../job-services/core-concepts.html" class="xref page">job service</a> guide you can see all the available add-ons and configuration alternatives for this case.</p>
 </div>
 </div>
 </div>
