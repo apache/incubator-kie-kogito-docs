@@ -7,22 +7,12 @@ pipeline {
         label 'ubuntu'
     }
 
-    tools {
-        nodejs 'nodejs-16.2.0'
-    }
-
     options {
         timestamps()
         timeout(time: 60, unit: 'MINUTES')
     }
 
-    // parameters {
-    // For parameters, check into .jenkins/dsl/jobs.groovy file
-    // }
-
     environment {
-        // Some generated env is also defined into .jenkins/dsl/jobs.groovy file
-
         CI_EMAIL_TO = credentials("${JENKINS_EMAIL_CREDS_ID}")
     }
 
