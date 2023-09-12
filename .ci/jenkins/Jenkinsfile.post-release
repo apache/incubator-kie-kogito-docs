@@ -38,7 +38,7 @@ pipeline {
                 script {
                     dir("kogito-docs-${getBuildBranch()}") {
                         deleteDir()
-                        checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
+                        checkout(githubscm.resolveRepository('incubator-kie-kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
                         sh "git checkout ${getBuildBranch()}"
 
                         String antoraFile = 'serverlessworkflow/antora.yml'

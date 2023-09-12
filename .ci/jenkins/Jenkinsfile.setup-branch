@@ -41,7 +41,7 @@ pipeline {
 
                     dir("kogito-docs-${getBuildBranch()}") {
                         deleteDir()
-                        checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
+                        checkout(githubscm.resolveRepository('incubator-kie-kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
                         sh "git checkout ${getBuildBranch()}"
 
                         String[] branchSplit = getBuildBranch().split("\\.")
@@ -77,7 +77,7 @@ pipeline {
                 script {
                     dir('kogito-docs') {
                         deleteDir()
-                        checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), 'main', false, getGitAuthorCredsID()))
+                        checkout(githubscm.resolveRepository('incubator-kie-kogito-docs', getGitAuthor(), 'main', false, getGitAuthorCredsID()))
                         sh 'git checkout main'
 
                         updateYaml('antora-playbook.yml') { antoraConfig ->
