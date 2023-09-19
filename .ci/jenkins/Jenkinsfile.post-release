@@ -4,11 +4,7 @@ import org.jenkinsci.plugins.workflow.libs.Library
 
 pipeline {
     agent {
-        label 'rhel8 && !built-in'
-    }
-
-    tools {
-        nodejs 'nodejs-16.2.0'
+        label 'ubuntu'
     }
 
     options {
@@ -16,13 +12,7 @@ pipeline {
         timeout(time: 60, unit: 'MINUTES')
     }
 
-    // parameters {
-    // For parameters, check into .jenkins/dsl/jobs.groovy file
-    // }
-
     environment {
-        // Some generated env is also defined into .jenkins/dsl/jobs.groovy file
-
         CI_EMAIL_TO = credentials("${JENKINS_EMAIL_CREDS_ID}")
     }
 
@@ -48,7 +38,7 @@ pipeline {
                 script {
                     dir("kogito-docs-${getBuildBranch()}") {
                         deleteDir()
-                        checkout(githubscm.resolveRepository('kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
+                        checkout(githubscm.resolveRepository('incubator-kie-kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
                         sh "git checkout ${getBuildBranch()}"
 
                         String antoraFile = 'serverlessworkflow/antora.yml'
