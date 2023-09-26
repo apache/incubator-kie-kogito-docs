@@ -1,0 +1,103 @@
+= Customize the PodSpec Definition
+:compat-mode!:
+// Metadata:
+:description: How to customize the PodTemplateSpec in the SonataFlow custom resource
+:keywords: sonataflow, workflow, serverless, operator, kubernetes, minikube, podspec, openshift, containers, template
+// URLs
+
+:k8s_resources_limits_url: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+:k8s_podspec_api_url: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.26/#podspec-v1-core
+
+This document describes how to customize the pod specification definition in thew `SonataFlow` custom resource.
+
+Sometimes you may have a specific requirement to deploy containers on Kubernetes or OpenShift such as setting link:{k8s_resources_limits_url}[Resource Limits].
+
+{operator_name} enables custom link:{k8s_podspec_api_url}[PodSpec] definitions when deploying a `SonataFlow` instance by setting the `.spec.podTemplate` attribute. For example:
+
+.Setting PodSpec Resources Limits example
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: simple
+  annotations:
+    sonataflow.org/description: Simple example on k8s!
+    sonataflow.org/version: 0.0.1
+spec:
+  podTemplate: <1>
+    container: <2>
+      resources: <3>
+        limits:
+          cpu: "250m"
+          memory: "128mi"
+  flow:
+    start: HelloWorld
+    states:
+      - name: HelloWorld
+        type: inject
+        data:
+          message: Hello World
+        end: true
+----
+
+<1> The `PodSpec` template definition
+<2> The default workflow service container 
+<3> Resources configuration
+
+The `.spec.podTemplate` attribute has the majority of fields defined in the default link:{k8s_podspec_api_url}[Kubernetes PodSpec API]. The same Kubernetes API validation rules applies to these fields.
+
+The `.spec.podTemplate.container` is a special attribute that you won't find in the default Kubernetes API. The reason is to avoid misconfiguration when users require to change the specific container where the workflow application is deployed.
+
+== Customization Exceptions
+
+Besides customizing the default container, you can add more `containers`, `initContainers`, or `volumes` to the pod. There are a few exceptions listed below:
+
+1. The `containers` array can't have a container named `workflow`. If you set a container with this name, it will be ignored by the operator. Instead, use `.spec.podTemplate.container` to modify the workflow container.
+2. There are a few file system paths controlled by the operator within the container where it mounts important files. These volumes can't be overrided, it will be ignored by the operatror. See the table below:
++
+.List of immutable volumes
+[cols="1,1,2,1"]
+|===
+|Volume | Type | Path | Profile
+
+| workflow-properties
+| `ConfigMap`
+| `/deployments/config/application.properties`
+| prod
+
+| workflow-properties
+| `ConfigMap`
+| `$\{PROJECT_ROOT\}/src/main/resources/application.properties`
+| dev
+
+| resources
+| `Projected`
+| `$\{PROJECT_ROOT\}/src/main/resources/`
+| dev
+
+|===
+
+[IMPORTANT]
+====
+In dev profile, all the SonataFlow `.spec.resources` objects are mounted in the `resources` projected volume listed in this table. Do not mount anything else in this path.
+====
+
+== Setting a custom image in the default container
+
+When setting the attribute `.spec.podTemplate.container.image` the operator understands that the workflow already have an image built and the user is responsible for the build and image maintainence. That means that the operator won't try to upgrade this image in the future or do any reconciliation changes to it.
+
+=== Setting a custom image in devmode
+
+In xref:cloud/operator/developing-workflows.adoc[development profile], it's expected that the image is based on the default `quay.io/kiegroup/kogito-swf-devmode:latest`. 
+
+=== Setting a custom image in production
+
+When xref:cloud/operator/build-and-deploy-workflows.adoc[deploying in production], you can opt in to have the operator to handle the build process for you. However, in more complex scenarios it's expected that the user owns and controls the build process. For this reason, when overriding the image the operator won't build the workflow. The operator will try to deploy the workflow using the given image. 
+
+It's advised that the SonataFlow `.spec.flow` definition and the workflow built within the image corresponds to the same workflow. If these definitions don't match you may experience poorly management and configuration. The {operator_name} uses the `.spec.flow` attribute to configure the application, service discovery, and service binding with other deployments within the topology.
+
+[IMPORTANT]
+====
+xref:cloud/operator/known-issues.adoc[It's on the roadmap] to add integrity check to the built images provided to the operator by customizing the default container.
+====
