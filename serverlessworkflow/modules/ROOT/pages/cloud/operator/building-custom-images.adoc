@@ -1,0 +1,136 @@
+= Building a Custom Development Image
+:compat-mode!:
+// Metadata:
+:description: Building custom development images for SonataFlow
+:keywords: sonataflow, workflow, serverless, operator, kubernetes, minikube, devmode
+// Links:
+:rh_ubi8_url: https://catalog.redhat.com/software/containers/ubi8/ubi-minimal/5c359a62bed8bd75a2c3fba8
+
+// NOTE: this guide can be expanded in the future to include prod images, hence the file name
+//       please change the title section and rearrange the others once it's done
+
+This document describes how to build a custom development image to use in SonataFlow.
+
+== The development mode image structure
+
+The base image used by the default development image is the link:{rh_ubi8_url}[Red Hat UBI 8 minimal]. You can read the image's documentation for more detailed information about that image's architecture.
+
+The table below lists the additional packages installed in the development mode image.
+
+.List of packages
+[cols="1,2"]
+|===
+|Package | Description
+
+|shadow-utils
+|The shadow-utils package includes the necessary programs for converting UNIX password files to the shadow password format.
+
+|tar
+|
+
+|gzip
+|
+
+|unzip
+|
+
+|zip
+|
+
+|tzdata-java
+|
+
+|java-11-openjdk-devel
+|OpenJDK 11
+
+|apache-maven-3.8.6-bin.tar.gz
+|Apache Maven
+
+|===
+
+The next table lists the important paths in the image's file system.
+
+.Important file system paths
+[cols="1,1"]
+|===
+|Path | Description
+
+|`/home/kogito`
+|Default user home directory
+
+|`/home/kogito/launch`
+|Useful scripts to run the application
+
+|`/home/kogito/serverless-workflow-project`
+|Workflow application directory in Maven format
+
+|`/home/kogito/.m2/repository`
+|Default Maven cache repository
+
+|===
+
+== Using the dev mode as base image
+
+Below you can find an example of a Dockerfile using the dev mode image as a base image to run a workflow capable of executing Python scripts.
+
+.Example of a dev mode Dockerfile
+[source,dockerfile,subs="attributes+"]
+----
+FROM {sonataflow_devmode_imagename}:{operator_version} <1>
+
+USER root <2>
+
+RUN microdnf install -y --nodocs python311 gcc python3.11-devel mesa-libGLU && \ <3>
+    microdnf clean all && \
+    ln -s /usr/bin/python3 /usr/bin/python && \
+    curl -sSL https://bootstrap.pypa.io/get-pip.py | python
+
+USER 1001 <4>
+
+ENV PATH="$\{PATH\}:/home/kogito/.local/bin" <5>
+
+COPY requirements.txt /home/kogito/serverless-workflow-project/ <6>
+
+RUN pip install numpy
+RUN pip install -r requirements.txt
+
+ENV QUARKUS_EXTENSIONS="org.kie.kogito:kogito-addons-quarkus-serverless-workflow-python:{page-component-display-version}" <7>
+
+CMD ["/home/kogito/launch/run-app-devmode.sh"] <8>
+----
+
+<1> The dev mode image as the base image
+<2> Change to super user to run privileged actions
+<3> Install additional packages
+<4> Change back to the default user without admin privileges
+<5> Add a new binary path to the `PATH`
+<6> Copying a file to the project's root path
+<7> Optionally adding a new Quarkus addon to the project
+<8> Defining the default entrypoint for the image
+
+You can then build this image using the following command:
+
+.Example of building a custom dev mode image
+[source,shell,subs="attributes+"]
+----
+docker build -t quay.io/acme/sonataflow-python-devmode:latest .
+----
+
+You can experiment with your new image running the container locally, for example:
+
+.Running the custom dev mode image locally
+[source,shell,subs="attributes+"]
+----
+ docker run -it --rm -p 8080:8080 -v /path/to/my/local/project/resources:/home/kogito/serverless-workflow-project/src/main/resources quay.io/acme/sonataflow-python-devmode:latest
+----
+
+The container exposes the port 8080 by default. When running the container locally, you must forward any free local port to 8080. In this example, we use the same 8080 port.
+
+Next, we mount a local volume to the container's application path. Any local workflow definitions, specification files, or properties should be mounted to `src/main/resources`. Alternatively, you can also mount custom Java files to `src/main/java`.
+
+== Additional resources
+
+* xref:cloud/operator/referencing-resource-files.adoc[]
+* xref:cloud/operator/developing-workflows.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
