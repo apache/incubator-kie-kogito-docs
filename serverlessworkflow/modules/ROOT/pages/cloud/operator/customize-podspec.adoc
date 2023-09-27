@@ -95,6 +95,13 @@ In xref:cloud/operator/developing-workflows.adoc[development profile], it's expe
 
 When xref:cloud/operator/build-and-deploy-workflows.adoc[deploying in production], you can opt in to have the operator to handle the build process for you. However, in more complex scenarios it's expected that the user owns and controls the build process. For this reason, when overriding the image the operator won't build the workflow. The operator will try to deploy the workflow using the given image. 
 
+In this scenario, the `.spec.resources` attribute is ignored since it's only used during the build process in the production profile. 
+
+[IMPORTANT]
+====
+xref:cloud/operator/known-issues.adoc[In the roadmap] you will find that we plan to consider the `.spec.resources` attribute when the image is specified in the default container.
+====
+
 It's advised that the SonataFlow `.spec.flow` definition and the workflow built within the image corresponds to the same workflow. If these definitions don't match you may experience poorly management and configuration. The {operator_name} uses the `.spec.flow` attribute to configure the application, service discovery, and service binding with other deployments within the topology.
 
 [IMPORTANT]
