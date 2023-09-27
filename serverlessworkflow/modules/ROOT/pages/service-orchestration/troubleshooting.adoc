@@ -1,14 +1,18 @@
-= Troubleshooting Remote Service Invocations
+= Troubleshooting Services Orchestrations
 :compat-mode!:
 // Metadata:
-:description: Troubleshooting remote service invocations
+:description: Troubleshooting Services Orchestrations
 :keywords: workflow, serverless, openapi, services, json, http, tls, https
 // Links:
 :apache_http_client_url: https://hc.apache.org/httpcomponents-client-5.2.x/
 
-This document describes an ongoing list of known issues while invoking remote services from workflows such as OpenAPI functions.
+This document describes an ongoing list of known issues while orchestrating services with workflows.
 
-== Turning HTTP tracing on
+== Troubleshooting HTTP Services Invocations
+
+The backbone of workflow orchestrations are remote HTTP services invocations, for example when using xref:service-orchestration/orchestration-of-openapi-based-services.adoc[OpenAPI functions]. Following a few steps that can be useful when troubleshooting HTTP-based functions.
+
+=== Tracing HTTP Requests and Responses
 
 Under the hood, {product_name} uses link:{apache_http_client_url}[Apache HTTP Client]. You can turn HTTP requests and responses tracing by setting the following property:
 
