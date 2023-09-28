@@ -1,0 +1,74 @@
+= Troubleshooting Services Orchestrations
+:compat-mode!:
+// Metadata:
+:description: Troubleshooting Services Orchestrations
+:keywords: workflow, serverless, openapi, services, json, http, tls, https
+// Links:
+:apache_http_client_url: https://hc.apache.org/httpcomponents-client-5.2.x/
+
+This document describes an ongoing list of known issues while orchestrating services with workflows.
+
+== Troubleshooting HTTP Services Invocations
+
+The backbone of workflow orchestrations are remote HTTP services invocations, for example when using xref:service-orchestration/orchestration-of-openapi-based-services.adoc[OpenAPI functions]. Following a few steps that can be useful when troubleshooting HTTP-based functions.
+
+=== Tracing HTTP Requests and Responses
+
+Under the hood, {product_name} uses link:{apache_http_client_url}[Apache HTTP Client]. You can turn HTTP requests and responses tracing by setting the following property:
+
+.Turning HTTP tracing on
+[source,properties]
+----
+quarkus.log.category."org.apache.http".level=DEBUG
+----
+
+Reset the application so the log configuration is propagated. After that, you can find HTTP tracing in your logs.
+
+.HTTP Request trace
+[source,log,subs="attributes+"]
+----
+...
+2023-09-25 19:00:55,242 DEBUG Executing request POST /v2/models/yolo-model/infer HTTP/1.1
+...
+2023-09-25 19:00:55,243 DEBUG http-outgoing-0 >> POST /v2/models/yolo-model/infer HTTP/1.1 <1>
+2023-09-25 19:00:55,243 DEBUG http-outgoing-0 >> Accept: application/json
+2023-09-25 19:00:55,243 DEBUG http-outgoing-0 >> Content-Type: application/json
+2023-09-25 19:00:55,243 DEBUG http-outgoing-0 >> kogitoprocid: inferencepipeline <2>
+2023-09-25 19:00:55,243 DEBUG http-outgoing-0 >> kogitoprocinstanceid: 85114b2d-9f64-496a-bf1d-d3a0760cde8e <3>
+2023-09-25 19:00:55,243 DEBUG http-outgoing-0 >> kogitoprocist: Active
+2023-09-25 19:00:55,243 DEBUG http-outgoing-0 >> kogitoproctype: SW
+2023-09-25 19:00:55,243 DEBUG http-outgoing-0 >> kogitoprocversion: 1.0
+2023-09-25 19:00:55,243 DEBUG http-outgoing-0 >> Content-Length: 23177723
+2023-09-25 19:00:55,244 DEBUG http-outgoing-0 >> Host: yolo-model-opendatahub-model.apps.trustyai.dzzt.p1.openshiftapps.com
+...
+----
+
+1. The path where the client will make the HTTP invocation
+2. The workflow definition id
+3. The workflow instance (execution) id
+
+In the example above, you have access to every portion of the HTTP request and can verify if something is wrong during the message creation.
+For example, you can use the `kogitoprocinstanceid` header to trace this HTTP message in the logs.
+
+For responses, you should be able to see the details below the request body:
+
+.HTTP Response trace
+[source,log,subs="attributes+"]
+----
+...
+2023-09-25 19:01:00,738  DEBUG http-outgoing-0 << "HTTP/1.1 500 Internal Server Error[\r][\n]" <1>
+2023-09-25 19:01:00,738  DEBUG http-outgoing-0 << "content-type: application/json[\r][\n]"
+2023-09-25 19:01:00,738  DEBUG http-outgoing-0 << "date: Mon, 25 Sep 2023 19:01:00 GMT[\r][\n]"
+2023-09-25 19:01:00,738  DEBUG http-outgoing-0 << "content-length: 186[\r][\n]"
+2023-09-25 19:01:00,738  DEBUG http-outgoing-0 << "set-cookie: 276e4597d7fcb3b2cba7b5f037eeacf5=5427fafade21f8e7a4ee1fa6c221cf40; path=/; HttpOnly; Secure; SameSite=None[\r][\n]"
+2023-09-25 19:01:00,738  DEBUG http-outgoing-0 << "[\r][\n]"
+2023-09-25 19:01:00,738  DEBUG http-outgoing-0 << "{"code":13, "message":"Failed to load Model due to adapter error: Error calling stat on model file: stat /models/yolo-model__isvc-1295fd6ba9/yolov5s-seg.onnx: no such file or directory"}" <2>
+...
+----
+
+1. Response code returned by the server. In this example, a general server error 
+2. Response body containing the message body returned by the server
+
+Having the details about the HTTP invocation enables users to do a better assessment about the behavior of a given workflow.
+
+include::../../pages/_common-content/report-issue.adoc[]
