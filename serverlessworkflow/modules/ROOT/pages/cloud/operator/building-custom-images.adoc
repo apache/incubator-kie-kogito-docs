@@ -13,9 +13,9 @@ This document describes how to build a custom development image to use in Sonata
 
 == The development mode image structure
 
-The base image used by the default development image is the link:{rh_ubi8_url}[Red Hat UBI 8 minimal]. You can read the image's documentation for more detailed information about that image's architecture.
+The development image is based on the link:{rh_ubi8_url}[Red Hat UBI 8 minimal] container image. You can read its documentation for more detailed information about that image's architecture.
 
-The table below lists the additional packages installed in the development mode image.
+The table below lists the additional packages installed in the development mode container image.
 
 .List of packages
 [cols="1,2"]
@@ -48,7 +48,7 @@ The table below lists the additional packages installed in the development mode 
 
 |===
 
-The next table lists the important paths in the image's file system.
+The next table lists the important paths in the container image's file system.
 
 .Important file system paths
 [cols="1,1"]
@@ -69,7 +69,7 @@ The next table lists the important paths in the image's file system.
 
 |===
 
-== Using the dev mode as base image
+== Using the development mode as base image
 
 Below you can find an example of a Dockerfile using the dev mode image as a base image to run a workflow capable of executing Python scripts.
 
@@ -124,9 +124,11 @@ You can experiment with your new image running the container locally, for exampl
  docker run -it --rm -p 8080:8080 -v /path/to/my/local/project/resources:/home/kogito/serverless-workflow-project/src/main/resources quay.io/acme/sonataflow-python-devmode:latest
 ----
 
-The container exposes the port 8080 by default. When running the container locally, you must forward any free local port to 8080. In this example, we use the same 8080 port.
+The container exposes port 8080 by default. When running the container locally, you must forward any free local port to 8080. In this example, we use the same 8080 port.
 
 Next, we mount a local volume to the container's application path. Any local workflow definitions, specification files, or properties should be mounted to `src/main/resources`. Alternatively, you can also mount custom Java files to `src/main/java`.
+
+Finally, to use the new generated image with the dev profile you can see: xref:cloud/operator/developing-workflows.adoc#_using_another_workflow_base_image[Using another Workflow base image].
 
 == Additional resources
 
