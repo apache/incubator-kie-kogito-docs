@@ -369,6 +369,22 @@ spec:
 ====
 The `spec.build.config.strategyOptions.KanikoBuildCacheEnabled` enables the internal Kaniko process to cache builder images to try to speed up the building execution.
 ====
+[TIP]
+====
+The minikube registry addon must be enabled as follows.
+[source,bash,subs="attributes+"]
+----
+minikube addons enable registry 
+----
+To verify that the addon was property enabled:
+[source,bash,subs="attributes+"]
+----
+minikube addons list |grep registry
+| registry                    | minikube | enabled ✅   | minikube                       |
+| registry-aliases            | minikube | disabled     | 3rd party (unknown)            |
+| registry-creds              | minikube | disabled     | 3rd party (UPMC Enterprises)   |
+----
+====
 
 You can save this file locally and run the following command:
 
