@@ -58,10 +58,8 @@ The previous command creates a Maven Quarkus project in the `serverless-workflow
 
 * `{kogito_sw_ga}`: Adds support for workflows.
 * `quarkus-resteasy-jackson`: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request.
-* `quarkus-smallrye-openapi`: Adds support for Swagger documentation when you run the application in development mode.
+* `quarkus-smallrye-openapi`: Adds support for <<swaggerui,Swagger>> documentation when you run the application in development mode.
 * `--no-code`: Prevents workflow example code from being generated.
-
-The SwaggerUI is available at `http://localhost:8080/q/swagger-ui/` when you run the application.
 --
 Apache Maven::
 +
@@ -74,7 +72,6 @@ mvn {quarkus_platform}:quarkus-maven-plugin:{quarkus_platform_version}:create \
     -DprojectArtifactId=serverless-workflow-hello-world \
     -Dextensions="{kogito_sw_ga},quarkus-resteasy-jackson,quarkus-smallrye-openapi" \
     -DnoCode
-cd serverless-workflow-hello-world
 ----
 
 In the previous command, `org.acme`, `serverless-workflow-hello-world`, and `1.0.0-SNAPSHOT` is group ID, artifact ID, and version of your project respectively. `-DnoCode` prevents the generation of workflow example code.
@@ -86,16 +83,21 @@ Knative workflow CLI::
 
 [source,shell,subs="attributes"]
 ----
-kn workflow create \
+kn workflow quarkus create \
   --name serverless-workflow-hello-world \
   --extension quarkus-jsonp,quarkus-smallrye-openapi \
   --quarkus-platform-group-id={quarkus_platform} \
   --quarkus-version={quarkus_platform_version}
 ----
-
 For more information about Knative workflow CLI, see xref:testing-and-troubleshooting/kn-plugin-workflow-overview.adoc[{product_name} plug-in for Knative CLI].
 --
 ====
+. Navigate into the project directory.
++
+[source,shell]
+----
+cd serverless-workflow-hello-world
+----
 
 [[proc-creating-workflow]]
 == Creating a workflow
@@ -205,9 +207,8 @@ Knative workflow CLI::
 .Build your project and generate a local image called `dev.local/serverless-workflow-hello-world:latest`
 [source,shell]
 ----
-kn workflow build --image dev.local/serverless-workflow-hello-world --verbose
+kn workflow quarkus build --image dev.local/serverless-workflow-hello-world
 ----
-The `--verbose` flag is used to display the output of the build command. This flag is optional.
 
 For more information about Knative workflow CLI, see xref:testing-and-troubleshooting/kn-plugin-workflow-overview.adoc[{product_name} plug-in for Knative CLI].
 --
@@ -242,30 +243,26 @@ Apache Maven::
 mvn clean quarkus:dev
 ----
 --
-Knative workflow CLI:
+Knative workflow CLI::
 +
 --
-Currently, Knative workflow CLI doesn't support yet running workflows locally. You can either:
-
-.Run your workflow application using Apache Maven
+.Run your workflow application using Knative workflow CLI
 [source,shell]
 ----
-mvn clean quarkus:dev
+kn workflow quarkus run
 ----
 
-.Run your workflow application using Quarkus CLI
-[source,shell]
-----
-quarkus dev
-----
+Note that once the project is ready, the Development UI will be opened up in a browser automatically (on `http://localhost:8080/q/dev`). You can avoid that by appending `--open-dev-ui=false` after the command.
 
 For more information about Knative workflow CLI, see xref:testing-and-troubleshooting/kn-plugin-workflow-overview.adoc[{product_name} plug-in for Knative CLI].
 
-Also, to deploy and run your workflow application, see xref:cloud/quarkus/deploying-on-minikube.adoc[Deploying workflow application on Minikube]
 --
 ====
+The SwaggerUI[[swaggerui]] is available at `http://localhost:8080/q/swagger-ui/` when you run the application.
 +
-.Example response
+Also, to deploy and run your workflow application, see xref:cloud/quarkus/deploying-on-minikube.adoc[Deploying workflow application on Minikube]
++
+.Example startup log
 [source,shell,subs="attributes"]
 ----
 [INFO] ------< org.acme:serverless-workflow-hello-world >-------
@@ -322,7 +319,7 @@ curl -X POST -H 'Content-Type:application/json' http://localhost:8080/hello_worl
 ----
 --
 
-. When running in development mode (using Quarkus CLI or Apache Maven), you can update your workflow with a new `mantra` value without restarting the application.
+. When running in development mode, you can update your workflow with a new `mantra` value without restarting the application.
 +
 --
 .Update your workflow
