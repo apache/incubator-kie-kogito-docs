@@ -165,6 +165,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../service-orchestration/orchestration-of-grpc-services.html">gRPC</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../service-orchestration/troubleshooting.html">Troubleshooting</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -305,7 +308,13 @@
     <a class="nav-link" href="../../cloud/operator/workflow-status-conditions.html">Custom Resource Status</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../../cloud/operator/known-issues.html">Known Issues</a>
+    <a class="nav-link" href="../../cloud/operator/building-custom-images.html">Building Custom Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../cloud/operator/known-issues.html">Roadmap and Known Issues</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../cloud/operator/customize-podspec.html">Custom Workflow PodSpec</a>
   </li>
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="../../cloud/operator/migration-guide.html">Migration Guide</a>
@@ -538,69 +547,14 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="proc-setting-kie-sandbox-extended-services-serverless-logic-web-tools"><a class="anchor" href="#proc-setting-kie-sandbox-extended-services-serverless-logic-web-tools"></a>Setting Extended Services</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The Extended Services tool is required to proxy requests to an OpenShift instance. Therefore, setting the Extended Services enables you to deploy and monitor your SonataFlow projects.</p>
-</div>
-<div class="olist arabic">
-<div class="title">Procedure</div>
-<ol class="arabic">
-<li>
-<p>In the Serverless Logic Web Tools web application, click the <strong>Cogwheel</strong> (⚙️) on the top-right corner and go to the <strong>Extended Services</strong> tab.</p>
-</li>
-<li>
-<p>In case you are not connected to Extended Services, you see <strong>You are not connected to Extended Services. Click to setup</strong> message.</p>
-</li>
-<li>
-<p>Click on the link in the message.</p>
-<div class="paragraph">
-<p>A window appears containing your current operating system as selected and a link to download the latest version of Extended Services.</p>
-</div>
-</li>
-<li>
-<p>Download the Extended Services and execute it.</p>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>You might need to grant permissions to run the file depending on your operating system and settings.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If you are using macOS, you might encounter the <code>"Extended Services" is damaged and can&#8217;t be opened. You should move it to Bin</code> error message while running the "Extended Services" application. This is due to the overeager <a href="https://support.apple.com/en-us/HT202491">approach towards security</a> by macOS and you can fix it by moving the "Extended Services" application out of quarantine. You can execute the <code>xattr -d com.apple.quarantine /Applications/KIE\ Sandbox\ Extended\ Services.app</code> command to achieve this.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>After executing the Extended Services the content in the <strong>Extended Services</strong> is updated and displays that you are connected to the Extended Services.</p>
-</div>
-</div>
-</div>
-</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="proc-connecting-openshift-instance-serverless-logic-web-tools"><a class="anchor" href="#proc-connecting-openshift-instance-serverless-logic-web-tools"></a>Connecting to OpenShift instance using Serverless Logic Web Tools</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After setting the Extended Services, you can connect to your OpenShift instance to deploy your SonataFlow projects with Serverless Logic Web Tools.</p>
+<p>You can connect to your OpenShift instance to deploy your SonataFlow projects with Serverless Logic Web Tools.</p>
 </div>
 <div class="ulist">
 <div class="title">Prerequisites</div>
 <ul>
-<li>
-<p>Extended Services tool is installed and running.</p>
-</li>
 <li>
 <p>OpenShift instance is active.</p>
 <div class="paragraph">
@@ -663,6 +617,9 @@
 <p>Enter the value of API token in the <strong>Token</strong> field.</p>
 </li>
 <li>
+<p>If your OpenShift instance uses Self-Signed certificates, you must also check the <strong>Insecurely disable TLS certificate validation</strong> option.</p>
+</li>
+<li>
 <p>Click <strong>Connect</strong>.</p>
 <div class="paragraph">
 <p>If the entered values are correct, then the tab updates and displays <strong>You&#8217;re connected to OpenShift</strong> message.</p>
@@ -672,20 +629,6 @@
 </div>
 <div class="paragraph">
 <p>After connecting to OpenShift, you are ready to deploy your SonataFlow projects using Serverless Logic Web Tools. For more information about deploying your projects, see <a href="serverless-logic-web-tools-deploy-projects.html" class="xref page">Deploying your SonataFlow projects using Serverless Logic Web Tools</a>.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If your OpenShift instance uses self-signed certificates, then you must enable the <code>InsecureSkipVerify</code> on Extended Services.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>

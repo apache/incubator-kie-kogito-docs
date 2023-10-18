@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Developing Workflow with the Operator :: SonataFlow Guides</title>
+    <title>Developing Workflows with the Operator :: SonataFlow Guides</title>
     <meta name="description" content="Developing workflows with the operator on Kubernetes">
     <meta name="keywords" content="kogito, sonataflow, workflow, serverless, operator, kubernetes, minikube, devmode">
     <meta name="generator" content="Antora 3.1.4">
@@ -165,6 +165,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../service-orchestration/orchestration-of-grpc-services.html">gRPC</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../service-orchestration/troubleshooting.html">Troubleshooting</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -305,7 +308,13 @@
     <a class="nav-link" href="workflow-status-conditions.html">Custom Resource Status</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="known-issues.html">Known Issues</a>
+    <a class="nav-link" href="building-custom-images.html">Building Custom Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="known-issues.html">Roadmap and Known Issues</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="customize-podspec.html">Custom Workflow PodSpec</a>
   </li>
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="migration-guide.html">Migration Guide</a>
@@ -529,7 +538,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Developing Workflow with the Operator</h1>
+<h1 class="page">Developing Workflows with the Operator</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -654,7 +663,7 @@ spec:
 <div class="listingblock">
 <div class="title">Deploying the greeting Workflow example</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl apply -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/test/testdata/sw.kogito_v1alpha08_sonataflow_devmode.yaml -n &lt;your_namespace&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl apply -f https://raw.githubusercontent.com/apache/incubator-kie-kogito-serverless-operator/main/test/testdata/sonataflow.org_v1alpha08_sonataflow_devmode.yaml -n &lt;your_namespace&gt;</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -724,7 +733,7 @@ greeting   dev       0.0.1               True</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -S https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/config/samples/sw.kogito_v1alpha08_sonataflow_devmode.yaml &gt; workflow_devmode.yaml
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -S https://raw.githubusercontent.com/apache/incubator-kie-kogito-serverless-operator/main/test/testdata/sonataflow.org_v1alpha08_sonataflow_devmode.yaml &gt; workflow_devmode.yaml
 code workflow_devmode.yaml
 kubectl apply -f workflow_devmode.yaml -n &lt;your_namespace&gt;</code></pre>
 </div>
@@ -856,7 +865,7 @@ kubectl patch sonataflowplatform &lt;name&gt; --patch  'spec:\n devMode:\n    ba
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The default image was created to run a Quarkus Java application in dev mode. You can replace this image with another one as long as it has the same concept. One way of doing this is using the default as the base image.</p>
+<p>The default image was created to run a Quarkus Java application in dev mode. You can replace this image with another one as long as it has the same concept. One way of doing this is using the default as the base image. See <a href="building-custom-images.html" class="xref page">Building a Custom Development Image</a>.</p>
 </div>
 </td>
 </tr>
@@ -974,6 +983,9 @@ As the operator is under active development, errors during the validation might 
 </li>
 <li>
 <p><a href="build-and-deploy-workflows.html" class="xref page">Building and Deploying Workflows with the Operator</a></p>
+</li>
+<li>
+<p><a href="building-custom-images.html" class="xref page">Building a Custom Development Image</a></p>
 </li>
 </ul>
 </div>

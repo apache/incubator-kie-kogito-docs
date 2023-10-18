@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Configuring Workflow Services :: SonataFlow Guides</title>
-    <meta name="description" content="Configuration of Workflow Services deployed by the operator">
-    <meta name="keywords" content="kogito, sonataflow, workflow, serverless, operator, kubernetes, minikube, config, openshift, containers">
+    <title>Customize the PodSpec Definition :: SonataFlow Guides</title>
+    <meta name="description" content="How to customize the PodTemplateSpec in the SonataFlow custom resource">
+    <meta name="keywords" content="sonataflow, workflow, serverless, operator, kubernetes, minikube, podspec, openshift, containers, template">
     <meta name="generator" content="Antora 3.1.4">
     <link rel="stylesheet" href="../../../../_/css/site.css">
 <link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
@@ -298,7 +298,7 @@
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="referencing-resource-files.html">Referencing Workflow Resources</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="3">
+  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="configuring-workflows.html">Configuration</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -313,7 +313,7 @@
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="known-issues.html">Roadmap and Known Issues</a>
   </li>
-  <li class="nav-item" data-depth="3">
+  <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="customize-podspec.html">Custom Workflow PodSpec</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -500,22 +500,22 @@
     <li><a href="../../index.html">SonataFlow Guides</a></li>
     <li><a href="../index.html">Cloud</a></li>
     <li>Operator</li>
-    <li><a href="configuring-workflows.html">Configuration</a></li>
+    <li><a href="customize-podspec.html">Custom Workflow PodSpec</a></li>
   </ul>
 </nav>
 <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">snapshot</button>
   <div class="version-menu">
-    <a class="version is-current" href="configuring-workflows.html">snapshot</a>
-    <a class="version" href="../../../1.44.0-SNAPSHOT/cloud/operator/configuring-workflows.html">1.44-RC</a>
-    <a class="version" href="../../../latest/cloud/operator/configuring-workflows.html">1.43</a>
-    <a class="version" href="../../../1.42.0.Final/cloud/operator/configuring-workflows.html">1.42</a>
-    <a class="version" href="../../../1.41.0.Final/cloud/operator/configuring-workflows.html">1.41</a>
-    <a class="version" href="../../../1.40.0.Final/cloud/operator/configuring-workflows.html">1.40</a>
-    <a class="version" href="../../../1.40.0-SNAPSHOT/cloud/operator/configuring-workflows.html">1.40-RC</a>
-    <a class="version" href="../../../1.39.0.Final/cloud/operator/configuring-workflows.html">1.39</a>
-    <a class="version" href="../../../1.38.0.Final/cloud/operator/configuring-workflows.html">1.38</a>
-    <a class="version" href="../../../1.37.0.Final/cloud/operator/configuring-workflows.html">1.37</a>
+    <a class="version is-current" href="customize-podspec.html">snapshot</a>
+    <a class="version is-missing" href="../../../1.44.0-SNAPSHOT/index.html">1.44-RC</a>
+    <a class="version is-missing" href="../../../latest/index.html">1.43</a>
+    <a class="version is-missing" href="../../../1.42.0.Final/index.html">1.42</a>
+    <a class="version is-missing" href="../../../1.41.0.Final/index.html">1.41</a>
+    <a class="version is-missing" href="../../../1.40.0.Final/index.html">1.40</a>
+    <a class="version is-missing" href="../../../1.40.0-SNAPSHOT/index.html">1.40-RC</a>
+    <a class="version is-missing" href="../../../1.39.0.Final/index.html">1.39</a>
+    <a class="version is-missing" href="../../../1.38.0.Final/index.html">1.38</a>
+    <a class="version is-missing" href="../../../1.37.0.Final/index.html">1.37</a>
     <a class="version is-missing" href="../../../1.36.1.Final/index.html">1.36</a>
     <a class="version is-missing" href="../../../1.35.0.Final/index.html">1.35</a>
     <a class="version is-missing" href="../../../1.34.0.Final/index.html">1.34</a>
@@ -531,135 +531,196 @@
     <a class="version is-missing" href="../../../1.24.1.Final/index.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/cloud/operator/configuring-workflows.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/cloud/operator/customize-podspec.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Configuring Workflow Services</h1>
+<h1 class="page">Customize the PodSpec Definition</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how to configure a Workflow service with the SonataFlow Operator.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_editing_the_workflow_configuration"><a class="anchor" href="#_editing_the_workflow_configuration"></a>Editing the Workflow Configuration</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>When the operator deploys the Workflow service, it also creates a <code>ConfigMap</code> named after the <code>SonataFlow</code> object with the suffix <code>-props</code>. For example, if your Workflow name is <code>greeting</code>, then the <code>ConfigMap</code> name is <code>greeting-props</code>.</p>
+<p>This document describes how to customize the pod specification definition in thew <code>SonataFlow</code> custom resource.</p>
 </div>
 <div class="paragraph">
-<p>You can use the Kubernetes object editor of your preference to add or edit the <a href="https://en.wikipedia.org/wiki/.properties">properties</a> in the Workflow configuration. Using <code>kubectl</code> you can do:</p>
+<p>Sometimes you may have a specific requirement to deploy containers on Kubernetes or OpenShift such as setting <a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/">Resource Limits</a>.</p>
+</div>
+<div class="paragraph">
+<p>SonataFlow Operator enables custom <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.26/#podspec-v1-core">PodSpec</a> definitions when deploying a <code>SonataFlow</code> instance by setting the <code>.spec.podTemplate</code> attribute. For example:</p>
 </div>
 <div class="listingblock">
-<div class="title">Editing the Workflow Properties</div>
+<div class="title">Setting PodSpec Resources Limits example</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl edit cm &lt;workflow-name&gt;-props</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Note that it&#8217;s important to respect the properties format, otherwise the operator will replace your configuration with the default one.</p>
-</div>
-<div class="paragraph">
-<p>Here&#8217;s an example of a Workflow properties stored within a ConfigMap:</p>
-</div>
-<div class="listingblock">
-<div class="title">Example of a Workflow ConfigMap Properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
-kind: ConfigMap
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
 metadata:
-  labels:
-    app: greeting
-  name: greeting-props
-  namespace: default
-data:
-  application.properties: |
-    my.properties.key = any-value</code></pre>
+  name: simple
+  annotations:
+    sonataflow.org/description: Simple example on k8s!
+    sonataflow.org/version: 0.0.1
+spec:
+  podTemplate: <i class="conum" data-value="1"></i><b>(1)</b>
+    container: <i class="conum" data-value="2"></i><b>(2)</b>
+      resources: <i class="conum" data-value="3"></i><b>(3)</b>
+        limits:
+          cpu: "250m"
+          memory: "128mi"
+  flow:
+    start: HelloWorld
+    states:
+      - name: HelloWorld
+        type: inject
+        data:
+          message: Hello World
+        end: true</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>PodSpec</code> template definition</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The default workflow service container</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Resources configuration</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>The underlying runtime engine that executes the Workflow service is based on <a href="https://quarkus.io/">Quarkus</a>. The <code>application.properties</code> key in the ConfigMap means that you can configure the Workflow as you would any <a href="https://quarkus.io/guides/config">Quarkus application</a>.</p>
+<p>The <code>.spec.podTemplate</code> attribute has the majority of fields defined in the default <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.26/#podspec-v1-core">Kubernetes PodSpec API</a>. The same Kubernetes API validation rules applies to these fields.</p>
 </div>
 <div class="paragraph">
-<p>Any <a href="../../core/configuration-properties.html" class="xref page">SonataFlow configuration that the documentation describes</a> or general Quarkus application property can be configured using this method.</p>
+<p>The <code>.spec.podTemplate.container</code> is a special attribute that you won&#8217;t find in the default Kubernetes API. The reason is to avoid misconfiguration when users require to change the specific container where the workflow application is deployed.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_immutable_properties"><a class="anchor" href="#_immutable_properties"></a>Immutable properties</h2>
+<h2 id="_customization_exceptions"><a class="anchor" href="#_customization_exceptions"></a>Customization Exceptions</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A few properties cannot be changed in this configuration. Usually, they are already defined in the properties file. The table below lists them.</p>
+<p>Besides customizing the default container, you can add more <code>containers</code>, <code>initContainers</code>, or <code>volumes</code> to the pod. There are a few exceptions listed below:</p>
 </div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The <code>containers</code> array can&#8217;t have a container named <code>workflow</code>. If you set a container with this name, it will be ignored by the operator. Instead, use <code>.spec.podTemplate.container</code> to modify the workflow container.</p>
+</li>
+<li>
+<p>There are a few file system paths controlled by the operator within the container where it mounts important files. These volumes can&#8217;t be overrided, it will be ignored by the operatror. See the table below:</p>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. List of immutable properties</caption>
+<caption class="title">Table 1. List of immutable volumes</caption>
 <colgroup>
-<col style="width: 50%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 20%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Property Key</th>
-<th class="tableblock halign-left valign-top">Immutable Value</th>
+<th class="tableblock halign-left valign-top">Volume</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Path</th>
 <th class="tableblock halign-left valign-top">Profile</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.http.port</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">8080</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">all</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">workflow-properties</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ConfigMap</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/deployments/config/application.properties</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">prod</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.http.host</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0.0.0.0</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">all</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">workflow-properties</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ConfigMap</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${PROJECT_ROOT}/src/main/resources/application.properties</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dev</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">org.kie.kogito.addons.knative.eventing.health-enabled</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">resources</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Projected</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>${PROJECT_ROOT}/src/main/resources/</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">dev</p></td>
 </tr>
 </tbody>
 </table>
+</li>
+</ol>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>If you try to change any of them, the operator will override them with the default, but preserving your changes in other property keys.</p>
+<p>In dev profile, all the SonataFlow <code>.spec.resources</code> objects are mounted in the <code>resources</code> projected volume listed in this table. Do not mount anything else in this path.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../../core/configuration-properties.html" class="xref page">Configuration properties in SonataFlow</a></p>
-</li>
-<li>
-<p><a href="known-issues.html" class="xref page">SonataFlow Operator Known Issues, Limitations and Roadmap</a></p>
-</li>
-<li>
-<p><a href="developing-workflows.html" class="xref page">Developing Workflows with the Operator</a></p>
-</li>
-<li>
-<p><a href="build-and-deploy-workflows.html" class="xref page">Building and Deploying Workflows with the Operator</a></p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_found_an_issue"><a class="anchor" href="#_found_an_issue"></a><em><strong>Found an issue?</strong></em></h2>
+<h2 id="_setting_a_custom_image_in_the_default_container"><a class="anchor" href="#_setting_a_custom_image_in_the_default_container"></a>Setting a custom image in the default container</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If you find an issue or any misleading information, please feel free to report it <a href="https://github.com/kiegroup/kogito-docs/issues/new">here</a>.
-We really appreciate it!</p>
+<p>When setting the attribute <code>.spec.podTemplate.container.image</code> the operator understands that the workflow already have an image built and the user is responsible for the build and image maintainence. That means that the operator won&#8217;t try to upgrade this image in the future or do any reconciliation changes to it.</p>
+</div>
+<div class="sect2">
+<h3 id="_setting_a_custom_image_in_devmode"><a class="anchor" href="#_setting_a_custom_image_in_devmode"></a>Setting a custom image in devmode</h3>
+<div class="paragraph">
+<p>In <a href="developing-workflows.html" class="xref page">development profile</a>, it&#8217;s expected that the image is based on the default <code>quay.io/kiegroup/kogito-swf-devmode:latest</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_setting_a_custom_image_in_production"><a class="anchor" href="#_setting_a_custom_image_in_production"></a>Setting a custom image in production</h3>
+<div class="paragraph">
+<p>When <a href="build-and-deploy-workflows.html" class="xref page">deploying in production</a>, you can opt in to have the operator to handle the build process for you. However, in more complex scenarios it&#8217;s expected that the user owns and controls the build process. For this reason, when overriding the image the operator won&#8217;t build the workflow. The operator will try to deploy the workflow using the given image.</p>
+</div>
+<div class="paragraph">
+<p>In this scenario, the <code>.spec.resources</code> attribute is ignored since it&#8217;s only used during the build process in the production profile.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><a href="known-issues.html" class="xref page">In the roadmap</a> you will find that we plan to consider the <code>.spec.resources</code> attribute when the image is specified in the default container.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It&#8217;s advised that the SonataFlow <code>.spec.flow</code> definition and the workflow built within the image corresponds to the same workflow. If these definitions don&#8217;t match you may experience poorly management and configuration. The SonataFlow Operator uses the <code>.spec.flow</code> attribute to configure the application, service discovery, and service binding with other deployments within the topology.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><a href="known-issues.html" class="xref page">It&#8217;s on the roadmap</a> to add integrity check to the built images provided to the operator by customizing the default container.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>

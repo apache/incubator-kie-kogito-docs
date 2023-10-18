@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Configuring Workflow Services :: SonataFlow Guides</title>
-    <meta name="description" content="Configuration of Workflow Services deployed by the operator">
-    <meta name="keywords" content="kogito, sonataflow, workflow, serverless, operator, kubernetes, minikube, config, openshift, containers">
+    <title>Building a Custom Development Image :: SonataFlow Guides</title>
+    <meta name="description" content="Building custom development images for SonataFlow">
+    <meta name="keywords" content="sonataflow, workflow, serverless, operator, kubernetes, minikube, devmode">
     <meta name="generator" content="Antora 3.1.4">
     <link rel="stylesheet" href="../../../../_/css/site.css">
 <link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
@@ -298,7 +298,7 @@
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="referencing-resource-files.html">Referencing Workflow Resources</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="3">
+  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="configuring-workflows.html">Configuration</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -307,7 +307,7 @@
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="workflow-status-conditions.html">Custom Resource Status</a>
   </li>
-  <li class="nav-item" data-depth="3">
+  <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="building-custom-images.html">Building Custom Images</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -500,22 +500,22 @@
     <li><a href="../../index.html">SonataFlow Guides</a></li>
     <li><a href="../index.html">Cloud</a></li>
     <li>Operator</li>
-    <li><a href="configuring-workflows.html">Configuration</a></li>
+    <li><a href="building-custom-images.html">Building Custom Images</a></li>
   </ul>
 </nav>
 <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">snapshot</button>
   <div class="version-menu">
-    <a class="version is-current" href="configuring-workflows.html">snapshot</a>
-    <a class="version" href="../../../1.44.0-SNAPSHOT/cloud/operator/configuring-workflows.html">1.44-RC</a>
-    <a class="version" href="../../../latest/cloud/operator/configuring-workflows.html">1.43</a>
-    <a class="version" href="../../../1.42.0.Final/cloud/operator/configuring-workflows.html">1.42</a>
-    <a class="version" href="../../../1.41.0.Final/cloud/operator/configuring-workflows.html">1.41</a>
-    <a class="version" href="../../../1.40.0.Final/cloud/operator/configuring-workflows.html">1.40</a>
-    <a class="version" href="../../../1.40.0-SNAPSHOT/cloud/operator/configuring-workflows.html">1.40-RC</a>
-    <a class="version" href="../../../1.39.0.Final/cloud/operator/configuring-workflows.html">1.39</a>
-    <a class="version" href="../../../1.38.0.Final/cloud/operator/configuring-workflows.html">1.38</a>
-    <a class="version" href="../../../1.37.0.Final/cloud/operator/configuring-workflows.html">1.37</a>
+    <a class="version is-current" href="building-custom-images.html">snapshot</a>
+    <a class="version is-missing" href="../../../1.44.0-SNAPSHOT/index.html">1.44-RC</a>
+    <a class="version is-missing" href="../../../latest/index.html">1.43</a>
+    <a class="version is-missing" href="../../../1.42.0.Final/index.html">1.42</a>
+    <a class="version is-missing" href="../../../1.41.0.Final/index.html">1.41</a>
+    <a class="version is-missing" href="../../../1.40.0.Final/index.html">1.40</a>
+    <a class="version is-missing" href="../../../1.40.0-SNAPSHOT/index.html">1.40-RC</a>
+    <a class="version is-missing" href="../../../1.39.0.Final/index.html">1.39</a>
+    <a class="version is-missing" href="../../../1.38.0.Final/index.html">1.38</a>
+    <a class="version is-missing" href="../../../1.37.0.Final/index.html">1.37</a>
     <a class="version is-missing" href="../../../1.36.1.Final/index.html">1.36</a>
     <a class="version is-missing" href="../../../1.35.0.Final/index.html">1.35</a>
     <a class="version is-missing" href="../../../1.34.0.Final/index.html">1.34</a>
@@ -531,105 +531,207 @@
     <a class="version is-missing" href="../../../1.24.1.Final/index.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/cloud/operator/configuring-workflows.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/kiegroup/kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/cloud/operator/building-custom-images.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Configuring Workflow Services</h1>
+<h1 class="page">Building a Custom Development Image</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how to configure a Workflow service with the SonataFlow Operator.</p>
+<p>This document describes how to build a custom development image to use in SonataFlow.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_editing_the_workflow_configuration"><a class="anchor" href="#_editing_the_workflow_configuration"></a>Editing the Workflow Configuration</h2>
+<h2 id="_the_development_mode_image_structure"><a class="anchor" href="#_the_development_mode_image_structure"></a>The development mode image structure</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When the operator deploys the Workflow service, it also creates a <code>ConfigMap</code> named after the <code>SonataFlow</code> object with the suffix <code>-props</code>. For example, if your Workflow name is <code>greeting</code>, then the <code>ConfigMap</code> name is <code>greeting-props</code>.</p>
+<p>The development image is based on the <a href="https://catalog.redhat.com/software/containers/ubi8/ubi-minimal/5c359a62bed8bd75a2c3fba8">Red Hat UBI 8 minimal</a> container image. You can read its documentation for more detailed information about that image&#8217;s architecture.</p>
 </div>
 <div class="paragraph">
-<p>You can use the Kubernetes object editor of your preference to add or edit the <a href="https://en.wikipedia.org/wiki/.properties">properties</a> in the Workflow configuration. Using <code>kubectl</code> you can do:</p>
-</div>
-<div class="listingblock">
-<div class="title">Editing the Workflow Properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl edit cm &lt;workflow-name&gt;-props</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Note that it&#8217;s important to respect the properties format, otherwise the operator will replace your configuration with the default one.</p>
-</div>
-<div class="paragraph">
-<p>Here&#8217;s an example of a Workflow properties stored within a ConfigMap:</p>
-</div>
-<div class="listingblock">
-<div class="title">Example of a Workflow ConfigMap Properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
-kind: ConfigMap
-metadata:
-  labels:
-    app: greeting
-  name: greeting-props
-  namespace: default
-data:
-  application.properties: |
-    my.properties.key = any-value</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The underlying runtime engine that executes the Workflow service is based on <a href="https://quarkus.io/">Quarkus</a>. The <code>application.properties</code> key in the ConfigMap means that you can configure the Workflow as you would any <a href="https://quarkus.io/guides/config">Quarkus application</a>.</p>
-</div>
-<div class="paragraph">
-<p>Any <a href="../../core/configuration-properties.html" class="xref page">SonataFlow configuration that the documentation describes</a> or general Quarkus application property can be configured using this method.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_immutable_properties"><a class="anchor" href="#_immutable_properties"></a>Immutable properties</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>A few properties cannot be changed in this configuration. Usually, they are already defined in the properties file. The table below lists them.</p>
+<p>The table below lists the additional packages installed in the development mode container image.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. List of immutable properties</caption>
+<caption class="title">Table 1. List of packages</caption>
 <colgroup>
-<col style="width: 50%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Property Key</th>
-<th class="tableblock halign-left valign-top">Immutable Value</th>
-<th class="tableblock halign-left valign-top">Profile</th>
+<th class="tableblock halign-left valign-top">Package</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.http.port</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">8080</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">all</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">shadow-utils</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The shadow-utils package includes the necessary programs for converting UNIX password files to the shadow password format.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.http.host</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0.0.0.0</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">all</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">tar</p></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">org.kie.kogito.addons.knative.eventing.health-enabled</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">dev</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">gzip</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">unzip</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">zip</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">tzdata-java</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java-11-openjdk-devel</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OpenJDK 11</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">apache-maven-3.8.6-bin.tar.gz</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Maven</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>If you try to change any of them, the operator will override them with the default, but preserving your changes in other property keys.</p>
+<p>The next table lists the important paths in the container image&#8217;s file system.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Important file system paths</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/home/kogito</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Default user home directory</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/home/kogito/launch</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Useful scripts to run the application</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/home/kogito/serverless-workflow-project</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Workflow application directory in Maven format</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/home/kogito/.m2/repository</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Default Maven cache repository</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_the_development_mode_as_base_image"><a class="anchor" href="#_using_the_development_mode_as_base_image"></a>Using the development mode as base image</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Below you can find an example of a Dockerfile using the dev mode image as a base image to run a workflow capable of executing Python scripts.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a dev mode Dockerfile</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dockerfile hljs" data-lang="dockerfile">FROM quay.io/kiegroup/kogito-swf-devmode:main <i class="conum" data-value="1"></i><b>(1)</b>
+
+USER root <i class="conum" data-value="2"></i><b>(2)</b>
+
+RUN microdnf install -y --nodocs python311 gcc python3.11-devel mesa-libGLU &amp;&amp; \ <i class="conum" data-value="3"></i><b>(3)</b>
+    microdnf clean all &amp;&amp; \
+    ln -s /usr/bin/python3 /usr/bin/python &amp;&amp; \
+    curl -sSL https://bootstrap.pypa.io/get-pip.py | python
+
+USER 1001 <i class="conum" data-value="4"></i><b>(4)</b>
+
+ENV PATH="${PATH}:/home/kogito/.local/bin" <i class="conum" data-value="5"></i><b>(5)</b>
+
+COPY requirements.txt /home/kogito/serverless-workflow-project/ <i class="conum" data-value="6"></i><b>(6)</b>
+
+RUN pip install numpy
+RUN pip install -r requirements.txt
+
+ENV QUARKUS_EXTENSIONS="org.kie.kogito:kogito-addons-quarkus-serverless-workflow-python:snapshot" <i class="conum" data-value="7"></i><b>(7)</b>
+
+CMD ["/home/kogito/launch/run-app-devmode.sh"] <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The dev mode image as the base image</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Change to super user to run privileged actions</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Install additional packages</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Change back to the default user without admin privileges</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Add a new binary path to the <code>PATH</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Copying a file to the project&#8217;s root path</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Optionally adding a new Quarkus addon to the project</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Defining the default entrypoint for the image</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can then build this image using the following command:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of building a custom dev mode image</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">docker build -t quay.io/acme/sonataflow-python-devmode:latest .</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can experiment with your new image running the container locally, for example:</p>
+</div>
+<div class="listingblock">
+<div class="title">Running the custom dev mode image locally</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell"> docker run -it --rm -p 8080:8080 -v /path/to/my/local/project/resources:/home/kogito/serverless-workflow-project/src/main/resources quay.io/acme/sonataflow-python-devmode:latest</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The container exposes port 8080 by default. When running the container locally, you must forward any free local port to 8080. In this example, we use the same 8080 port.</p>
+</div>
+<div class="paragraph">
+<p>Next, we mount a local volume to the container&#8217;s application path. Any local workflow definitions, specification files, or properties should be mounted to <code>src/main/resources</code>. Alternatively, you can also mount custom Java files to <code>src/main/java</code>.</p>
+</div>
+<div class="paragraph">
+<p>Finally, to use the new generated image with the dev profile you can see: <a href="developing-workflows.html#_using_another_workflow_base_image" class="xref page">Using another Workflow base image</a>.</p>
 </div>
 </div>
 </div>
@@ -639,16 +741,10 @@ data:
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../../core/configuration-properties.html" class="xref page">Configuration properties in SonataFlow</a></p>
-</li>
-<li>
-<p><a href="known-issues.html" class="xref page">SonataFlow Operator Known Issues, Limitations and Roadmap</a></p>
+<p><a href="referencing-resource-files.html" class="xref page">Referencing Additional Files in the Workflow</a></p>
 </li>
 <li>
 <p><a href="developing-workflows.html" class="xref page">Developing Workflows with the Operator</a></p>
-</li>
-<li>
-<p><a href="build-and-deploy-workflows.html" class="xref page">Building and Deploying Workflows with the Operator</a></p>
 </li>
 </ul>
 </div>

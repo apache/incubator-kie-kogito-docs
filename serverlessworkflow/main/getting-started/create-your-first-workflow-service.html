@@ -163,6 +163,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../service-orchestration/orchestration-of-grpc-services.html">gRPC</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../service-orchestration/troubleshooting.html">Troubleshooting</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -303,7 +306,13 @@
     <a class="nav-link" href="../cloud/operator/workflow-status-conditions.html">Custom Resource Status</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../cloud/operator/known-issues.html">Known Issues</a>
+    <a class="nav-link" href="../cloud/operator/building-custom-images.html">Building Custom Images</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/known-issues.html">Roadmap and Known Issues</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../cloud/operator/customize-podspec.html">Custom Workflow PodSpec</a>
   </li>
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="../cloud/operator/migration-guide.html">Migration Guide</a>
@@ -580,7 +589,7 @@
 <p>Apache Maven 3.8.6 is installed.</p>
 </li>
 <li>
-<p><a href="https://quarkus.io/guides/cli-tooling">Quarkus CLI</a> or <a href="../testing-and-troubleshooting/kn-plugin-workflow-overview.html" class="xref page">Knative Workflow CLI</a> 0.21.3 is installed.</p>
+<p><a href="https://quarkus.io/guides/cli-tooling">Quarkus CLI</a> or <a href="../testing-and-troubleshooting/kn-plugin-workflow-overview.html" class="xref page">Knative Workflow CLI</a> 0.31.0 is installed.</p>
 </li>
 <li>
 <p>Visual Studio Code with <a href="https://marketplace.visualstudio.com/items?itemName=redhat.java">Red Hat Java Extension</a>
@@ -643,15 +652,12 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
 <p><code>quarkus-resteasy-jackson</code>: Adds support for RESTEasy, which is required by the generated REST resources that are used to start the flow process using an HTTP request.</p>
 </li>
 <li>
-<p><code>quarkus-smallrye-openapi</code>: Adds support for Swagger documentation when you run the application in development mode.</p>
+<p><code>quarkus-smallrye-openapi</code>: Adds support for <a href="#swaggerui">Swagger</a> documentation when you run the application in development mode.</p>
 </li>
 <li>
 <p><code>--no-code</code>: Prevents workflow example code from being generated.</p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>The SwaggerUI is available at <code><a href="http://localhost:8080/q/swagger-ui/" class="bare">http://localhost:8080/q/swagger-ui/</a></code> when you run the application.</p>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_apache-maven">
@@ -662,8 +668,7 @@ and <a href="https://marketplace.visualstudio.com/items?itemName=redhat.vscode-e
     -DprojectGroupId=org.acme \
     -DprojectArtifactId=serverless-workflow-hello-world \
     -Dextensions="kogito-quarkus-serverless-workflow,quarkus-resteasy-jackson,quarkus-smallrye-openapi" \
-    -DnoCode
-cd serverless-workflow-hello-world</code></pre>
+    -DnoCode</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -674,7 +679,7 @@ cd serverless-workflow-hello-world</code></pre>
 <div class="listingblock">
 <div class="title">Create a project using Knative workflow CLI</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow create \
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow quarkus create \
   --name serverless-workflow-hello-world \
   --extension quarkus-jsonp,quarkus-smallrye-openapi \
   --quarkus-platform-group-id=io.quarkus.platform \
@@ -685,6 +690,14 @@ cd serverless-workflow-hello-world</code></pre>
 <p>For more information about Knative workflow CLI, see <a href="../testing-and-troubleshooting/kn-plugin-workflow-overview.html" class="xref page">SonataFlow plug-in for Knative CLI</a>.</p>
 </div>
 </div>
+</div>
+</div>
+</li>
+<li>
+<p>Navigate into the project directory.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cd serverless-workflow-hello-world</code></pre>
 </div>
 </div>
 </li>
@@ -848,11 +861,8 @@ cd serverless-workflow-hello-world</code></pre>
 <div class="listingblock">
 <div class="title">Build your project and generate a local image called <code>dev.local/serverless-workflow-hello-world:latest</code></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow build --image dev.local/serverless-workflow-hello-world --verbose</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow quarkus build --image dev.local/serverless-workflow-hello-world</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>The <code>--verbose</code> flag is used to display the output of the build command. This flag is optional.</p>
 </div>
 <div class="paragraph">
 <p>For more information about Knative workflow CLI, see <a href="../testing-and-troubleshooting/kn-plugin-workflow-overview.html" class="xref page">SonataFlow plug-in for Knative CLI</a>.</p>
@@ -885,6 +895,9 @@ cd serverless-workflow-hello-world</code></pre>
 <li>
 <p><a id="tabset3_apache-maven"></a>Apache Maven</p>
 </li>
+<li>
+<p><a id="tabset3_knative-workflow-cli"></a>Knative workflow CLI</p>
+</li>
 </ul>
 </div>
 <div class="content">
@@ -897,8 +910,6 @@ cd serverless-workflow-hello-world</code></pre>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset3_apache-maven">
-<div class="openblock">
-<div class="content">
 <div class="listingblock">
 <div class="title">Run your workflow application using Apache Maven</div>
 <div class="content">
@@ -906,40 +917,30 @@ cd serverless-workflow-hello-world</code></pre>
 </div>
 </div>
 </div>
+<div class="tab-pane" aria-labelledby="tabset3_knative-workflow-cli">
+<div class="listingblock">
+<div class="title">Run your workflow application using Knative workflow CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kn workflow quarkus run</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Knative workflow CLI:</p>
-</div>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Currently, Knative workflow CLI doesn&#8217;t support yet running workflows locally. You can either:</p>
-</div>
-<div class="listingblock">
-<div class="title">Run your workflow application using Apache Maven</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn clean quarkus:dev</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Run your workflow application using Quarkus CLI</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus dev</code></pre>
-</div>
+<p>Note that once the project is ready, the Development UI will be opened up in a browser automatically (on <code><a href="http://localhost:8080/q/dev" class="bare">http://localhost:8080/q/dev</a></code>). You can avoid that by appending <code>--open-dev-ui=false</code> after the command.</p>
 </div>
 <div class="paragraph">
 <p>For more information about Knative workflow CLI, see <a href="../testing-and-troubleshooting/kn-plugin-workflow-overview.html" class="xref page">SonataFlow plug-in for Knative CLI</a>.</p>
 </div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The SwaggerUI<a id="swaggerui"></a> is available at <code><a href="http://localhost:8080/q/swagger-ui/" class="bare">http://localhost:8080/q/swagger-ui/</a></code> when you run the application.</p>
+</div>
 <div class="paragraph">
 <p>Also, to deploy and run your workflow application, see <a href="../cloud/quarkus/deploying-on-minikube.html" class="xref page">Deploying workflow application on Minikube</a></p>
 </div>
-</div>
-</div>
-</div>
-</div>
-</div>
 <div class="listingblock">
-<div class="title">Example response</div>
+<div class="title">Example startup log</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">[INFO] ------< org.acme:serverless-workflow-hello-world >-------
 [INFO] Building serverless-workflow-hello-world 1.0.0-SNAPSHOT
@@ -997,7 +998,7 @@ __  ____  __  _____   ___  __ ____  ______
 </div>
 </li>
 <li>
-<p>When running in development mode (using Quarkus CLI or Apache Maven), you can update your workflow with a new <code>mantra</code> value without restarting the application.</p>
+<p>When running in development mode, you can update your workflow with a new <code>mantra</code> value without restarting the application.</p>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
