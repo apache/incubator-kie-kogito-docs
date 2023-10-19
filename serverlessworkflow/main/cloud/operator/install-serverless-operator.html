@@ -678,6 +678,17 @@
 </div>
 </div>
 <div class="paragraph">
+<p>You can also specify a version:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/v&lt;version&gt;/operator.yaml</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>&lt;version&gt;</code> could be <code>1.43.0</code> for instance.</p>
+</div>
+<div class="paragraph">
 <p>You can follow the deployment of the SonataFlow Operator:</p>
 </div>
 <div class="listingblock">
@@ -741,13 +752,10 @@ kubectl delete --all sonataflowplatform --all-namespaces</code></pre>
 quay.io/kiegroup/kogito-serverless-operator-nightly:1.41.0</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The operator manager image reflects the current operator&#8217;s version. Replace the major and minor version names in the command below. For example, if the image version is <code>1.41.0</code> use <code>1.41</code> in the placeholder:</p>
-</div>
 <div class="listingblock">
 <div class="title">Uninstalling the operator</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl delete -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/&lt;version&gt;.x/operator.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl delete -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/v&lt;version&gt;/operator.yaml</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -759,6 +767,9 @@ quay.io/kiegroup/kogito-serverless-operator-nightly:1.41.0</code></pre>
 <td class="content">
 <div class="paragraph">
 <p>If you&#8217;re running a snapshot version, use this URL instead <code><a href="https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/operator.yaml" class="bare">https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/operator.yaml</a></code>.</p>
+</div>
+<div class="paragraph">
+<p>The URL should be the same used when installing the operator.</p>
 </div>
 </td>
 </tr>
