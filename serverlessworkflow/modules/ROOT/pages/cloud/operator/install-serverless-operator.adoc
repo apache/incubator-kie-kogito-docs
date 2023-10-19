@@ -86,6 +86,11 @@ To install the {product_name} Operator, you can use the following command:
 ----
 kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/{operator_version}/operator.yaml
 ----
+You can also specify a version:
+----
+kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/v<version>/operator.yaml
+----
+`<version>` could be `1.43.0` for instance.
 
 You can follow the deployment of the {product_name} Operator:
 
@@ -142,17 +147,17 @@ kubectl get deployment sonataflow-operator-controller-manager -n sonataflow-oper
 quay.io/kiegroup/kogito-serverless-operator-nightly:1.41.0
 ----
 
-The operator manager image reflects the current operator's version. Replace the major and minor version names in the command below. For example, if the image version is `1.41.0` use `1.41` in the placeholder:
-
 .Uninstalling the operator
 [source,shell,subs="attributes+"]
 ----
-kubectl delete -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/<version>.x/operator.yaml
+kubectl delete -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/v<version>/operator.yaml
 ----
 
 [TIP]
 ====
 If you're running a snapshot version, use this URL instead `https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/main/operator.yaml`.
+
+The URL should be the same used when installing the operator.
 ====
 
 == Additional resources
