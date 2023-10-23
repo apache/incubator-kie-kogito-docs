@@ -41,7 +41,7 @@
         <div id="topbar-nav" class="navbar-menu">
             <div class="navbar-end">
                 <div class="navbar-item">
-                    <a class="navbar-item small-item" href="https://github.com/kiegroup"
+                    <a class="navbar-item small-item" href="https://github.com/apache"
                        target="_blank" title="Follow KIE on GitHub">
                         <div class="github-icon"></div>
                     </a>
@@ -564,10 +564,10 @@
 <h2 id="ref-example-callback"><a class="anchor" href="#ref-example-callback"></a>Example of the OpenAPI Callback</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To understand the OpenAPI Callback, see the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus"><code>serverless-workflow-callback-events-over-http-quarkus</code></a> example application in GitHub repository.</p>
+<p>To understand the OpenAPI Callback, see the <a href="https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus"><code>serverless-workflow-callback-events-over-http-quarkus</code></a> example application in GitHub repository.</p>
 </div>
 <div class="paragraph">
-<p>This example contains a simple <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-workflow">workflow-service</a> that illustrates callback state using OpenAPI callbacks functionality. A callback is a state that invokes an action and wait for an event (event that will be eventually fired by the external service notified by the action). This example consists of a callback state that waits for an event to arrive at the wait channel. Its action calls an external service named <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-event-service">callback-event-service</a> that publishes the wait event over HTTP. After consuming the wait event, the workflow prints the message received in the wait event and ends the workflow.</p>
+<p>This example contains a simple <a href="https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-workflow">workflow-service</a> that illustrates callback state using OpenAPI callbacks functionality. A callback is a state that invokes an action and wait for an event (event that will be eventually fired by the external service notified by the action). This example consists of a callback state that waits for an event to arrive at the wait channel. Its action calls an external service named <a href="https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-event-service">callback-event-service</a> that publishes the wait event over HTTP. After consuming the wait event, the workflow prints the message received in the wait event and ends the workflow.</p>
 </div>
 <div class="paragraph">
 <p>The <code>serverless-workflow-callback-events-over-http-quarkus</code> application is initiated with the following request to <code><a href="http://localhost:8080/callback" class="bare">http://localhost:8080/callback</a></code>:</p>
@@ -580,10 +580,10 @@
 </div>
 </div>
 <div class="paragraph">
-<p>Once the workflow is started, it makes an external service call with the callback URL and the workflow instance ID in the request body to <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-event-service">callback-event-service</a>. Then, as configured in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/specs/callback.yaml">OpenAPI</a> file, the callback URL is invoked to send a CloudEvent to the workflow.</p>
+<p>Once the workflow is started, it makes an external service call with the callback URL and the workflow instance ID in the request body to <a href="https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-event-service">callback-event-service</a>. Then, as configured in the <a href="https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/specs/callback.yaml">OpenAPI</a> file, the callback URL is invoked to send a CloudEvent to the workflow.</p>
 </div>
 <div class="paragraph">
-<p>Once the <code>wait</code> type CloudEvent is received by the callback-workflow-service, the workflow moves to the next state and ends successfully. The following figure shows the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus"><code>serverless-workflow-callback-events-over-http-quarkus</code></a> image:</p>
+<p>Once the <code>wait</code> type CloudEvent is received by the callback-workflow-service, the workflow moves to the next state and ends successfully. The following figure shows the <a href="https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus"><code>serverless-workflow-callback-events-over-http-quarkus</code></a> image:</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -591,7 +591,7 @@
 </div>
 </div>
 <div class="paragraph">
-<p>To use the OpenAPI callback in a workflow, the OpenAPI YAML file is configured with the callback as specified in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/specs/callback.yaml">OpenAPI</a> file.</p>
+<p>To use the OpenAPI callback in a workflow, the OpenAPI YAML file is configured with the callback as specified in the <a href="https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/specs/callback.yaml">OpenAPI</a> file.</p>
 </div>
 <div class="paragraph">
 <p>To use the Callback state in a workflow, first CloudEvent type <code>wait</code> is declared that the workflow uses. Following is an example of CloudEvents declaration in a workflow definition:</p>
@@ -646,7 +646,7 @@
 </table>
 </div>
 <div class="paragraph">
-<p>An <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-event-service/src/main/java/org/kie/kogito/examples/CallbackResource.java">event listener</a> publishes a new <code>wait</code> type CloudEvent. Following is an example of a Java method that publishes the <code>wait</code> type CloudEvent:</p>
+<p>An <a href="https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-event-service/src/main/java/org/kie/kogito/examples/CallbackResource.java">event listener</a> publishes a new <code>wait</code> type CloudEvent. Following is an example of a Java method that publishes the <code>wait</code> type CloudEvent:</p>
 </div>
 <div class="listingblock">
 <div class="title">Example of a Java method that makes a call to Callback URL and publishes the <code>wait</code> CloudEvent</div>
@@ -682,7 +682,7 @@
 <p>The <code>serverless-workflow-callback-events-over-http-quarkus</code> example application consumes the Cloudevents using Knative Eventing. For more information about incoming and outgoing CloudEvents oer HTTP, see <a href="../eventing/consume-produce-events-with-knative-eventing.html" class="xref page">Consuming and Producing CloudEvents over HTTP</a>.</p>
 </div>
 <div class="paragraph">
-<p>The HTTP path where the workflow application will listen for the CloudEvents in the <code>serverless-workflow-callback-events-over-http-quarkus</code> example application, is configured in the <a href="https://github.com/kiegroup/kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/application.properties"><code>application.properties</code></a> file as shown below:</p>
+<p>The HTTP path where the workflow application will listen for the CloudEvents in the <code>serverless-workflow-callback-events-over-http-quarkus</code> example application, is configured in the <a href="https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-events-over-http-quarkus/callback-workflow/src/main/resources/application.properties"><code>application.properties</code></a> file as shown below:</p>
 </div>
 <div class="listingblock">
 <div class="content">
