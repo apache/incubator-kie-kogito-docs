@@ -32,7 +32,7 @@ For the documentation review, do the same step as described in the item number 4
 
 ## Basic Conventions
 
-As a general rule of thumb, look at the [published documentation](https://kiegroup.github.io/kogito-docs/) to have an idea of the writing style, format, and organization.
+As a general rule of thumb, look at the [published documentation](https://apache.github.io/incubator-kie-kogito-docs/) to have an idea of the writing style, format, and organization.
 
 ### UI Elements
 
@@ -216,11 +216,11 @@ More details at [Antora documentation](https://docs.antora.org/antora/latest/asc
 
 1. You can retrieve all changes in the release page of each repository of the project:
 
-    - https://github.com/kiegroup/kogito-runtimes/releases/tag/{version}
-    - https://github.com/kiegroup/kogito-apps/releases/tag/{version}
-    - https://github.com/kiegroup/kogito-examples/releases/tag/{version}
-    - https://github.com/kiegroup/kogito-images/releases/tag/{version_without_Final}
-    - https://github.com/kiegroup/kogito-serverless-operator/releases/tag/v{version_without_Final}
+    - https://github.com/apache/incubator-kie-kogito-runtimes/releases/tag/{version}
+    - https://github.com/apache/incubator-kie-kogito-apps/releases/tag/{version}
+    - https://github.com/apache/incubator-kie-kogito-examples/releases/tag/{version}
+    - https://github.com/apache/incubator-kie-kogito-images/releases/tag/{version_without_Final}
+    - https://github.com/apache/incubator-kie-kogito-serverless-operator/releases/tag/v{version_without_Final}
 
    Replace `{version}` with the given core version, for example `1.41.0.Final`.  
    Replace `{version_without_Final}` with the given cloud version, for example `1.41.0`.
