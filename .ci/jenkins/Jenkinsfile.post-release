@@ -39,7 +39,7 @@ pipeline {
         stage('Initialization') {
             steps {
                 script {
-                    cleanWs()
+                    cleanWs(disableDeferredWipeout: true)
 
                     if (params.DISPLAY_NAME) {
                         currentBuild.displayName = params.DISPLAY_NAME
@@ -89,8 +89,7 @@ pipeline {
         }
         cleanup {
             script {
-                // Clean also docker in case of usage of testcontainers lib
-                util.cleanNode('docker')
+                util.cleanNode()
             }
         }
     }
