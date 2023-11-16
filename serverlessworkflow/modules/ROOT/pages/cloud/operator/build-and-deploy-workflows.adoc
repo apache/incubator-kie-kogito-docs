@@ -422,6 +422,88 @@ In your editor, change the first line in the `Dockerfile` entry where it reads `
 
 This image must be compatible with your operator's installation.
 
+[#deploy-supporting-services]
+== Deploy supporting services
+
+=== Data Index
+
+By default, workflows use an embedded version of Data Index. Alternatively, can you deploy Data Index via `SonataFlowPlatform` configuration. The operator will then configure all new workflows, with the "prod" profile, to use that Data Index.
+
+Following is a basic configuration. It will deploy an ephemeral Data Index to the same namespace as the `SonataFlowPlatform`.
+
+.Example of a SonataFlowPlatform instance with an ephemeral Data Index deployment
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  services:
+    dataIndex: {}
+----
+
+If you require Data Index persistence, this can be done with a `postgresql` database.
+
+Following is a services configuration with the persistence option enabled. You'll first need to create a secret with your database credentials.
+
+.Create a Secret for datasource authentication.
+[source,bash,subs="attributes+"]
+----
+kubectl create secret generic <creds-secret> --from-literal=POSTGRESQL_USER=<user> --from-literal=POSTGRESQL_PASSWORD=<password> -n workflows
+----
+
+.Example of a SonataFlowPlatform instance with a Data Index deployment persisted to a postgresql database
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  services:
+    dataIndex:
+      persistence:
+        postgresql:
+          secretRef:
+            name: <creds-secret> <1>
+          serviceRef:
+            name: <postgresql-service> <2>
+----
+
+<1> Name of your postgresql credentials secret
+<2> Name of your postgresql k8s service
+
+.Example of a SonataFlowPlatform instance with a persisted Data Index deployment and custom pod configuration
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  services:
+    dataIndex:
+      enabled: false <1>
+      persistence:
+        postgresql:
+          secretRef:
+            name: <creds-secret>
+            userKey: <secret-user-key> <2>
+          jdbcUrl: "jdbc:postgresql://host:port/database?currentSchema=data-index-service" <3>
+      podTemplate:
+        replicas: 1 <4>
+        container:
+          image: <image:tag> <5>
+----
+
+<1> Determines whether "prod" profile workflows should be configured to use this service, defaults to `true`
+<2> Secret key of your postgresql credentials user, defaults to `POSTGRESQL_USER`
+<3> PostgreSql JDBC URL
+<4> Number of Data Index pods, defaults to `1`
+<5> Custom Data Index container image name
+
+
 [#build-deploy-workflow]
 == Build and deploy your workflow
 
@@ -567,5 +649,6 @@ Ideally you should use this feature if there's a problem with your workflow or t
 
 * xref:cloud/operator/known-issues.adoc[]
 * xref:cloud/operator/developing-workflows.adoc[]
+* xref:data-index/data-index-service.adoc[]
 
 include::../../../pages/_common-content/report-issue.adoc[]
