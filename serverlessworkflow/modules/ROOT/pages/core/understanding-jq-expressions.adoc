@@ -7,12 +7,15 @@
 :jq_url: https://stedolan.github.io/jq/manual/
 :jsonpath_url: https://github.com/json-path/JsonPath/
 :json_data_types_url: https://www.w3schools.com/js/js_json_datatypes.asp
+:jq_play:https://jiehong.gitlab.io/jq_offline
 
 Each workflow instance is associated with a data model. A data model consists of a JSON object regardless of whether the workflow file contains YAML or JSON. The initial content of the JSON object depends on how the workflow is started. If the workflow is created using the link:{cloud_events_url}[Cloud Event], then the workflow content is taken from the `data` property. However, if the workflow is started through an HTTP POST request, then the workflow content is taken from the request body.
 
 The workflow expressions in the link:{spec_doc_url}#workflow-expressions[Serverless Workflow specification] are used to interact with the data model. The supported expression languages include link:{jsonpath_url}[JsonPath] and link:{jq_url}[jq]. jq expression language is the default language. However, you can change the expression language to JsonPath using the `expressionLang` property. 
 
-This document describes the usage of jq expressions in switch state conditions, action function arguments, and data filtering.
+This document describes the usage of jq expressions in switch state conditions, action function arguments, and data filtering. 
+
+JQ expression might be tricky to master, for non trivial cases, it is recommended to use helper tools like link:{jq_play}[JQ Play] to validate the expression before including it in the workflow file. 
 
 [[ref-example-jq-expression-switch-conditions]]
 == Example of jq expressions in switch conditions
@@ -198,6 +201,7 @@ The previous example of the event filter copies the content of CloudEvent data `
 
 == Additional resources
 
+* link:{jq_play} [JQ Play offline]
 * xref:service-orchestration/configuring-openapi-services-endpoints.adoc[Configuring the OpenAPI services endpoints]
 
 include::../../pages/_common-content/report-issue.adoc[]
