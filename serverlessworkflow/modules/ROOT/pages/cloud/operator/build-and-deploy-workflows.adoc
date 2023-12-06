@@ -538,6 +538,29 @@ If everything is working, you should receive a response like this:
 {"id":"b5fbfaa3-b125-4e6c-9311-fe5a3577efdd","workflowdata":{"name":"John","language":"English","greeting":"Hello from JSON Workflow, "}}
 ----
 
+== Restarting a build
+
+If you require to restart the build for some reason, you can add or edit the annotation `sonataflow.org/restartBuild: true` in the `SonataFlowBuild` instance.
+
+For example:
+
+.Example of a SonataFlowBuild marked to restart
+[source,json,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowBuild
+metadata:
+  name: greeting
+  annotations:
+    sonataflow.org/restartBuild: true
+----
+
+After editing the resource, the operator will start a new build of the workflow. Once this is finished, the workflow will be notified and updated accordingly.
+
+If the build fails, but the workflow has a working deployment, the operator won't rollout a new deployment. 
+
+Ideally you should use this feature if there's a problem with your workflow or the initial build revision.
+
 // TODO: add a troubleshooting guide - https://issues.redhat.com/browse/KOGITO-8864
 
 == Additional resources
