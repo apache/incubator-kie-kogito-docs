@@ -8,6 +8,7 @@
 :kubectl_prereq: command-line tool is installed. Otherwise, Minikube handles it.
 //Common constants
 :data_index_ref: Data Index
+:flow_examples_operator_url: {kogito_sw_examples_url}/serverless-workflow-dataindex-operator-use-cases
 
 
 This document describes how to deploy a multiple {product_name} workflow applications and the {data_index_ref} service using a local Kubernetes cluster, such as link:{minikube_url}[Minikube], using the link:{kogito_serverless_operator_url}[{operator_name}].
@@ -21,9 +22,8 @@ This use case is intended to represent an installation with:
 * The `helloworld` workflow (no persistence), that is configured to register events to the Data Index Service.
 * Both workflows are configured to register the process events on the {data_index_ref} Service.
 
-You can directly access the UseCase2 example application we are going to follow at link:{flow_examples_operator_url}[{product_name} Use Cases repository].
+You can directly access the UseCase2 example application we are going to follow at link:{flow_examples_operator_url}[{product_name}  Data Index Use Cases with operator].
 
-// shared pre req
 include::common/_prerequisites.adoc[]
 
 You can check the Minikube installation by entering the following commands in a command terminal:
@@ -52,7 +52,7 @@ alias kubectl="minikube kubectl --"
 ====
 
 .Procedure
-. After cloning the link:{flow_examples_operator_url}[SonataFlow Use Cases repository]. Open a terminal and run the following commands
+. After cloning the link:{flow_examples_operator_url}[SonataFlow Data Index Use Cases]. Open a terminal and run the following commands
 . Create the namespace:
 +
 --
@@ -65,31 +65,7 @@ kubectl create namespace usecase2
 . Deploy the {data_index_ref} Service and postgresql database:
 +
 --
-
-link:{flow_examples_operator_url}/tree/main/infra/dataindex[Here] you can find the infrastructure kustomization required to deploy {data_index_ref} service and a postgresql database explained in this use case.
-
-.Use case kustomization.yaml resources that deploy {data_index_ref} deployment with persistence to a postgresql database
-[source,yaml,subs="attributes+"]
-----
-resources:
-- 01-postgres.yaml <1>
-- 02-dataindex.yaml <2>
-
-secretGenerator:
-  - name: postgres-secrets
-    literals:
-      - POSTGRES_USER=sonataflow
-      - POSTGRES_PASSWORD=sonataflow
-      - POSTGRES_DB=sonataflow
-      - PGDATA=/var/lib/postgresql/data/mydata
-
-configMapGenerator:
-  - name: dataindex-properties
-    files:
-      - application.properties
-----
-<1> Postgres database deployment
-<2> {data_index_ref} deployment
+include::common/_dataindex_deployment_operator.adoc[]
 
 Perform the deployments executing
 [source,shell]
@@ -135,6 +111,9 @@ resources:
 - ../../workflows/sonataflow-greeting
 - ../../workflows/sonataflow-helloworld
 ----
+
+To see in more detail access to  xref:cloud/operator/build-and-deploy-workflows.adoc[]
+
 
 Perform the deployment executing
 [source,shell]
