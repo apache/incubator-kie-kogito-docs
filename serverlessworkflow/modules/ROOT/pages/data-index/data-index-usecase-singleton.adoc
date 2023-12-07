@@ -8,7 +8,7 @@
 :kubectl_prereq: command-line tool is installed. Otherwise, Minikube handles it.
 //Common constants
 :data_index_ref: Data Index
-:flow_examples_operator_url: {kogito_sw_examples_url}/serverless-workflow-dataindex-operator-use-cases
+:flow_examples_operator_url: {kogito_sw_operator_examples_url}/serverless-workflow-dataindex-use-cases
 
 
 This document describes how to deploy a workflow application and the {data_index_ref} service using a local Kubernetes cluster, such as link:{minikube_url}[Minikube], using the link:{kogito_serverless_operator_url}[{operator_name}].
@@ -20,7 +20,7 @@ This use case is intended to represent an installation with:
 * A singleton Data Index Service with PostgreSQL persistence
 * The `greeting` workflow (no persistence), that is configured to register events to the Data Index Service.
 
-You can directly access the UseCase1 example application we are going to follow at link:{flow_examples_operator_url}[{product_name} Use Cases repository].
+You can directly access the UseCase1 example application we are going to follow at link:{flow_examples_operator_url}[{product_name} Data Index Use Cases with operator].
 
 // shared pre req
 include::common/_prerequisites.adoc[]
@@ -51,7 +51,17 @@ alias kubectl="minikube kubectl --"
 ====
 
 .Procedure
-. After cloning the link:{flow_examples_operator_url}[SonataFlow Data Index Use Cases]. Open a terminal and run the following commands
+
+. After cloning the link:{kogito_examples_url}[{product_name} examples repository]. Open a terminal and run the following commands
+
++
+--
+[source,shell]
+----
+cd serverless-operator-examples/serverless-workflow-dataindex-use-cases/
+----
+--
+
 . Create the namespace:
 +
 --
