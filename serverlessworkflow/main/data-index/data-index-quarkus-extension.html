@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Data Index Quarkus extension :: SonataFlow Guides</title>
+    <title>Data Index Quarkus extensions :: SonataFlow Guides</title>
     <meta name="description" content="Data Index Service to allow to index and query audit data in SonataFlow">
     <meta name="keywords" content="workflow, serverless, data, dataindex, data-index, index, service, extension, quarkus">
     <meta name="generator" content="Antora 3.1.4">
@@ -385,7 +385,19 @@
     <a class="nav-link" href="data-index-service.html">Standalone service</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="data-index-quarkus-extension.html">Quarkus Extension</a>
+    <a class="nav-link" href="data-index-quarkus-extension.html">Quarkus Extensions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Operator</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="data-index-usecase-singleton.html">Deploying Data Index and SonataFlow application on Minikube</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="data-index-usecase-multi.html">Deploying Data Index and multiple SonataFlow application on Minikube</a>
+  </li>
+</ul>
   </li>
 </ul>
   </li>
@@ -496,7 +508,7 @@
   <ul>
     <li><a href="../index.html">SonataFlow Guides</a></li>
     <li>Data Index</li>
-    <li><a href="data-index-quarkus-extension.html">Quarkus Extension</a></li>
+    <li><a href="data-index-quarkus-extension.html">Quarkus Extensions</a></li>
   </ul>
 </nav>
 <div class="page-versions">
@@ -533,7 +545,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Data Index Quarkus extension</h1>
+<h1 class="page">Data Index Quarkus extensions</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -550,9 +562,14 @@ The example described in this document is based on the <a href="https://github.c
 <p>The Data Index service has been designed to store and manage data from different workflow instances.
 Communication with the service is through events that contain the workflows related data and the service is responsible for storing them and exposing a GraphQL endpoint to allow queries and maintenance operations on the different workflow instances.</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/data-index/data-index-addon.png" alt="Image of data-index as a Quarkus Extension">
+</div>
+</div>
 <div class="paragraph">
 <p>In specific use cases, to avoid deploying the service separately, it could be useful to have the indexing functionality and the query capabilities embedded in the same application.
-For this purpose, the Quarkus Data Index extension can be added to any workflow application and incorporates the Data Index functionality into the same application without needing an external Data Index service.
+For this purpose, the Quarkus Data Index extension can be added to any workflow application and incorporates the full Data Index functionality into the same application without needing an external Data Index service.
 These extensions are distributed as addons ready to work with different types of persistence:</p>
 </div>
 <div class="ulist">
@@ -571,6 +588,26 @@ These extensions are distributed as addons ready to work with different types of
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>With the same purpose, the Quarkus Data Index persistence extension can be added to any workflow application and incorporates only the Data Index indexation and data persistence functionality into the same application without needing an external Data Index service to do that.
+These extensions are distributed as addons ready to work with different types of persistence:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>kogito-addons-quarkus-data-index-persistence-postgresql</p>
+</li>
+<li>
+<p>kogito-addons-quarkus-data-index-persistence-infinispan</p>
+</li>
+<li>
+<p>kogito-addons-quarkus-data-index-persistence-mongodb</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In this case to interact with that data and related runtimes using GraphQL you will need an external Data Index service that makes that endpoint available.</p>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -586,7 +623,7 @@ These extensions are distributed as addons ready to work with different types of
 </table>
 </div>
 <div class="paragraph">
-<p>Once one of these <code>kogito-addons-quarkus-data-index</code> addons is added to a workflow, it incorporates the functionality to index and store the workflow data and also incorporates the GraphQL endpoint to perform queries and management operations.</p>
+<p>Once one of these <code>kogito-addons-quarkus-data-index</code> or <code>kogito-addons-quarkus-data-index-persistence</code> addons is added to a workflow, it incorporates the functionality to index and store the workflow data. In case of the <code>kogito-addons-quarkus-data-index</code> also incorporates the GraphQL endpoint to perform queries and management operations.</p>
 </div>
 <div class="paragraph">
 <p>In the same way as the Data Index service, there is a specific addon for each type of persistence you want to work with. Currently, you can find Data Index addons for: <a href="https://www.postgresql.org/">PostgreSQL</a>, <a href="https://infinispan.org/">Infinispan</a>, and <a href="https://www.mongodb.com/">MongoDB</a></p>
@@ -607,7 +644,7 @@ The addon will share the data source used by the workflow where it is added, and
 </table>
 </div>
 <div class="paragraph">
-<p>When any of the Data Index addons is added:</p>
+<p>When any of the <code>kogito-addons-quarkus-data-index</code>  or <code>kogito-addons-quarkus-data-index-persistence</code> addons is added:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -615,8 +652,15 @@ The addon will share the data source used by the workflow where it is added, and
 <p>The communication with the workflow is direct, the workflow data is <strong>not</strong> transmitted or consumed through events, they are stored directly in the configured database.
 There is no need to configure the events connection for this purpose.</p>
 </li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Only when any of the <code>kogito-addons-quarkus-data-index</code> addons is added:</p>
+</div>
+<div class="ulist">
+<ul>
 <li>
-<p>A new GraphQL endpoint is added to perform queries and management operations</p>
+<p>A new GraphQL endpoint is added to perform queries and management operations when <code>kogito-addons-quarkus-data-index</code> is added</p>
 </li>
 </ul>
 </div>
@@ -633,6 +677,9 @@ There is no need to configure the events connection for this purpose.</p>
 <ul>
 <li>
 <p>Your workflow is running and has persistence enabled.</p>
+</li>
+<li>
+<p>Data Index is using the same datasource to store indexed data</p>
 <div class="paragraph">
 <p>For more information about creating a workflow, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow</a>. You also can find more details about enabling persistence in <a href="../persistence/persistence-with-postgresql.html" class="xref page">Running a workflow using PostgreSQL</a></p>
 </div>
@@ -643,16 +690,48 @@ There is no need to configure the events connection for this purpose.</p>
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
-<p>Add the required Data Index addon dependencies to the <code>pom.xml</code> file of your workflow:</p>
+<p>Add the <code>kogito-addons-quarkus-data-index</code> extension to your Quarkus Workflow Project using any of the following alternatives:</p>
 <div class="openblock">
 <div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_manually-to-the-pom-xml"></a>Manually to the POM.xml</p>
+</li>
+<li>
+<p><a id="tabset1_apache-maven"></a>Apache Maven</p>
+</li>
+<li>
+<p><a id="tabset1_quarkus-cli"></a>Quarkus CLI</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_manually-to-the-pom-xml">
 <div class="listingblock">
-<div class="title">Add Data Index Addon dependencies to <code>pom.xml</code> file</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
     &lt;artifactId&gt;kogito-addons-quarkus-data-index-postgresql&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_apache-maven">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn quarkus:add-extension -Dextensions="kogito-addons-quarkus-data-index-postgresql"</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_quarkus-cli">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus extension add kogito-addons-quarkus-data-index-postgresql</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -692,6 +771,102 @@ When adding the addon to the workflow, you need to disable it by setting <code>q
 </div>
 </li>
 </ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="kogito-addons-quarkus-dataindex-persistence-extension"><a class="anchor" href="#kogito-addons-quarkus-dataindex-persistence-extension"></a>Adding Data Index persistence extension to a workflow application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can add the Data Index persistence quarkus extension as an addon:</p>
+</div>
+<div class="ulist">
+<div class="title">Prerequisites</div>
+<ul>
+<li>
+<p>Your workflow is running and has persistence enabled</p>
+</li>
+<li>
+<p>Data Index is using the same datasource to store indexed data</p>
+<div class="paragraph">
+<p>For more information about creating a workflow, see <a href="../getting-started/create-your-first-workflow-service.html" class="xref page">Creating your first workflow</a>. You also can find more details about enabling persistence in <a href="../persistence/persistence-with-postgresql.html" class="xref page">Running a workflow using PostgreSQL</a></p>
+</div>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">Procedure</div>
+<ol class="arabic">
+<li>
+<p>Add the <code>kogito-addons-quarkus-data-index-persistence</code> extension to your Quarkus Workflow Project using any of the following alternatives:</p>
+<div class="openblock">
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_manually-to-the-pom-xml"></a>Manually to the POM.xml</p>
+</li>
+<li>
+<p><a id="tabset2_apache-maven"></a>Apache Maven</p>
+</li>
+<li>
+<p><a id="tabset2_quarkus-cli"></a>Quarkus CLI</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_manually-to-the-pom-xml">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.kie.kogito&lt;/groupId&gt;
+    &lt;artifactId&gt;kogito-addons-quarkus-data-index-persistence-postgresql&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_apache-maven">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">mvn quarkus:add-extension -Dextensions="kogito-addons-quarkus-data-index-persistence-postgresql"</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_quarkus-cli">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">quarkus extension add kogito-addons-quarkus-data-index-persistence-postgresql</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Add the following configurations to the <code>application.properties</code> file of your project.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">Example adding Data Index addon properties in <code>application.properties</code> file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.kogito.devservices.enabled=false <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>By default, when a workflow is running in dev mode, automatically a Data Index Dev Service is started and a temporary dev service Database is created.
+When adding the addon to the workflow, you need to disable it by setting <code>quarkus.kogito.devservices.enabled</code> to <code>false</code> in the <code>application.properties</code> file.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For more information, see  <a href="https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-data-index-persistence-addon-quarkus"><code>serverless-workflow-data-index-persistence-addon-quarkus</code></a> example application.</p>
 </div>
 </div>
 </div>
