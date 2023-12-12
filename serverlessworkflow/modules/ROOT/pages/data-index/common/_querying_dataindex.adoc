@@ -1,0 +1,105 @@
+[[querying-dataindex-minikube]]
+== Querying Data Index service on Minikube
+
+You can use the public Data Index endpoint to play around with the GraphiQL interface.
+
+.Procedure
+This procedure apply to all use cases with that deploys the Data Index Service.
+
+* Get the Data Index Url:
+[source,shell]
+----
+minikube service data-index-service-postgresql --url -n my_usecase
+----
+
+* Open the GrahiqlUI
+
+Using the url returned, open a browser window in the following url http://192.168.49.2:32409/graphiql/,
+
+[NOTE]
+====
+that IP and port will be different in your installation, and don't forget to add the last slash "/" to the url, otherwise the GraphiqlUI won't be opened.
+====
+
+
+To see the process instances information you can execute this query:
+
+[source,shell]
+----
+{
+  ProcessInstances {
+    id,
+    processId,
+    processName,
+    variables,
+    state,
+    endpoint,
+    serviceUrl,
+    start,
+    end
+  }
+}
+----
+
+The results should be something like:
+
+[source]
+----
+{
+  "data": {
+    "ProcessInstances": [
+      {
+        "id": "3ed8bf63-85c9-425d-9099-49bfb63608cb",
+        "processId": "greeting",
+        "processName": "workflow",
+        "variables": "{\"workflowdata\":{\"name\":\"John\",\"greeting\":\"Hello from JSON Workflow, \",\"language\":\"English\"}}",
+        "state": "COMPLETED",
+        "endpoint": "/greeting",
+        "serviceUrl": "http://greeting",
+        "start": "2023-09-13T06:59:24.319Z",
+        "end": "2023-09-13T06:59:24.400Z"
+      }
+    ]
+  }
+}
+----
+
+To see the jobs instances information, if any, you can execute this query:
+
+[source]
+----
+{
+  Jobs {
+    id,
+    processId,
+    processInstanceId,
+    status,
+    expirationTime,
+    retries,
+    endpoint,
+    callbackEndpoint
+  }
+}
+----
+
+The results should be something like:
+
+[source]
+----
+{
+  "data": {
+    "Jobs": [
+      {
+        "id": "55c7aadb-3dff-4b97-af8e-cc45014b1c0d",
+        "processId": "callbackstatetimeouts",
+        "processInstanceId": "299886b7-2b78-4965-a701-16783c4162d8",
+        "status": "EXECUTED",
+        "expirationTime": null,
+        "retries": 0,
+        "endpoint": "http://jobs-service-postgresql/jobs",
+        "callbackEndpoint": "http://callbackstatetimeouts:80/management/jobs/callbackstatetimeouts/instances/299886b7-2b78-4965-a701-16783c4162d8/timers/-1"
+      }
+    ]
+  }
+}
+----

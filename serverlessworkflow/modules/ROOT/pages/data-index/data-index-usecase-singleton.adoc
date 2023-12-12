@@ -1,0 +1,196 @@
+= Deploying Data Index and {product_name} application on Minikube
+:compat-mode!:
+// Metadata:
+:description:  Deploying {product_name} application and Data Index on Minikube with operator
+:keywords: kogito, workflow, quarkus, serverless, kn, kubectl, minikube, operator, dataindex
+:table-caption: Data Set
+// envs for common content
+:kubectl_prereq: command-line tool is installed. Otherwise, Minikube handles it.
+//Common constants
+:data_index_ref: Data Index
+:flow_examples_operator_url: {kogito_sw_operator_examples_url}/serverless-workflow-dataindex-use-cases
+
+
+This document describes how to deploy a workflow application and the {data_index_ref} service using a local Kubernetes cluster, such as link:{minikube_url}[Minikube], using the link:{kogito_serverless_operator_url}[{operator_name}].
+
+For more information about Minikube and related system requirements, see link:{minikube_url}/docs/start/[Getting started with Minikube] documentation.
+
+This use case is intended to represent an installation with:
+
+* A singleton Data Index Service with PostgreSQL persistence
+* The `greeting` workflow (no persistence), that is configured to register events to the Data Index Service.
+
+You can directly access the UseCase1 example application we are going to follow at link:{flow_examples_operator_url}[{product_name} Data Index Use Cases with operator].
+
+// shared pre req
+include::common/_prerequisites.adoc[]
+
+You can check the Minikube installation by entering the following commands in a command terminal:
+
+.Verify Minikube version
+[source,shell]
+----
+minikube version
+----
+
+.Verify `kubectl` CLI version
+[source,shell]
+----
+kubectl version
+----
+
+[NOTE]
+====
+If `kubectl` is not installed, then Minikube handles it when you execute the following command:
+
+.`kubectl` is available using Minikube
+[source,shell]
+----
+alias kubectl="minikube kubectl --"
+----
+====
+
+.Procedure
+
+. After cloning the link:{kogito_examples_url}[{product_name} examples repository]. Open a terminal and run the following commands
+
++
+--
+[source,shell]
+----
+cd serverless-operator-examples/serverless-workflow-dataindex-use-cases/
+----
+--
+
+. Create the namespace:
++
+--
+[source,shell]
+----
+kubectl create namespace usecase1
+----
+--
+
+. Deploy the {data_index_ref} Service and postgresql database:
++
+--
+include::common/_dataindex_deployment_operator.adoc[]
+
+Perform the deployments executing
+[source,shell]
+----
+kubectl kustomize infra/dataindex | kubectl apply -f - -n usecase1
+----
+
+----
+configmap/dataindex-properties-hg9ff8bff5 created
+secret/postgres-secrets-22tkgc2dt7 created
+service/data-index-service-postgresql created
+service/postgres created
+persistentvolumeclaim/postgres-pvc created
+deployment.apps/data-index-service-postgresql created
+deployment.apps/postgres created
+----
+
+Give some time for the data index to start, you can check that it's running by executing.
+
+[source,shell]
+----
+kubectl get pod -n usecase1
+----
+
+----
+NAME                                             READY   STATUS    RESTARTS       AGE
+data-index-service-postgresql-5d76dc4468-lb259   1/1     Running   0              2m11s
+postgres-7f78499688-lc8n6                        1/1     Running   0              2m11s
+----
+--
+. Deploy the workflow:
++
+--
+
+link:{flow_examples_operator_url}/tree/main/usecases/usecase1[Here] you can find the use case kustomization required to deploy the workflow
+
+.Use case kustomization.yaml resources that deploys the workflow
+[source,yaml,subs="attributes+"]
+----
+resources:
+- ../../infra/service_discovery
+- ../../workflows/sonataflow-greeting
+----
+
+To see in more detail how to deploy the workflow access to  xref:cloud/operator/build-and-deploy-workflows.adoc[]
+
+Perform the deployment executing
+
+[source,shell]
+----
+ kubectl kustomize usecases/usecase1 | kubectl apply -f - -n usecase1
+----
+
+----
+configmap/greeting-props created
+sonataflow.sonataflow.org/greeting created
+----
+
+To see in more detail how to generate this resources access to  xref:cloud/operator/build-and-deploy-workflows.adoc[]
+
+Give some time for the sonataflow operator to build and deploy the workflow.
+To check that the workflow is ready you can use this command.
+
+[source,shell]
+----
+kubectl get workflow -n usecase1
+----
+
+----
+NAME       PROFILE   VERSION   URL   READY   REASON
+greeting             0.0.1           True
+----
+--
+
+. Expose the workflow and get the url:
++
+--
+[source,shell]
+----
+kubectl patch svc greeting -p '{"spec": {"type": "NodePort"}}' -n usecase1
+----
+
+[source,shell]
+----
+minikube service greeting --url -n usecase1
+----
+--
+
+. Create a workflow instance:
++
+--
+You must use the URLs calculated in step 5.
+
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}'    http://192.168.49.2:32407/greeting
+----
+
+--
+
+. Clean the use case:
++
+--
+[source,shell]
+----
+kubectl delete namespace usecase1
+----
+--
+
+include::common/_querying_dataindex.adoc[]
+
+== Additional resources
+
+* xref:data-index/data-index-core-concepts.adoc[]
+* xref:data-index/data-index-usecase-multi.adoc[]
+* xref:cloud/quarkus/deploying-on-minikube.adoc[]
+* xref:cloud/operator/install-serverless-operator.adoc[]
+
+include::../../pages/_common-content/report-issue.adoc[]

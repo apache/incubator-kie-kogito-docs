@@ -1,4 +1,4 @@
-= Data Index Quarkus extension
+= Data Index Quarkus extensions
 :compat-mode!:
 // Metadata:
 :description: Data Index Service to allow to index and query audit data in {product_name}
@@ -10,6 +10,8 @@
 // External pages
 :kogito_sw_timeouts_showcase_embedded_example_url: {kogito_sw_examples_url}/serverless-workflow-timeouts-showcase-embedded
 :kogito_sw_timeouts_showcase_embedded_example_application_properties_url: {kogito_sw_timeouts_showcase_embedded_example_url}/src/main/resources/application.properties
+:kogito_sw_dataindex_persistence_example_url: {kogito_sw_examples_url}/serverless-workflow-data-index-persistence-addon-quarkus
+
 :infinispan_url: https://infinispan.org/
 :mongo_url: https://www.mongodb.com/
 :postgresql_url: https://www.postgresql.org/
@@ -30,8 +32,10 @@ The example described in this document is based on the link:{kogito_sw_timeouts_
 The {data_index_ref} service has been designed to store and manage data from different workflow instances.
 Communication with the service is through events that contain the workflows related data and the service is responsible for storing them and exposing a GraphQL endpoint to allow queries and maintenance operations on the different workflow instances.
 
+image::data-index/data-index-addon.png[Image of data-index as a Quarkus Extension]
+
 In specific use cases, to avoid deploying the service separately, it could be useful to have the indexing functionality and the query capabilities embedded in the same application.
-For this purpose, the Quarkus {data_index_ref} extension can be added to any workflow application and incorporates the {data_index_ref} functionality into the same application without needing an external {data_index_ref} service.
+For this purpose, the Quarkus {data_index_ref} extension can be added to any workflow application and incorporates the full {data_index_ref} functionality into the same application without needing an external {data_index_ref} service.
 These extensions are distributed as addons ready to work with different types of persistence:
 
 * kogito-addons-quarkus-data-index-inmemory (inmemory PostgreSQL)
@@ -39,12 +43,21 @@ These extensions are distributed as addons ready to work with different types of
 * kogito-addons-quarkus-data-index-infinispan
 * kogito-addons-quarkus-data-index-mongodb
 
+With the same purpose, the Quarkus {data_index_ref} persistence extension can be added to any workflow application and incorporates only the {data_index_ref} indexation and data persistence functionality into the same application without needing an external {data_index_ref} service to do that.
+These extensions are distributed as addons ready to work with different types of persistence:
+
+* kogito-addons-quarkus-data-index-persistence-postgresql
+* kogito-addons-quarkus-data-index-persistence-infinispan
+* kogito-addons-quarkus-data-index-persistence-mongodb
+
+In this case to interact with that data and related runtimes using GraphQL you will need an external {data_index_ref} service that makes that endpoint available.
+
 [NOTE]
 ====
 The {data_index_ref} extensions are provided as addons for each kind of supported persistence relying on the link:{quarkus_guides_base_url}/writing-extensions[Quarkus extensions] mechanism.
 ====
 
-Once one of these `kogito-addons-quarkus-data-index` addons is added to a workflow, it incorporates the functionality to index and store the workflow data and also incorporates the GraphQL endpoint to perform queries and management operations.
+Once one of these `kogito-addons-quarkus-data-index` or `kogito-addons-quarkus-data-index-persistence` addons is added to a workflow, it incorporates the functionality to index and store the workflow data. In case of the `kogito-addons-quarkus-data-index` also incorporates the GraphQL endpoint to perform queries and management operations.
 
 In the same way as the {data_index_ref} service, there is a specific addon for each type of persistence you want to work with. Currently, you can find {data_index_ref} addons for: link:{postgresql_url}[PostgreSQL], link:{infinispan_url}[Infinispan], and link:{mongo_url}[MongoDB]
 
@@ -54,11 +67,14 @@ The {data_index_ref} addon distribution added to the workflow must match the wor
 The addon will share the data source used by the workflow where it is added, and it will create separate tables for that purpose.
 ====
 
-When any of the {data_index_ref} addons is added:
+When any of the `kogito-addons-quarkus-data-index`  or `kogito-addons-quarkus-data-index-persistence` addons is added:
 
 * The communication with the workflow is direct, the workflow data is *not* transmitted or consumed through events, they are stored directly in the configured database.
 There is no need to configure the events connection for this purpose.
-* A new GraphQL endpoint is added to perform queries and management operations
+
+Only when any of the `kogito-addons-quarkus-data-index` addons is added:
+
+* A new GraphQL endpoint is added to perform queries and management operations when `kogito-addons-quarkus-data-index` is added
 
 [[data-index-ext-use]]
 == Adding {data_index_ref} extension to a workflow application
@@ -67,14 +83,19 @@ You can add the {data_index_ref} quarkus extension as an addon:
 
 .Prerequisites
 * Your workflow is running and has persistence enabled.
+* {data_index_ref} is using the same datasource to store indexed data
 +
 For more information about creating a workflow, see {getting_started_create_first_workflow_guide}[Creating your first workflow]. You also can find more details about enabling persistence in {persistence_with_postgresql_guide}[Running a workflow using PostgreSQL]
 
 .Procedure
-. Add the required {data_index_ref} addon dependencies to the `pom.xml` file of your workflow:
+. Add the `kogito-addons-quarkus-data-index` extension to your Quarkus Workflow Project using any of the following alternatives:
 +
 --
-.Add {data_index_ref} Addon dependencies to `pom.xml` file
+
+[tabs]
+====
+Manually to the POM.xml::
++
 [source,xml]
 ----
 <dependency>
@@ -82,6 +103,19 @@ For more information about creating a workflow, see {getting_started_create_firs
     <artifactId>kogito-addons-quarkus-data-index-postgresql</artifactId>
 </dependency>
 ----
+Apache Maven::
++
+[source,shell]
+----
+mvn quarkus:add-extension -Dextensions="kogito-addons-quarkus-data-index-postgresql"
+----
+Quarkus CLI::
++
+[source,shell]
+----
+quarkus extension add kogito-addons-quarkus-data-index-postgresql
+----
+====
 
 --
 
@@ -102,6 +136,63 @@ When adding the addon to the workflow, you need to disable it by setting `quarku
 
 For more information, see `application.properties` file of link:{kogito_sw_timeouts_showcase_embedded_example_application_properties_url}[`serverless-timeouts_showcase_embedded`] example application.
 --
+
+
+[#kogito-addons-quarkus-dataindex-persistence-extension]
+== Adding {data_index_ref} persistence extension to a workflow application
+
+You can add the {data_index_ref} persistence quarkus extension as an addon:
+
+.Prerequisites
+* Your workflow is running and has persistence enabled
+* {data_index_ref} is using the same datasource to store indexed data
++
+For more information about creating a workflow, see {getting_started_create_first_workflow_guide}[Creating your first workflow]. You also can find more details about enabling persistence in {persistence_with_postgresql_guide}[Running a workflow using PostgreSQL]
+
+.Procedure
+. Add the `kogito-addons-quarkus-data-index-persistence` extension to your Quarkus Workflow Project using any of the following alternatives:
++
+--
+
+[tabs]
+====
+Manually to the POM.xml::
++
+[source,xml]
+----
+<dependency>
+    <groupId>org.kie.kogito</groupId>
+    <artifactId>kogito-addons-quarkus-data-index-persistence-postgresql</artifactId>
+</dependency>
+----
+Apache Maven::
++
+[source,shell]
+----
+mvn quarkus:add-extension -Dextensions="kogito-addons-quarkus-data-index-persistence-postgresql"
+----
+Quarkus CLI::
++
+[source,shell]
+----
+quarkus extension add kogito-addons-quarkus-data-index-persistence-postgresql
+----
+====
+
+--
+
+. Add the following configurations to the `application.properties` file of your project.
+
+.Example adding Data Index addon properties in `application.properties` file
+[source,properties]
+----
+quarkus.kogito.devservices.enabled=false <1>
+----
+<1> By default, when a workflow is running in dev mode, automatically a Data Index Dev Service is started and a temporary dev service Database is created.
+When adding the addon to the workflow, you need to disable it by setting `quarkus.kogito.devservices.enabled` to `false` in the `application.properties` file.
+
+
+For more information, see  link:{kogito_sw_dataindex_persistence_example_url}[`serverless-workflow-data-index-persistence-addon-quarkus`] example application.
 
 == Additional resources
 
