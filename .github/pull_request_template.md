@@ -1,5 +1,5 @@
 <!-- Please don't forget your Issue link -->
-close/fixes #NUMBER
+Closes/Fixes/Resolves #ISSUE-NUMBER
 
 <!-- Please provide a short description of what this PR does -->
 **Description:**
