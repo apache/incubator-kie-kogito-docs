@@ -3,32 +3,32 @@
 We accept all kinds of contributions:
 
 1. Reviewing a PR
-2. Opening [an issue](issues) by describing what problem you see that we need to fix
-3. Opening [a PR](pulls) if you see a typo, broken link, or any other minor changes.
+2. Opening [an issue](https://github.com/apache/incubator-kie-kogito-docs/issues/new) by describing what problem you see that we need to fix
+3. Opening [a PR](https://github.com/apache/incubator-kie-kogito-docs/compare) if you see a typo, broken link, or any other minor changes.
 
-> To include a new guide or documentation content, please **open an issue first** so we can discuss in more detail what needs to be done. We use [JIRA](https://issues.redhat.com/) to track our tasks, so the issue is likely to turn into a JIRA issue.
+> To include a new guide or documentation content, please **open an issue first** so we can discuss in more detail what needs to be done. We use [Issues](https://github.com/apache/incubator-kie-kogito-docs/issues) to track our tasks. Please include a good title and thorought description.
 
 ## Including a new guide
 
-1. Open a JIRA issue and add a sub-task for Doc review. 
-2. Write the guide
+1. Open a [an issue](https://github.com/apache/incubator-kie-kogito-docs/issues/new) provide a description and link any pull-requests realted to the guide. 
+2. Write the guide.
 3. Add a link to the guide in [serverlessworkflow/modules/ROOT/nav.adoc](serverlessworkflow/modules/ROOT/nav.adoc)
 4. Add a card for the guide in [serverlessworkflow/modules/ROOT/pages/index.adoc](serverlessworkflow/modules/ROOT/pages/index.adoc)
+5. Submit a [a PR](https://github.com/apache/incubator-kie-kogito-docs/compare)
 
-## Opening a JIRA Issue
+## Opening an Issue
 
-1. Make sure to add a description of the guide you plan to add followed by the `[Kogito Guides]` prefix
-2. Clearly describe in which parent category you will publish the guide
-3. Create a sub-task with the title `[Docs Review][Kogito Guides] - JIRA Title` so that the Content Team can review your guide.
-4. After all SMEs have reviewed and approved your guide, change the status of the sub-task to "Pull Request Sent" by adding the PR link to the sub-task JIRA. This way, the documentation team will be notified and will review your PR.
+1. Make sure to add a good summarizing title and thorought description of the guide you plan to add. 
+2. Clearly describe in which parent category you will publish the guide.
+3. Ensure there are linked contribution realated to the guide, so that the Reviewer is able to understand the source.
 
 ### Following up a code change
 
-If your PR is to update a guide with a change you made in Kogito project code base, you don't need to create a new JIRA just to update the documentation.
+If your PR is to update a guide with a change you made in Kogito project code base, you don't need to create a new issue just to update the documentation.
 
-Use the same JIRA issue and make sure that your branch is called `kogito-NNNNN` where `NNNNN` is the JIRA number. This way, our automation will work and link all the PRs together among every repository impacted by your change.
+Use the same issue and make sure that your branches are called `kie-kogito-docs-#NNNN` where `NNNNN` is the issue number.
 
-For the documentation review, do the same step as described in the item number 4 in the previous section: open a sub-task in the JIRA issue.
+For the documentation review, do the same step as described in the item number 4 in the previous section: open an issue and use proper label.
 
 ## Basic Conventions
 
