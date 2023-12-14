@@ -58,7 +58,9 @@ void createSetupBranchJob() {
 
         GIT_AUTHOR: "${GIT_AUTHOR_NAME}",
 
-        AUTHOR_CREDS_ID: "${GIT_AUTHOR_CREDENTIALS_ID}",
+        GIT_AUTHOR_CREDS_ID: "${GIT_AUTHOR_CREDENTIALS_ID}",
+
+        GIT_AUTHOR_PUSH_CREDS_ID: "${GIT_AUTHOR_PUSH_CREDENTIALS_ID}",
 
         IS_MAIN_BRANCH: "${Utils.isMainBranch(this)}"
     ])
@@ -80,7 +82,9 @@ void setupPostReleaseJob() {
 
         GIT_AUTHOR: "${GIT_AUTHOR_NAME}",
 
-        AUTHOR_CREDS_ID: "${GIT_AUTHOR_CREDENTIALS_ID}",
+        GIT_AUTHOR_CREDS_ID: "${GIT_AUTHOR_CREDENTIALS_ID}",
+
+        GIT_AUTHOR_PUSH_CREDS_ID: "${GIT_AUTHOR_PUSH_CREDENTIALS_ID}",
     ])
     KogitoJobTemplate.createPipelineJob(this, jobParams)?.with {
         parameters {

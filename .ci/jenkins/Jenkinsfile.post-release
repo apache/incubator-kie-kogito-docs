@@ -57,7 +57,7 @@ pipeline {
                 script {
                     dir("kogito-docs-${getBuildBranch()}") {
                         deleteDir()
-                        checkout(githubscm.resolveRepository('incubator-kie-kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
+                        checkout(githubscm.resolveRepository('incubator-kie-kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsId()))
                         sh "git checkout ${getBuildBranch()}"
 
                         String antoraFile = 'serverlessworkflow/antora.yml'
@@ -70,14 +70,15 @@ pipeline {
 
                         // Add changed files, commit, open and merge PR
                         if (githubscm.isThereAnyChanges()) {
+                            githubscm.setUserConfigFromCreds(getGitAuthorPushCredsId())
                             githubscm.commitChanges("Release Kogito ${getKogitoVersion()}")
-                            githubscm.pushObject('origin', getBuildBranch(), getGitAuthorCredsID())
+                            githubscm.pushObject('origin', getBuildBranch(), getGitAuthorPushCredsId())
                         } else {
                             echo "No changes to push."
                         }
 
                         // Tag repository
-                        githubscm.tagLocalAndRemoteRepository('origin', getKogitoVersion(), getGitAuthorCredsID(), env.BUILD_TAG, true)
+                        githubscm.tagLocalAndRemoteRepository('origin', getKogitoVersion(), getGitAuthorCredsId(), env.BUILD_TAG, true)
                     }
                 }
             }
@@ -126,6 +127,9 @@ String getGitAuthor() {
     return env.GIT_AUTHOR
 }
 
-String getGitAuthorCredsID() {
-    return env.AUTHOR_CREDS_ID
+String getGitAuthorCredsId() {
+    return env.GIT_AUTHOR_CREDS_ID
+}
+String getGitAuthorPushCredsId() {
+    return env.GIT_AUTHOR_PUSH_CREDS_ID
 }

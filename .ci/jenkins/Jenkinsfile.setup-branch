@@ -60,7 +60,7 @@ pipeline {
 
                     dir("kogito-docs-${getBuildBranch()}") {
                         deleteDir()
-                        checkout(githubscm.resolveRepository('incubator-kie-kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsID()))
+                        checkout(githubscm.resolveRepository('incubator-kie-kogito-docs', getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsId()))
                         sh "git checkout ${getBuildBranch()}"
 
                         String[] branchSplit = getBuildBranch().split("\\.")
@@ -81,8 +81,9 @@ pipeline {
 
                         // Add changed files, commit, open and merge PR
                         if (githubscm.isThereAnyChanges()) {
+                            githubscm.setUserConfigFromCreds(getGitAuthorPushCredsId())
                             githubscm.commitChanges("Init ${getBuildBranch()} branch")
-                            githubscm.pushObject('origin', getBuildBranch(), getGitAuthorCredsID())
+                            githubscm.pushObject('origin', getBuildBranch(), getGitAuthorPushCredsId())
                         } else {
                             echo 'No changes to push.'
                         }
@@ -96,7 +97,7 @@ pipeline {
                 script {
                     dir('kogito-docs') {
                         deleteDir()
-                        checkout(githubscm.resolveRepository('incubator-kie-kogito-docs', getGitAuthor(), 'main', false, getGitAuthorCredsID()))
+                        checkout(githubscm.resolveRepository('incubator-kie-kogito-docs', getGitAuthor(), 'main', false, getGitAuthorCredsId()))
                         sh 'git checkout main'
 
                         updateYaml('antora-playbook.yml') { antoraConfig ->
@@ -110,8 +111,9 @@ pipeline {
 
                         // Add changed files, commit, open and merge PR
                         if (githubscm.isThereAnyChanges()) {
+                            githubscm.setUserConfigFromCreds(getGitAuthorPushCredsId())
                             githubscm.commitChanges("Add branch ${getBuildBranch()} for generation")
-                            githubscm.pushObject('origin', 'main', getGitAuthorCredsID())
+                            githubscm.pushObject('origin', 'main', getGitAuthorPushCredsId())
                         } else {
                             echo 'No changes to push.'
                         }
@@ -153,8 +155,12 @@ String getGitAuthor() {
     return env.GIT_AUTHOR
 }
 
-String getGitAuthorCredsID() {
-    return env.AUTHOR_CREDS_ID
+String getGitAuthorCredsId() {
+    return env.GIT_AUTHOR_CREDS_ID
+}
+
+String getGitAuthorPushCredsId() {
+    return env.GIT_AUTHOR_PUSH_CREDS_ID
 }
 
 void updateYaml(String filePath, Closure updateClosure) {
