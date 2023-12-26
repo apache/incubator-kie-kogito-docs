@@ -1293,6 +1293,37 @@ GREETING_SVC=$(oc get route/greeting --template='{{.spec.host}}')</code></pre>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_restarting_a_build"><a class="anchor" href="#_restarting_a_build"></a>Restarting a build</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you require to restart the build for some reason, you can add or edit the annotation <code>sonataflow.org/restartBuild: true</code> in the <code>SonataFlowBuild</code> instance.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a SonataFlowBuild marked to restart</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowBuild
+metadata:
+  name: greeting
+  annotations:
+    sonataflow.org/restartBuild: true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After editing the resource, the operator will start a new build of the workflow. Once this is finished, the workflow will be notified and updated accordingly.</p>
+</div>
+<div class="paragraph">
+<p>If the build fails, but the workflow has a working deployment, the operator won&#8217;t rollout a new deployment.</p>
+</div>
+<div class="paragraph">
+<p>Ideally you should use this feature if there&#8217;s a problem with your workflow or the initial build revision.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
 <div class="sectionbody">
 <div class="ulist">
