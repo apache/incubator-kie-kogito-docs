@@ -1,0 +1,119 @@
+= Managing Jobs Service with the Operator
+:compat-mode!:
+// Metadata:
+:description: Configure Jobs Service using the SonataFlowPlatform CR.
+:keywords: sonataflow, serverless, operator, kubernetes, jobs service
+
+
+This document describes how to configure the Jobs Service instance usimg the SonataFlowPlarform CR.
+
+== Automate the Jobs Service instance management with the SonataFlow Operator
+
+While it is possible to deploy the Jobs Service manually, the Operator also provides a convenient way to combine it with the
+namespace configuration via the SonataFlowPlatform CR. With this approach, the Operator will take care of configuring the
+Jobs Service instance and ensure it is in sync with the specification in the CR. When the operator manages the Jobs Service lifecycle,
+it will inject properties in SonataFlow workflows at creation time to enable the workflows to communicate with the Jobs Service
+instance during their execution, removing the need to add these properties as part of the SonataFlow workflow CR instance.
+
+== Configuring Jobs Service in the SonataFlowPlatformCR
+
+To enable the deployment of a Jobs Service instance, the `SonataFlowPlatform` CRD exposes a set of fields that allow the user to 
+configure the running instance. 
+
+==== Ephemeral persistence
+The basic runtime is to deploy the Jobs Service with an ephemeral backend running in the same container
+as the Jobs Service runtime.
+
+[source,yaml,subs="attributes+"]
+---
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  services:
+    jobService: {}
+---
+
+When executing this manifest, the operator will reconcile generating a pod hosting the Jobs Service:
+
+[source,yaml,subs="attributes+"]
+---
+$>kubectl get pod -n sonataflow
+NAME                                               READY   STATUS    RESTARTS   AGE
+sonataflow-platform-jobs-service-cdf85d969-sbwkj   1/1     Running   0          108s
+---
+
+Keep in mind that this setup is not recommended for production environments, chiefly because the data is not persisted when the pod restarts.
+
+==== Using an existing postgreSQL service
+For robust environments it is recommened to use an dedicated database service and configure Jobs Service to make use of it. Currently, the Jobs Service
+only supports PostgreSQL database.
+
+To configure Jobs Service to communicate with an existing PostgreSQL instance running in the same cluster you will need to specify the secret that contains
+the credentials to authenticate with the database, and then define the kubernetes service specification:
+
+[source,yaml,subs="attributes+"]
+---
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: callbackstatetimeouts
+spec:
+  persistence:
+    postgresql:
+      secretRef:
+        name: postgres-secrets
+        userKey: POSTGRES_USER
+        passwordKey: POSTGRES_PASSWORD
+      serviceRef:
+        name: postgres
+        port: 5432
+        databaseName: sonataflow
+        databaseSchema: jobs-service
+---
+
+In this example we're using a PostgreSQL service located in the same namespace where the Jobs Service is deployed, pointing to the default PostgreSQL port of 5432
+and referencing the database `sonataflow` and schema `jobs-service`. By default, when the Jobs Service pod starts it will recreate the schema in the given location
+if it doesn't exist.
+
+The values of `POSTGRES_USER` and `POSTGRES_PASSWORD` point to the keys in the secret that contains the PostgreSQL credentials.
+
+[source,yaml,subs="attributes+"]
+---
+$>kubectl describe secrets postgres-secrets
+Name:         postgres-secrets
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Type:  Opaque
+
+Data
+====
+PGDATA:             28 bytes
+POSTGRES_DATABASE:  10 bytes
+POSTGRES_PASSWORD:  10 bytes
+POSTGRES_USER:      10 bytes
+---
+
+Putting everything together will render an output similar to this one below:
+
+[source,yaml,subs="attributes+"]
+---
+$>kubectl get pod -w -n sonataflow
+NAME                                                READY   STATUS    RESTARTS   AGE
+postgres-64c9ddb6bc-v96qb                           1/1     Running   0          14m
+sonataflow-platform-jobs-service-79bb6bc67f-gvcg4   1/1     Running   0           1m
+---
+
+== Conclusion
+The Operator extends its scope to manage the lifecycle of the Jobs Service instance, thus removing the burden to the users and allowing them to focus on the
+implementation of the SonataFlow workflows. It takes care of managing the Jobs Service deployment, dynamically configure its application properties
+when the Data Index service is also available and managed by the Operator, and finally inject application properties in SonataFlow workflows in the target
+namespace when the Jobs Service is available.
+
+== Additional resources
+* xref:cloud/operator/install-serverless-operator.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
