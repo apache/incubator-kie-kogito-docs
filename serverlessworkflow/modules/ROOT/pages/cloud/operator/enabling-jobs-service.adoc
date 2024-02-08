@@ -1,19 +1,19 @@
 = Managing Jobs Service with the Operator
 :compat-mode!:
 // Metadata:
-:description: Configure Jobs Service using the SonataFlowPlatform CR.
+:description: Configure Jobs Service using the `SonataFlowPlatform` CR.
 :keywords: sonataflow, serverless, operator, kubernetes, jobs service
 
 
 This document describes how to configure the Jobs Service instance usimg the SonataFlowPlarform CR.
 
-== Automate the Jobs Service instance management with the SonataFlow Operator
+== Automate the Jobs Service instance management with the `SonataFlow` Operator
 
 While it is possible to deploy the Jobs Service manually, the Operator also provides a convenient way to combine it with the
-namespace configuration via the SonataFlowPlatform CR. With this approach, the Operator will take care of configuring the
+namespace configuration via the `SonataFlowPlatform` CR. With this approach, the Operator will take care of configuring the
 Jobs Service instance and ensure it is in sync with the specification in the CR. When the operator manages the Jobs Service lifecycle,
-it will inject properties in SonataFlow workflows at creation time to enable the workflows to communicate with the Jobs Service
-instance during their execution, removing the need to add these properties as part of the SonataFlow workflow CR instance.
+it will inject properties in `SonataFlow` workflows at creation time to enable the workflows to communicate with the Jobs Service
+instance during their execution, removing the need to add these properties as part of the `SonataFlow` workflow CR instance.
 
 == Configuring Jobs Service in the SonataFlowPlatformCR
 
@@ -37,7 +37,7 @@ spec:
 
 When executing this manifest, the operator will reconcile generating a pod hosting the Jobs Service:
 
-[source,yaml,subs="attributes+"]
+[source,shell,subs="attributes+"]
 ---
 $>kubectl get pod -n sonataflow
 NAME                                               READY   STATUS    RESTARTS   AGE
@@ -50,8 +50,57 @@ Keep in mind that this setup is not recommended for production environments, chi
 For robust environments it is recommened to use an dedicated database service and configure Jobs Service to make use of it. Currently, the Jobs Service
 only supports PostgreSQL database.
 
-To configure Jobs Service to communicate with an existing PostgreSQL instance running in the same cluster you will need to specify the secret that contains
-the credentials to authenticate with the database, and then define the kubernetes service specification:
+Configuring Jobs Service to communicate with an existing PostgreSQL instance is supported in two ways. In both cases it requires providing the persistence
+configuration, one by using the Jobs Service's persistence field and the other one using the persistence field defined in the `SonataFlowPlatform` CR
+deployed in the same namespace.
+
+By default, the persistence specification defined in the `SonataFlow` workflow's CR takes precedence over the one in the `SonataFlowPlatform` persistence's specification.
+
+===== Using the persistence field defined in the `SonataFlowPlatform` CR
+Using the persistence configuration in the `SonataFlowPlatform` CR located in the same namespace requires to have the `SonataFlow` CR persistence field configured
+to have an empty `{}` value, signaling the Operator to derive the persistence from the active `SonataFlowPlatform`, when available. If no persistence is defined
+the operator will fallback to the ephemeral persistence previously described.
+
+[source,yaml,subs="attributes+"]
+---
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  persistence:
+    postgresql:
+      secretRef:
+        name: postgres-secrets
+        userKey: POSTGRES_USER
+        passwordKey: POSTGRES_PASSWORD
+      serviceRef:
+        name: postgres
+        port: 5432
+        databaseName: sonataflow
+---
+
+And the `SonataFlow` CR looks like this:
+
+[source,yaml,subs="attributes+"]
+---
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: callbackstatetimeouts
+  annotations:
+    sonataflow.org/description: Callback State Timeouts Example k8s
+    sonataflow.org/version: 0.0.1
+spec:
+  persistence: {}
+...
+---
+
+When the database schema is not defined in the persistence configuration, the operator will generate the schema and use the workflow's given name instead.
+
+===== Using the persistency field inside the service specification
+You can specify define the persistence configuration directly in the Jobs Service specification. The structure is the same as in the `SonataFlowPlatform` CR and also
+consist on the credentials to access the PostgreSQL instance, and the kubernetes service reference to generate the connectivity.
 
 [source,yaml,subs="attributes+"]
 ---
@@ -79,7 +128,7 @@ if it doesn't exist.
 
 The values of `POSTGRES_USER` and `POSTGRES_PASSWORD` point to the keys in the secret that contains the PostgreSQL credentials.
 
-[source,yaml,subs="attributes+"]
+[source,shell,subs="attributes+"]
 ---
 $>kubectl describe secrets postgres-secrets
 Name:         postgres-secrets
@@ -99,7 +148,7 @@ POSTGRES_USER:      10 bytes
 
 Putting everything together will render an output similar to this one below:
 
-[source,yaml,subs="attributes+"]
+[source,shell,subs="attributes+"]
 ---
 $>kubectl get pod -w -n sonataflow
 NAME                                                READY   STATUS    RESTARTS   AGE
@@ -109,8 +158,8 @@ sonataflow-platform-jobs-service-79bb6bc67f-gvcg4   1/1     Running   0         
 
 == Conclusion
 The Operator extends its scope to manage the lifecycle of the Jobs Service instance, thus removing the burden to the users and allowing them to focus on the
-implementation of the SonataFlow workflows. It takes care of managing the Jobs Service deployment, dynamically configure its application properties
-when the Data Index service is also available and managed by the Operator, and finally inject application properties in SonataFlow workflows in the target
+implementation of the `Sonataworkflows. It takes care of managing the Jobs Service deployment, dynamically configure its application properties
+when the Data Index service is also available and managed by the Operator, and finally inject application properties in `SonataFlow` workflows in the target
 namespace when the Jobs Service is available.
 
 == Additional resources
