@@ -96,7 +96,9 @@ spec:
 ...
 ---
 
-When the database schema is not defined in the persistence configuration, the operator will generate the schema and use the workflow's given name instead.
+When using the `jdbcUrl` field instead of `serviceRef`, the user is responsible of providing the correct JDBC URL connection value that does not contain a `database schema`
+because the operator will use verbatim the contents of this field as the JDBC connection in the Jobs Service pod, and if it provides a schema that has been used or formatted 
+by a different client, the pod will fail to run.
 
 ===== Using the persistency field inside the service specification
 You can specify define the persistence configuration directly in the Jobs Service specification. The structure is the same as in the `SonataFlowPlatform` CR and also
