@@ -6,9 +6,9 @@ This guide showcases using the Knative Workflow CLI plugin and Visual Studio cod
 * xref:testing-and-troubleshooting/kn-plugin-workflow-overview.adoc[Knative Workflow CLI] {kn_cli_version} is installed.
 * Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
 
-.Preparing your environment 
+.Preparing your environment for local development with locally deployed cluster instance
 * Install https://docs.docker.com/engine/install/[Docker] or https://podman.io/docs/installation[Podman].
-* Install https://minikube.sigs.k8s.io/docs/start/[minikube].
+* Install https://minikube.sigs.k8s.io/docs/start/[minikube] ( or Kind ).
 * Install https://kubernetes.io/docs/tasks/tools/[kubectl].
 * Start minikube. Depending on your environment, set `--driver` flag to `podman` or `docker`
 [source,bash]
@@ -17,7 +17,7 @@ minikube start --cpus 4 --memory 8096 --addons registry --addons metrics-server 
 ----
 * (optional) Install https://k9scli.io/[k9scli.io] 
 * xref:cloud/operator/install-serverless-operator.adoc[]
-* Install https://github.com/kiegroup/kie-tools/releases/tag/0.30.3[KN Workflow CLI] by downloading the correct distribution for your development environment and adding it to the PATH.
+* Install https://github.com/kiegroup/kie-tools/releases/tag/0.32.0[SonataFlow plug-in for Knative CLI]. Follow xref:testing-and-troubleshooting/kn-plugin-workflow-overview.adoc[] guide.
 
 [[proc-creating-app-with-kn-cli]]
 == Creating a workflow project with Visual Studio Code and KN CLI
@@ -112,6 +112,7 @@ curl -X 'POST' \
 * xref:testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.adoc[]
 * xref:getting-started/getting-familiar-with-our-tooling.adoc[]
 * xref:service-orchestration/orchestration-of-openapi-based-services.adoc[]
+* xref:../cloud/operator/developing-workflows.adoc[]
 
 include::../../pages/_common-content/report-issue.adoc[]
 

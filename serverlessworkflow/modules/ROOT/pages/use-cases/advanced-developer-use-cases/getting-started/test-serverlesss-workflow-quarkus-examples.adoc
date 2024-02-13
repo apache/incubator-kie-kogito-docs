@@ -1,0 +1,62 @@
+= Testing images of serverless workflow example applications using Quarkus CLI
+
+After building your workflow image using Quarkus CLI, you can test the built image.
+
+TODO: Add link to previous guides
+
+.Prerequisites
+* Latest version of Docker is installed.
+
+.Procedure
+. Start JVM and native Container Images.
++
+--
+[tabs]
+====
+Example JVM image::
++
+[source,shell]
+----
+docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0
+...
+INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final on JVM (powered by Quarkus ${quarkus_platform}) started in 1.302s
+----q
+Example native image::
++
+[source,shell]
+----
+docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0-native
+...
+INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final native (powered by Quarkus ${quarkus_platform}) started in 0.039s
+----
+====
+
+Note that the startup of native image is faster than the JVM image.
+--
+
+. To invoke the workflow application, execute the following command once the container is started:
++
+--
+[tabs]
+====
+Example request::
++
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://localhost:8080/jsongreet
+----
+Example response::
++
+[source,json]
+----
+{
+    "id": "2acf710d-7e4a-481d-925c-dfd85a369987",
+    "workflowdata": {
+        "name": "John",
+        "language": "English",
+        "greeting": "Hello from JSON Workflow, "
+    }
+}
+----
+====
+--
