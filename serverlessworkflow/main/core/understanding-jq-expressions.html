@@ -819,6 +819,58 @@
 </div>
 </div>
 <div class="sect1">
+<h2 id="_workflow_secrets_constants_and_context"><a class="anchor" href="#_workflow_secrets_constants_and_context"></a>Workflow secrets, constants and context</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As per specification, you can use <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-constants">Workflow Constants</a> and <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#workflow-secrets">Workflow Secrets</a> whenever an expression is accepted.
+In SonataFlow you can use <code>$SECRET</code> to access any configuration property, not just sensitive ones.
+So, assuming you have added to your <code>application.properties</code> a line with the <code>myname=john</code> property, the following function will append the string <code>my name is john</code> to the <code>message</code> variable</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+      "name": "secretMessage",
+      "type": "expression",
+      "operation": ".message |= \"my name is \"+$SECRET.my_name"
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Besides constants and secrets, you might access contextual information of the running workflow by using the $WORKFLOW reserved word.
+SonataFlow supports the following contextual keys:
+ * <code>id</code>: The id of the running workflow definition
+ * <code>name</code>: The name of the running workflow definition
+ * <code>instanceId</code>: The id of the running workflow instance
+ * <code>headers</code>: Optional map containing the headers, if any, of the invocation that started the running workflow instance
+ * <code>prevActionResult</code>: In a <code>foreach</code> state, give access the result of the previous loop iteration output.
+ * <code>identity</code>: Quarkus security identity</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Therefore, the following function, for a serverless workflow definition whose id  is `expressionTest`, will append the string `worklow id is expressionTest` to the `message` variable</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+      "name": "contextMessage",
+      "type": "expression",
+      "operation": ".message |= \"workflow id is \"+$WORKFLOW.id"
+}</pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_customizing_workflow_context"><a class="anchor" href="#_customizing_workflow_context"></a>Customizing workflow context</h3>
+<div class="paragraph">
+<p>In addition to the predefined keys mentioned previously, you can add your own keys to workflow context using Java Service Loader mechanism, by providing an implementation of class <a href="https://github.com/apache/incubator-kie-kogito-runtimes/tree/main/kogito-serverless-workflow/kogito-serverless-workflow-utils/src/main/java/org/kie/kogito/serverless/workflow/utils/KogitoProcessContextResolverExtension.java">KogitoProcessContextResolverExtension</a></p>
+</div>
+<div class="paragraph">
+<p>This feature was used to add quarkus security identity support, you can check source code as reference <a href="https://github.com/apache/incubator-kie-kogito-runtimes/tree/main/quarkus/extensions/kogito-quarkus-serverless-workflow-extension/kogito-quarkus-serverless-workflow/src/main/java/org/kie/kogito/serverless/workflow/QuarkusKogitoProcessContextResolver.java">here</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional resources</h2>
 <div class="sectionbody">
 <div class="ulist">
