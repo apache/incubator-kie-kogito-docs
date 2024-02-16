@@ -17,29 +17,27 @@
 # under the License.
 #
 
-name: SonataFlow Guides Build
+name: SonataFlow Guides Preview Teardown
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
-    branches: [main]
-    paths-ignore:
-      - ".gitignore"
-      - "LICENSE"
-      - "README*"
-      - "CONTRIBUTING.md"
+  pull_request_target:
+    paths:
+      - "*.adoc"
+    types: [closed]
+
 jobs:
-  build_site:
-    name: "Building SonataFlow Docs with Antora"
-    runs-on: [ubuntu-latest]
+  preview-teardown:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Teardown surge preview
+        id: deploy
+        run: npx surge teardown https://sonataflow-docs-preview-pr-${{ github.event.number }}.surge.sh --token ${{ secrets.SURGE_TOKEN }}
+      - name: Update PR status comment
+        uses: actions-cool/maintain-one-comment@v3
         with:
-          node-version: "16"
-      - run: export DOCSEARCH_ENABLED=true
-      - run: export DOCSEARCH_ENGINE=lunr
-      - run: export NODE_PATH="$(npm -g root)"
-      - run: npm -v
-      # TODO: fail if warning
-      - run: npm run install-build
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            🙈 The PR is closed and the preview is expired.
+            <!-- Sticky Pull Request Comment -->
+          body-include: "<!-- Sticky Pull Request Comment -->"
+          number: ${{ github.event.number }}

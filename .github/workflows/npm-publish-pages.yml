@@ -20,7 +20,7 @@
 # This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
 # For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
 
-name: Node.js Publish webpage
+name: Node.js Publish SonataFlow Docs
 
 on:
   push:
@@ -34,7 +34,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -43,30 +42,29 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - name: Checkout main branch
-      uses: actions/checkout@v3
-      with:
-        ref: main
-    
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-#        cache: 'npm'
+      - name: Checkout main branch
+        uses: actions/checkout@v3
+        with:
+          ref: main
 
-    - name: Build the pages
-      run: npm run install-build
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-        
-    - name: Copy latest to numbered version
-      run: python scripts/copy-latest.py
-    
-    - name: Publish to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: build/site
+      - name: Build the pages
+        run: npm run install-build
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Copy latest to numbered version
+        run: python scripts/copy-latest.py
+
+      - name: Publish to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/site
