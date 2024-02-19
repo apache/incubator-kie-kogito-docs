@@ -7,11 +7,11 @@
 
 The Cloud Native Computing Foundation (CNCF) specification link:{spec_doc_url}#defining-custom-function-types[supports the `custom` function type], which enables the implementations to extend the function definition capability.
 
-{product_name} supports the `java` and `sysout` custom types.
+{product_name} supports several custom types, which are enumerated below.
 
 [WARNING]
 ====
-The CNCF specification does not support `java` and `sysout` functions. Therefore, these functions might not be portable across other implementations.
+Custom functions might not be portable across other implementations.
 ====
 
 [[con-func-sysout]]
@@ -531,7 +531,61 @@ kogito.sw.functions.greet.timeout=5000 <1>
 ----
 <1> Time in milliseconds
 
-== Custom function types
+== Rest Custom Function 
+
+Serverless Workflow Specification defines the xref:service-orchestration/orchestration-of-openapi-based-services.adoc[OpenAPI function type], which is the preferred way to interact with existing REST servers. 
+However, sometimes a workflow shoud interact with several REST APIs which are not described using an OpenAPI specification file. Since generating such file for these services might be a tedious exercise, {product_name} offers REST custom type as a shorcut. 
+
+When using custom rest, in the function definition you specify the HTTP URI to be invoked and the HTTP method (get, post, patch or put) to be used, using `operation` string. When the function is actually invoked you pass the request arguments as you do when using an OpenAPI function. 
+
+The following example shows the declaration of a `rest` function:
+
+.Example of a `rest` function declaration
+[source,json]
+----
+{
+  "functions": [
+    {
+      "name": "multiplyAllByAndSum", <1>
+      "type": "custom", <2>
+      "operation": "rest:post:/numbers/{multiplier}/multiplyByAndSum" <3>
+    }
+  ]
+}
+----
+
+<1> `multiplyAllAndSum` is the function name
+<2> `custom` is the function type
+<3> `rest:post:/numbers/{multiplier}/multiplyByAndSum` is the custom operation definition. In the custom operation definition: 
+* `rest` is the reserved operation keyword that indicates this is a REST call.
+* `post` is the HTTP method. 
+* `/numbers/{multiplier}/multiplyByAndSum` is the relative endpoint. 
+
+When using relative endpoints you must specify the host as a property. The format of the host property is `kogito.sw.functions.<function_name>.host`. Therefore, in this example, the host property key  is `kogito.sw.functions.multiplyAllByAndSum.host`. You might override the default port (80) if needed by specifying `kogito.sw.functions.multiplyAllAndSum.port` property. 
+
+This particular endpoint expects as body a json object which field `numbers` is an array of integers, multiplies each item in the array by `multiplier` and returns the sum of all the multiplied items. Therefore, to invoke it, assuming the input array is stored in the workflow model as property `inputNumbers`, you shoud write:
+
+.Example of a `rest` function call
+[source,json]
+----
+{
+ "functionRef": {
+   "refName": "multiplyAllByAndSum",
+   "arguments": {
+     "numbers": "$.inputNumbers"
+     "multiplier": 3 <1>
+   }
+ }
+}
+----
+<4> you replace path and query parameters by specifying an argument which name is equal to the path or query parameter. The query or path parameter to be replaced should be enclosed within {} in the endpoint string.  
+
+If `inputNumbers` contains `1`, `2` and `3`, the output of the call will be  `1*3+2*3+3*3=18. 
+
+In case you want to specify headers in your your HTTP request, you might do it by adding arguments starting with `HEADER_` prefix. Therefore if you add `"HEADER_ce_id":"123"` to the previous argument set, you will be adding a header named `ce_id` with value `123`  to your request. A similar approach might be used to add query params to a GET request, in that case you should add arguments starting with `QUERY_` prefix. Note that you can also use {} notation for replacements of query parameters included directly in the `operation` string.  
+
+
+== Additional custom function types
 
 You can add your custom types by using the Kogito add-on mechanism. As predefined custom types like xref:core/custom-functions-support.adoc#con-func-sysout[`sysout`] or xref:core/custom-functions-support.adoc#con-func-java[`java`], the custom type identifier is the prefix of the operation field of the function definition.
 
