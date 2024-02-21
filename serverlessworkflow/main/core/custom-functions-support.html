@@ -557,7 +557,7 @@
 <p>The Cloud Native Computing Foundation (CNCF) specification <a href="https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md#defining-custom-function-types">supports the <code>custom</code> function type</a>, which enables the implementations to extend the function definition capability.</p>
 </div>
 <div class="paragraph">
-<p>SonataFlow supports the <code>java</code> and <code>sysout</code> custom types.</p>
+<p>SonataFlow supports several custom types, which are listed below.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -567,7 +567,7 @@
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The CNCF specification does not support <code>java</code> and <code>sysout</code> functions. Therefore, these functions might not be portable across other implementations.</p>
+<p>Custom functions might not be portable across other implementations.</p>
 </div>
 </td>
 </tr>
@@ -1301,7 +1301,133 @@ custom-function-knative-service   http://custom-function-knative-service.default
 </div>
 </div>
 <div class="sect1">
-<h2 id="_custom_function_types"><a class="anchor" href="#_custom_function_types"></a>Custom function types</h2>
+<h2 id="_rest_custom_function"><a class="anchor" href="#_rest_custom_function"></a>Rest custom function</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Serverless Workflow Specification defines the <a href="../service-orchestration/orchestration-of-openapi-based-services.html" class="xref page">OpenAPI function type</a>, which is the preferred way to interact with existing REST servers.
+However, sometimes a workflow should interact with several REST APIs that are not described using an OpenAPI specification file. Since generating such files for these services might be tedious, SonataFlow offers REST custom type as a shortcut.</p>
+</div>
+<div class="paragraph">
+<p>When using custom rest, in the function definition, you specify the HTTP URI to be invoked and the HTTP method (get, post, patch, or put) to be used, using the <code>operation</code> string. When the function is invoked, you pass the request arguments as you do when using an OpenAPI function.</p>
+</div>
+<div class="paragraph">
+<p>The following example shows the declaration of a <code>rest</code> function:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a <code>rest</code> function declaration</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "functions": [
+    {
+      "name": "multiplyAllByAndSum", <i class="conum" data-value="1"></i><b>(1)</b>
+      "type": "custom", <i class="conum" data-value="2"></i><b>(2)</b>
+      "operation": "rest:post:/numbers/{multiplier}/multiplyByAndSum" <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>multiplyAllAndSum</code> is the function name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>custom</code> is the function type</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>rest:post:/numbers/{multiplier}/multiplyByAndSum</code> is the custom operation definition. In the custom operation definition:
+<div class="ulist">
+<ul>
+<li>
+<p><code>rest</code> is the reserved operation keyword that indicates this is a REST call.</p>
+</li>
+<li>
+<p><code>post</code> is the HTTP method.</p>
+</li>
+<li>
+<p><code>/numbers/{multiplier}/multiplyByAndSum</code> is the relative endpoint.</p>
+</li>
+</ul>
+</div></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When using the relative endpoints you must specify the host as a property. The format of the host property is <code>kogito.sw.functions.&lt;function_name&gt;.host</code>. Therefore, in this example, <code>kogito.sw.functions.multiplyAllByAndSum.host</code> is the host property key. You might override the default port (80) if needed by specifying <code>kogito.sw.functions.multiplyAllAndSum.port</code> property.</p>
+</div>
+<div class="paragraph">
+<p>This particular endpoint expects as body a JSON object whose field <code>numbers</code> is an array of integers, multiplies each item in the array by <code>multiplier</code> and returns the sum of all the multiplied items. Therefore, to invoke it, assuming the input array is stored in the workflow model as property <code>inputNumbers</code>, you should write:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a <code>rest</code> function call</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+ "functionRef": {
+   "refName": "multiplyAllByAndSum",
+   "arguments": {
+     "numbers": "$.inputNumbers"
+     "multiplier": 3 <i class="conum" data-value="1"></i><b>(1)</b>
+   }
+ }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>you replace path and query parameters by specifying an argument which name is equal to the path or query parameter. The query or path parameter to be replaced should be enclosed within {} in the endpoint string.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If <code>inputNumbers</code> contains <code>1</code>, <code>2</code>, and <code>3</code>, the output of the call will be  `1*3+2*3+3*3=18.</p>
+</div>
+<div class="paragraph">
+<p>In case you want to specify headers in your HTTP request, you might do it by adding arguments starting with the <code>HEADER_</code> prefix. Therefore if you add <code>"HEADER_ce_id": "123"</code> to the previous argument set, you will be adding a header named <code>ce_id</code> with the value <code>123</code>  to your request. A similar approach might be used to add query params to a GET request, in that case, you must add arguments starting with the <code>QUERY_</code> prefix. Note that you can also use {} notation for replacements of query parameters included directly in the <code>operation</code> string.</p>
+</div>
+<div class="paragraph">
+<p>For example, given the following function definition that performs a <code>get</code> request</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a <code>get</code> request definition</div>
+<div class="content">
+<pre>{
+  "functions": [
+    {
+      "name": "getProductList",
+      "type": "custom",
+      "operation": "rest:get:/products/search?category={category}"
+    }
+  ]
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can replace <code>{category}</code> specifying an argument with that name, plus adding <code>sort</code> query parameter</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of a <code>get</code> request invocation</div>
+<div class="content">
+<pre>{
+ "functionRef": {
+   "refName": "getProductList",
+   "arguments": {
+     "category": "electronics",
+     "QUERY_sort": "asc"
+   }
+ }
+}</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_custom_function_types"><a class="anchor" href="#_additional_custom_function_types"></a>Additional custom function types</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You can add your custom types by using the Kogito add-on mechanism. As predefined custom types like <a href="#con-func-sysout"><code>sysout</code></a> or <a href="#con-func-java"><code>java</code></a>, the custom type identifier is the prefix of the operation field of the function definition.</p>
