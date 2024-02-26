@@ -29,7 +29,7 @@ If your workflows are not using timer-based actions, like timeouts, there is no 
 
 To interact with the Job Service by sending cloud events over the knative eventing system you must follow these steps:
 
-. Be sure that you have read the xref:eventing/consume-produce-events-with-knative-eventing.adoc[Consuming and producing events on Knative Eventing] guide, and that you have configured the project accordingly.
+. Be sure that you have read the xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-produce-events-with-knative-eventing.adoc[Consuming and producing events on Knative Eventing] guide, and that you have configured the project accordingly.
 
 . Add the `kogito-addons-quarkus-jobs-knative-eventing` extension to your Quarkus Workflow Project using any of the following alternatives:
 
@@ -76,7 +76,7 @@ If this variable is not present, the default value `http://localhost:8280/v2/job
 ====
 
 [start=2]
-. Build your project and locate the automatically generated `kogito.yml` and `knative.yml` files in the `/target/kubernetes` directory of your project, xref:eventing/consume-produce-events-with-knative-eventing.adoc#proc-generating-kn-objects-build-time[see].
+. Build your project and locate the automatically generated `kogito.yml` and `knative.yml` files in the `/target/kubernetes` directory of your project, xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-produce-events-with-knative-eventing.adoc#proc-generating-kn-objects-build-time[see].
 
 [source,shell]
 ----
@@ -93,14 +93,14 @@ kubectl apply -f target/kogito.yml
 kubectl apply -f target/knative.yml
 ----
 
-You can see a full example of this interaction mode configuration in the xref:use-cases/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] example project.
+You can see a full example of this interaction mode configuration in the xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] example project.
 
 [#kogito-addons-quarkus-jobs-messaging]
 == Kafka messaging interaction
 
 To interact with the Job Service by sending cloud events over the kafka messaging system you must follow these steps:
 
-. Be sure that you have read the xref:eventing/consume-producing-events-with-kafka.adoc[Consuming and producing events with Kafka] guide, and you have configured the project accordingly.
+. Be sure that you have read the xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-producing-events-with-kafka.adoc[Consuming and producing events with Kafka] guide, and you have configured the project accordingly.
 
 . Add the `quarkus-smallrye-reactive-messaging-kafka` and `kogito-addons-quarkus-jobs-messaging` extensions to your Quarkus Workflow Project using any of the following alternatives.
 
@@ -233,6 +233,6 @@ quarkus extension add kogito-addons-quarkus-jobs-management
 [start=3]
 . Build and deploy your workflow application using any of the available procedures.
 
-You can see a full example of Job Service embedded usage in the xref:use-cases/timeout-showcase-example.adoc#execute-quarkus-project-embedded-services[Quarkus Workflow Project with embedded services] example project.
+You can see a full example of Job Service embedded usage in the xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc#execute-quarkus-project-embedded-services[Quarkus Workflow Project with embedded services] example project.
 
-include::../../pages/_common-content/report-issue.adoc[]
+include::../../../../pages/_common-content/report-issue.adoc[]

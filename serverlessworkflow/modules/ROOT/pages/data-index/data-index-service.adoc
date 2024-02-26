@@ -96,7 +96,7 @@ In this case {data_index_ref} is ready to consume the events sent to the topics:
 
 [IMPORTANT]
 ====
-It is important to configure the workflows application to send the events to the topic `kogito-processinstances-events`  using the connector `smallrye-kafka`. More information about how to configure workflows Kafka eventing is available in xref:eventing/consume-producing-events-with-kafka.adoc[] guide.
+It is important to configure the workflows application to send the events to the topic `kogito-processinstances-events`  using the connector `smallrye-kafka`. More information about how to configure workflows Kafka eventing is available in xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-producing-events-with-kafka.adoc[] guide.
 
 To explore the specific configuration to add to the workflow to connect with {data_index_ref} using Kafka eventing see xref:data-index/data-index-core-concepts.adoc#_kafka_eventing[{data_index_ref} Kafka eventing]
 
@@ -236,7 +236,7 @@ spec:
 <7> The URI where the {data_index_ref} service is expecting to consume those types of events.
 
 This deployment is using `KOGITO_DATA_INDEX_QUARKUS_PROFILE: http-events-support`. Workflow applications need to configure the connector to use `quarkus-http` and send the events to the Knative `K_SINK`.
-You can find more information about Knative eventing and `K_SINK` environment variable in xref:eventing/consume-produce-events-with-knative-eventing.adoc[]
+You can find more information about Knative eventing and `K_SINK` environment variable in xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-produce-events-with-knative-eventing.adoc[]
 
 To explore the specific configuration to add to the workflow to connect with {data_index_ref} using Knative eventing see xref:data-index/data-index-core-concepts.adoc#_knative_eventing[{data_index_ref} Knative eventing]
 
@@ -253,16 +253,16 @@ mp.messaging.outgoing.kogito-processinstances-events.method=POST
 If that configuration values weren't there before the container image creation, they need to be passed as environment variables. More details about customizing Quarkus generated images can be found in {quarkus_container_image_customizing_url}[Quarkus Container Images Customizing] guide.
 ====
 
-A full example where the {data_index_ref} service standalone is deployed using Knative eventing can be found as part of xref:use-cases/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] guide.
+A full example where the {data_index_ref} service standalone is deployed using Knative eventing can be found as part of xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] guide.
 
 ---
 
 == Additional resources
 
 * xref:data-index/data-index-core-concepts.adoc[]
-* xref:cloud/quarkus/deploying-on-minikube.adoc[]
-* xref:eventing/consume-producing-events-with-kafka.adoc[]
-* xref:eventing/consume-produce-events-with-knative-eventing.adoc[]
-* xref:use-cases/timeout-showcase-example.adoc[Timeout example in {product_name}]
+* xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-minikube.adoc[]
+* xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-producing-events-with-kafka.adoc[]
+* xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-produce-events-with-knative-eventing.adoc[]
+* xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc[Timeout example in {product_name}]
 
 include::../_common-content/report-issue.adoc[]
