@@ -1,0 +1,78 @@
+= Testing images of {product_name} example applications using Quarkus CLI
+
+After building the image of your application using Quarkus CLI, you can use the built image
+to do some test with your application.
+
+.Prerequisites
+* Latest version of Docker is installed.
+* Built image of your application. Go to xref:./build-workflow-image-with-quarkus-cli.adoc[] to see how.
+
+.Procedure
+. Start JVM and native Container Images.
++
+--
+[tabs]
+====
+Example JVM image::
++
+[source,shell]
+----
+docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0
+...
+INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final on JVM (powered by Quarkus ${quarkus_platform}) started in 1.302s
+----
+Example native image::
++
+[source,shell]
+----
+docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0-native
+...
+INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final native (powered by Quarkus ${quarkus_platform}) started in 0.039s
+----
+====
+
+Note that the startup of native image is faster than the JVM image.
+The docker deploys the image on your local and you can now execute commands and start testing
+the workflows behavior.
+--
+
+. To invoke the example greeting workflow application, execute the following command once the container is started:
++
+--
+[tabs]
+====
+Example request::
++
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://localhost:8080/jsongreet
+----
+Example response::
++
+[source,json]
+----
+{
+    "id": "2acf710d-7e4a-481d-925c-dfd85a369987",
+    "workflowdata": {
+        "name": "John",
+        "language": "English",
+        "greeting": "Hello from JSON Workflow, "
+    }
+}
+----
+====
+--
+
+This command will trigger the workflows execution and return its output.
+
+More complex workflows require different kind of testing, see the additional resources
+how to extend the test coverage of your {product_name} applications.
+
+
+== Additional resources
+
+* xref:use-cases/advanced-developer-use-cases/testing/basic-integration-tests-with-restassured.adoc[]
+* xref:use-cases/advanced-developer-use-cases/testing/mocking-http-cloudevents-with-wiremock.adoc[]
+* xref:use-cases/advanced-developer-use-cases/testing/mocking-openapi-services-with-wiremock.adoc[]
+
+include::../../../../pages/_common-content/report-issue.adoc[]

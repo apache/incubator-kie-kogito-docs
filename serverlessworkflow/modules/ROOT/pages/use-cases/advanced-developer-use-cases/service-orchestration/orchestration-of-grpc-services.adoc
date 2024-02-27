@@ -1,0 +1,261 @@
+= Orchestrating gRPC based Services
+:compat-mode!:
+// Metadata:
+:description: Understanding JQ expressions
+:keywords: kogito, workflow, serverless, jq, expression
+// links:
+:grpc_example_url: {kogito_sw_examples_url}/serverless-workflow-greeting-rpc-quarkus
+:grpc_core_url: https://grpc.io/docs/what-is-grpc/core-concepts
+:grpc_json_mapping: https://developers.google.com/protocol-buffers/docs/proto3#json
+:grpc_configuration_url: https://quarkus.io/guides/grpc-service-consumption#client-configuration
+:grpc_enum_url: https://developers.google.com/protocol-buffers/docs/proto3#enum
+
+As a developer, you can invoke a gRPC service using a workflow application that runs with Quarkus. This document describes how to create a workflow that invokes a running gRPC service and how to configure properties to locate that running gRPC service.
+
+For information about gRPC concepts, see link:{grpc_core_url}[gRPC].
+
+In order to illustrate how gRPC integration works, this link:{grpc_example_url}/serverless-workflow-greeting-client-rpc-quarkus[Serverless Workflow application] is used. This example greets a user in their preferred language by invoking a gRPC service.
+
+Relevant files of the workflow application include:
+
+* link:{grpc_example_url}/serverless-workflow-greeting-server-rpc-quarkus/src/main/proto/greeting.proto[gRPC proto file]: This file defines a greeter service, which consists of `sayHello` methods, each covering a different gRPC scenario:
+
+** The `sayHello` method accepts two parameters, including name of the user and an optional language to use in the greeting message (English by default). The `sayHello` method returns the greeting message in the appropriate language.
+** The `SayHelloAllLanguages` accepts just the name parameter and streams greetings in all languages supported by the service. This represents the server-side streaming scenario.
+** The `SayHelloMultipleLanguagesAtOnce` accepts a stream of name-language pairs as parameters and returns corresponding greetings as one block of text after the streaming is finished. This is the client-side streaming scenario.
+** The `SayHelloMultipleLanguages` accepts a stream of name-language pairs and streams back greetings with a respective name and in a respective language.
+
+[source]
+----
+// The greeter service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+  rpc SayHelloAllLanguages (HelloRequest) returns (stream HelloReply) {}
+  rpc SayHelloMultipleLanguagesAtOnce (stream HelloRequest) returns (HelloReply) {}
+  rpc SayHelloMultipleLanguages (stream HelloRequest) returns (stream HelloReply) {}
+  ...
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+  string language=2;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}
+----
+
+* link:{grpc_example_url}/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreet.sw.json[Workflow definition file]: This file defines an RPC link:{spec_doc_url}#using-functions-for-rpc-service-invocations[function].
+
+[source,json]
+----
+
+"functions": [
+    {
+      "name": "sayHello",
+      "type": "rpc",
+      "operation": "greeting.proto#Greeter#SayHello"
+    }
+  ]
+----
+
+In this `rpc` function, the `operation` property is composed of three tokens separated by `#`. The three tokens include:
+
+* URI of the proto file (`greeting.proto`)
+* Name of the service (`Greeter`)
+* Name of the method (`SayHello`)
+
+{product_name} supports three URI schemes, including `http`, `file`, and `classpath` (default). Therefore, in the previous example, the `greeting.proto` is expected to be found in the project classpath.
+
+The execution of the workflow consists of a single link:{spec_doc_url}#operation-state[operation] state, which is composed of one link:{spec_doc_url}#action-definition[action].
+
+
+[source,json]
+----
+ {
+    "name": "sayHello",
+    "functionRef" : {
+        "refName": "sayHello",
+        "arguments": {
+            "name": ".name",
+            "language": ".language"
+        }
+    }
+}
+----
+
+In the previous example, the action invokes the `sayHello` RPC method using two model variables: `name` and `language`. These parameters are provided as part of the REST call that starts the workflow.
+The response of the method execution is link:{grpc_json_mapping}[mapped] to a JSON object and merged with the workflow model.
+
+For the remaining scenarios, see the following workflow definition files:
+
+* link:{grpc_example_url}/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreetServerStream.sw.json[Server streaming]
+* link:{grpc_example_url}/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreetClientStream.sw.json[Client streaming]
+* link:{grpc_example_url}/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/jsongreetBiDiStream.sw.json[Bidirectional streaming]
+
+The only difference to the basic scenario is that workflows with client streaming expect an array of requests as arguments of the gRPC function:
+
+[source,json]
+----
+ {
+    "name": "SayHelloMultipleLanguagesAtOnce",
+    "functionRef" : {
+        "refName": "SayHelloMultipleLanguagesAtOnce",
+        "arguments": ".helloRequests"
+    }
+}
+----
+
+The function expects an array of requests which is mapped under the `helloRequests` key in the workflow model.
+
+In case of server streaming, the response is returned as an array as well and merged with the workflow model. In these examples, because no `stateDataFilter` is defined, the response is merged under the default `response` key in the workflow model.
+
+* link:{grpc_example_url}/serverless-workflow-greeting-client-rpc-quarkus/pom.xml[Maven POM]: The `gRPC` functionality is included within workflow dependencies, which means you do not need to add specific dependencies for `gRPC` to work with {product_name}.
+
+This `pom.xml` file contains the following `resource` node:
+
+[source,xml]
+----
+<resource>
+ <directory>${project.basedir}/../serverless-workflow-greeting-server-rpc-quarkus/src/main/proto</directory>
+ <includes>
+   <include>greeting.proto</include>
+  </includes>
+</resource>
+----
+
+The reason for this snippet to exist is to guarantee that the proto file is included in the classpath. Remember that in the workflow file, the URI for the proto file does not contain any scheme, therefore the proto file is expected to be accessible in the classpath.
+
+The previous, Maven based, approach can be used when the source code of the workflow and the gRPC server are stored in the same repository, but normally this will not be the case. If the proto file can be downloaded from a remote server, you might use the `http` scheme. If the proto file is not remotely accessible, you will need to manually obtain a copy of it and store in a directory that is included in the classpath (for example `src/main/resources`). Another possibility is to copy the proto file in a well known absolute path (that might be a shared network file system) and use the `file` scheme.
+
+* link:{grpc_example_url}/serverless-workflow-greeting-client-rpc-quarkus/src/main/resources/application.properties[Application properties]: In the `application.properties` file, you can add the information for the workflow application to locate the `gRPC` server.
+
+Internally, the workflow implementation uses the same set of properties as link:{grpc_configuration_url}[Quarkus gRPC client]. The `client-name` used by {product_name} is the service name declared in the proto file.
+
+Therefore, since in this example a service called `Greeter` is invoked, the following code is added to the properties.
+
+[source,properties]
+----
+quarkus.grpc.clients.Greeter.host=localhost
+quarkus.grpc.clients.Greeter.port=50051
+----
+
+In the same GitHub repository as the example application, there is a link:{grpc_example_url}/serverless-workflow-greeting-server-rpc-quarkus[Maven project] which provides a simple implementation of the `Greeter` service. By default, this gRPC server runs on port `50051`. Therefore, the same port is used in the `application.properties` file.
+
+== Default enum values
+
+gRPC link:{grpc_enum_url}[specification] requires enumeration types to have a default value. The default value is not included in the server response payload. Therefore, use an empty value such as `UNKNOWN` as default.
+If, for any reason, your default value is semantically valid and you want the value to be included in the workflow model, you must set `kogito.grpc.enum.includeDefault` property to true. This way enumeration fields are always filled by the workflow if the server response does not include them.
+
+[[running-serverless-workflow-application]]
+== Running the workflow application
+
+. Before running the workflow application, you need to start the gRPC server the workflow invokes. To run the gRPC server, navigate to the `serverless-workflow-greeting-server-rpc-quarkus` directory in a command terminal and enter the command:
++
+[source, shell]
+----
+mvn compile exec:java -Dexec.mainClass="org.kie.kogito.examples.sw.greeting.GreeterService"
+----
+
+. Once the server is running, you must navigate to the `serverless-workflow-greeting-client-rpc-quarkus` directory in a separate command terminal and run the workflow application by entering the following command: 
++
+[source,shell]
+----
+mvn clean quarkus:dev
+----
+
+. Once the workflow application is started, you can invoke the workflow instance using any HTTP client, such as `curl`, from a separate command terminal.
+
+=== Simple gRPC
+
+.Example request
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://localhost:8080/jsongreet
+----
+
+.Example response
+[source,shell]
+----
+{"id":"4376cc50-42d4-45ef-8a5e-6e403a654a30","workflowdata":{"name":"John","language":"English","message":"Hello from gRPC service John"}}
+----
+
+You can also try greeting in a different language.
+
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "Javi", "language": "Spanish"}' http://localhost:8080/jsongreet
+----
+
+In response, you will see the greeting in Spanish language.
+
+=== Server-side streaming gRPC
+
+.Example request
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John"}' http://localhost:8080/jsongreetserverstream
+----
+
+.Example response
+[source,shell]
+----
+{"id":"665911c5-36ee-40b7-93dd-a2328f969c73","workflowdata":{"name":"John","response":[{"message":"Hello from gRPC service John"},{"message":"Saludos desde gRPC service John"}]}}
+----
+
+=== Client-side streaming gRPC
+
+.Example request
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"helloRequests" : [{"name" : "Javierito", "language":"Spanish"}, {"name" : "John", "language":"English"}, {"name" : "Jan", "language":"Czech"}]}' http://localhost:8080/jsongreetclientstream
+----
+
+.Example response
+[source,shell]
+----
+
+
+{"workflowdata" : {
+                    "helloRequests" : [
+                                     {"name" : "Javierito", "language":"Spanish"},
+                                     {"name" : "John", "language":"English"},
+                                     {"name" : "Jan", "language":"Czech"}],
+                    "message":"Saludos desde gRPC service Javierito\nHello from gRPC service John\nHello from gRPC service Jan"
+                  }
+}
+
+----
+
+=== Bidirectional streaming gRPC
+
+.Example request
+[source,shell]
+----
+curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"helloRequests" : [{"name" : "Javierito", "language":"Spanish"},{"name" : "John", "language":"English"},{"name" : "Jan", "language":"Czech"}]}' http://localhost:8080/jsongreetbidistream
+----
+
+.Example response
+[source,shell]
+----
+
+{"workflowdata" : {
+                    "helloRequests" : [
+                                     {"name" : "Javierito", "language":"Spanish"},
+                                     {"name" : "John", "language":"English"},
+                                     {"name" : "Jan", "language":"Czech"}],
+                    "response":[
+                                {"message":"Saludos desde gRPC service Javierito"},
+                                {"message":"Hello from gRPC service John"},
+                                {"message":"Hello from gRPC service Jan"}
+                               ]
+                  }
+}
+
+----
+
+include::../../../../pages/_common-content/report-issue.adoc[]

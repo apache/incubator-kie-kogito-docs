@@ -1,0 +1,141 @@
+= {data_index_ref} as a Quarkus Development service
+When you use the {product_name} Process Quarkus extension, a temporary {data_index_ref} service is automatically provisioned while the Quarkus application is running in development mode. When you use one of the following Quarkus extensions, the Dev Service is set up for immediate use:
+
+.{product_name} main Quarkus extension
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-quarkus</artifactId>
+</dependency>
+----
+
+.{product_name} Quarkus extension
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie.kogito</groupId>
+  <artifactId>kogito-quarkus-serverless-workflow</artifactId>
+</dependency>
+----
+
+When you start your Quarkus project in development mode, an in-memory instance of the {data_index_ref} service is automatically started in the background. This feature is enabled by link:{dev_services_url}[Quarkus Dev Services], and leverages link:{test_containers_url}[Testcontainers] to start an image of the {data_index_ref} service.
+
+The {product_name} Process Quarkus extension sets up your Quarkus application to automatically replicate any {product_name} messaging events related to {workflow_instances} or jobs into the provisioned {data_index_ref} instance.
+
+Once the service is up and running, you can query the GraphQL interface directly using `http://localhost:8180/graphql` or using the Quarkus Dev UI console `http://localhost:8080/q/dev`.
+
+The {data_index_ref} GraphQL endpoint can query for `ProcessInstances` and `Jobs`. For more information about operations and attributes to query, see xref:data-index/data-index-core-concepts.adoc#data-index-graphql[GraphQL endpoint provided by {data_index_ref}] section.
+
+You can share the same {data_index_ref} instance across multiple {product_name} services during development. Sharing {data_index_ref} instances is enabled by default, therefore, only one {data_index_ref} instance is started. This behavior can be adjusted to start multiple instances using the `quarkus.kogito.devservices.shared` property.
+
+The Quarkus Dev Service also allows further configuration options including:
+
+* To disable {data_index_ref} Dev Service, use the `quarkus.kogito.devservices.enabled=false` property.
+* To change the port where the {data_index_ref} Dev Service runs, use the `quarkus.kogito.devservices.port=8180` property.
+* To adjust the provisioned image, use `quarkus.kogito.devservices.imageName=quay.io/kiegroup/kogito-data-index-ephemeral` property.
+* To disable sharing the {data_index_ref} instance across multiple Quarkus applications, use `quarkus.kogito.devservices.shared=false` property.
+
+For more information about Quarkus Dev Services, see link:{dev_services_url}[Dev Services guide].
+
+[#data-index-service-configuration-properties]
+== {data_index_ref} service configuration properties
+The following table serves as a quick reference for commonly {data_index_ref} configuration properties supported.
+
+.Common configuration properties
+[cols="40%,35%,10%,10%,5%", options="header"]
+|===
+|Property|Description|Type|Default value|Override at runtime
+
+|`QUARKUS_DATASOURCE_JDBC_URL`
+| The datasource URL
+| string
+|
+| Yes
+
+|`QUARKUS_DATASOURCE_USERNAME`
+| The datasource username
+| string
+|
+| Yes
+
+|`QUARKUS_DATASOURCE_PASSWORD`
+| The datasource password
+| string
+|
+| Yes
+
+|`QUARKUS_DATASOURCE_DB_KIND`
+a|The kind of database to connect: `postgresql`,..
+|string
+|
+|Yes
+
+|`QUARKUS_FLYWAY_MIGRATE_AT_START`
+| `true` to execute Flyway automatically when the application starts, false otherwise.
+| boolean
+| false
+| Yes
+
+|`KOGITO_DATA_INDEX_QUARKUS_PROFILE`
+a| (Only when referencing an image distribution)
+
+Allows to change the event connection type. The possible values are:
+
+* `kafka-events-support`
+* `http-events-support`
+
+| string
+| `kafka-events-support`
+| Yes
+
+|`kogito.persistence.query.timeout.millis`
+|Defines timeout for a query execution.
+|long
+|`10000`
+|Yes
+
+|`quarkus.kogito.devservices.enabled`
+|Enables or disables the Dev Services for workflows. By default, the Dev Services are enabled, unless an existing configuration is present.
+|boolean
+|`true`
+|No
+
+|`quarkus.kogito.devservices.port`
+|Defines the optional fixed port that the Dev Services listen to.
+|int
+|`8180`
+|No
+
+|`quarkus.kogito.devservices.image-name`
+|Defines the {data_index_ref} image to use in Dev Service.
+|string
+|`quay.io/kiegroup/kogito-data-index-ephemeral:{page-component-version}`
+|No
+
+|`quarkus.kogito.devservices.shared`
+|Indicates if the {data_index_ref} instance, which is managed by Quarkus Dev Services, is shared.
+|boolean
+|`true`
+|No
+
+|`quarkus.kogito.devservices.service-name`
+|Defines the value of the label that is attached to the started container. This property is used when `shared` is set to `true`.
+|string
+|`kogito-data-index`
+|No
+
+
+|===
+
+---
+
+== Additional resources
+
+* xref:data-index/data-index-core-concepts.adoc[]
+* xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-minikube.adoc[]
+* xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-producing-events-with-kafka.adoc[]
+* xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-produce-events-with-knative-eventing.adoc[]
+* xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc[Timeout example in {product_name}]
+
+include::../../../_common-content/report-issue.adoc[]

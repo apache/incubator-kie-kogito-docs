@@ -1,0 +1,329 @@
+= Kubernetes service discovery in {product_name}
+:compat-mode!:
+// Metadata:
+:description: Explain what is and how the service discovery works
+:keywords: kogito, workflow, quarkus, serverless, service-discovery, enhanced-service-discovery
+// links
+:quarkus_issue_url: https://github.com/quarkusio/quarkus/issues/27457
+:kubernertes_sa_url: https://kubernetes.io/docs/concepts/security/service-accounts/
+
+The Kubernetes service discovery allows you to describe the Kubernetes resource you want to perform HTTP requests on using a custom URI. Under the hood, it will discover the network endpoint (URL) to where to make the request.
+
+The Kubernetes service discovery feature works during the workflow application startup, in which this feature scans all the Quarkus configurations in search of the URI pattern. Therefore, you must remember that if the application startup time matters, consider using a known static URL instead.
+
+Following is the custom URI pattern in Kubernetes service discovery:
+
+.URI pattern in Kubernetes service discovery
+[source,shell]
+----
+kubernetes:<kind>.<version>.<group>/<namespace>/<resourceName>?<attributeName>=<attributeValue>
+\________/ \____/ \_______/ \_____/ \_________/ \____________/ \______________________________/
+  scheme    kind   version   group   namespace   resourceName   additional resource attributes
+            \____________________/                               \__________________________/
+                     GVK                                           Supported values:
+                                                                   - port-name={PORT_NAME}
+                                                                   - labels=label-name=label-value;other-label=other-value
+----
+
+The following scheme values are supported in the URI pattern:
+
+* `kubernetes`
+* `openshift`
+* `knative`
+
+The following resources are supported for the Kubernetes GVK (Group, Version, and Kind):
+
+* `services.v1`
+* `services.v1.serving.knative.dev`
+* `pods.v1`
+* `deployments.v1.apps`
+* `deploymentconfigs.v1.apps.openshift.io`
+* `statefulsets.v1.apps`
+* `routes.v1.route.openshift.io`
+* `ingresses.v1.networking.k8s.io`
+
+[NOTE]
+====
+When using `knative`, you can also use a simplified URI like:
+
+[source]
+----
+knative:<namespace>/<serviceName>
+----
+
+The above URI looks directly for services.v1.serving.knative.dev resource.
+====
+
+[IMPORTANT]
+====
+The `namespace` in the URI is optional, however, if `namespace` contains an empty value, the current namespace or context is used.
+====
+
+Query parameters in URI::
++
+--
+Also known as query string. The query parameters are defined the similar way with URLs to assign value to specific attributes.
+
+The following query parameters help the engine to be more precise when querying for a given Kubernetes resource:
+
+* *Custom labels*: The custom labels are used to filter services in case there are more than one service with the same label selector but exposing different ports. In this case, you can instruct the engine that if more than one service is found, then the engine must use the service containing the provided label. 
++
+The label is defined with the following expression and in case of multiple labels, you can use semicolon (;):
++
+`labels=label-name=namevalue;another-label=another-value`
++
+.Example label definition in URI
+[source,shell]
+----
+kubernetes:pods.v1/<namespace>/<pod-name>?labels=label-name=test-label
+----
++
+Using the previous URI example, if there are more than one service exposing the given pod, the `label-name=test-label` label is used to filter the service. If the label does not exist, the first found service is used.
+
+* *Custom port name*: The custom port name is used to determine which port to use when multiple ports are configured in the target service or container. You can configure the port name to be queried using the following pattern:
++
+`port-name=<PORT_NAME>`
+--
+
+[[required-kubernetes-roles]]
+== Required Kubernetes roles
+
+The service discovery engine requires that the link:{kubernertes_sa_url}[Kubernetes Service Account] running the application has read permissions for the discovered objects.
+
+The following Kubernetes Role resource has all the required permissions for the service discovery to work:
+
+.Required permissions for the Service Discovery on Kubernetes
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: service-discovery-role
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - services
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - statefulsets
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+  # Knative
+  - apiGroups:
+      - serving.knative.dev
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+----
+
+If running on OpenShift, you must also add the following rules:
+
+.Additional rules to run on OpenShift
+[source,yaml]
+----
+rules:
+  - apiGroups:
+      - route.openshift.io
+    resources:
+      - routes
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - apps.openshift.io
+    resources:
+      - deploymentconfigs
+    verbs:
+      - get
+      - list
+----
+
+You must then bind the Service Account with the `Role` via a `RoleBinding`:
+
+.RoleBinding for the required service discovery role
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: service-discovery-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: service-discovery-role
+subjects:
+  - kind: ServiceAccount
+    name: default
+----
+
+[IMPORTANT]
+====
+Usually, pods run using the `default` Service Account. If your cluster has a different configuration, you should adapt this `RoleBinding` to your requirements.
+====
+
+You must create these two objects in every namespace that you wish to deploy Quarkus Workflow applications with Service Discovery enabled. 
+
+As an alternative, you can create a `ClusterRole` instead of a `Role` in every namespace. In this case, the role will reflect globally in your cluster. For security reasons, you should avoid this approach.
+
+[[con-kubernetes-service-doscovery-configuration]]
+== Configuration in Kubernetes service discovery
+
+There is no specific configuration required for the Kubernetes service discovery except by using the expected URI pattern. However, the `okhttp` communication interceptor, which logs the communication between the application and the Kubernetes API is disabled by default.
+
+You can enable the `okhttp` communication interceptor if there is a need to debug the communication between the client and the Kubernetes API by setting the following application property:
+
+.Application property to enable `okhttp` communication interceptor
+[source,shell]
+----
+quarkus.log.category."okhttp3.OkHttpClient".level=INFO
+----
+
+[[con-precedence-kubernetes-service-discovery]]
+== Precedence in Kubernetes service discovery
+
+Based on the resource to be discovered, the Kubernetes service discovery follows specific paths as shown in the following figure:
+
+image::cloud/sw-discovery-flow.jpg[]
+
+[[ref-example-kubernetes-service-discovery]]
+== Example of Kubernetes service discovery in {product_name}
+
+The Kubernetes service discovery is performed at the _STATIC_INIT_ time of Quarkus during the workflow application startup. First, the service discovery scans the Quarkus configuration values and searches for the Kubernetes URI pattern. If the URI pattern is found, the engine parses the URI, queries the Kubernetes API searching for the given resource, and overrides the given application property.
+
+For example, consider an application that consumes a resource running on Kubernetes. This resource is a Knative service that exposes a function, which can be discovered using the following URI:
+
+.Example URI
+[source,shell]
+----
+org.kie.kogito.sw.knative.service=${knative:services.v1/serverless-workflow-greeting-quarkus/greeting-quarkus-cli}
+----
+
+Or you can reference a specific endpoint of the Knative service using the following URI:
+
+.Example endpoint URI
+[source,shell]
+----
+org.kie.kogito.sw.knative.service=${knative:services.v1/serverless-workflow-greeting-quarkus/greeting-quarkus-cli}/endpoint
+----
+
+[NOTE]
+====
+The service discovery engine does not read the application property `name`, but only `value`.
+====
+
+Once the workflow application is started, you can see the Kubernetes service discovery into action in the logs:
+
+.Example logs
+[source,shell]
+----
+$ java -jar target/quarkus-app/quarkus-run.jar
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2022-08-23 12:21:04,360 DEBUG [org.kie.kog.add.qua.k8s.SWDiscoveryConfigSourceInterceptor] (main) Configuring k8s client...
+2022-08-23 12:21:05,245 INFO  [io.qua.sma.ope.run.OpenApiRecorder] (main) Default CORS properties will be used, please use 'quarkus.http.cors' properties instead
+2022-08-23 12:21:05,420 DEBUG [org.kie.kog.add.qua.k8s.par.KubeURI] (main)  KubeURI successfully parsed: KubeURI{protocol='knative', gvk=GVK{group='', version='v1', kind='service'}, namespace='serverless-workflow-greeting-quarkus', resourceName='greeting-quarkus-cli'}
+2022-08-23 12:21:06,043 INFO  [org.kie.kog.add.qua.k8s.KubeResourceDiscovery] (main) Connected to kubernetes cluster  v1.23.4, current namespace is serverless-workflow-greeting-quarkus. Resource name for discovery is greeting-quarkus-cli
+2022-08-23 12:21:06,045 DEBUG [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Trying to adapt kubernetes client to knative
+2022-08-23 12:21:06,316 DEBUG [org.kie.kog.add.qua.k8s.KnativeResourceDiscovery] (main) Found Knative endpoint at http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io
+2022-08-23 12:21:06,375 INFO  [org.kie.kog.sw.AppLifecycle] (main) The application is starting
+2022-08-23 12:21:06,382 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (main) Registered Kogito CloudEvent extension
+2022-08-23 12:21:06,460 INFO  [io.quarkus] (main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080
+2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Profile prod activated.
+2022-08-23 12:21:06,462 INFO  [io.quarkus] (main) Installed features: [cache, cdi, jackson-jq, kogito-addon-kubernetes-extension, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, kubernetes, kubernetes-client, openshift-client, qute, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-openapi, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx]
+----
+
+[NOTE]
+====
+In the previous example, the URI is translated to `http://greeting-quarkus-cli.serverless-workflow-greeting-quarkus.10.99.154.147.sslip.io` when the application started. The translated URL is used at runtime when needed.
+====
+
+The Kubernetes service discovery scans the Quarkus configuration during the startup, which can also cause small delay as follows:
+
+[tabs]
+====
+Kubernetes service discovery is enabled::
++
+[source,shell]
+----
+(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 2.360s. Listening on: http://0.0.0.0:8080
+----
+Kubernetes service discovery is disabled::
++
+[source,shell]
+----
+(main) sw-service-discovery 1.0.0-SNAPSHOT on JVM (powered by Quarkus 999-SNAPSHOT) started in 1.507s. Listening on: http://0.0.0.0:8080
+----
+====
+
+[[ref-enabling-kubernetes-service-discovery]]
+== Enabling Kubernetes service discovery
+
+When using the Kubernetes service discovery feature, you need to balance if your application can afford the delayed startup time.
+
+If the URI pattern is not found in the application properties, then discovery is not triggered. However, the scanning is performed anyway. Therefore, a short time is required to go through the startup scan.
+
+=== Available service discovery implementations
+
+Currently, there are two implementations available.
+
+You can enable the Kubernetes service discovery by adding a service discovery implementation to the application's dependencies as shown in the following Maven dependencies:
+
+==== Fabric8 Kubernetes Service Catalog
+
+When activated, it leverages the Kubernetes Java API for service discovery, making it ideally suited for self-managed scenarios where users independently construct and deploy workflows.
+
+.Example Maven dependencies
+[source,xml]
+----
+<dependency>
+    <groupId>org.kie.kogito</groupId>
+    <artifactId>kogito-addons-quarkus-kubernetes</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.kie.kogito</groupId>
+    <artifactId>kogito-addons-quarkus-fabric8-kubernetes-service-catalog</artifactId>
+</dependency>
+----
+
+==== MicroProfile Config Kubernetes Service Catalog
+
+This implementation retrieves information from the application's configuration, making it valuable in scenarios where users rely on the operator to provide the necessary information from the hosting platform.
+
+.Example Maven dependencies
+[source,xml]
+----
+<dependency>
+    <groupId>org.kie.kogito</groupId>
+    <artifactId>kogito-addons-quarkus-kubernetes</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.kie.kogito</groupId>
+    <artifactId>kogito-addons-quarkus-microprofile-config-service-catalog</artifactId>
+</dependency>
+----
+
+== Additional resources
+
+* xref:use-cases/advanced-developer-use-cases/service-orchestration/configuring-openapi-services-endpoints-with-quarkus.adoc[Configuring the OpenAPI services endpoints with Quarkus]
+
+
+include::../../../../pages/_common-content/report-issue.adoc[]
