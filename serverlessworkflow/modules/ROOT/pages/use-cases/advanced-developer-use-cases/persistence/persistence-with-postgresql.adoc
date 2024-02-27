@@ -14,24 +14,19 @@
 :postgresql_doc_url: https://www.postgresql.org/docs/current/
 :flyway_url: https://flywaydb.org/
 
-This document describes how you can run your workflow application using PostgreSQL persistence.
+The {product_name} PostgreSQL persistence is provided by the `kogito-addons-quarkus-persistence-jdbc` add-on, which is based on the Java Database Connectivity (JDBC).
+Additionally, it uses the Quarkus JDBC for PostgreSQL and Argoal Datasource extensions to connect with the database. And thus, it automatically inherits all the features of these extensions.
+For more information about Quarkus and JDBC, see link:{quarkus_datasource_guide}[Quarkus Datasources].
 
-When your workflow execution requires `wait` states, then running your workflow application with persistence enabled is a recommended approach. 
+To see how to configure the PostgreSQL persistence, we recommend that follow the `serverless-workflow-callback-quarkus` example application in the link:{kogito_examples_repository_url}[GitHub repository], or apply the <<#configuration_procedure, configuration procedure>> directly in your project.
 
-For example, when a process reaches a `callback` or needs to wait for an event, then the execution of the process is paused and the engine takes a snapshot of the workflow data. The snapshot is persisted in the database as a binary format along with process metadata information. The process metadata information includes process ID, process instance ID, and process version. 
-
-Runtime persistence is used for storing data, which is required to resume the workflow execution of a process instance. Once a process is completed, the related data is removed from the database. This means that only required data to resume the execution is persisted.
-
-In {product_name}, you can enable persistence using add-ons. This document describes the use of the `kogito-addons-quarkus-persistence-jdbc` add-on, which is based on Java Database Connectivity (JDBC) along with PostgreSQL. 
-
-The `kogito-addons-quarkus-persistence-jdbc` add-on also extends on the Quarkus capabilities and you can use the available features directly from Quarkus JDBC support. For more information about Quarkus and JDBC, see link:{quarkus_datasource_guide}[Quarkus Datasources]. 
-
-You can also see the `serverless-workflow-callback-quarkus` example application in GitHub repository. To execute the `serverless-workflow-callback-quarkus` example application, you can follow the instructions mentioned in the `README` file. To clone the `kogito-example` repository, use the following command:
-
-.Clone `kogito-examples` repository
-[source,shell]
+.Getting the serverless-workflow-callback-quarkus application
+. In a command terminal, clone the `kogito-examples` repository, navigate to the cloned directory, and follow link:{kogito_sw_examples_url}/serverless-workflow-callback-quarkus/README.md[these steps]:
+[source, bash]
 ----
-git clone git@github.com:apache/incubator-kie-kogito-examples.git
+git clone https://github.com/apache/incubator-kie-kogito-examples.git
+
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-callback-quarkus
 ----
 
 .Prerequisites
@@ -41,9 +36,10 @@ include::../../../../pages/_common-content/getting-started-requirement.adoc[]
 
 [NOTE]
 ====
-This document relies on running PostgreSQL as a Docker service, even though PostgreSQL installation is mentioned as a prerequisite.
+This document relies on running PostgreSQL as a Docker service, however, if you are not following the `serverless-workflow-callback-quarkus` example you can use your own PostgreSQL installation.
 ====
 
+[#configuration_procedure]
 .Procedure
 . Add required dependencies to the `pom.xml` file of your project to use the persistence add-on:
 +
@@ -97,6 +93,7 @@ quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/postgres
 
 . Create PostgreSQL database schema.
 +
+[#create-database-schema]
 --
 The persistence add-on uses link:{flyway_url}[Flyway] to create the database schema. To enable the database schema creation during the runtime startup, you must set the following properties in the `application.properties` file.
 
@@ -166,7 +163,8 @@ The following table serves as a quick reference of commonly used persistence con
 [[postgresql-persistence-additional-resources]]
 == Additional resources
 
+* xref:use-cases/advanced-developer-use-cases/persistence/postgresql-advanced-concepts.adoc[Postgresql Advanced Concepts]
+* xref:use-cases/advanced-developer-use-cases/persistence/postgresql-flyway-migration.adoc[PostgreSQL Database Migration]
 * xref:use-cases/advanced-developer-use-cases/persistence/integration-tests-with-postgresql.adoc[{product_name} integration test using PostgreSQL]
-* xref:use-cases/advanced-developer-use-cases/persistence/postgresql-flyway-migration.adoc[Migrating Your PostgreSQL Database]
 
 include::../../../../pages/_common-content/report-issue.adoc[]

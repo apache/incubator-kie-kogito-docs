@@ -1,0 +1,55 @@
+<mxfile host="Electron" modified="2024-02-28T15:06:49.359Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="4Iq8t0b1lsZ31KtZ3L9S" version="23.1.5" type="device">
+  <diagram name="Page-1" id="ohW414weAMjfF7zPGFYP">
+    <mxGraphModel dx="979" dy="529" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="mPxZNNTQL4VJy8QZwQUN-29" value="process_instances" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="195" y="246" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="mPxZNNTQL4VJy8QZwQUN-33" value="correlation_instances" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="312.5" y="396" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="g4UiwubL2sIvR2kkYWUs-1" value="flyway_schema_history" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="246" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="g4UiwubL2sIvR2kkYWUs-2" value="Workflows Runtime Persistence PostgreSQL" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="312.5" y="126" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="g4UiwubL2sIvR2kkYWUs-5" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" source="g4UiwubL2sIvR2kkYWUs-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="264.5" y="147" as="sourcePoint" />
+            <mxPoint x="265.5" y="246" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="265" y="171" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g4UiwubL2sIvR2kkYWUs-6" value="workflow snapshots are stored in&lt;br&gt;the process_instances table" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="75" y="186" width="230" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="g4UiwubL2sIvR2kkYWUs-7" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="g4UiwubL2sIvR2kkYWUs-2" target="g4UiwubL2sIvR2kkYWUs-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="465" y="166" as="sourcePoint" />
+            <mxPoint x="510" y="241" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="510" y="171" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g4UiwubL2sIvR2kkYWUs-8" value="flyway updates on the database schema are registered in the flyway_schema_history table" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="525" y="186" width="250" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="g4UiwubL2sIvR2kkYWUs-9" value="" style="endArrow=classic;html=1;rounded=0;dashed=1;" edge="1" parent="1" target="mPxZNNTQL4VJy8QZwQUN-33">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="382.15999999999997" y="186" as="sourcePoint" />
+            <mxPoint x="382.65999999999997" y="226" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g4UiwubL2sIvR2kkYWUs-10" value="event correlations defned in a workflow are stored in the correlation_instances table" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="465" y="406" width="300" height="24" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
