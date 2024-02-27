@@ -218,7 +218,7 @@ Besides constants and secrets, you might access contextual information of the ru
  * `name`: The name of the running workflow definition
  * `instanceId`: The id of the running workflow instance
  * `headers`: Optional map containing the headers, if any, of the invocation that started the running workflow instance 
- * `prevActionResult`: In a `foreach` state, give access the result of the previous loop iteration output. 
+ * `prevActionResult`: In a `foreach` state using multiple actions per loop cycle, give access to the result of the previous action. See link:{kogito_sw_examples_url}/serverless-workflow-foreach-quarkus/src/main/resources/foreach.sw.json#L11[example]
  * `identity`: Quarkus security identity
  
  Therefore, the following function, for a serverless workflow definition whose id  is `expressionTest`, will append the string `worklow id is expressionTest` to the `message` variable
