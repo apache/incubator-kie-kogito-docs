@@ -1,11 +1,11 @@
-= Testing images of serverless workflow example applications using Quarkus CLI
+= Testing images of {product_name} example applications using Quarkus CLI
 
-After building your workflow image using Quarkus CLI, you can test the built image.
-
-TODO: Add link to previous guides
+After building the image of your application using Quarkus CLI, you can use the built image
+to do some test with your application.
 
 .Prerequisites
 * Latest version of Docker is installed.
+* Built image of your application. Go to xref:./build-workflow-image-with-quarkus-cli.adoc[] to see how.
 
 .Procedure
 . Start JVM and native Container Images.
@@ -32,9 +32,11 @@ INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final nati
 ====
 
 Note that the startup of native image is faster than the JVM image.
+The docker deploys the image on your local and you can now execute commands and start testing
+the workflows behavior.
 --
 
-. To invoke the workflow application, execute the following command once the container is started:
+. To invoke the example greeting workflow application, execute the following command once the container is started:
 +
 --
 [tabs]
@@ -60,3 +62,17 @@ Example response::
 ----
 ====
 --
+
+This command will trigger the workflows execution and return its output.
+
+More complex workflows require different kind of testing, see the additional resources
+how to extend the test coverage of your {product_name} applications.
+
+
+== Additional resources
+
+* xref:use-cases/advanced-developer-use-cases/testing/basic-integration-tests-with-restassured.adoc[]
+* xref:use-cases/advanced-developer-use-cases/testing/mocking-http-cloudevents-with-wiremock.adoc[]
+* xref:use-cases/advanced-developer-use-cases/testing/mocking-openapi-services-with-wiremock.adoc[]
+
+include::../../../../pages/_common-content/report-issue.adoc[]

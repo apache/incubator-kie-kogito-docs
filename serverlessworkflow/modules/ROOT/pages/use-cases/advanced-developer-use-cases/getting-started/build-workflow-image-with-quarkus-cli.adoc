@@ -157,70 +157,11 @@ When you are building Container Images using a remote Docker Daemon, i.e. Miniku
 For more information about native builds, see link:{quarkus_native_builds_url}[Building a native executable].
 --
 
-[[proc-testing-serverless-workflow-image]]
-== Testing your workflow image
-
-After building your workflow image using Quarkus CLI, you can test the built image.
-
-.Prerequisites
-* Latest version of Docker is installed.
-
-.Procedure
-. Start JVM and native Container Images.
-+
---
-[tabs]
-====
-Example JVM image::
-+
-[source,shell]
-----
-docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0
-...
-INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final on JVM (powered by Quarkus 2.9.2.Final) started in 1.302s
-----
-Example native image::
-+
-[source,shell]
-----
-docker run -it -p 8080:8080 quay.io/kogito/serverless-workflow-greeting-quarkus:1.0-native
-...
-INFO  [io.quarkus] (main) serverless-workflow-greeting-quarkus 1.22.1.Final native (powered by Quarkus 2.9.2.Final) started in 0.039s
-----
-====
-
-Note that the startup of native image is faster than the JVM image.
---
-
-. To invoke the workflow application, execute the following command once the container is started:
-+
---
-[tabs]
-====
-Example request::
-+
-[source,shell]
-----
-curl -X POST -H 'Content-Type:application/json' -H 'Accept:application/json' -d '{"name": "John", "language": "English"}' http://localhost:8080/jsongreet
-----
-Example response::
-+
-[source,json]
-----
-{
-    "id": "2acf710d-7e4a-481d-925c-dfd85a369987",
-    "workflowdata": {
-        "name": "John",
-        "language": "English",
-        "greeting": "Hello from JSON Workflow, "
-    }
-}
-----
-====
---
+Once you have the container image of you {product_name} application, you can proceed to deployments or start testing it locally.
 
 == Additional resources
 
+* xref:use-cases/advanced-developer-use-cases/getting-started/test-serverless-workflow-quarkus-examples.adoc[]
 * xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-minikube.adoc[Deploying your {product_name} application on Minikube]
 * xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-kubernetes.adoc[Deploying your {product_name} application on Kubernetes]
 * xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-openshift.adoc[Deploying your {product_name} application on OpenShift]
