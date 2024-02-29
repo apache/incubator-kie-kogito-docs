@@ -5,7 +5,7 @@
 :keywords: sonataflow, serverless, operator, kubernetes, jobs service
 
 
-This document describes how to configure the Jobs Service instance usimg the SonataFlowPlarform CR.
+This document describes how to configure the Jobs Service instance using the SonataFlowPlarform CR.
 
 == Automate the Jobs Service instance management with the `SonataFlow` Operator
 
@@ -15,7 +15,7 @@ Jobs Service instance and ensure it is in sync with the specification in the CR.
 it will inject properties in `SonataFlow` workflows at creation time to enable the workflows to communicate with the Jobs Service
 It is possible to deploy the Jobs Service manually, but the Operator also provides a convenient way to combine it with the namespace configuration via the `SonataFlowPlatform` CR. This approach allows the Operator to configure the Jobs Service and make sure it is in line with the Specification in CR. When the Operator manages the jobs service lifecycle, it injects properties at creation time in the `SonataFlow` workflows to communicate with the Jobs Service during execution, eliminating the need to include these properties in the workflow CR instance of the `SonataFlow` workflow.
 
-== Configuring Jobs Service in the SonataFlowPlatformCR
+== Configuring Jobs Service in the SonataFlowPlatform CR
 
 To enable the deployment of a Jobs Service instance, the `SonataFlowPlatform` CRD exposes a set of fields that allow the user to 
 configure the running instance. 
@@ -46,8 +46,8 @@ sonataflow-platform-jobs-service-cdf85d969-sbwkj   1/1     Running   0          
 
 Keep in mind that this setup is not recommended for production environments, especially because the data does not persist when the pod restarts.
 
-==== Using an existing postgreSQL service
-For robust environments, it is recommended to use a dedicated database service and configure Jobs Service to make use of it. Currently, the Jobs Service
+==== Using an existing PostgreSQL service
+For robust environments it is recommened to use an dedicated database service and configure Jobs Service to make use of it. Currently, the Jobs Service
 only supports PostgreSQL database.
 
 Configuring Jobs Service to communicate with an existing PostgreSQL instance is supported in two ways. In both cases it requires providing the persistence
@@ -100,14 +100,14 @@ When using the `jdbcUrl` field instead of `serviceRef`, the user is responsible 
 because the operator will use verbatim the contents of this field as the JDBC connection in the Jobs Service pod, and if it provides a schema that has been used or formatted 
 by a different client, the pod will fail to run.
 
-===== Using the persistency field inside the service specification
-You can specify and define the persistence configuration directly in the Jobs Service specification. The structure is the same as in the `SonataFlowPlatform` CR and also
-consist of the credentials to access the PostgreSQL instance, and the kubernetes service reference to generate the connectivity.
+===== Using the persistence field inside the service specification
+You can specify define the persistence configuration directly in the Jobs Service specification. The structure is the same as in the `SonataFlowPlatform` CR and also
+consist on the credentials to access the PostgreSQL instance, and the kubernetes service reference to generate the connectivity.
 
 [source,yaml,subs="attributes+"]
 ---
 apiVersion: sonataflow.org/v1alpha08
-kind: SonataFlow
+kind: SonataFlowPlatform
 metadata:
   name: callbackstatetimeouts
 spec:
