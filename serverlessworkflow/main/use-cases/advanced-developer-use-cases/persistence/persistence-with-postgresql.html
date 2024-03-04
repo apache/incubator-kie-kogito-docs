@@ -371,8 +371,14 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Persistence</span>
 <ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="persistence-core-concepts.html">Core Concepts</a>
+  </li>
   <li class="nav-item is-current-page" data-depth="4">
     <a class="nav-link" href="persistence-with-postgresql.html">Running a Quarkus Workflow Application using PostgreSQL</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="postgresql-advanced-concepts.html">Postgresql Advanced Concepts</a>
   </li>
   <li class="nav-item" data-depth="4">
     <a class="nav-link" href="postgresql-flyway-migration.html">PostgreSQL Database Migration</a>
@@ -642,30 +648,26 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This document describes how you can run your workflow application using PostgreSQL persistence.</p>
+<p>The SonataFlow PostgreSQL persistence is provided by the <code>kogito-addons-quarkus-persistence-jdbc</code> add-on, which is based on the Java Database Connectivity (JDBC).
+Additionally, it uses the Quarkus JDBC for PostgreSQL and Argoal Datasource extensions to connect with the database. And thus, it automatically inherits all the features of these extensions.
+For more information about Quarkus and JDBC, see <a href="https://quarkus.io/guides/datasource">Quarkus Datasources</a>.</p>
 </div>
 <div class="paragraph">
-<p>When your workflow execution requires <code>wait</code> states, then running your workflow application with persistence enabled is a recommended approach.</p>
+<p>To see how to configure the PostgreSQL persistence, we recommend that follow the <code>serverless-workflow-callback-quarkus</code> example application in the <a href="https://github.com/apache/incubator-kie-kogito-examples">GitHub repository</a>, or apply the <a href="#configuration_procedure">configuration procedure</a> directly in your project.</p>
 </div>
-<div class="paragraph">
-<p>For example, when a process reaches a <code>callback</code> or needs to wait for an event, then the execution of the process is paused and the engine takes a snapshot of the workflow data. The snapshot is persisted in the database as a binary format along with process metadata information. The process metadata information includes process ID, process instance ID, and process version.</p>
-</div>
-<div class="paragraph">
-<p>Runtime persistence is used for storing data, which is required to resume the workflow execution of a process instance. Once a process is completed, the related data is removed from the database. This means that only required data to resume the execution is persisted.</p>
-</div>
-<div class="paragraph">
-<p>In SonataFlow, you can enable persistence using add-ons. This document describes the use of the <code>kogito-addons-quarkus-persistence-jdbc</code> add-on, which is based on Java Database Connectivity (JDBC) along with PostgreSQL.</p>
-</div>
-<div class="paragraph">
-<p>The <code>kogito-addons-quarkus-persistence-jdbc</code> add-on also extends on the Quarkus capabilities and you can use the available features directly from Quarkus JDBC support. For more information about Quarkus and JDBC, see <a href="https://quarkus.io/guides/datasource">Quarkus Datasources</a>.</p>
-</div>
-<div class="paragraph">
-<p>You can also see the <code>serverless-workflow-callback-quarkus</code> example application in GitHub repository. To execute the <code>serverless-workflow-callback-quarkus</code> example application, you can follow the instructions mentioned in the <code>README</code> file. To clone the <code>kogito-example</code> repository, use the following command:</p>
+<div class="olist arabic">
+<div class="title">Getting the serverless-workflow-callback-quarkus application</div>
+<ol class="arabic">
+<li>
+<p>In a command terminal, clone the <code>kogito-examples</code> repository, navigate to the cloned directory, and follow <a href="https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-callback-quarkus/README.md">these steps</a>:</p>
+</li>
+</ol>
 </div>
 <div class="listingblock">
-<div class="title">Clone <code>kogito-examples</code> repository</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">git clone git@github.com:apache/incubator-kie-kogito-examples.git</code></pre>
+<pre>git clone https://github.com/apache/incubator-kie-kogito-examples.git
+
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-callback-quarkus</pre>
 </div>
 </div>
 <div class="ulist">
@@ -693,13 +695,13 @@
 </td>
 <td class="content">
 <div class="paragraph">
-<p>This document relies on running PostgreSQL as a Docker service, even though PostgreSQL installation is mentioned as a prerequisite.</p>
+<p>This document relies on running PostgreSQL as a Docker service, however, if you are not following the <code>serverless-workflow-callback-quarkus</code> example you can use your own PostgreSQL installation.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
-<div class="olist arabic">
+<div id="configuration_procedure" class="olist arabic">
 <div class="title">Procedure</div>
 <ol class="arabic">
 <li>
@@ -760,7 +762,7 @@ quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/postgres</code></pr
 </li>
 <li>
 <p>Create PostgreSQL database schema.</p>
-<div class="openblock">
+<div id="create-database-schema" class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>The persistence add-on uses <a href="https://flywaydb.org/">Flyway</a> to create the database schema. To enable the database schema creation during the runtime startup, you must set the following properties in the <code>application.properties</code> file.</p>
@@ -868,10 +870,13 @@ quarkus.datasource.db-kind=postgresql</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="integration-tests-with-postgresql.html" class="xref page">SonataFlow integration test using PostgreSQL</a></p>
+<p><a href="postgresql-advanced-concepts.html" class="xref page">Postgresql Advanced Concepts</a></p>
 </li>
 <li>
-<p><a href="postgresql-flyway-migration.html" class="xref page">Migrating Your PostgreSQL Database</a></p>
+<p><a href="postgresql-flyway-migration.html" class="xref page">PostgreSQL Database Migration</a></p>
+</li>
+<li>
+<p><a href="integration-tests-with-postgresql.html" class="xref page">SonataFlow integration test using PostgreSQL</a></p>
 </li>
 </ul>
 </div>
