@@ -1,0 +1,44 @@
+= Core Concepts
+:compat-mode!:
+// Metadata:
+:description: Running Quarkus Workflow Application using PostgresSQL
+:keywords: kogito, workflow, quarkus, serverless, quarkus-cli, persistence, postgresql
+
+The {product_name} workflow runtime persistence is the mechanism to ensure that your workflow instances remain consistent in the context of an error or a runtime restart. For example, a pod restart, a programmed maintenance shutdown, etc.
+
+Every workflow instance requires some status information and data to execute, this information is automatically managed by the workflow's runtime and is persisted at different moments of the workflow execution.
+
+For example, when a workflow instance reaches a state that needs to wait for an event, the engine takes a snapshot of the most relevant information, stores it in the database, and pauses that instance execution.
+In this way, resources like memory are released and can be used by other executing instances.
+
+This snapshot contains the workflow id, the instance id and version, the workflow data, and other relevant information required to resume that instance execution when the expected event arrives.
+
+When the persistence is not configured, an in-memory repository is used, making all this information volatile upon runtime restarts.
+And thus, if the workflow runtime is restarted while the workflow is waiting for the event, and the event arrives at a later point in time, that instance won't be resumed.
+
+image::persistence/Persistence-Core-Concepts.png[]
+
+[NOTE]
+====
+For non-testing or development environments, it's strongly recommended to configure any of the available persistence mechanisms.
+====
+
+Finally, to configure the persistence for a given Quarkus Workflow Project you must:
+
+1. Add the {product_name} persistence addon required for the database type of your choice
+2. Add other quarkus database connectivity extensions that usually depends on the selected database type
+3. Set the necessary configuration parameters in the `application.properties`
+
+image::persistence/Persistence-Configuration.png[]
+
+[[postgresql-persistence-additional-resources]]
+== Additional resources
+
+* xref:use-cases/advanced-developer-use-cases/persistence/persistence-with-postgresql.adoc[{product_name} Persistence with PostreSQL]
+* xref:use-cases/advanced-developer-use-cases/persistence/postgresql-advanced-concepts.adoc[Postgresql Advanced Concepts]
+* xref:use-cases/advanced-developer-use-cases/persistence/postgresql-flyway-migration.adoc[PostgreSQL Database Migration]
+* xref:use-cases/advanced-developer-use-cases/persistence/integration-tests-with-postgresql.adoc[{product_name} integration test using PostgreSQL]
+
+
+include::../../../_common-content/report-issue.adoc[]
+
