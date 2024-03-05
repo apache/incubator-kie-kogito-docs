@@ -1,0 +1,79 @@
+The Kubernetes service discovery allows you to describe the Kubernetes resource you want to perform HTTP requests on using a custom URI. Under the hood, it will discover the network endpoint (URL) to where to make the request.
+
+The service discovery occurs during the operator managed deployment of a workflow, or during the application startup if you are using a standalone Quarkus Workflow Project.
+In both cases, this feature scans all the Quarkus configurations in search of the URI pattern. Therefore, you must remember that if the application startup time matters, consider using a known static URL instead.
+
+Following is the custom URI pattern in Kubernetes service discovery:
+
+.URI pattern in Kubernetes service discovery
+[source,shell]
+----
+kubernetes:<kind>.<version>.<group>/<namespace>/<resourceName>?<attributeName>=<attributeValue>
+\________/ \____/ \_______/ \_____/ \_________/ \____________/ \______________________________/
+  scheme    kind   version   group   namespace   resourceName   additional resource attributes
+            \____________________/                               \__________________________/
+                     GVK                                           Supported values:
+                                                                   - port=<PORT_NAME>
+                                                                   - label-name1=label-value1
+                                                                   - label-name2=label-value2
+----
+
+The following scheme values are supported in the URI pattern:
+
+* `kubernetes`
+* `openshift`
+* `knative`
+
+The following resources are supported for the Kubernetes GVK (Group, Version, and Kind):
+
+* `services.v1`
+* `services.v1.serving.knative.dev`
+* `pods.v1`
+* `deployments.v1.apps`
+* `deploymentconfigs.v1.apps.openshift.io`
+* `statefulsets.v1.apps`
+* `routes.v1.route.openshift.io`
+* `ingresses.v1.networking.k8s.io`
+
+[NOTE]
+====
+When using `knative`, you can also use a simplified URI like:
+
+[source]
+----
+knative:<namespace>/<serviceName>
+----
+
+The above URI looks directly for services.v1.serving.knative.dev resource.
+====
+
+[IMPORTANT]
+====
+The `namespace` in the URI is optional, however, if `namespace` contains an empty value, the current namespace or context is used.
+====
+
+Query parameters in URI::
++
+--
+Also known as query string. The query parameters are defined the similar way with URLs to assign value to specific attributes.
+
+The following query parameters help the engine to be more precise when querying for a given Kubernetes resource:
+
+* *Custom labels*: The custom labels are used to filter services in case there are more than one service with the same label selector but exposing different ports. In this case, you can instruct the engine that if more than one service is found, then the engine must use the service containing the provided label.
++
+The label is defined with the following expression and in case of multiple labels, you can use ampersand (&):
++
+`label-name1=label-value1&label-name2=label-value2`
++
+.Example label definition in URI
+[source,shell]
+----
+kubernetes:pods.v1/<namespace>/<pod-name>?tier=backend
+----
++
+Using the previous URI example, if there are more than one service exposing the given pod, the `tier=backend` label is used to filter the service. If the label does not exist, the first found service is used.
+
+* *Custom port*: The custom `port` is used to determine which port to use when multiple ports are configured in the target service. You can configure the port name to be queried using the following pattern:
++
+`port=<PORT_NAME>`
+--
