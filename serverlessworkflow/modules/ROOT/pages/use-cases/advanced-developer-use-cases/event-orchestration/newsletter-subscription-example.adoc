@@ -1,4 +1,4 @@
-= Newsletter Subscription example in {product_name}
+= Newsletter subscription example in {product_name}
 
 :compat-mode!:
 // Metadata:
@@ -19,10 +19,10 @@ The figure below illustrates the overall architecture of this use case.
 image::use-cases/newsletter-subscription/architecture.png[Architecture]
 
 . Once a new subscription request comes, the flow will evaluate if it's not already subscribed.
-. If not, it will attempt to subscribe the new user and wait for the confirmation.
-. Once a new event containing the confirmation arrives, the flow will resume and subscribe the new user.
-. Subscriptions that are not confirmed during a configured period of time, are considered timed-out and are automatically removed from the system.
-. By the end, a new event containing the details of the subscription is broadcasted in the environment, so other actors can react upon it.
+. If not, it will attempt to subscribe to the newsletter, the new user and wait for the confirmation.
+. Once a new event containing the confirmation arrives, the flow will resume and proceed with the new user subscription.
+. Subscriptions not confirmed during a configured period are considered timed-out and automatically removed from the system.
+. By the end, a new event containing the details of the subscription is broadcast in the environment, so other actors can react to it.
 
 Here we have the Newsletter Subscription workflow:
 
@@ -191,16 +191,16 @@ image::use-cases/newsletter-subscription/newsletter-subscription-flow.png[Workfl
 
 The newsletter-subscription example involves two services:
 
-* Newsletter subscription application. It allows to create new subscriptions and runs the workflow.
-* Newsletter subscription Backend. It allows to see the pending and the approved subscriptions
+* Newsletter subscription application. It allows you to create new subscriptions and runs the workflow.
+* Newsletter subscription Backend. It allows you to see the pending and approved subscriptions
 
-Both services provide specific user interface to allow to track what's going on with the subscriptions
+Both services provide specific user interfaces to allow to track what's going on with the subscriptions
 
 [#workflow_newsletter_subscription_ui]
 == The User Interface
-As a Quarkus project, the UI resources can be placed at folder `src/main/resources/META-INF/resources`.
+As a Quarkus project, you can place the UI resources in the `src/main/resources/META-INF/resources` folder.
 
-The Newsletter Subscription Application (subscription-flow) has a user interface to interact with the workflow without having to rely on the command line to push events or making HTTP requests:
+The Newsletter Subscription Application (subscription-flow) has a user interface to interact with the workflow without having to rely on the command line to push events or make HTTP requests:
 
 The used resources are available at link:{flow_newsletter_subscription_url}/subscription-flow/src/main/resources/META-INF/resources[Newsletter Subscription Application flow UI resources].
 
@@ -229,14 +229,14 @@ cd kogito-examples/serverless-workflow-examples/serverless-workflow-newsletter-s
 
 The following diagram shows the architecture for this use case:
 
-. Every time a workflow needs to program a timer for a given timeout, a cloud event is sent to the {job_service_xref}#integration-with-the-workflows[job service] for that purpose.
+. Whenever a workflow needs to program a timer for a given timeout, a cloud event is sent to the {job_service_xref}#integration-with-the-workflows[job service] for that purpose.
 . When a timer is overdue, a rest call is executed to notify the workflow, which then must execute according to the given state semantic.
 . Workflow and job status changes are propagated to the {data_index_xref}[data index service] via cloud events.
 
 .Knative Workflow with Job Service architecture
 image::use-cases/newsletter-subscription/newsletter-subscription-Architecture.png[]
 
-* *subscription-flow:* Is the Quarkus Workflow Project that contains the workflows that must be maven build, and deployed into the kubernetes cluster.
+* *subscription-flow:* Is the Quarkus Workflow Project that contains the workflows that must be maven built, and deployed into the kubernetes cluster.
 
 * *subscription-service:* Is the Quarkus Workflow Project that contains the backend operations, that must be maven built, and deployed into the kubernetes cluster.
 
@@ -248,7 +248,7 @@ image::use-cases/newsletter-subscription/newsletter-subscription-Architecture.pn
 
 [NOTE]
 ====
-For simplification purposes, a single database instance is used for both services to store the information about the workflow instances, and the timers.  However, in a production environment it is recommended to have independent database instances.
+For simplification purposes, a single database instance is used for both services to store the information about the workflow instances, and the timers.  However, in a production environment, it is recommended to have independent database instances.
 ====
 
 
