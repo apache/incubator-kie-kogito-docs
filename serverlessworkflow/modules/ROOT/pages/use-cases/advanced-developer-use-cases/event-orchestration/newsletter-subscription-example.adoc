@@ -1,0 +1,264 @@
+= Newsletter subscription example in {product_name}
+
+:compat-mode!:
+// Metadata:
+:description: Newsletter subscription example in {product_name}
+:keywords: kogito, workflow, serverless
+:flow_newsletter_subscription_url: {kogito_sw_examples_url}/serverless-workflow-newsletter-subscription
+
+This example demonstrates a few features powered by the {product_name} following the Serverless Workflow specification including:
+
+* REST Services calls via OpenAPI definitions
+* Pause and resume of a given workflow instance
+* Consuming and producing CloudEvents
+
+In a Knative environment, the services involved in this use case can be scaled to zero and resume from the exact stage it was, saving cluster resources in the process.
+
+The figure below illustrates the overall architecture of this use case.
+
+image::use-cases/newsletter-subscription/architecture.png[Architecture]
+
+. Once a new subscription request comes, the flow will evaluate if it's not already subscribed.
+. If not, it will attempt to subscribe to the newsletter, the new user and wait for the confirmation.
+. Once a new event containing the confirmation arrives, the flow will resume and proceed with the new user subscription.
+. Subscriptions not confirmed during a configured period are considered timed-out and automatically removed from the system.
+. By the end, a new event containing the details of the subscription is broadcast in the environment, so other actors can react to it.
+
+Here we have the Newsletter Subscription workflow:
+
+.newsletter-subscription-flow workflow
+image::use-cases/newsletter-subscription/newsletter-subscription-flow.png[Workflow]
+
+.Newsletter subscription flow workflow definition
+[source,json]
+----
+{
+  "id": "subscription_flow",
+  "dataInputSchema": "subscription-schema.json",
+  "specVersion": "0.8",
+  "version": "1.0",
+  "start": "VerifyEmail",
+  "events": [
+    {
+      "kind": "produced",
+      "type": "new.subscription",
+      "name": "NewSubscriptionEvent"
+    },
+    {
+      "kind": "consumed",
+      "type": "confirm.subscription",
+      "name": "ConfirmSubscriptionEvent"
+    }
+  ],
+  "functions": [
+    {
+      "name": "subscribeToNewsletter",
+      "operation": "specs/subscription-service.yaml#subscribe"
+    },
+    {
+      "name": "confirmSubscription",
+      "operation": "specs/subscription-service.yaml#confirm"
+    },
+    {
+      "name": "deleteSubscription",
+      "operation": "specs/subscription-service.yaml#delete"
+    },
+    {
+      "name": "verifyEmail",
+      "operation": "specs/subscription-service.yaml#verify"
+    }
+  ],
+  "states": [
+    {
+      "name": "VerifyEmail",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "verifyEmail",
+            "arguments": {
+              "email": "${ .email }"
+            }
+          }
+        }
+      ],
+      "transition": {
+        "nextState": "ExitIfEmailExists"
+      }
+    },
+    {
+      "name": "ExitIfEmailExists",
+      "type": "switch",
+      "dataConditions": [
+        {
+          "condition": "${ .emailExists == true }",
+          "transition": {
+            "nextState": "NoSubscription"
+          }
+        },
+        {
+          "condition": "${ .emailExists == false }",
+          "transition": {
+            "nextState": "SubscribeAndWaitForConfirmation"
+          }
+        }
+      ]
+    },
+    {
+      "name": "SubscribeAndWaitForConfirmation",
+      "type": "callback",
+      "action": {
+        "functionRef": {
+          "refName": "subscribeToNewsletter",
+          "arguments": {
+            "email": "${ .email }",
+            "id": "$WORKFLOW.instanceId",
+            "name": "${ .name }"
+          }
+        }
+      },
+      "eventRef": "ConfirmSubscriptionEvent",
+      "transition": {
+        "nextState": "CheckConfirmation"
+      },
+      "timeouts": {
+        "eventTimeout": "PT3M"
+      }
+    },
+    {
+      "name" : "CheckConfirmation",
+      "type" : "switch",
+      "dataConditions": [
+        {
+          "condition": "${ .confirmed == true }",
+          "transition": "ConfirmSubscription"
+        }
+      ],
+      "defaultCondition": {
+        "transition": "DeleteSubscription"
+      }
+    },
+    {
+      "name": "ConfirmSubscription",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "confirmSubscription",
+            "arguments": {
+              "email": "${ .email }",
+              "id": "$WORKFLOW.instanceId",
+              "name": "${ .name }"
+            }
+          }
+        }
+      ],
+      "end": {
+        "produceEvents": [
+          {
+            "eventRef": "NewSubscriptionEvent"
+          }
+        ],
+        "terminate": true
+      }
+    },
+    {
+      "name": "DeleteSubscription",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "deleteSubscription",
+            "arguments": {
+              "id": "$WORKFLOW.instanceId"
+            }
+          }
+        }
+      ],
+      "end": true
+    },
+    {
+      "name": "NoSubscription",
+      "type": "inject",
+      "data": {
+        "subscribed": true
+      },
+      "end": true
+    }
+  ]
+}
+----
+
+The newsletter-subscription example involves two services:
+
+* Newsletter subscription application. It allows you to create new subscriptions and runs the workflow.
+* Newsletter subscription Backend. It allows you to see the pending and approved subscriptions
+
+Both services provide specific user interfaces to allow to track what's going on with the subscriptions
+
+[#workflow_newsletter_subscription_ui]
+== The User Interface
+As a Quarkus project, you can place the UI resources in the `src/main/resources/META-INF/resources` folder.
+
+The Newsletter Subscription Application (subscription-flow) has a user interface to interact with the workflow without having to rely on the command line to push events or make HTTP requests:
+
+The used resources are available at link:{flow_newsletter_subscription_url}/subscription-flow/src/main/resources/META-INF/resources[Newsletter Subscription Application flow UI resources].
+
+.Newsletter subscription user interface
+image::use-cases/newsletter-subscription/newsletter-subscription-ui.png[Newsletter subscription UI]
+
+The Newsletter Subscription backend (subscription-service) has a user interface to see the state of the existing subscriptions
+
+The used resources are available at link:{flow_newsletter_subscription_url}/subscription-service/src/main/resources/META-INF/resources[Subscription service UI resources].
+
+.Newsletter subscription backend user interface
+image::use-cases/newsletter-subscription/newsletter-subscription-backend-ui.png[Newsletter subscription backend UI]
+
+== Executing the workflows
+
+In a command terminal, clone the `kogito-examples` repository, navigate to the cloned directory, and follow link:{kogito_sw_examples_url}/serverless-workflow-newsletter-subscription/README.md#running-on-knative[these steps]:
+
+[source, bash]
+----
+git clone https://github.com/apache/incubator-kie-kogito-examples.git
+
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-newsletter-subscription
+----
+
+=== Architecture
+
+The following diagram shows the architecture for this use case:
+
+. Whenever a workflow needs to program a timer for a given timeout, a cloud event is sent to the {job_service_xref}#integration-with-the-workflows[job service] for that purpose.
+. When a timer is overdue, a rest call is executed to notify the workflow, which then must execute according to the given state semantic.
+. Workflow and job status changes are propagated to the {data_index_xref}[data index service] via cloud events.
+
+.Knative Workflow with Job Service architecture
+image::use-cases/newsletter-subscription/newsletter-subscription-Architecture.png[]
+
+* *subscription-flow:* Is the Quarkus Workflow Project that contains the workflows that must be maven built, and deployed into the kubernetes cluster.
+
+* *subscription-service:* Is the Quarkus Workflow Project that contains the backend operations, that must be maven built, and deployed into the kubernetes cluster.
+
+* *jobs-service-postresql:* Is the job service that will be deployed into the kubernetes cluster.
+
+* *data-index-service-postgresql:* Is the data index service that will be deployed into the kubernetes cluster.
+
+* *timeouts-showcase-database:* Is the PostgreSQL instance that will be deployed into the kubernetes cluster.
+
+[NOTE]
+====
+For simplification purposes, a single database instance is used for both services to store the information about the workflow instances, and the timers.  However, in a production environment, it is recommended to have independent database instances.
+====
+
+
+For more information about knative eventing outgoing CloudEvents over HTTP, see xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-produce-events-with-knative-eventing.adoc[].
+
+
+== Additional resources
+
+* xref:core/timeouts-support.adoc[Timeouts support in {product_name}]
+* xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-minikube.adoc[]
+* xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-produce-events-with-knative-eventing.adoc[]
+
+include::../../../_common-content/report-issue.adoc[]
