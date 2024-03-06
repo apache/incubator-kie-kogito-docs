@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Install the SonataFlow Operator :: SonataFlow Guides</title>
-    <meta name="description" content="Install the operator on Kubernetes clusters">
-    <meta name="keywords" content="kogito, sonataflow, workflow, serverless, operator, kubernetes, minikube, openshift, containers">
+    <title>Managing Jobs Service with the Operator :: SonataFlow Guides</title>
+    <meta name="description" content="Configure Jobs Service using the `SonataFlowPlatform` CR.">
+    <meta name="keywords" content="sonataflow, serverless, operator, kubernetes, jobs service">
     <meta name="generator" content="Antora 3.1.4">
     <link rel="stylesheet" href="../../../../_/css/site.css">
 <link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
@@ -247,7 +247,7 @@
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Operator</span>
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="3">
+  <li class="nav-item" data-depth="3">
     <a class="nav-link" href="install-serverless-operator.html">Installation</a>
   </li>
   <li class="nav-item" data-depth="3">
@@ -606,24 +606,22 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../index.html">SonataFlow Guides</a></li>
-    <li><a href="../index.html">Cloud</a></li>
-    <li>Operator</li>
-    <li><a href="install-serverless-operator.html">Installation</a></li>
+    <li><a href="enabling-jobs-service.html">Managing Jobs Service with the Operator</a></li>
   </ul>
 </nav>
 <div class="page-versions">
   <button class="version-menu-toggle" title="Show other versions of page">snapshot</button>
   <div class="version-menu">
-    <a class="version is-current" href="install-serverless-operator.html">snapshot</a>
-    <a class="version" href="../../../1.45.0-SNAPSHOT/cloud/operator/install-serverless-operator.html">1.45-RC</a>
-    <a class="version" href="../../../1.44.0-SNAPSHOT/cloud/operator/install-serverless-operator.html">1.44-RC</a>
-    <a class="version" href="../../../latest/cloud/operator/install-serverless-operator.html">1.43</a>
-    <a class="version" href="../../../1.42.0.Final/cloud/operator/install-serverless-operator.html">1.42</a>
-    <a class="version" href="../../../1.41.0.Final/cloud/operator/install-serverless-operator.html">1.41</a>
-    <a class="version" href="../../../1.40.0.Final/cloud/operator/install-serverless-operator.html">1.40</a>
-    <a class="version" href="../../../1.39.0.Final/cloud/operator/install-serverless-operator.html">1.39</a>
-    <a class="version" href="../../../1.38.0.Final/cloud/operator/install-serverless-operator.html">1.38</a>
-    <a class="version" href="../../../1.37.0.Final/cloud/operator/install-serverless-operator.html">1.37</a>
+    <a class="version is-current" href="enabling-jobs-service.html">snapshot</a>
+    <a class="version is-missing" href="../../../1.45.0-SNAPSHOT/index.html">1.45-RC</a>
+    <a class="version is-missing" href="../../../1.44.0-SNAPSHOT/index.html">1.44-RC</a>
+    <a class="version is-missing" href="../../../latest/index.html">1.43</a>
+    <a class="version is-missing" href="../../../1.42.0.Final/index.html">1.42</a>
+    <a class="version is-missing" href="../../../1.41.0.Final/index.html">1.41</a>
+    <a class="version is-missing" href="../../../1.40.0.Final/index.html">1.40</a>
+    <a class="version is-missing" href="../../../1.39.0.Final/index.html">1.39</a>
+    <a class="version is-missing" href="../../../1.38.0.Final/index.html">1.38</a>
+    <a class="version is-missing" href="../../../1.37.0.Final/index.html">1.37</a>
     <a class="version is-missing" href="../../../1.36.1.Final/index.html">1.36</a>
     <a class="version is-missing" href="../../../1.35.0.Final/index.html">1.35</a>
     <a class="version is-missing" href="../../../1.34.0.Final/index.html">1.34</a>
@@ -639,254 +637,220 @@
     <a class="version is-missing" href="../../../1.24.1.Final/index.html">1.24</a>
   </div>
 </div>
-  <div class="edit-this-page"><a href="https://github.com/apache/incubator-kie-kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/cloud/operator/install-serverless-operator.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/incubator-kie-kogito-docs/edit/main/serverlessworkflow/modules/ROOT/pages/cloud/operator/enabling-jobs-service.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Install the SonataFlow Operator</h1>
+<h1 class="page">Managing Jobs Service with the Operator</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This guide describes how to install the SonataFlow Operator in a Kubernetes or OpenShift cluster. The operator is in an <a href="known-issues.html" class="xref page">early development stage</a> (community only) and has been tested on OpenShift 4.1, Kubernetes {kubernetes_version}, and <a href="https://minikube.sigs.k8s.io">Minikube</a>.</p>
-</div>
-<div class="ulist">
-<div class="title">Prerequisites</div>
-<ul>
-<li>
-<p>A Kubernetes or OpenShift cluster with admin privileges. Alternatively, you can use Minikube or KIND.</p>
-</li>
-<li>
-<p><code>kubectl</code> command-line tool is installed. Otherwise, Minikube provides it.</p>
-</li>
-</ul>
+<p>This document describes how to configure the Jobs Service instance using the SonataFlowPlarform CR.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_sonataflow_operator_openshift_installation"><a class="anchor" href="#_sonataflow_operator_openshift_installation"></a>SonataFlow Operator OpenShift installation</h2>
+<h2 id="_automate_the_jobs_service_instance_management_with_the_sonataflow_operator"><a class="anchor" href="#_automate_the_jobs_service_instance_management_with_the_sonataflow_operator"></a>Automate the Jobs Service instance management with the <code>SonataFlow</code> Operator</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To install the operator on OpenShift refer to the "<a href="https://docs.openshift.com/container-platform/4.13/operators/admin/olm-adding-operators-to-cluster.html">Adding Operators to a cluster</a>" from the OpenShift&#8217;s documentation.</p>
+<p>It is possible to deploy the Jobs Service manually, leveraging the Operator offers a more seamless integration by
+combining it with namespace configuration through the SonataFlowPlatform Custom Resource (CR). When the Operator oversees
+the lifecycle of the jobs service, it automatically injects necessary properties during creation into the SonataFlow workflows.
+This integration eliminates the need for including these properties within the SonataFlow workflow CR instance, simplifying workflow management.
+== Configuring Jobs Service in the SonataFlowPlatform CR</p>
 </div>
 <div class="paragraph">
-<p>When searching for the operator in the <strong>Filter by keyword</strong> field, use the word <code>sonataflow</code>. If you&#8217;re installing from the CLI, the operator&#8217;s catalog name is <code>sonataflow-operator</code>.</p>
+<p>To enable the deployment of a Jobs Service instance, the <code>SonataFlowPlatform</code> CRD exposes a set of fields that allow the user to
+configure the running instance.</p>
 </div>
 <div class="sect2">
-<h3 id="_uninstall"><a class="anchor" href="#_uninstall"></a>Uninstall</h3>
+<h3 id="_ephemeral_persistence"><a class="anchor" href="#_ephemeral_persistence"></a>Ephemeral persistence</h3>
 <div class="paragraph">
-<p>To remove the operator on OpenShift refer to the "<a href="https://docs.openshift.com/container-platform/4.13/operators/admin/olm-deleting-operators-from-cluster.html">Deleting Operators from a cluster</a>" from the OpenShift&#8217;s documentation.</p>
+<p>The basic runtime is to deploy the Jobs Service with an ephemeral backend running in the same container
+as the Jobs Service runtime.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  services:
+    jobService: {}
+---</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When executing this manifest, the operator will reconcile generating a pod hosting the Jobs Service:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">---
+$&gt;kubectl get pod -n sonataflow
+NAME                                               READY   STATUS    RESTARTS   AGE
+sonataflow-platform-jobs-service-cdf85d969-sbwkj   1/1     Running   0          108s
+---</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Keep in mind that this setup is not recommended for production environments, especially because the data does not persist when the pod restarts.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_an_existing_postgresql_service"><a class="anchor" href="#_using_an_existing_postgresql_service"></a>Using an existing PostgreSQL service</h3>
+<div class="paragraph">
+<p>For robust environments it is recommened to use an dedicated database service and configure Jobs Service to make use of it. Currently, the Jobs Service
+only supports PostgreSQL database.</p>
+</div>
+<div class="paragraph">
+<p>Configuring Jobs Service to communicate with an existing PostgreSQL instance is supported in two ways. In both cases it requires providing the persistence
+configuration, one by using the Jobs Service&#8217;s persistence field and the other one using the persistence field defined in the <code>SonataFlowPlatform</code> CR
+deployed in the same namespace.</p>
+</div>
+<div class="paragraph">
+<p>By default, the persistence specification defined in the <code>SonataFlow</code> workflow&#8217;s CR takes priority over the one in the <code>SonataFlowPlatform</code> persistence specification.</p>
+</div>
+<div class="sect3">
+<h4 id="_using_the_persistence_field_defined_in_the_sonataflowplatform_cr"><a class="anchor" href="#_using_the_persistence_field_defined_in_the_sonataflowplatform_cr"></a>Using the persistence field defined in the <code>SonataFlowPlatform</code> CR</h4>
+<div class="paragraph">
+<p>Using the persistence configuration in the <code>SonataFlowPlatform</code> CR located in the same namespace requires to have the <code>SonataFlow</code> CR persistence field configured
+to have an empty <code>{}</code> value, signaling the Operator to derive the persistence from the active <code>SonataFlowPlatform</code>, when available. If no persistence is defined
+the operator will fallback to the ephemeral persistence previously described.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  persistence:
+    postgresql:
+      secretRef:
+        name: postgres-secrets
+        userKey: POSTGRES_USER
+        passwordKey: POSTGRES_PASSWORD
+      serviceRef:
+        name: postgres
+        port: 5432
+        databaseName: sonataflow
+---</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And the <code>SonataFlow</code> CR looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: callbackstatetimeouts
+  annotations:
+    sonataflow.org/description: Callback State Timeouts Example k8s
+    sonataflow.org/version: 0.0.1
+spec:
+  persistence: {}
+...
+---</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When using the <code>jdbcUrl</code> field instead of <code>serviceRef</code>, the user is responsible for providing the correct JDBC URL connection value that does not contain a <code>database schema</code>
+because the operator will use verbatim the contents of this field as the JDBC connection in the Jobs Service pod, and if it provides a schema that has been used or formatted
+by a different client, the pod will fail to run.</p>
+</div>
+<div class="sect4">
+<h5 id="_using_the_persistence_field_inside_the_service_specification"><a class="anchor" href="#_using_the_persistence_field_inside_the_service_specification"></a>Using the persistence field inside the service specification</h5>
+<div class="paragraph">
+<p>You can specify define the persistence configuration directly in the Jobs Service specification. The structure is the same as in the <code>SonataFlowPlatform</code> CR and also
+consist on the credentials to access the PostgreSQL instance, and the kubernetes service reference to generate the connectivity.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: callbackstatetimeouts
+spec:
+  persistence:
+    postgresql:
+      secretRef:
+        name: postgres-secrets
+        userKey: POSTGRES_USER
+        passwordKey: POSTGRES_PASSWORD
+      serviceRef:
+        name: postgres
+        port: 5432
+        databaseName: sonataflow
+        databaseSchema: jobs-service
+---</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example we&#8217;re using a PostgreSQL service located in the same namespace where the Jobs Service is deployed, pointing to the default PostgreSQL port of 5432
+and referencing the database <code>sonataflow</code> and schema <code>jobs-service</code>. By default, when the Jobs Service pod starts it will recreate the schema in the given location
+if it doesn&#8217;t exist.</p>
+</div>
+<div class="paragraph">
+<p>The values of <code>POSTGRES_USER</code> and <code>POSTGRES_PASSWORD</code> point to the keys in the secret that contains the PostgreSQL credentials.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">---
+$&gt;kubectl describe secrets postgres-secrets
+Name:         postgres-secrets
+Namespace:    default
+Labels:       &lt;none&gt;
+Annotations:  &lt;none&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Type:  Opaque</p>
+</div>
+<div class="paragraph">
+<p>Data
+\\\\====
+PGDATA:             28 bytes
+POSTGRES_DATABASE:  10 bytes
+POSTGRES_PASSWORD:  10 bytes
+POSTGRES_USER:      10 bytes
+---</p>
+</div>
+<div class="paragraph">
+<p>Putting everything together will render an output similar to this one below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">---
+$&gt;kubectl get pod -w -n sonataflow
+NAME                                                READY   STATUS    RESTARTS   AGE
+postgres-64c9ddb6bc-v96qb                           1/1     Running   0          14m
+sonataflow-platform-jobs-service-79bb6bc67f-gvcg4   1/1     Running   0           1m
+---</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_sonataflow_operator_kubernetes_installation"><a class="anchor" href="#_sonataflow_operator_kubernetes_installation"></a>SonataFlow Operator Kubernetes installation</h2>
+<h2 id="_conclusion"><a class="anchor" href="#_conclusion"></a>Conclusion</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To install the operator on Kubernetes refer to the  "<a href="https://operatorhub.io/how-to-install-an-operator">How to install an Operator from OperatorHub.io</a>" from the OperatorHub&#8217;s documentation.</p>
-</div>
-<div class="paragraph">
-<p>When <a href="https://operatorhub.io/">searching for the operator in the <strong>Search OperatorHub</strong> field</a>, use the word <code>sonataflow</code>.</p>
-</div>
-<div class="sect2">
-<h3 id="_uninstall_2"><a class="anchor" href="#_uninstall_2"></a>Uninstall</h3>
-<div class="paragraph">
-<p>To remove the operator on Kubernetes follow the document "<a href="https://olm.operatorframework.io/docs/tasks/uninstall-operator/">Uninstall your operator</a>" from the OLM&#8217;s documentation.</p>
-</div>
-<div class="paragraph">
-<p>When searching for the subscription to remove, use the word <code>my-sonataflow-operator</code>.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_sonataflow_operator_manual_installation"><a class="anchor" href="#_sonataflow_operator_manual_installation"></a>SonataFlow Operator Manual Installation</h2>
-<div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If you&#8217;re running on Kubernetes or OpenShift, it is highly recommended to install the operator from the OperatorHub or OpenShift Console instead since the installation is managed by OLM. Use this method only if you need a snapshot version or you&#8217;re running locally on Minikube or KIND.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_prepare_a_minikube_instance"><a class="anchor" href="#_prepare_a_minikube_instance"></a>Prepare a Minikube instance</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>You can safely skip this section if you&#8217;re not using Minikube.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="ulist">
-<div class="title">Prerequisites</div>
-<ul>
-<li>
-<p>A machine with at least 8GB memory and a <a href="https://en.wikipedia.org/wiki/Multi-core_processor">CPU with 8 cores</a></p>
-</li>
-<li>
-<p>Docker or Podman installed</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Run the following command to create a new instance capable of installing the operator and deploy workflows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">minikube start --cpus 4 --memory 4096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>To speed up the build time, you can increase the CPUs and memory options so that your Minikube instance will have more resources. For example, use <code>--cpus 12 --memory 16384</code>. If you have already created your Minikube instance, you will need to recreate it for these changes to apply.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>If Minikube does not work with the default driver, also known as <code>docker</code>, you can try to start with the <code>podman</code> driver as follows:</p>
-</div>
-<div class="listingblock">
-<div class="title">Start Minikube with the Podman driver</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">minikube start [...] --driver podman</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_install"><a class="anchor" href="#_install"></a>Install</h3>
-<div class="paragraph">
-<p>To install the SonataFlow Operator, you can use the following command:</p>
-</div>
-<div class="listingblock">
-<div class="title">Install SonataFlow Operator on Kubernetes</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl create -f https://raw.githubusercontent.com/apache/incubator-kie-kogito-serverless-operator/main/operator.yaml</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can also specify a version:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/v&lt;version&gt;/operator.yaml</pre>
-</div>
-</div>
-<div class="paragraph">
-<p><code>&lt;version&gt;</code> could be <code>1.43.0</code> for instance.</p>
-</div>
-<div class="paragraph">
-<p>You can follow the deployment of the SonataFlow Operator:</p>
-</div>
-<div class="listingblock">
-<div class="title">Watch the SonataFlow Operator pod</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get pod -n sonataflow-operator-system --watch</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>A successful installation should have an output like this:</p>
-</div>
-<div class="listingblock">
-<div class="title">Successful Installation Output</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">NAME                                                     READY   STATUS              RESTARTS   AGE
-sonataflow-operator-controller-manager-948547ffd-sr2j2   0/2     ContainerCreating   0          6s
-sonataflow-operator-controller-manager-948547ffd-sr2j2   1/2     Running             0          7s
-sonataflow-operator-controller-manager-948547ffd-sr2j2   2/2     Running             0          20s</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can also follow the operator’s log:</p>
-</div>
-<div class="listingblock">
-<div class="title">Watch the SonataFlow Operator pod logs</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl logs deployment/sonataflow-operator-controller-manager -n sonataflow-operator-system -f</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Once the operator is running, it will watch for instances of the SonataFlow Custom Resources (CR). Using CRs, you can configure your SonataFlow environment and define Workflows and builds to be handled by the operator.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_uninstall_3"><a class="anchor" href="#_uninstall_3"></a>Uninstall</h3>
-<div class="paragraph">
-<p>To uninstall the SonataFlow Operator, first, you must delete all the SonataFlow Custom Resources (CR) instances managed by it. Once the CRs are deleted, you can then delete all resources created during the operator installation.</p>
-</div>
-<div class="paragraph">
-<p>To delete every CR managed by the operator in your cluster, you can run these series of commands:</p>
-</div>
-<div class="listingblock">
-<div class="title">Delete all SonataFlow CR instances</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl delete --all workflow --all-namespaces
-kubectl delete --all sonataflowbuild --all-namespaces
-kubectl delete --all sonataflowplatform --all-namespaces</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Alternatively, if you created everything under the same Namespace, deleting the given namespace has the same outcome.</p>
-</div>
-<div class="paragraph">
-<p>To uninstall the correct version of the operator, first you must get the current version by running:</p>
-</div>
-<div class="listingblock">
-<div class="title">Getting the operator version</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl get deployment sonataflow-operator-controller-manager -n sonataflow-operator-system -o jsonpath="{.spec.template.spec.containers[?(@.name=='manager')].image}"
-
-quay.io/kiegroup/kogito-serverless-operator-nightly:1.41.0</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Uninstalling the operator</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">kubectl delete -f https://raw.githubusercontent.com/apache/incubator-kie-kogito-serverless-operator/&lt;version&gt;.x/operator.yaml</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If you&#8217;re running a snapshot version, use this URL instead <code><a href="https://raw.githubusercontent.com/apache/incubator-kie-kogito-serverless-operator/main/operator.yaml" class="bare">https://raw.githubusercontent.com/apache/incubator-kie-kogito-serverless-operator/main/operator.yaml</a></code>.</p>
-</div>
-<div class="paragraph">
-<p>The URL should be the same used when installing the operator.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
+<p>The Operator extends its scope to manage the lifecycle of the Jobs Service instance, thus removing the burden on the users and allowing them to focus on the
+implementation of the <code>Sonataworkflows. It takes care of managing the Jobs Service deployment, dynamically configures its application properties
+when the Data Index service is also available and managed by the Operator, and finally inject application properties in `SonataFlow</code> workflows in the target
+namespace when the Jobs Service is available.</p>
 </div>
 </div>
 </div>
@@ -896,13 +860,7 @@ quay.io/kiegroup/kogito-serverless-operator-nightly:1.41.0</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="known-issues.html" class="xref page">SonataFlow Operator Known Issues, Limitations and Roadmap</a></p>
-</li>
-<li>
-<p><a href="developing-workflows.html" class="xref page">Developing Workflows with the Operator</a></p>
-</li>
-<li>
-<p><a href="enabling-jobs-service.html" class="xref page">Managing Jobs Service with the Operator</a></p>
+<p><a href="install-serverless-operator.html" class="xref page">Install the SonataFlow Operator</a></p>
 </li>
 </ul>
 </div>
