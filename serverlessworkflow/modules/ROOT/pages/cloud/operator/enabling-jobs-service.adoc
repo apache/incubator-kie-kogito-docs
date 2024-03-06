@@ -9,12 +9,10 @@ This document describes how to configure the Jobs Service instance using the Son
 
 == Automate the Jobs Service instance management with the `SonataFlow` Operator
 
-While it is possible to deploy the Jobs Service manually, the Operator also provides a convenient way to combine it with the
-namespace configuration via the `SonataFlowPlatform` CR. With this approach, the Operator will take care of configuring the
-Jobs Service instance and ensure it is in sync with the specification in the CR. When the operator manages the Jobs Service lifecycle,
-it will inject properties in `SonataFlow` workflows at creation time to enable the workflows to communicate with the Jobs Service
-It is possible to deploy the Jobs Service manually, but the Operator also provides a convenient way to combine it with the namespace configuration via the `SonataFlowPlatform` CR. This approach allows the Operator to configure the Jobs Service and make sure it is in line with the Specification in CR. When the Operator manages the jobs service lifecycle, it injects properties at creation time in the `SonataFlow` workflows to communicate with the Jobs Service during execution, eliminating the need to include these properties in the workflow CR instance of the `SonataFlow` workflow.
-
+It is possible to deploy the Jobs Service manually, leveraging the Operator offers a more seamless integration by
+combining it with namespace configuration through the SonataFlowPlatform Custom Resource (CR). When the Operator oversees
+the lifecycle of the jobs service, it automatically injects necessary properties during creation into the SonataFlow workflows.
+This integration eliminates the need for including these properties within the SonataFlow workflow CR instance, simplifying workflow management.
 == Configuring Jobs Service in the SonataFlowPlatform CR
 
 To enable the deployment of a Jobs Service instance, the `SonataFlowPlatform` CRD exposes a set of fields that allow the user to 
