@@ -1,0 +1,32 @@
+= Global Configuration
+:compat-mode!:
+// Metadata:
+:description: Global Configuration {operator_name} for cluster admins
+:keywords: sonataflow, workflow, serverless, operator, kubernetes, minikube, openshift, containers, configuration
+// links
+
+This document describes how to set global configuration options for the {operator_name}.
+
+.Prerequisites
+* You have installed the operator in the target cluster. You can find more information at the xref:cloud/operator/install-serverless-operator.adoc[] guide.
+
+== Modifying configuration options
+
+After installing the operator, you can access the `ConfigMap` named `sonataflow-operator-controllers-config` in the namespace {operator_installation_namespace}.
+This configuration file governs the operator's behavior when creating new resources in the cluster. Existing resources won't be changed after this configuration.
+See the section <<config-changes>> for more information.
+
+You can freely edit any of the options in the key `controllers_cfg.yaml` entry. The table bellow lists each possible entry.
+
+.Description of Global Configuration
+[cols="1,2"]
+|===
+|Configuration Key | Description
+
+| 
+|
+
+|===
+
+[#config-changes]
+== Configuration Changes Impact
