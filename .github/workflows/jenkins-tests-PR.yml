@@ -22,9 +22,9 @@
 name: Jenkins Tests
 on:
   pull_request:
-    paths: 
-    - '.ci/jenkins/**'
-    - '.github/workflows/jenkins-tests-PR.yml'
+    paths:
+      - ".ci/jenkins/**"
+      - ".github/workflows/jenkins-tests-PR.yml"
 
 jobs:
   dsl-tests:
@@ -33,9 +33,9 @@ jobs:
       cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
-    - name: DSL tests
-      uses: kiegroup/kie-ci/.ci/actions/dsl-tests@main
-      with:
-        main-config-file-repo: apache/incubator-kie-kogito-pipelines
-        main-config-file-path: .ci/jenkins/config/main.yaml
-        branch-config-file-repo: apache/incubator-kie-kogito-pipelines
+      - name: DSL tests
+        uses: apache/incubator-kie-kogito-pipelines/.ci/actions/dsl-tests@main
+        with:
+          main-config-file-repo: apache/incubator-kie-kogito-pipelines
+          main-config-file-path: .ci/jenkins/config/main.yaml
+          branch-config-file-repo: apache/incubator-kie-kogito-pipelines

@@ -17,12 +17,18 @@
 # under the License.
 #
 
-name: SonataFlow Guides - Verify Build
+name: SonataFlow Guides Preview - Build
 
 on:
+  push:
+    branches:
+        - "main"
+    paths-ignore:
+      - ".gitignore"
+      - "LICENSE"
+      - "README*"
+      - "CONTRIBUTING.md"
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
-    branches: [main]
     paths-ignore:
       - ".gitignore"
       - "LICENSE"
@@ -30,15 +36,33 @@ on:
       - "CONTRIBUTING.md"
 jobs:
   build_site:
-    name: "Building SonataFlow Docs with Antora"
-    runs-on: [ubuntu-latest]
+    name: "Building WebSite with Antora"
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "16"
-      - run: export DOCSEARCH_ENABLED=true
-      - run: export DOCSEARCH_ENGINE=lunr
-      - run: export NODE_PATH="$(npm -g root)"
-      - run: npm -v
-      - run: npm run local-install-build
+
+      - name: Set environment variables
+        run: |
+          echo "DOCSEARCH_ENABLED=true" >> $GITHUB_ENV
+          echo "DOCSEARCH_ENGINE=lunr" >> $GITHUB_ENV
+          echo "NODE_PATH=$(npm -g root)" >> $GITHUB_ENV
+
+      - name: Check Node.js version
+        run: npm -v
+
+      - name: Install dependencies and build
+        run: npm run local-install-build
+
+      - name: Publishing directory for PR preview
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: ./build/site
+          retention-days: 3

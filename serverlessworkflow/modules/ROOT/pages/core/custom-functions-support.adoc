@@ -556,10 +556,10 @@ The following example shows the declaration of a `rest` function:
 
 <1> `multiplyAllAndSum` is the function name
 <2> `custom` is the function type
-<3> `rest:post:/numbers/{multiplier}/multiplyByAndSum` is the custom operation definition. In the custom operation definition: 
+<3> `rest:post:/numbers/\{multiplier}/multiplyByAndSum` is the custom operation definition. In the custom operation definition: 
 * `rest` is the reserved operation keyword that indicates this is a REST call.
 * `post` is the HTTP method. 
-* `/numbers/{multiplier}/multiplyByAndSum` is the relative endpoint. 
+* `/numbers/\{multiplier}/multiplyByAndSum` is the relative endpoint. 
 
 When using the relative endpoints you must specify the host as a property. The format of the host property is `kogito.sw.functions.<function_name>.host`. Therefore, in this example, `kogito.sw.functions.multiplyAllByAndSum.host` is the host property key. You might override the default port (80) if needed by specifying `kogito.sw.functions.multiplyAllAndSum.port` property. 
 
@@ -599,7 +599,7 @@ For example, given the following function definition that performs a `get` reque
 }
 ----
 
-You can replace `{category}` specifying an argument with that name, plus adding `sort` query parameter
+You can replace `\{category}` specifying an argument with that name, plus adding `sort` query parameter
 
 .Example of a `get` request invocation
 
