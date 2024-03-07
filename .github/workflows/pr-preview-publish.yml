@@ -36,7 +36,8 @@ jobs:
         with:
           name: site
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.workflow_id }}
+          run-id: ${{ github.event.workflow_run.id }}
+          path: ./build/site
 
       - name: Publish to Surge for preview
         id: deploy
