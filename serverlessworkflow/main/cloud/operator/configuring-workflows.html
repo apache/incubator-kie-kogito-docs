@@ -658,7 +658,31 @@
 <h2 id="_editing_the_workflow_configuration"><a class="anchor" href="#_editing_the_workflow_configuration"></a>Editing the Workflow Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When the operator deploys the Workflow service, it also creates a <code>ConfigMap</code> named after the <code>SonataFlow</code> object with the suffix <code>-props</code>. For example, if your Workflow name is <code>greeting</code>, then the <code>ConfigMap</code> name is <code>greeting-props</code>.</p>
+<p>When the operator deploys the Workflow service, it also creates two `ConfigMap`s to store the runtime properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The user properties are defined in a <code>ConfigMap</code> named after the <code>SonataFlow</code> object with the suffix <code>-props</code>. For example, if your Workflow name is <code>greeting</code>, then the <code>ConfigMap</code> name is <code>greeting-props</code>.</p>
+</li>
+<li>
+<p>The <a href="#managed-props">Managed Properties</a> are defined in a <code>ConfigMap</code> named after the <code>SonataFlow</code> object with the suffix <code>-managed-props</code>. For example, if your Workflow name is <code>greeting</code>, then the <code>ConfigMap</code> name is <code>greeting-managed-props</code>.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Managed properties always override any user property using the same key name and cannot be edited by the user. Any change would be overwritten by the operator at the next reconciliation cycle.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>You can use the Kubernetes object editor of your preference to add or edit the <a href="https://en.wikipedia.org/wiki/.properties">properties</a> in the Workflow configuration. Using <code>kubectl</code> you can do:</p>
@@ -699,13 +723,13 @@ data:
 </div>
 </div>
 <div class="sect1">
-<h2 id="_immutable_properties"><a class="anchor" href="#_immutable_properties"></a>Immutable properties</h2>
+<h2 id="managed-props"><a class="anchor" href="#managed-props"></a>Managed properties</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A few properties cannot be changed in this configuration. Usually, they are already defined in the properties file. The table below lists them.</p>
+<p>A few properties cannot be changed in this configuration and they are defined in the managed properties file. The table below lists them.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. List of immutable properties</caption>
+<caption class="title">Table 1. List of managed properties</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 25%;">
@@ -737,6 +761,22 @@ data:
 </tbody>
 </table>
 <div class="paragraph">
+<p>Other managed properties include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="../../use-cases/advanced-developer-use-cases/service-discovery/kubernetes-service-discovery.html" class="xref page">Kubernetes service discovery</a> properties</p>
+</li>
+<li>
+<p>The <a href="../../use-cases/advanced-developer-use-cases/data-index/data-index-quarkus-extension.html" class="xref page">Data Index location properties</a></p>
+</li>
+<li>
+<p>The <a href="../../use-cases/advanced-developer-use-cases/job-service/quarkus-extensions.html" class="xref page">Job Service location properties</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
 <p>If you try to change any of them, the operator will override them with the default, but preserving your changes in other property keys.</p>
 </div>
 </div>
@@ -746,6 +786,9 @@ data:
 <div class="sectionbody">
 <div class="ulist">
 <ul>
+<li>
+<p><a href="https://quarkus.io/guides/config-reference#profile-aware-files">Quarkus - Profile aware files</a></p>
+</li>
 <li>
 <p><a href="../../core/configuration-properties.html" class="xref page">Configuration properties in SonataFlow</a></p>
 </li>
