@@ -13,8 +13,10 @@ When the operator deploys the Workflow service, it also creates two `ConfigMap`s
 * The user properties are defined in a `ConfigMap` named after the `SonataFlow` object with the suffix `-props`. For example, if your Workflow name is `greeting`, then the `ConfigMap` name is `greeting-props`.
 * The xref:#managed-props[Managed Properties] are defined in a `ConfigMap` named after the `SonataFlow` object with the suffix `-managed-props`. For example, if your Workflow name is `greeting`, then the `ConfigMap` name is `greeting-props`.
 
-Note that managed properties always override any user property using the same key name and cannot be edited by the user: any change would be 
-overwritten by the operator at the next reconciliation cycle.
+[IMPORTANT]
+====
+Managed properties always override any user property using the same key name and cannot be edited by the user. Any change would be overwritten by the operator at the next reconciliation cycle.
+====
 
 You can use the Kubernetes object editor of your preference to add or edit the link:https://en.wikipedia.org/wiki/.properties[properties] in the Workflow configuration. Using `kubectl` you can do:
 
