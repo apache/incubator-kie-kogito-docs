@@ -61,14 +61,17 @@ apiVersion: v1
 data:
   DEFAULT_BUILDER_RESOURCE_NAME: Dockerfile
   DEFAULT_WORKFLOW_EXTENSION: .sw.json
-  Dockerfile: "FROM quay.io/kiegroup/kogito-swf-builder-nightly:latest AS builder\n
-    \ \n  # Copy from build context to skeleton resources project\nCOPY * ./resources/\n\nRUN
-    /home/kogito/launch/build-app.sh ./resources\n  \n  #=============================\n
-    \ # Runtime Run\n  #=============================\nFROM registry.access.redhat.com/ubi8/openjdk-11:latest\n\nENV
-    LANG='en_US.UTF-8' LANGUAGE='en_US:en'\n  \n  # We make four distinct layers so
-    if there are application changes the library layers can be re-used\nCOPY --from=builder
-    --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/lib/ /deployments/lib/\nCOPY
-    --from=builder --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/*.jar
+  Dockerfile: "FROM quay.io/kiegroup/kogito-swf-builder-nightly:latest AS builder\n\n#
+    variables that can be overridden by the builder\n# To add a Quarkus extension
+    to your application\nARG QUARKUS_EXTENSIONS\n# Args to pass to the Quarkus CLI
+    add extension command\nARG QUARKUS_ADD_EXTENSION_ARGS\n# Additional java/mvn arguments
+    to pass to the builder\nARG MAVEN_ARGS_APPEND\n\n# Copy from build context to
+    skeleton resources project\nCOPY --chown=1001 . ./resources\n\nRUN /home/kogito/launch/build-app.sh
+    ./resources\n  \n#=============================\n# Runtime Run\n#=============================\nFROM
+    registry.access.redhat.com/ubi9/openjdk-17:latest\n\nENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'\n
+    \ \n# We make four distinct layers so if there are application changes the library
+    layers can be re-used\nCOPY --from=builder --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/lib/
+    /deployments/lib/\nCOPY --from=builder --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/*.jar
     /deployments/\nCOPY --from=builder --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/app/
     /deployments/app/\nCOPY --from=builder --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/quarkus/
     /deployments/quarkus/\n\nEXPOSE 8080\nUSER 185\nENV AB_JOLOKIA_OFF=\"\"\nENV JAVA_OPTS=\"-Dquarkus.http.host=0.0.0.0
@@ -76,6 +79,7 @@ data:
 kind: ConfigMap
 metadata:
   name: sonataflow-operator-builder-config
+  namespace: sonataflow-operator-system
 ----
 
 [WARNING]
@@ -201,8 +205,9 @@ The table below lists the Dockerfile arguments available in the default {operato
 |===
 | Argument | Description | Example
 
-|QUARKUS_EXTENSIONS | List of link:{quarkus_extensions_url}[Quarkus Extensions] separated by comma that the builder should add to the workflow. | org.kie.kogito:kogito-addons-quarkus-persistence-infinispan:2.0.0-SNAPSHOT
+|QUARKUS_EXTENSIONS | List of link:{quarkus_extensions_url}[Quarkus Extensions] separated by comma that the builder should add to the workflow. | org.kie.kogito:kogito-addons-quarkus-persistence-jdbc:999-SNAPSHOT
 |QUARKUS_ADD_EXTENSION_ARGS | Arguments passed to the Quarkus CLI when adding extensions. Enabled only when `QUARKUS_EXTENSIONS` is not empty. | See the link:{quarkus_cli_url}#using-the-cli[Quarkus CLI documentation]
+|MAVEN_ARGS_APPEND | Arguments passed to the maven build when the workflow build is produced. | -Dkogito.persistence.type=jdbc -Dquarkus.datasource.db-kind=postgresql
 |===
 
 === Setting environment variables in the internal builder
