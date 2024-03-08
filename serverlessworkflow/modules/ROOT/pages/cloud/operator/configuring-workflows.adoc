@@ -8,7 +8,15 @@ This document describes how to configure a Workflow service with the {operator_n
 
 == Editing the Workflow Configuration
 
-When the operator deploys the Workflow service, it also creates a `ConfigMap` named after the `SonataFlow` object with the suffix `-props`. For example, if your Workflow name is `greeting`, then the `ConfigMap` name is `greeting-props`.
+When the operator deploys the Workflow service, it also creates two `ConfigMap`s to store the runtime properties:
+
+* The user properties are defined in a `ConfigMap` named after the `SonataFlow` object with the suffix `-props`. For example, if your Workflow name is `greeting`, then the `ConfigMap` name is `greeting-props`.
+* The xref:#managed-props[Managed Properties] are defined in a `ConfigMap` named after the `SonataFlow` object with the suffix `-managed-props`. For example, if your Workflow name is `greeting`, then the `ConfigMap` name is `greeting-managed-props`.
+
+[IMPORTANT]
+====
+Managed properties always override any user property using the same key name and cannot be edited by the user. Any change would be overwritten by the operator at the next reconciliation cycle.
+====
 
 You can use the Kubernetes object editor of your preference to add or edit the link:https://en.wikipedia.org/wiki/.properties[properties] in the Workflow configuration. Using `kubectl` you can do:
 
@@ -41,11 +49,12 @@ The underlying runtime engine that executes the Workflow service is based on lin
 
 Any xref:core/configuration-properties.adoc[{product_name} configuration that the documentation describes] or general Quarkus application property can be configured using this method.
 
-== Immutable properties
+[#managed-props]
+== Managed properties
 
-A few properties cannot be changed in this configuration. Usually, they are already defined in the properties file. The table below lists them.
+A few properties cannot be changed in this configuration and they are defined in the managed properties file. The table below lists them.
 
-.List of immutable properties
+.List of managed properties
 [cols="2,1,1"]
 |===
 |Property Key | Immutable Value | Profile
@@ -64,10 +73,18 @@ A few properties cannot be changed in this configuration. Usually, they are alre
 
 |===
 
+Other managed properties include:
+
+* The xref:use-cases/advanced-developer-use-cases/service-discovery/kubernetes-service-discovery.adoc[Kubernetes service discovery] properties
+* The xref:use-cases/advanced-developer-use-cases/data-index/data-index-quarkus-extension.adoc[Data Index location properties]
+* The xref:use-cases/advanced-developer-use-cases/job-service/quarkus-extensions.adoc[Job Service location properties]
+
+
 If you try to change any of them, the operator will override them with the default, but preserving your changes in other property keys.
 
 == Additional resources
 
+* https://quarkus.io/guides/config-reference#profile-aware-files[Quarkus - Profile aware files]
 * xref:core/configuration-properties.adoc[]
 * xref:cloud/operator/known-issues.adoc[]
 * xref:cloud/operator/developing-workflows.adoc[]
