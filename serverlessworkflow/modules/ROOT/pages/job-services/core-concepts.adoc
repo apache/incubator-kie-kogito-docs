@@ -31,7 +31,7 @@ For example, every time the workflow execution reaches a state with a configured
 
 image::job-services/Time-Based-States-And-Job-Service-Interaction.png[]
 
-To set up this integration you can use different xref:job-services/quarkus-extensions.adoc#job-service-quarkus-extensions[communication alternatives], that must be configured by combining the Job Service and the Quarkus Workflow Project configurations.
+To set up this integration you can use different xref:use-cases/advanced-developer-use-cases/job-service/quarkus-extensions.adoc#job-service-quarkus-extensions[communication alternatives], that must be configured by combining the Job Service and the Quarkus Workflow Project configurations.
 
 [NOTE]
 ====
@@ -59,7 +59,7 @@ We recommend that you follow this procedure:
 
 1. Identify the <<job-service-persistence,persistence mechanism>> to use and see the required configuration parameters.
 2. Identify if the <<job-service-eventing-api, Eventing API>> is required for your needs and see the required configuration parameters.
-3. Identify if the project containing your workflows is configured with the appropriate xref:job-services/quarkus-extensions.adoc#job-service-quarkus-extensions[Job Service Quarkus Extension].
+3. Identify if the project containing your workflows is configured with the appropriate xref:use-cases/advanced-developer-use-cases/job-service/quarkus-extensions.adoc#job-service-quarkus-extensions[Job Service Quarkus Extension].
 
 Finally, to run the image, you must use the <<exposed-environment-variables, environment variables exposed by the image>>, and other configurations that you can set using <<using-environent-variables, additional environment variables>> or using <<using-java-like-system-properties, system properties with java like names>>.
 
@@ -127,7 +127,7 @@ spec:
 [NOTE]
 ====
 This is the recommended approach when you execute the Job Service in kubernetes.
-The timeouts showcase example xref:use-cases/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] contains an example of this configuration, https://github.com/apache/incubator-kie-kogito-examples/blob/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase-extended/kubernetes/jobs-service-postgresql.yml#L65[see].
+The timeouts showcase example xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] contains an example of this configuration, https://github.com/apache/incubator-kie-kogito-examples/blob/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase-extended/kubernetes/jobs-service-postgresql.yml#L65[see].
 ====
 
 [#using-java-like-system-properties]
@@ -213,7 +213,7 @@ PostgreSQL is the recommended database to use with the Job Service.
 Additionally, it provides an initialization procedure that integrates Flyway for the database initialization. Which automatically controls the database schema, in this way, the tables are created or updated by the service when required.
 
 In case you need to externally control the database schema, you can check and apply the DDL scripts for the Job Service in the same way as described in
-xref:persistence/postgresql-flyway-migration.adoc#manually-executing-scripts[Manually executing scripts] guide.
+xref:use-cases/advanced-developer-use-cases/persistence/postgresql-flyway-migration.adoc#manually-executing-scripts[Manually executing scripts] guide.
 
 To configure the PostgreSQL persistence you must provide these configurations:
 
@@ -278,7 +278,7 @@ Using system properties with java like names::
 |===
 ====
 
-The timeouts showcase example xref:use-cases/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services], shows how to run a PostgreSQL based Job Service as a Kubernetes deployment.
+The timeouts showcase example xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services], shows how to run a PostgreSQL based Job Service as a Kubernetes deployment.
 In your local environment you might have to change some of these values to point to your own PostgreSQL database.
 
 [#job-service-ephemeral]
@@ -449,7 +449,7 @@ The following snippets shows an example on how you can configure these resources
 
 [NOTE]
 ====
-We recommend that you visit this example xref:use-cases/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] to see a full setup of all these configurations.
+We recommend that you visit this example xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] to see a full setup of all these configurations.
 ====
 
 [#knative-eventing-supporting-resources-trigger-create]

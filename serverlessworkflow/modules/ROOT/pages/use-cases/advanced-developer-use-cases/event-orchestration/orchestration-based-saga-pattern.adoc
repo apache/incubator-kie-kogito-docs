@@ -1,0 +1,287 @@
+= Saga orchestration example in {product_name}
+
+:compat-mode!:
+// Metadata:
+:description: Saga Pattern use case example in Serverless Workflow
+:keywords: kogito, workflow, serverless, saga, saga pattern, consistency, microservices, orchestration, orchestrator
+
+[[con-saga-overview]]
+== Overview of Saga pattern
+
+The Saga design pattern manages data consistency across participants that are available in distributed transaction scenarios. For more information about Saga pattern, see the initial link:https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf[publication]. 
+
+In a microservice architecture, you can define a participant as microservice, which is responsible to perform actions related to the business domain. 
+
+The Saga pattern manages the transactions using a sequence of steps. If a failure occurs while executing a step, then a sequence of compensating actions is executed to undo the changes that are made during the execution. As an alternative, you can leave the system in a known termination state to be consistent.
+
+[[ref-sw-example-saga-pattern]]
+== Example of Saga pattern a workflow
+
+To understand the implementation of Saga pattern in a workflow, you can use the link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus[`serverless-workflow-saga-quarkus`] example application in GitHub repository. 
+
+The `serverless-workflow-saga-quarkus` example application is based on the order fulfillment process and describes how to define the Saga pattern using {product_name}. In the order fulfillment example, a user buys an item from an e-commerce application. The user adds the delivery information and payment details, and waits for the item to be delivered. The following figure shows the sequence of steps that are executed to complete an order:
+
+.Example of order fulfillment process
+image::use-cases/orchestration-based-saga-pattern/order-fulfillment-example.png[Example of order fulfillment process]
+
+The previous figure contains the following steps:
+
+1. *Order checkout*: User confirms the order with selected items, payment method, and delivery address.
+2. *Stock reservation*: The selected items in the order are reserved in the stock.
+3. *Payment processing*: Payment is processed based on the selected payment method and user information. For example, in case of processing payment using credit card, then the credit is verified and allocated to the payment.
+4. *Shipping processing*: The shipping processing represents a mechanism, which communicates with a third-party or an internal system who are responsible for logistics and delivery.
+
+The following figure describes the Saga pattern using the success and failure workflows in the order fulfillment process:
+
+.Example of Saga pattern in Order fulfillment process
+image::use-cases/orchestration-based-saga-pattern/order-fulfillment-saga.png[Example of Saga pattern in Order fulfillment process]
+
+The success workflow in the previous figure consists of the following steps:
+
+. Reserve item stock
+. Process the payment
+. Schedule the order shipping
+
+However, in the failure workflow an error occurred during the shipping process. In this situation, a sequence of compensation actions is executed, including canceling the payment and releasing the stock for the items in the order.
+
+In the `serverless-workflow-saga-quarkus` example application, a link:{spec_doc_url}[workflow] is used that implements the Saga pattern, in which all the steps and compensation actions are defined. Also, the workflow plays the role of Saga Executor Coordinator (SEC), which orchestrates the calls to the participants in the Saga pattern.
+
+The workflow definition used to define the Saga pattern is available in the link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus/src/main/resources/order-saga-error-handling.sw.json[`order-saga-error-handling.sw.json`] file. 
+
+.Example of order fulfillment Saga workflow
+image::use-cases/orchestration-based-saga-pattern/order-fulfillment-saga-workflow.png[]
+
+In the previous example figure of workflow, the calls are orchestrated to the participants (for example, order service, payment service), each participant can throw possible errors, and compensations for each step are defined, that are executed once an error appears during the workflow execution.
+
+To define the interactions among participants in the Saga pattern using Serverless Workflow specification, you can use link:{spec_doc_url}#workflow-states[workflow states] with link:{spec_doc_url}#Transitions[transitions]. 
+
+In Serverless Workflow specification, each workflow state represents a step to be completed in the Saga pattern. Also, an action associated with the workflow state represents how a participant is invoked to execute a given step.
+
+[#payment-state]
+.Example of workflow state declaration representing the payment process in Saga
+[source,json]
+----
+{
+   "name":"processPayment",
+   "type":"operation",
+   "actions":[
+      {
+         "name":"processPaymentAction",
+         "functionRef":{
+            "refName":"processPayment",
+            "arguments":{
+               "orderId":".orderId",
+               "failService":".failService"
+            }
+         },
+         "actionDataFilter":{
+            "results":".",
+            "toStateData":".paymentResponse"
+         }
+      }
+   ],
+   "transition":"scheduleShipping",
+   "compensatedBy":"CancelPayment",
+   "onErrors":[
+      {
+         "errorRef":"process payment failed",
+         "transition":"ServiceError"
+      }
+   ]
+}
+----
+
+In the previous example, the `processPayment` state contains a `processPaymentAction` action, which invokes a function to execute the payment processing that `Payment Service` participant might process. The `transition` attribute represents the next step to be started, which schedules the order shipping for the Saga pattern.
+
+Compensation actions::
++
+--
+When designing a Saga pattern, compensation actions for each step is considered as a core functionality, which is executed by a participant.
+
+In {product_name} each workflow state must define a compensation action using `compensatedBy` attribute, indicating another workflow state that performs the compensation action. For example, in `serverless-workflow-saga-quarkus`, `processPayment` state defines `CancelPayment` as a compensation action in the <<payment-state, payment process>>.
+
+.Example of defining a compensation action
+[source,json]
+"compensatedBy": "CancelPayment"
+--
+
+Errors::
++
+--
+In {product_name} errors are identified by a name and can be associated with a workflow state. For example, a `process payment failed` error is associated with the `processPayment` state. 
+
+Following is an example of error declaration in the workflow definition:
+
+[#errors-definitions]
+.Example the error declaration for the Saga
+[source,json]
+----
+{
+   "errors":[
+      {
+         "name":"reserve stock failed",
+         "code":"org.kie.kogito.ServiceException"
+      },
+      {
+         "name":"process payment failed",
+         "code":"org.kie.kogito.ServiceException"
+      },
+      {
+         "name":"shipping failed",
+         "code":"org.kie.kogito.ServiceException"
+      }
+   ]
+}
+----
+
+Once an error occurs during the workflow execution, the associated compensation action is triggered. 
+
+An error definition uses the fully qualified class name (FQCN) for Java exceptions that are thrown by functions. In the previous example of error definition, `org.kie.kogito.ServiceException` is thrown by the service calls that are defined as <<#custom-function, Java methods>> in the link:{kogito_sw_examples_url}/serverless-workflow-saga-quarkus/src/main/java/org/kie/kogito/PaymentService.java[`PaymentService.java`] file. 
+
+[#custom-function]
+.Example custom function using a Java class and method
+[source,json]
+----
+{
+   "name":"reserveStock",
+   "type":"custom",
+   "operation":"service:org.kie.kogito.PaymentService::processPayment"
+}
+----
+
+The function that are throwing errors can be any type of functions, such as REST, OpenAPI, or gRPC. For information about error handling, see xref:core/understanding-workflow-error-handling.adoc[Error handling in {product_name}].
+--
+
+The workflow engine controls the execution of the flow and keeps the track of the steps that need to be compensated. Also, the engine ensures that compensated states are executed in reverse order of each completed step. 
+
+The engine is a stateful, allowing Saga to contain wait states, such as callbacks. After each wait state, the workflow is persisted and can continue once it receives a request or event.
+
+The `serverless-workflow-saga-quarkus` example application shows a Saga workflow that is executed as request-response. This is called a straight through process, in which an entire workflow is executed in a single request.
+
+[[ref-sw-run-test-saga-example]]
+== Examples of running and testing the Saga pattern in a workflow
+
+You can use the following examples as a reference to run and test the Saga pattern in a workflow:
+
+Create new success order::
++
+--
+You can use the following example to send a request for creating an order:
+
+.Example request to create an order
+[source,shell]
+----
+curl -L -X POST "http://localhost:8080/order_saga_error_workflow" -H 'Content-Type: application/json' --data-raw '{
+  "orderId": "03e6cf79-3301-434b-b5e1-d6899b5639aa"
+}'
+----
+
+.Example response
+[source,json]
+----
+{
+   "id":"b5c0bf16-1e37-4d7a-82cd-610809090d9c",
+   "workflowdata":{
+      "orderId":"03e6cf79-3301-434b-b5e1-d6899b5639aa",
+      "stockResponse":{
+         "type":"SUCCESS",
+         "resourceId":"dc32abe6-9706-4061-8e96-910d8e06728d"
+      },
+      "paymentResponse":{
+         "type":"SUCCESS",
+         "resourceId":"505259d9-1c12-40ea-af5d-679e2cd89394"
+      },
+      "shippingResponse":{
+         "type":"SUCCESS",
+         "resourceId":"d6e2d538-0229-4b8e-a363-17ebabdb3585"
+      },
+      "orderResponse":{
+         "type":"SUCCESS",
+         "resourceId":"03e6cf79-3301-434b-b5e1-d6899b5639aa"
+      }
+   }
+}
+----
+
+The response contains the workflow data with nested attributes, which represent the responses from the execution of each step including success or failure. 
+
+In the previous example, the `orderResponse` attribute indicates if the order can be confirmed by the client by initiating the Saga workflow. Therefore, if the value of the `orderResponse` attribute is `success`, then the order can be confirmed, otherwise the order can be canceled.
+
+When executing the application, you can also verify the log with information related to the executed steps as shown in the following example:
+
+.Example console output
+[source, shell]
+----
+2022-06-24 13:44:36,666 INFO  [org.kie.kog.StockService] (executor-thread-0) Reserve Stock for order 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:44:36,669 INFO  [org.kie.kog.PaymentService] (executor-thread-0) Process Payment for order 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:44:36,673 INFO  [org.kie.kog.ShippingService] (executor-thread-0) Schedule Shipping for order 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:44:36,676 INFO  [org.kie.kog.OrderService] (executor-thread-0) Order Success 03e6cf79-3301-434b-b5e1-d6899b5639aa
+----
+--
+
+Activate compensation actions::
++
+--
+To test the workflow, an optional `failService` attribute is introduced, indicating which participant must respond with an error. In the following example, the `ShippingService` state throws an error, which breaks the workflow execution and triggers the compensation actions:
+
+.Example compensation request
+[source,shell]
+----
+curl -L -X POST 'http://localhost:8080/order_saga_error_workflow' -H 'Content-Type: application/json' --data-raw '{
+  "orderId": "03e6cf79-3301-434b-b5e1-d6899b5639aa",
+  "failService": "ShippingService"
+}'
+----
+
+.Example response
+[source,json]
+----
+{
+   "id":"217050a3-6676-4c0e-8555-2fcda936e00e",
+   "workflowdata":{
+      "orderId":"03e6cf79-3301-434b-b5e1-d6899b5639aa",
+      "failService":"ShippingService",
+      "stockResponse":{
+         "type":"SUCCESS",
+         "resourceId":"6ab362c6-a6c4-4517-b232-3349741271d5"
+      },
+      "paymentResponse":{
+         "type":"SUCCESS",
+         "resourceId":"2114cc5b-1912-4b34-b869-734907f0fef2"
+      },
+      "cancelPaymentResponse":{
+         "type":"SUCCESS",
+         "resourceId":"2114cc5b-1912-4b34-b869-734907f0fef2"
+      },
+      "cancelStockResponse":{
+         "type":"SUCCESS",
+         "resourceId":"6ab362c6-a6c4-4517-b232-3349741271d5"
+      },
+      "orderResponse":{
+         "type":"ERROR",
+         "resourceId":"03e6cf79-3301-434b-b5e1-d6899b5639aa"
+      }
+   }
+}
+----
+
+When executing the application, you can also verify the log with information related to the executed steps as shown in the following example:
+
+.Example console output
+[source, shell]
+----
+2022-06-24 13:43:45,077 INFO  [org.kie.kog.StockService] (executor-thread-0) Reserve Stock for order 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:43:45,215 INFO  [org.kie.kog.PaymentService] (executor-thread-0) Process Payment for order 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:43:45,219 INFO  [org.kie.kog.ShippingService] (executor-thread-0) Schedule Shipping for order 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:43:45,219 ERROR [org.kie.kog.MockService] (executor-thread-0) Error in ShippingService for 03e6cf79-3301-434b-b5e1-d6899b5639aa
+2022-06-24 13:43:45,230 INFO  [org.kie.kog.PaymentService] (executor-thread-0) Cancel Payment 4b94408d-8cad-432d-85bb-63dd79c4071e
+2022-06-24 13:43:45,239 INFO  [org.kie.kog.StockService] (executor-thread-0) Cancel Stock 9d543764-8a8b-4d94-aaee-e6ccbe9c94c3
+2022-06-24 13:43:45,244 INFO  [org.kie.kog.OrderService] (executor-thread-0) Order Failed 03e6cf79-3301-434b-b5e1-d6899b5639aa
+----
+--
+
+== Additional resources
+
+* xref:core/understanding-workflow-error-handling.adoc[Error handling in {product_name}]
+
+include::../../../../pages/_common-content/report-issue.adoc[]

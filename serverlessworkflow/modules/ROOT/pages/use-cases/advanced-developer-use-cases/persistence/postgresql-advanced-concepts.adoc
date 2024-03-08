@@ -1,0 +1,78 @@
+= Postgresql Advanced Concepts
+:compat-mode!:
+// Metadata:
+:description: Running Quarkus Workflow Application using PostgresSQL
+:keywords: kogito, workflow, quarkus, serverless, quarkus-cli, persistence, postgresql
+:flyway_url: https://flywaydb.org/
+
+This document shows a detailed view of the database structure when you use the PostgreSQL persistence.
+
+.Prerequisites
+* You are familiar with the xref:use-cases/advanced-developer-use-cases/persistence/persistence-core-concepts.adoc[Persistence Core concepts] guide
+* You are familiar with the xref:use-cases/advanced-developer-use-cases/persistence/persistence-with-postgresql.adoc[Persistence with PostreSQL] guide
+
+As it was introduced in the xref:use-cases/advanced-developer-use-cases/persistence/persistence-core-concepts.adoc[Persistence Core concepts], every workflow instance requires some status information and data to execute, this information is automatically managed by the workflow's runtime. And is persisted at different moments of the workflow execution in the form of a snapshot.
+
+In the following diagram you can see the tables that support these information:
+
+image::persistence/Persistence-PostgreSQL-Advanced.png[]
+
+[NOTE]
+====
+Regular backup procedures are not performed by the workflow's runtime persistence, and thus, they must be provided by the installation owner.
+====
+
+== `process_instances`
+This table stores the workflow snapshots. These snapshots are stored in binary format, and by default, are maintained in the database as long as the workflow instance is active. When a workflow instance finalizes its execution, the corresponding snapshot is removed from the database for optimization purposes.
+However, if you have installed the xref:data-index/data-index-core-concepts.adoc[Data Index] service, information about that workflow execution is kept by this service.
+
+[source, sql]
+----
+CREATE TABLE process_instances
+(
+    id              character(36)     NOT NULL,
+    payload         bytea             NOT NULL,
+    process_id      character varying NOT NULL,
+    version         bigint,
+    process_version character varying,
+    CONSTRAINT process_instances_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_process_instances_process_id ON process_instances (process_id, id, process_version);
+----
+
+== `correlation_instances`
+This table stores the information about the xref:eventing/event-correlation-with-workflows.adoc[Event Correlations] defined for a workflow.
+
+[source, sql]
+----
+CREATE TABLE correlation_instances
+(
+    id                     character(36)         NOT NULL,
+    encoded_correlation_id character varying(36) NOT NULL UNIQUE,
+    correlated_id          character varying(36) NOT NULL,
+    correlation            json                  NOT NULL,
+    version                bigint,
+    CONSTRAINT correlation_instances_pkey PRIMARY KEY (id)
+);
+CREATE INDEX idx_correlation_instances_encoded_id ON correlation_instances (encoded_correlation_id);
+CREATE INDEX idx_correlation_instances_correlated_id ON correlation_instances (correlated_id);
+----
+
+== `flyway_schema_history`
+If the link:{flyway_url}[Flyway] database schema generation was enabled for the current workflow project, this table contains information about the schema versions and the corresponding updates and that framework completely manages it.
+
+* To enable the Flyway managed database schema generation, you must follow this xref:use-cases/advanced-developer-use-cases/persistence/persistence-with-postgresql.adoc#create-database-schema[procedure].
+* To create the database schema manually, you must be sure that the following application property `quarkus.flyway.migrate-at-start` is not configured, or is set to `false`, and follow this xref:use-cases/advanced-developer-use-cases/persistence/postgresql-flyway-migration.adoc#manually-executing-scripts[procedure].
+
+[[postgresql-persistence-additional-resources]]
+== Additional resources
+
+* xref:use-cases/advanced-developer-use-cases/persistence/postgresql-flyway-migration.adoc[PostgreSQL Database Migration]
+* xref:use-cases/advanced-developer-use-cases/persistence/integration-tests-with-postgresql.adoc[{product_name} integration test using PostgreSQL]
+
+include::../../../_common-content/report-issue.adoc[]
+
+
+
+
+

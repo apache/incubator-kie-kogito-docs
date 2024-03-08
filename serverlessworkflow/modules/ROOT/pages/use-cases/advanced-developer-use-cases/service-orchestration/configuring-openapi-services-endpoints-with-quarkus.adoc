@@ -1,0 +1,327 @@
+= Configuring the OpenAPI services endpoints in different environments
+
+You can use different MicroProfile ConfigSources, such as environment variables and Kubernetes ConfigMaps, and MicroProfile Config profiles to configure the OpenAPI services in different environments. For more information about MicoProfile ConfigSources, see link:https://download.eclipse.org/microprofile/microprofile-config-2.0/microprofile-config-spec-2.0.html#configsource[ConfigSources].
+
+[IMPORTANT]
+====
+Some operating systems allow only alphabetic characters or an underscore (_), in environment variables. Other characters such as `.` and `/` are not allowed. You must use the link:https://download.eclipse.org/microprofile/microprofile-config-2.0/microprofile-config-spec-2.0.html#default_configsources.env.mapping[Environment Variables Mapping Rules], to set the value of a configuration property that contains a name with such characters.
+====
+
+The testing procedure described in this document is based on the `serverless-workflow-stock-profit` example application in link:{kogito_sw_examples_url}/serverless-workflow-stock-profit[GitHub repository]. The `serverless-workflow-stock-profit` example application is a workflow that computes the profit for a given stock based on an existing stock portfolio.
+
+The `serverless-workflow-stock-profit` example application sends request to the following services:
+
+* `stock-portfolio-service`: Calculates the stock portfolio profit for a given stock based on the current stock price.
+* `stock-service`: Retrieves the current stock price.
+
+Developing an application using a service that returns different results every time can be difficult, therefore the `stock-service` uses the following implementations depending on the environment.
+
+* `real-stock-service` (default implementation): Returns the real stock price. This service returns a random price every time to simulate a real stock service. This implementation is used in normal or production environment.
+* `fake-stock-service`: Returns the same price every time. This implementation is used in the development environment.
+
+The `stock-profit` service contains the following workflow definition:
+
+.Workflow definition in `stock-profit` service
+[source,json]
+----
+{
+  "id": "stockprofit",
+  "specVersion": "0.8",
+  "version": "2.0.0-SNAPSHOT",
+  "name": "Stock profit Workflow",
+  "start": "GetStockPrice",
+  "functions": [
+    {
+      "name": "getStockPriceFunction",
+      "operation": "openapi/stock-svc.yaml#getStockPrice" <1>
+    },
+    {
+      "name": "getProfitFunction",
+      "operation": "openapi/stock-portfolio-svc.yaml#getStockProfit" <2>
+    }
+  ],
+  "states": [
+    {
+      "name": "GetStockPrice",
+      "type": "operation",
+      "actionMode": "sequential",
+      "actions": [
+        {
+          "name": "getStockPrice",
+          "functionRef": {
+            "refName": "getStockPriceFunction",
+            "arguments": {
+              "symbol": ".symbol"
+            }
+          }
+        }
+      ],
+      "transition": "ComputeProfit"
+    },
+    {
+      "name": "ComputeProfit",
+      "type": "operation",
+      "actionMode": "sequential",
+      "actions": [
+        {
+          "name": "getStockProfit",
+          "functionRef": {
+            "refName": "getProfitFunction",
+            "arguments": {
+              "symbol": ".symbol",
+              "currentPrice": ".currentPrice"
+            }
+          }
+        }
+      ],
+      "end": true
+    }
+  ]
+}
+----
+
+<1> Defines the `stock-service` service operation
+<2> Defines the `stock-portfolio-service` service operation
+
+{product_name} leverages Quarkus profiles to configure the workflow application depending on the target environment.
+
+To set properties for different profiles, each property needs to be prefixed with a percentage (%) followed by the profile name and a period (.) in the syntax as `%<profile-name>.config.name`. By default, Quarkus provides the following profiles that activate automatically in certain conditions:
+
+* `dev`: Activates in development mode, such as `quarkus:dev`
+* `test`: Activates when tests are running
+* `prod` (default profile): Activates when not running in development or test mode
+
+You can also create additional profiles and activate them using the `quarkus.profile` configuration property. For more information about Quarkus profiles, see link:{quarkus_guides_profiles_url}[Profiles] in the Quarkus Configuration reference guide.
+
+[[proc-config-openapi-services-defining-urls]]
+== Defining URLs of the services in different environments
+
+You can define the URLs of the services in different environments by using profiles.
+
+.Procedure
+. Create a file named `application.properties` in the `src/main/resources` directory of the workflow project, if the file does not exist.
+
+. In the `application.properties` file, add the OpenAPI configuration for the default environment:
++
+--
+.Example properties in `application.properties` file
+[source,properties]
+----
+quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/ <1>
+quarkus.rest-client.stock_portfolio_svc_yaml.url=http://localhost:8282/
+----
+
+<1> URL of the `real-stock-service` service
+--
+
+. In the `application.properties` file, add the OpenAPI configuration for the `dev` environment:
++
+--
+.Example properties for development environment
+[source,properties]
+----
+%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/ <1>
+----
+
+<1> URL of the `fake-stock-service` service
+
+[NOTE]
+====
+The `%dev.` prefix indicates the `dev` profile configuration, which is used when you run `mvn quarkus:dev` or `quarkus dev`.
+====
+--
+
+[[proc-config-openapi-services-running-the-services]]
+== Running the services
+
+After defining the URLs of the services, you can run the services that the workflow sends request to.
+
+.Prerequisites
+* URLs of the services in the different environments are defined.
++
+For more information, see <<proc-config-openapi-services-defining-urls, Defining the URLs of the services in different environments>>.
+
+.Procedure
+. In a separate command terminal window, run the `stock-portfolio-service` service:
++
+--
+Run the `stock-portfolio-service` service
+[source,shell]
+----
+cd stock-portfolio-service
+mvn quarkus:dev -Ddebug=false
+----
+
+You can access the `stock-portfolio-service` service at `http://localhost:8282/`.
+--
+
+. In a separate command terminal window, run the `real-stock-service` service:
++
+--
+Run `real-stock-service` service
+[source,shell]
+----
+cd real-stock-service
+mvn quarkus:dev -Ddebug=false
+----
+
+You can access the `real-stock-service` service at `http://localhost:8383/`.
+--
+
+. In a separate command terminal window, run the `fake-stock-service` service:
++
+--
+.Run `fake-stock-service` service 
+[source,shell]
+----
+cd fake-stock-service
+mvn quarkus:dev -Ddebug=false
+----
+
+You can access the `fake-stock-service` service at `http://localhost:8181/`.
+--
+
+[[proc-config-openapi-services-running-sw-application-in-development-mode]]
+== Running workflow application in development mode
+
+When you define `%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/`, the `fake-stock-service` service is used in the development mode and you get the same result every time you run the workflow. Using this example, you can run the workflow application in development mode. 
+
+.Prerequisites
+* Services that the workflow application sends requests to are started.
++
+For more information, see <<proc-config-openapi-services-running-the-services, Running the services>>.
+
+.Procedure
+. In a separate command terminal window, run the workflow application in development mode:
++
+--
+.Run workflow application in development mode
+[source,shell]
+----
+cd stock-profit
+mvn quarkus:dev -Ddebug=false
+----
+--
+
+. In a separate command terminal window, send a request to the workflow application:
++
+--
+.Example request
+[source,shell]
+----
+curl -X 'POST' \
+  'http://localhost:8080/stockprofit' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{ "symbol": "KGTO" }'
+----
+
+.Example response
+[source,json]
+----
+{"id":"5ab5dcb8-5952-4730-b526-cace363774bb","workflowdata":{"symbol":"KGTO","currentPrice":75,"profit":"50%"}}
+----
+
+Note that, in the previous example `fake-stock-service` is used, therefore, the computed `profit` property is same no matter how many times you run the workflow.
+--
+
+[[proc-config-openapi-services-running-sw-application-in-production-mode]]
+=== Running workflow application in production mode
+
+When you define `quarkus.rest-client.stock_svc_yaml.url=http://localhost:8383/`, the `real-stock-service` service is used in the normal or production mode and you get different results every time you run the workflow. Using this example, you can run the workflow application in normal or production mode.
+
+.Prerequisites
+* Services that the workflow application sends requests to are started.
++
+For more information, see <<proc-config-openapi-services-running-the-services, Running the services>>.
+
+.Procedure
+. In a separate command terminal window, package the workflow application to be run as fat JAR:
++
+--
+.Package workflow application
+[source,shell]
+----
+cd stock-profit
+mvn package
+----
+--
+
+. In a separate command terminal window, run the workflow application in normal or production mode:
++
+--
+.Run workflow application in normal or production mode
+[source,shell]
+----
+java -jar target/quarkus-app/quarkus-run.jar
+----
+--
+
+. In a separate command terminal window, send a request to the workflow application:
++
+--
+.Example request
+[source,shell]
+----
+curl -X 'POST' \
+  'http://localhost:8080/stockprofit' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{ "symbol": "KGTO" }'
+----
+
+.Example response
+[source,json]
+----
+{"id":"a80c95d6-51fd-4ca9-b689-f779929c9937","workflowdata":{"symbol":"KGTO","currentPrice":59.36,"profit":"19%"}}
+----
+
+Note that, in the previous example, the `real-stock-service` is used, therefore, the computed `profit` property is different every time you run the workflow.
+--
+
+[[proc-define-urls-using-environment-variables]]
+=== Defining URLs of services in different environments using environment variables
+
+You can define the URLs of the services in different environments using profiles and environment variables.
+
+.Prerequisites
+* Services that the workflow application sends requests to are started.
++
+For more information, see <<proc-config-openapi-services-running-the-services, Running the services>>.
+
+.Procedure
+. In a separate command terminal window, run the workflow application in development mode, overwriting the property defined in the `application.properties` file using an environment variable:
++
+--
+.Run the workflow application in development mode
+[source,shell]
+----
+cd stock-profit
+export _DEV_QUARKUS_REST_CLIENT_STOCK_SVC_YAML_URL=http://localhost:8383/ <1>
+mvn quarkus:dev -Ddebug=false
+----
+
+<1> Overwrite the `%dev.quarkus.rest-client.stock_svc_yaml.url=http://localhost:8181/` defined in the `application.properties` file using an environment variable, which is pointing to `real-stock-service`.
+--
+
+. In a separate command terminal window, send a request to the workflow application:
++
+--
+.Example request
+[source,shell]
+----
+curl -X 'POST' \
+  'http://localhost:8080/stockprofit' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{ "symbol": "KGTO" }'
+----
+
+.Example response
+[source,json]
+----
+{"id":"5ab5dcb8-5952-4730-b526-cace363774bb","workflowdata":{"symbol":"KGTO","currentPrice":56.35,"profit":"13%"}}
+----
+
+Note that, in the previous example, you overwrote the property defined in the `application.properties` file to point to `real-stock-service`, therefore, the computed `profit` property is different every time you run the workflow.
+--

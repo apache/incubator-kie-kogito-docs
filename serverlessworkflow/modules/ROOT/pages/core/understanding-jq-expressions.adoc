@@ -7,7 +7,7 @@
 :jq_url: https://stedolan.github.io/jq/manual/
 :jsonpath_url: https://github.com/json-path/JsonPath/
 :json_data_types_url: https://www.w3schools.com/js/js_json_datatypes.asp
-:jq_play:https://jiehong.gitlab.io/jq_offline
+:jq_play: https://jiehong.gitlab.io/jq_offline
 
 Each workflow instance is associated with a data model. A data model consists of a JSON object regardless of whether the workflow file contains YAML or JSON. The initial content of the JSON object depends on how the workflow is started. If the workflow is created using the link:{cloud_events_url}[Cloud Event], then the workflow content is taken from the `data` property. However, if the workflow is started through an HTTP POST request, then the workflow content is taken from the request body.
 
@@ -198,6 +198,45 @@ You can find an example of event data filtering in the link:{kogito_sw_examples_
 
 The previous example of the event filter copies the content of CloudEvent data `result` field into the workflow model `move` field.
 --
+
+== Workflow secrets, constants and context
+
+As per specification, you can use link:{spec_doc_url}#workflow-constants[Workflow Constants] and link:{spec_doc_url}#workflow-secrets[Workflow Secrets] whenever an expression is accepted. 
+In {product_name} you can use `$SECRET` to access any configuration property, not just sensitive ones.
+So, assuming you have added to your `application.properties` a line with the `myname=john` property, the following function will append the string `my name is john` to the `message` variable
+----
+{
+      "name": "secretMessage",
+      "type": "expression",
+      "operation": ".message |= \"my name is \"+$SECRET.my_name"
+}
+----
+
+Besides constants and secrets, you might access contextual information of the running workflow by using the $WORKFLOW reserved word.
+{product_name} supports the following contextual keys:
+ * `id`: The id of the running workflow definition
+ * `name`: The name of the running workflow definition
+ * `instanceId`: The id of the running workflow instance
+ * `headers`: Optional map containing the headers, if any, of the invocation that started the running workflow instance 
+ * `prevActionResult`: In a `foreach` state using multiple actions per loop cycle, give access to the result of the previous action. See link:{kogito_sw_examples_url}/serverless-workflow-foreach-quarkus/src/main/resources/foreach.sw.json#L11[example]
+ * `identity`: Quarkus security identity
+ 
+ Therefore, the following function, for a serverless workflow definition whose id  is `expressionTest`, will append the string `worklow id is expressionTest` to the `message` variable
+
+----
+{
+      "name": "contextMessage",
+      "type": "expression",
+      "operation": ".message |= \"workflow id is \"+$WORKFLOW.id"
+}
+----
+ 
+=== Customizing workflow context
+
+In addition to the predefined keys mentioned previously, you can add your own keys to workflow context using Java Service Loader mechanism, by providing an implementation of class link:{kogito_runtimes_url}/kogito-serverless-workflow/kogito-serverless-workflow-utils/src/main/java/org/kie/kogito/serverless/workflow/utils/KogitoProcessContextResolverExtension.java[KogitoProcessContextResolverExtension] 
+
+This feature was used to add quarkus security identity support, you can check source code as reference link:{kogito_runtimes_url}/quarkus/extensions/kogito-quarkus-serverless-workflow-extension/kogito-quarkus-serverless-workflow/src/main/java/org/kie/kogito/serverless/workflow/QuarkusKogitoProcessContextResolver.java[here].
+
 
 == Additional resources
 

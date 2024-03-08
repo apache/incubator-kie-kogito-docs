@@ -1,0 +1,314 @@
+[#timeouts-showcase]
+= Timeouts Showcase in {product_name}
+:compat-mode!:
+// Metadata:
+:description: Timeouts showcase in Serverless Workflow
+:keywords: kogito, workflow, serverless, timer, timeout
+
+The timeouts showcase is designed to show how to configure and execute workflows that use timeouts, according to different deployment scenarios.
+While all the scenarios contain the same set of workflows, they are provided as independent example projects, to facilitate the execution and understanding of each case.
+
+The following workflows are provided:
+
+* <<workflow_timeouts_workflow, `workflow_timeouts`>>
+* <<callback_state_timeouts_workflow, `callback_state_timeouts`>>
+* <<switch_state_timeouts_workflow, `switch_state_timeouts`>>
+* <<event_state_timeouts_workflow, `event_state_timeouts`>>
+
+[#workflow_timeouts_workflow]
+== `workflow_timeouts` workflow
+
+It is a simple workflow that, rather than configuring a timeout for a particular state, is configured for the whole execution of the workflow.
+This can be done by using the `workflowExecTimeout` property, which defines the maximum workflow execution time. If this time is surpassed and the workflow has not finished, it will be automatically canceled.
+
+See the xref:core/timeouts-support.adoc#workflow-timeout[workflow timeout definition] for more information.
+
+.workflow_timeouts workflow
+image::use-cases/timeouts-showcase/workflow-timeouts-decorated.svg[]
+
+.Workflow execution timeout definition
+[source,json]
+----
+{
+  "id": "workflow_timeouts",
+  "version": "1.0",
+  "name": "Workflow Timeouts",
+  "description": "Simple workflow to show the workflowExecTimeout working",
+  "start": "PrintStartMessage",
+  "timeouts": {
+    "workflowExecTimeout": "PT1H"
+  }
+...
+}
+----
+
+[#callback_state_timeouts_workflow]
+== `callback_state_timeouts` workflow
+
+It is a simple workflow that, when the execution reaches the state `CallbackState`, an action is executed, and it waits for the event `callbackEvent` to arrive in order to continue the execution.
+However, a timeout is configured to set the maximum waiting time for that event.
+
+.callback_state_timeouts workflow
+image::use-cases/timeouts-showcase/callback-state-timeouts-decorated.svg[]
+
+.Callback event definition
+[source, json]
+----
+{
+"name": "callbackEvent",
+"source": "",
+"type": "callback_event_type"
+}
+----
+
+.CallbackState definition
+[source,json]
+----
+{
+ "name": "CallbackState",
+ "type": "callback",
+ "action": {
+   "name": "callbackAction",
+   "functionRef": {
+     "refName": "callbackFunction",
+     "arguments": {
+       "input": "${\"callback-state-timeouts: \" + $WORKFLOW.instanceId + \" has executed the callbackFunction.\"}"
+     }
+   }
+ },
+ "eventRef": "callbackEvent",
+ "transition": "CheckEventArrival",
+ "onErrors": [
+   {
+     "errorRef": "callbackError",
+     "transition": "FinalizeWithError"
+   }
+ ],
+ "timeouts": {
+   "eventTimeout": "PT30S"
+ }
+}
+----
+
+The timeout is configured with a duration of 30 seconds, and if no event arrives during this time, the flow execution moves to the next state, and the workflow's data remains unchanged.
+
+On the other hand, if the event arrive, the event payload is merged into the workflow's data, and thus, the `eventData` property of the workflow's data, will contain the information carried by the event payload.
+Using this simple configuration strategy, the workflow can collect the event information, and use it for example to determine the path to go in the next state.
+
+See the xref:core/timeouts-support.adoc#callback-state-timeout[callback state definition] for more information.
+
+For more information about how the incoming event information can be merged into the workflow's data you can see link:{spec_doc_url}#Event-data-filters[Event data filters].
+
+[#switch_state_timeouts_workflow]
+== `switch_state_timeouts` workflow
+
+This workflow is similar to the `callback_state_timeouts`, but when the execution reaches the state `ChooseOneEvent`, it waits for one of the two configured events, `visaDeniedEvent` or `visaApprovedEvent` to arrive.
+
+If any of the configured events arrives before the timeout is overdue, the workflow execution moves to the next state defined in the corresponding `transition`.
+
+If none of the events arrives before the timeout is overdue, the workflow execution moves to the state defined in the `defaultCondition` transition.
+
+See the xref:core/timeouts-support.adoc#switch-state-timeout[switch state definition] for more information.
+
+.switch_state_timeouts workflow
+image::use-cases/timeouts-showcase/switch-state-timeouts-decorated.svg[]
+
+.ChooseOneEvent definition
+[source,json]
+----
+    {
+      "name": "ChooseOnEvent",
+      "type": "switch",
+      "eventConditions": [
+        {
+          "eventRef": "visaApprovedEvent",
+          "transition": "ApprovedVisa"
+        },
+        {
+          "eventRef": "visaDeniedEvent",
+          "transition": "DeniedVisa"
+        }
+      ],
+      "defaultCondition": {
+        "transition": "HandleNoVisaDecision"
+      },
+      "timeouts": {
+        "eventTimeout": "PT30S"
+      }
+    }
+----
+
+[#event_state_timeouts_workflow]
+== `event_state_timeouts` workflow
+
+This workflow is similar to the `switch_state_timeouts`, but when the execution reaches the state `WaitForEvent`, it waits for one of the configured events, `event1` or `event2`, to arrive.
+Each event has a number of configured actions to execute, but unlike the switch state, only one possible `transition` exists.
+
+If none of the configured events arrives before the timeout is overdue, the workflow execution moves to the next state defined in the `transition` property, skipping the events that were not received in time together with actions configured for them.
+
+If one of the events arrives before the timeout is overdue, the workflow executes the corresponding actions, and finally moves to the state defined in `transition`.
+
+[NOTE]
+====
+The semantic of this state might vary depending on the `exclusive` flag, in the example the default value of `true` will be applied, and thus, the workflow will transition as soon as the first event arrives.
+====
+
+See the xref:core/timeouts-support.adoc#event-state-timeout[event state definition] for more information.
+
+
+.event_state_timeouts workflow
+image::use-cases/timeouts-showcase/event-state-timeouts-decorated.svg[]
+
+
+.WaitForEvent definition
+[source,json]
+----
+    {
+      "name": "WaitForEvent",
+      "type": "event",
+      "onEvents": [
+        {
+          "eventRefs": [
+            "event1"
+          ],
+          "eventDataFilter": {
+            "data": "${ \"The event1 was received.\" }",
+            "toStateData": "${ .exitMessage }"
+          },
+          "actions": [
+            {
+              "name": "printAfterEvent1",
+              "functionRef": {
+                "refName": "systemOut",
+                "arguments": {
+                  "message": "${\"event-state-timeouts: \" + $WORKFLOW.instanceId + \" executing actions for event1.\"}"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "eventRefs": [
+            "event2"
+          ],
+          "eventDataFilter": {
+            "data": "${ \"The event2 was received.\" }",
+            "toStateData": "${ .exitMessage }"
+          },
+          "actions": [
+            {
+              "name": "printAfterEvent2",
+              "functionRef": {
+                "refName": "systemOut",
+                "arguments": {
+                  "message": "${\"event-state-timeouts: \" + $WORKFLOW.instanceId + \" executing actions for event2.\"}"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "timeouts": {
+        "eventTimeout": "PT30S"
+      },
+      "transition": "PrintExitMessage"
+    }
+----
+
+== Executing the workflows
+
+To execute the workflows you can use any of the available deployment scenarios:
+
+* <<execute-operator-dev-profile, {product_name} Operator Dev Profile>>
+
+* <<execute-quarkus-project-embedded-services, Quarkus Workflow Project with embedded services>>
+
+* <<execute-quarkus-project-standalone-services, Quarkus Workflow Project with standalone services>>
+
+[#execute-operator-dev-profile]
+=== {product_name} Operator Dev Profile
+
+When you work with the xref:cloud/operator/developing-workflows.adoc[{operator_name} Dev Profile], the operator will automatically provision an execution environment that contains an embedded {job_service_xref}[job service] instance, as well as an instance of the {data_index_xref}[data index service].
+And thus, there is no need for additional configurations when you use timeouts.
+
+To execute the workflows you must:
+
+In a command terminal, clone the `kogito-examples` repository, navigate to the cloned directory, and follow https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase-operator-devprofile/README.md[these steps]:
+
+[source, bash]
+----
+git clone https://github.com/apache/incubator-kie-kogito-examples.git
+
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-timeouts-showcase-operator-devprofile
+----
+
+[#execute-quarkus-project-embedded-services]
+=== Quarkus Workflow Project with embedded services
+
+Similar to the <<#execute-operator-dev-profile, {operator_name} Dev Profile>>, this scenario shows how to configure the embedded {job_service_xref}[job service] and {data_index_xref}[data index service], when you work with a Quarkus Workflow project and it is also intended for development purposes.
+
+In a command terminal, clone the `kogito-examples` repository, navigate to the cloned directory, and follow link:{kogito_sw_examples_url}/serverless-workflow-timeouts-showcase-embedded/README.md[these steps]:
+
+[source, bash]
+----
+git clone https://github.com/apache/incubator-kie-kogito-examples.git
+
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-timeouts-showcase-embedded
+----
+
+
+[#execute-quarkus-project-standalone-services]
+=== Quarkus Workflow Project with standalone services
+
+This is the most complex and close to a production scenario. In this case, the workflows, the {job_service_xref}[job service], the {data_index_xref}[data index service], and the database are deployed as standalone services in the kubernetes or knative cluster.
+Additionally, the communications from the workflows to the {job_service_xref}[job service], and from the {job_service_xref}[job service] to the {data_index_xref}[data index service], are resolved via the knative eventing system.
+
+[NOTE]
+====
+By using the knative eventing system the underlying low level communication system is transparent to the integration.
+====
+
+
+==== Architecture
+
+The following diagram shows the architecture for this use case:
+
+. Every time a workflow needs to program a timer for a given timeout, a cloud event is sent to the {job_service_xref}#integration-with-the-workflows[job service] for that purpose.
+. When a timer is overdue, a rest call is executed to notify the workflow, which then must execute accordingly to the given state semantic.
+. Workflow and job status changes are propagated to the {data_index_xref}[data index service] via cloud events.
+
+.Knative Workflow with Job Service architecture
+image::use-cases/timeouts-showcase/timeouts-showcase-extended-architecture.png[]
+
+* *timeouts-showcase-extended:* Is the Quarkus Workflow Project that contains the workflows, that must be maven build, and deployed into the kubernetes cluster.
+
+* *jobs-service-postresql:* Is the job service that will be deployed into the kubernetes cluster.
+
+* *data-index-service-postgresql:* Is the data index service that will be deployed into the kubernetes cluster.
+
+* *timeouts-showcase-database:* Is the PostgreSQL instance that will be deployed into the kubernetes cluster.
+
+[NOTE]
+====
+For simplification purposes, a single database instance is used for both services to store the information about the workflow instances, and the timers.  However, in a production environment is recommended to have independent database instances.
+====
+
+==== Running the example
+
+To execute the workflows you must:
+
+In a command terminal, clone the `kogito-examples` repository, navigate to the cloned directory, and follow link:{kogito_sw_examples_url}/serverless-workflow-timeouts-showcase-extended/README.md[these steps]:
+
+[source, bash]
+----
+git clone https://github.com/apache/incubator-kie-kogito-examples.git
+
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-timeouts-showcase-extended
+----
+
+
+== Additional resources
+
+* xref:core/timeouts-support.adoc[Timeouts support in {product_name}]
+
+include::../../../../pages/_common-content/report-issue.adoc[]

@@ -1,0 +1,165 @@
+= Testing your Quarkus Workflow Application using REST Assured
+:compat-mode!:
+// Metadata:
+:description: Basic Integration Test with REST Assured
+:keywords: kogito, workflow, quarkus, serverless, quarkus-cli, test, restassured
+
+This document describes how to test your workflow application using REST Assured. 
+
+REST Assured enables you to test REST APIs using Java libraries and integrates with Apache Maven. For more information about REST Assured, see link:https://rest-assured.io/[REST Assured page].
+
+The testing procedure in this document is based on the `serverless-workflow-examples/serverless-workflow-testing-with-rest-assured` example application. You can access this example application in link:{kogito_sw_examples_url}/serverless-workflow-testing-with-rest-assured[Kogito Examples] GitHub repository.
+
+The following procedure describes how to test a workflow application that exposes the `hello` endpoint, which expects a `name` as a request parameter and returns `greeting` value:
+
+.Example request body
+[source,json]
+----
+{
+  "name": "John Doe"
+}
+----
+
+.Example response
+[source,json]
+----
+{
+  "id": "00ce5c1d-4936-4e18-998c-f5c5d5d784ad",
+  "workflowdata": {
+    "greeting": "Hello, John Doe"
+  }
+}
+----
+
+.Prerequisites
+include::../../../../pages/_common-content/getting-started-requirement.adoc[]
+
+[NOTE]
+====
+This document is based on the `serverless-workflow-testing-with-rest-assured` example application from the link:{kogito_sw_examples_url}[GitHub repository].
+====
+
+.Procedure
+
+. Check if your project has the REST Assured dependency in your `pom.xml` file. If it doesn't, add it like the following:
+
++
+--
+[source,xml]
+----
+<dependency>
+    <groupId>io.rest-assured</groupId>
+    <artifactId>rest-assured</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+--
+
+. Create a test class named `HelloTest` in the `src/test/java/org/kie/kogito/examples/` directory, containing the following content:
++
+--
+.Example `HelloTest.java` file
+[source,java]
+----
+package org.kie.kogito.examples;
+
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+
+@QuarkusTest
+class HelloTest {
+
+    @BeforeAll
+    static void init() {
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails(); <1>
+    }
+
+    @Test
+    void testHello() {
+        given()
+                .contentType(ContentType.JSON) <2>
+                .accept(ContentType.JSON) <3>
+                .body("{\"name\": \"John Doe\"}") <4>
+                .when()
+                .post("/hello") <5>
+                .then()
+                .statusCode(201) <6>
+                .body("workflowdata.greeting", equalTo("Hello, John Doe")); <7>
+    }
+}
+----
+
+<1> Enables logging of the request and response when the test fails.
+<2> Defines JSON as the content type of the request.
+<3> Specifies the `accept` header of the request. This is an alternative for `header("Accept", "application/json")`.
+<4> Defines the request body as `{"name": "John Doe"}`.
+<5> Specifies the request as a POST method to the `/hello` URL.
+<6> Defines `201` as the expected response status code.
+<7> Defines that `Hello, John Doe` is expected in the `workflowdata.greeting` JSON path.
+
+--
+
+. To run your test, execute the following command:
++
+--
+.Command to run a test
+[source,shell]
+----
+mvn clean verify
+----
+
+.Example output
+[source,shell]
+----
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running org.kie.kogito.examples.HelloTest
+2022-06-03 16:36:11,461 INFO  [org.jbo.threads] (main) JBoss Threads version 3.4.2.Final
+2022-06-03 16:36:11,708 INFO  [org.kie.kog.cod.api.uti.AddonsConfigDiscovery] (build-1) Performed addonsConfig discovery, found: AddonsConfig{usePersistence=false, useTracing=false, useMonitoring=false, usePrometheusMonitoring=false, useCloudEvents=true, useExplainability=false, useProcessSVG=false, useEventDrivenDecisions=false, useEventDrivenRules=false}
+2022-06-03 16:36:12,004 INFO  [org.kie.kog.cod.cor.uti.ApplicationGeneratorDiscovery] (build-9) Generator discovery performed, found [processes]
+2022-06-03 16:36:14,486 INFO  [org.kie.kog.add.qua.mes.com.QuarkusKogitoExtensionInitializer] (main) Registered Kogito CloudEvent extension
+2022-06-03 16:36:14,612 INFO  [io.quarkus] (main) serverless-workflow-testing-with-rest-assured 1.0 on JVM (powered by Quarkus 2.9.2.Final) started in 3.635s. Listening on: http://localhost:8081
+2022-06-03 16:36:14,613 INFO  [io.quarkus] (main) Profile test activated.
+2022-06-03 16:36:14,613 INFO  [io.quarkus] (main) Installed features: [cache, cdi, jackson-jq, kogito-addon-messaging-extension, kogito-processes, kogito-serverless-workflow, reactive-routes, rest-client, rest-client-jackson, resteasy, resteasy-jackson, smallrye-context-propagation, smallrye-reactive-messaging, smallrye-reactive-messaging-http, vertx]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.819 s - in org.kie.kogito.examples.HelloTest
+2022-06-03 16:36:16,559 INFO  [io.quarkus] (main) serverless-workflow-testing-with-rest-assured stopped in 0.028s
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO]
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ serverless-workflow-testing-with-rest-assured ---
+[INFO] Building jar: /home/user/dev/apache/kogito-examples/serverless-workflow-examples/serverless-workflow-testing-with-rest-assured/target/serverless-workflow-testing-with-rest-assured-1.0.jar
+[INFO]
+[INFO] --- quarkus-maven-plugin:${quarkus_version}.Final:build (default) @ serverless-workflow-testing-with-rest-assured ---
+[INFO] Performed addonsConfig discovery, found: AddonsConfig{usePersistence=false, useTracing=false, useMonitoring=false, usePrometheusMonitoring=false, useCloudEvents=true, useExplainability=false, useProcessSVG=false, useEventDrivenDecisions=false, useEventDrivenRules=false}
+[INFO] Generator discovery performed, found [processes]
+[INFO] [io.quarkus.deployment.QuarkusAugmentor] Quarkus augmentation completed in 2669ms
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  15.558 s
+[INFO] Finished at: 2022-06-03T16:36:19-03:00
+[INFO] ------------------------------------------------------------------------
+----
+
+If you see a similar output, this means your test is executed successfully.
+--
+
+== Additional resources
+
+* xref:use-cases/advanced-developer-use-cases/testing/mocking-openapi-services-with-wiremock.adoc[Mocking OpenAPI services using WireMock]
+* xref:use-cases/advanced-developer-use-cases/testing/mocking-http-cloudevents-with-wiremock.adoc[Mocking HTTP CloudEvents sink using WireMock]
+* xref:use-cases/advanced-developer-use-cases/persistence/integration-tests-with-postgresql.adoc[{product_name} integration test using PostgreSQL]
+* link:https://quarkus.io/guides/getting-started-testing[Testing a Quarkus application]
+* link:https://rest-assured.io/#docs[REST Assured Documentation]
+
+include::../../../../pages/_common-content/report-issue.adoc[]

@@ -17,27 +17,28 @@
 # under the License.
 #
 
-name: SonataFlow Guides
+name: SonataFlow Guides - Verify Build
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     branches: [main]
     paths-ignore:
-      - '.gitignore'
-      - 'LICENSE'
-      - 'README*'
+      - ".gitignore"
+      - "LICENSE"
+      - "README*"
+      - "CONTRIBUTING.md"
 jobs:
   build_site:
-    name: "Building SonataFlow Guides with Antora"
+    name: "Building SonataFlow Docs with Antora"
     runs-on: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: "16"
       - run: export DOCSEARCH_ENABLED=true
       - run: export DOCSEARCH_ENGINE=lunr
       - run: export NODE_PATH="$(npm -g root)"
       - run: npm -v
-      - run: npm run install-build
+      - run: npm run local-install-build

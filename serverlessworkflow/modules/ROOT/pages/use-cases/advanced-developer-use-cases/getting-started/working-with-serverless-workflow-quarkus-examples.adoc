@@ -1,0 +1,47 @@
+= Working with {product_name} example application using Quarkus CLI
+:compat-mode!:
+// Metadata:
+:description: Build Serverless Application with Quarkus CLI
+:keywords: kogito, workflow, quarkus, serverless, quarkus-cli
+// links
+:quarkus_container_images_url: https://quarkus.io/guides/container-image
+:quarkus_native_builds_url: https://quarkus.io/guides/building-native-image
+:google_jib_url: https://github.com/GoogleContainerTools/jib
+:kogito_sw_examples_git_repo_url: https://github.com/apache/incubator-kie-kogito-examples.git
+
+This document describes how to build a images of {product_name} example applications using the link:{quarkus_cli_url}[Quarkus CLI].
+
+.Prerequisites
+include::./../../../../pages/_common-content/getting-started-requirement.adoc[]
+* Latest version of Docker is installed. Alternatively, you can use link:{google_jib_url}[Jib] to build container images. However, Docker is required to build GraalVM native image using the Quarkus native builder image.
+* Optionally, GraalVM {graalvm_min_version} is installed.
+* Install the Quarkus command line interface (CLI). For more information, see link:{quarkus_cli_url}[Installing the Quarkus CLI].
+
+[[proc-using-example-application]]
+== Using an example application
+
+To get started with building workflow images, you can use the link:{kogito_sw_examples_url}/serverless-workflow-greeting-quarkus[`serverless-workflow-greeting-quarkus`] example application.
+However, same procedure can be applied to any example located in link:{kogito_sw_examples_url}[{product_name} example repository]
+
+NOTE: You can skip the following procedure if you already have a workflow application.
+
+.Procedure
+. Clone the link:{kogito_sw_examples_git_repo_url}[kogito-examples] repository and navigate to the link:{kogito_sw_examples_url}/serverless-workflow-greeting-quarkus[`serverless-workflow-greeting-quarkus`] example application.
++
+.Clone an example application
+[source,shell,subs="attributes+"]
+----
+git clone --branch main {kogito_sw_examples_git_repo_url} 
+cd kogito-examples/serverless-workflow-examples/serverless-workflow-greeting-quarkus
+----
+
+. To run the example application, follow the instructions located in the README.md of the examples. Every example application provides a file with instructions on how to run and work with it.
+. Play with the example and explore {product_name} capabilities.
+
+
+== Additional resources
+
+* xref:./build-workflow-image-with-quarkus-cli.adoc[]
+* xref:./test-serverless-workflow-quarkus-examples.adoc[]
+
+include::../../../../pages/_common-content/report-issue.adoc[]

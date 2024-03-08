@@ -39,14 +39,14 @@ jobs:
         uses: kiegroup/kie-ci/.ci/actions/parse-labels@main
         with:
           labels: ${LABELS}
-  
+
   backporting:
     if: ${{ github.event.pull_request.state == 'closed' && github.event.pull_request.merged && needs.compute-targets.outputs.target-branches != '[]' }}
     name: "[${{ matrix.target-branch }}] - Backporting"
     runs-on: ubuntu-latest
     needs: compute-targets
     strategy:
-      matrix: 
+      matrix:
         target-branch: ${{ fromJSON(needs.compute-targets.outputs.target-branches) }}
       fail-fast: false
     env:

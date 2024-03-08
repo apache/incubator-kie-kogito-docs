@@ -1,0 +1,228 @@
+= Deploying your {product_name} application on Minikube
+:compat-mode!:
+// Metadata:
+:description: Deploying Serverless Application on Minikube
+:keywords: kogito, workflow, quarkus, serverless, kn, kubectl, minikube
+:table-caption: Data Set
+// envs for common content
+:environment_prereq: Minikube is installed
+:kubectl_prereq: command-line tool is installed. Otherwise, Minikube handles it.
+:cluster_kind: Minikube is installed
+:knative_procedure: <<proc-install-knative-minikube, Installing Knative on Minikube>>
+:deploy_application: using the Minikube registry
+:k8s_registry: dev.local
+:default_namespace: kogito
+:container_push_prop: false
+:platform: Kubernetes
+:registry: Minikube's
+:container_push: Property to whether or not push images. False when using Minikube's remote Docker daemon to avoid image validation
+:quarkus-k8s-plugin: quarkus-kubernetes
+:command_line_tool: kubectl
+:command_line_tool_name: Kubernetes CLI
+// links
+:kn_cli_quickstart_plugin_url: https://knative.dev/docs/install/quickstart-install/#install-the-knative-cli
+:knative_on_minikube_step_by_step_url: https://redhat-developer-demos.github.io/knative-tutorial/knative-tutorial/setup/minikube.html
+:knative_issue_url: https://github.com/knative/serving/issues/6101
+
+
+This document describes how to deploy your workflow application using a local Kubernetes cluster, such as link:{minikube_url}[Minikube], along with a procedure to run the Knative platform.
+
+For more information about Minikube and related system requirements, see link:{minikube_url}/docs/start/[Getting started with Minikube] documentation.
+
+// shared pre req
+include::./common/_prerequisites.adoc[]
+
+To deploy your workflow application on Minikube, you need to install Knative on Minikube. However, first you need to ensure that Minikube is installed correctly.
+
+You can check the Minikube installation by entering the following commands in a command terminal:
+
+.Verify Minikube version
+[source,shell]
+----
+minikube version
+----
+
+.Verify Knative CLI version
+[source,shell]
+----
+kn version
+----
+
+.Verify `kubectl` CLI version
+[source,shell]
+----
+kubectl version
+----
+
+[NOTE]
+====
+If `kubectl` is not installed, then Minikube handles it when you execute the following command:
+
+.`kubectl` is available using Minikube
+[source,shell]
+----
+alias kubectl="minikube kubectl --"
+----
+====
+
+[[proc-install-knative-minikube]]
+== Installing Knative on Minikube
+
+Once you verify the Minikube and Knative CLI installation, you can install Knative on Minikube.
+
+.Prerequisites
+* Minikube is installed.
+* Knative CLI is installed. +
+For more information, see link:{kn_cli_install_url}[Install the Knative CLI].
+
+.Procedure
+. Open a command terminal and install Knative on Minikube.
+. Configure Knative on Minikube.
++
+--
+Knative CLI offers `quickstart` plug-in, which provides the required configurations. For information about installing the `quickstart` plug-in, see link:{kn_cli_quickstart_plugin_url}[Install Knative using quickstart].
+--
+
+. After configuring the plug-in, execute the following command to configure a Minikube profile:
++
+--
+.Configure a Minikube profile
+[source,shell]
+----
+kn quickstart minikube
+----
+
+The previous command configures a Minikube profile called `knative`. After creating a Minikube profile, all Minikube commands use the created profile.
+--
+
+. To list the available Minikube profiles, enter the following command:
++
+--
+.List the available Minikube profiles
+[source,shell]
+----
+minikube profile list
+----
+--
+
+. Enter the following command to open the Minikube web console on the `knative` profile:
++
+--
+.Open Minikube web console
+[source,shell]
+----
+minikube dashboard --profile knative
+----
+
+The previous command opens the Kubernetes Management console in your browser. If the console is not opened, you can go to the URL that is returned.
+--
+
+[NOTE]
+====
+To follow the manual process of installing Knative on Minikube, see link:{knative_on_minikube_step_by_step_url}[Knative tutorial on Minikube].
+====
+
+[[proc-deploy-sw-application-minikube]]
+== Deploying your workflow application on Minikube
+
+Once you install Knative on Minikube, you can initiate the process of deploying your workflow application on Minikube.
+
+// shared app req
+include::./common/_deploy_workflow_application_requisites.adoc[]
+
+
+.Procedure
+. In a command terminal, enter the following command to configure Docker to use the in-cluster Docker daemon:
++
+--
+.Configure Docker to use in-cluster Docker Daemon
+[source,shell]
+----
+eval $(minikube -p minikube docker-env --profile knative)
+----
+--
+
+. Build your application to store it in the Minikube registry.
++
+--
+If your workflow application container image is built before configuring Docker to use the in-cluster Docker daemon, then you might need to build the image again so that the image is available in the Minikube registry.
+
+[NOTE]
+====
+If you are building native container images, ensure that you use the following system property to use Minikube Docker Daemon:
+
+.System property to build container images
+[source,shell]
+----
+-Dquarkus.native.remote-container-build=true
+----
+====
+
+[IMPORTANT]
+====
+You might be required to tag the container images using one of the following registry:
+
+* `ko.local`
+* `dev.local`
+
+For more information, see link:{knative_issue_url}[How to use locally built docker image].
+
+In that case, use the `-Dquarkus.container-image.registry=some_of_the_values_above` property to enable Knative fetch the container images from Minikube Docker Daemon.
+
+If you do not use the values, you might need to set the `imagePullPolicy` to `Never` or `IfNotPresent`, otherwise, Minikube pulls the images from a remote registry. 
+This behavior can be avoided by tagging the image using previously listed domains.
+====
+--
+
+. In a separate command terminal window, start the Minikube tunnel using the Knative profile to prepare the environment:
++
+--
+.Start Minikube tunnel using Knative profile
+[source,shell]
+----
+minikube tunnel --profile knative
+----
+
+The previous command starts in a loop. Therefore, this command must be running throughout the process mentioned in this document. On Mac and Windows, you might be required to provide the user password.
+
+.Example tunnel output
+[source,shell]
+----
+Status:
+	machine: knative
+	pid: 124859
+	route: 10.96.0.0/12 -> 192.168.58.2
+	minikube: Running
+	services: [kourier]
+    errors:
+		minikube: no errors
+		router: no errors
+		loadbalancer emulator: no errors
+----
+--
+
+. After starting the Minikube tunnel, create `serverless-workflow-greeting-quarkus` namespace using the following command:
++
+include::./common/_create_namespace_and_deploy_info.adoc[]
+
+In the following procedures, you can find different approaches to deploy your workflow application, such as:
+
+* <<proc-deploy-sw-application-knative-cli,Using Knative CLI (kn)>>
+* <<proc-deploy-sw-application-kubectl,Using kubectl command-line tool>>
+* <<proc-deploy-sw-application-quarkus-cli,Using Quarkus CLI>>
+
+
+// deploy with kn-cli
+include::./common/_proc_deploy_sw_kn_cli.adoc[]
+
+// deploy with kubectl
+include::./common/_proc_deploy_sw_kubectl.adoc[]
+
+// deploy with quarkus-cli
+include::./common/_proc_deploy_sw_quarkus_cli.adoc[]
+
+
+// verify deployed swf
+include::./common/_verify_if_swf_is_deployed.adoc[]
+
+include::../../../../pages/_common-content/report-issue.adoc[]

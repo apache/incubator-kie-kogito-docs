@@ -7,11 +7,11 @@
 
 The Cloud Native Computing Foundation (CNCF) specification link:{spec_doc_url}#defining-custom-function-types[supports the `custom` function type], which enables the implementations to extend the function definition capability.
 
-{product_name} supports the `java` and `sysout` custom types.
+{product_name} supports several custom types, which are listed below.
 
 [WARNING]
 ====
-The CNCF specification does not support `java` and `sysout` functions. Therefore, these functions might not be portable across other implementations.
+Custom functions might not be portable across other implementations.
 ====
 
 [[con-func-sysout]]
@@ -208,7 +208,7 @@ Kogito supports the link:{camel_url}[Camel Routes] functions within an Apache Ma
 
 [NOTE]
 ====
-This section briefly exemplifies how to define and use Camel Routes within your workflow application. For more information, see the xref:integrations/camel-routes-integration.adoc[Integrating with Camel Routes].
+This section briefly exemplifies how to define and use Camel Routes within your workflow application. For more information, see the xref:use-cases/advanced-developer-use-cases/integrations/camel-routes-integration.adoc[Integrating with Camel Routes].
 ====
 
 === Function definition
@@ -307,7 +307,7 @@ include::../../pages/_common-content/camel-valid-responses.adoc[]
 
 [NOTE]
 ====
-This section briefly exemplifies how to define and use Knative custom functions within your workflow application. For more information, see xref:integrations/custom-functions-knative.adoc[Invoking Knative services from Serverless Workflow].
+This section briefly exemplifies how to define and use Knative custom functions within your workflow application. For more information, see xref:use-cases/advanced-developer-use-cases/integrations/custom-functions-knative.adoc[Invoking Knative services from Serverless Workflow].
 ====
 
 === Function definition
@@ -336,7 +336,7 @@ You can declare a {product_name} custom function using the Knative service name,
 
 <1> `greet` is the function name
 <2> `custom` is the function type
-<3> In `operation` you set the coordinates of the Knative service. See xref:cloud/quarkus/kubernetes-service-discovery.adoc[Kubernetes Service Discovery] for supported Scheme and Kubernetes GVK
+<3> In `operation` you set the coordinates of the Knative service. See xref:use-cases/advanced-developer-use-cases/service-discovery/kubernetes-service-discovery.adoc[Kubernetes Service Discovery] for supported Scheme and Kubernetes GVK
 
 The above function will send a `POST` request to the http://custom-function-knative-service.default.10.109.169.193.sslip.io/plainJsonFunction URL. If you don't specify a path, {product_name} will use the root path (/).
 
@@ -531,7 +531,91 @@ kogito.sw.functions.greet.timeout=5000 <1>
 ----
 <1> Time in milliseconds
 
-== Custom function types
+== Rest custom function 
+
+Serverless Workflow Specification defines the xref:service-orchestration/orchestration-of-openapi-based-services.adoc[OpenAPI function type], which is the preferred way to interact with existing REST servers. 
+However, sometimes a workflow should interact with several REST APIs that are not described using an OpenAPI specification file. Since generating such files for these services might be tedious, {product_name} offers REST custom type as a shortcut. 
+
+When using custom rest, in the function definition, you specify the HTTP URI to be invoked and the HTTP method (get, post, patch, or put) to be used, using the `operation` string. When the function is invoked, you pass the request arguments as you do when using an OpenAPI function. 
+
+The following example shows the declaration of a `rest` function:
+
+.Example of a `rest` function declaration
+[source,json]
+----
+{
+  "functions": [
+    {
+      "name": "multiplyAllByAndSum", <1>
+      "type": "custom", <2>
+      "operation": "rest:post:/numbers/{multiplier}/multiplyByAndSum" <3>
+    }
+  ]
+}
+----
+
+<1> `multiplyAllAndSum` is the function name
+<2> `custom` is the function type
+<3> `rest:post:/numbers/\{multiplier}/multiplyByAndSum` is the custom operation definition. In the custom operation definition: 
+* `rest` is the reserved operation keyword that indicates this is a REST call.
+* `post` is the HTTP method. 
+* `/numbers/\{multiplier}/multiplyByAndSum` is the relative endpoint. 
+
+When using the relative endpoints you must specify the host as a property. The format of the host property is `kogito.sw.functions.<function_name>.host`. Therefore, in this example, `kogito.sw.functions.multiplyAllByAndSum.host` is the host property key. You might override the default port (80) if needed by specifying `kogito.sw.functions.multiplyAllAndSum.port` property. 
+
+This particular endpoint expects as body a JSON object whose field `numbers` is an array of integers, multiplies each item in the array by `multiplier` and returns the sum of all the multiplied items. Therefore, to invoke it, assuming the input array is stored in the workflow model as property `inputNumbers`, you should write:
+
+.Example of a `rest` function call
+[source,json]
+----
+{
+ "functionRef": {
+   "refName": "multiplyAllByAndSum",
+   "arguments": {
+     "numbers": "$.inputNumbers"
+     "multiplier": 3 <1>
+   }
+ }
+}
+----
+<1> you replace path and query parameters by specifying an argument which name is equal to the path or query parameter. The query or path parameter to be replaced should be enclosed within {} in the endpoint string.  
+
+If `inputNumbers` contains `1`, `2`, and `3`, the output of the call will be  `1*3+2*3+3*3=18. 
+
+In case you want to specify headers in your HTTP request, you might do it by adding arguments starting with the `HEADER_` prefix. Therefore if you add `"HEADER_ce_id": "123"` to the previous argument set, you will be adding a header named `ce_id` with the value `123`  to your request. A similar approach might be used to add query params to a GET request, in that case, you must add arguments starting with the `QUERY_` prefix. Note that you can also use {} notation for replacements of query parameters included directly in the `operation` string.
+
+For example, given the following function definition that performs a `get` request
+
+.Example of a `get` request definition
+----
+{
+  "functions": [
+    {
+      "name": "getProductList",
+      "type": "custom",
+      "operation": "rest:get:/products/search?category={category}"
+    }
+  ]
+}
+----
+
+You can replace `\{category}` specifying an argument with that name, plus adding `sort` query parameter
+
+.Example of a `get` request invocation
+
+----
+{
+ "functionRef": {
+   "refName": "getProductList",
+   "arguments": {
+     "category": "electronics",
+     "QUERY_sort": "asc"
+   }
+ }
+}
+----
+
+== Additional custom function types
 
 You can add your custom types by using the Kogito add-on mechanism. As predefined custom types like xref:core/custom-functions-support.adoc#con-func-sysout[`sysout`] or xref:core/custom-functions-support.adoc#con-func-java[`java`], the custom type identifier is the prefix of the operation field of the function definition.
 
