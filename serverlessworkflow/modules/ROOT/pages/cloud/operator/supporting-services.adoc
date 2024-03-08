@@ -2,11 +2,11 @@
 :compat-mode!:
 // Metadata:
 :description: Deploy Supporting Services with {operator_name}
-:keywords: kogito, sonataflow, workflow, serverless, operator, kubernetes, openshift, containers, data, index, job, service
+:keywords: kogito, sonataflow, workflow, serverless, operator, kubernetes, openshift, containers, data, index, job, service, cluster, wide, scoped, cluster-wide, cluster-scoped
 // links
 :kogito_serverless_operator_url: https://github.com/apache/incubator-kie-kogito-serverless-operator/
 
-By default, workflows use an embedded version of xref:data-index/data-index-core-concepts.adoc[Data Index]. This document describes how to deploy supporting services, like Data Index, on a cluster using the link:{kogito_serverless_operator_url}[{operator_name}].
+By default, workflows use an embedded version of xref:../../data-index/data-index-core-concepts.adoc[Data Index]. This document describes how to deploy supporting services, like Data Index, on a cluster using the link:{kogito_serverless_operator_url}[{operator_name}].
 
 [IMPORTANT]
 ====
@@ -98,9 +98,32 @@ spec:
 <4> Number of Data Index pods, defaults to `1`
 <5> Custom Data Index container image name
 
+[#cluster-wide-services]
+== Cluster-Wide Supporting Services
+
+The `SonataFlowClusterPlatform` CR is optionally used to specify a cluster-wide set of supporting services for workflow consumption. This is done by referencing an existing, namespaced `SonataFlowPlatform` resource.
+
+Following is a basic configuration. It will allow workflows cluster-wide to leverage whatever supporting services are configured in the chosen "central" namespace.
+
+.Example of a basic SonataFlowClusterPlatform CR
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowClusterPlatform
+metadata:
+  name: cluster-platform
+spec:
+  platformRef:
+    name: sonataflow-platform
+    namespace: <central namespace>
+----
+
+NOTE: These cluster-wide services can be overridden in any namespace, by configuring that namespace's `SonataFlowPlatform.spec.services`.
+
 == Additional resources
 
-* xref:data-index/data-index-service.adoc[]
+* xref:../../data-index/data-index-service.adoc[]
+* xref:cloud/operator/enabling-jobs-service.adoc[]
 * xref:cloud/operator/known-issues.adoc[]
 
 include::../../../pages/_common-content/report-issue.adoc[]
