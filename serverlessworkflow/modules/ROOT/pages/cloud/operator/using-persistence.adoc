@@ -1,0 +1,110 @@
+= Using persistence in the SonataFlow Workflow CR
+:compat-mode!:
+// Metadata:
+:description: Using persistence in the workflow instance to store its context
+:keywords: sonataflow, workflow, serverless, operator, kubernetes, persistence
+
+
+This document describes how to configure a SonataFlow instance to use persistence to store the flow's context in a relational database.
+
+== Configuring the SonataFlow CR to use persistence
+
+Kubernetes's pods are stateless by definition. In some scenarios, this can be a challenge for workloads that require maintaining the status of 
+the application regardless of the pod's lifecycle. In the case of {product_name}, the context of the workflow is lost when the pod restarts.
+If your workflow requires recovery from such scenarios, you must to make these additions to your workflow CR:
+Use the `persistence` field in the `SonataFlow` workflow spec to define the database service located in the same cluster.
+There are 2 ways to accomplish this:
+
+* Using the Platform CR's defined persistence
+When the Platform CR is deployed with its persistence spec populated it enables workflows to leverage its configuration to populate the persistence
+properties in the workflows. 
+
+[source,yaml,subs="attributes+"]
+---
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  persistence:
+    postgresql:
+      secretRef:
+        name: postgres-secrets
+        userKey: POSTGRES_USER
+        passwordKey: POSTGRES_PASSWORD
+      serviceRef:
+        name: postgres
+        port: 5432
+        databaseName: sonataflow
+        databaseSchema: shared
+  build:
+    config:
+      strategyOptions:
+        KanikoBuildCacheEnabled: "true"
+---
+
+The values of `POSTGRES_USER` and `POSTGRES_PASSWORD` are the keys in the [Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/) that contains the credentials to connect to the postgreSQL instance. 
+The SonataFlow Workflow CR 
+is defined with its `Persistence` field defined as empty.
+
+[source,yaml,subs="attributes+"]
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: callbackstatetimeouts
+  annotations:
+    sonataflow.org/description: Callback State Timeouts Example k8s
+    sonataflow.org/version: 0.0.1
+spec:
+  persistence: {}
+  ...
+---
+
+This configuration signals the operator that the workflow requires persistence and that it expects its configuration to be populated accordingly. 
+The operator will add the relevant JDBC properties in the `application.properties`
+generated and as part of the pod´s environment so that it can connect to the persistence service defined in the `Platform` CR.
+
+[NOTE]
+====
+Currently, PostgreSQL is the only persistence supported.
+====
+
+* Using the custom defined persistence in the `SonataFlow` CR
+
+Alternatively, you can define a dedicated configuration in the `SonataFlow` CR instance using the same schema format found in the Platform CRD:
+
+[source,yaml,subs="attributes+"]
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: callbackstatetimeouts
+  annotations:
+    sonataflow.org/description: Callback State Timeouts
+    sonataflow.org/version: 0.0.1
+spec:
+  persistence:
+    postgresql:
+      secretRef:
+        name: postgres-secrets
+        userKey: POSTGRES_USER
+        passwordKey: POSTGRES_PASSWORD
+      serviceRef:
+        name: postgres
+        port: 5432
+        databaseName: sonataflow
+        databaseSchema: callbackstatetimeouts
+  ...
+---
+
+Like in the Platform CR case, the values of the `POSTGRES_USER` and `POSTGRES_PASSWORD` are the secret keys in the secret that contain the credentials to connect to
+the PostgreSQL instace.
+
+== Conclusion
+You can enable SQL persistence in your workflows by configuring each `SonataFlow` CR instance. And when the `SonataFlowPlatform` CR contains the persistence field configured,
+the operator uses this information to configure those `SonataFlow` CRs that request persistence. When both the `Platform CR` and the `SonataFlow CR` contain persistence 
+configuration, the operator will use the `Persistence` values from the `SonataFlow` CR. 
+
+== Additional resources
+* xref:cloud/operator/developing-workflows.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
