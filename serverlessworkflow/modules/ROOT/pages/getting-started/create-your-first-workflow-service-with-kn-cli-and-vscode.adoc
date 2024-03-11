@@ -3,21 +3,7 @@
 This guide showcases using the Knative Workflow CLI plugin and Visual Studio code to create & run {product_name} projects.
 
 .Prerequisites
-* xref:testing-and-troubleshooting/kn-plugin-workflow-overview.adoc[Knative Workflow CLI] {kn_cli_version} is installed.
-* Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
-
-.Preparing your environment for local development with locally deployed cluster instance
-* Install https://docs.docker.com/engine/install/[Docker] or https://podman.io/docs/installation[Podman].
-* Install https://minikube.sigs.k8s.io/docs/start/[minikube]
-* Install https://kubernetes.io/docs/tasks/tools/[kubectl].
-* Start minikube. Depending on your environment, set `--driver` flag to `podman` or `docker`
-[source,bash]
-----
-minikube start --cpus 4 --memory 8096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"  --driver=docker
-----
-* (optional) Install https://k9scli.io/[k9scli.io] 
-* xref:cloud/operator/install-serverless-operator.adoc[]
-* Install https://github.com/kiegroup/kie-tools/releases/tag/{kn_cli_version}[SonataFlow plug-in for Knative CLI]. Follow xref:testing-and-troubleshooting/kn-plugin-workflow-overview.adoc[] guide.
+* You have setup your environment according xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
 
 [[proc-creating-app-with-kn-cli]]
 == Creating a workflow project with Visual Studio Code and KN CLI
@@ -65,13 +51,13 @@ Use the `deploy` command with kn workflow to deploy the {product_name} project i
 ----
 kn workflow deploy
 ----
-* (Optional) Using k9scli you can examine your deployment.
 * In a different bash instance, create a port mapping:
 [source,bash]
 ----
 minikube service hello --namespace default --url
 ----
 * Use this URL to access your workflow instances using the Developer UI
+// TODO: Parametrize the devui name
 ** <RETURNED_URL>/q/dev/org.kie.kogito.kogito-quarkus-serverless-workflow-devui/workflowInstances
 * To update the image run the `deploy` again, note that this may take some time.
 
