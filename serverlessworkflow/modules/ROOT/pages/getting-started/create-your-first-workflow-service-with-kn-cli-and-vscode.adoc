@@ -4,6 +4,7 @@ This guide showcases using the Knative Workflow CLI plugin and Visual Studio cod
 
 .Prerequisites
 * You have setup your environment according xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
+* Install https://k9scli.io/[k9scli.io] for easier inspection of your application resources in cluster. This is optional, you can use any tool you are fimiliar with in this regard. 
 
 [[proc-creating-app-with-kn-cli]]
 == Creating a workflow project with Visual Studio Code and KN CLI
@@ -46,25 +47,25 @@ To deploy the finished project to a local cluster, proceed to the next section.
 
 Use the `deploy` command with kn workflow to deploy the {product_name} project into your local cluster.
 
-* Deploy to minikube
+* Deploy to cluster
 [source,bash]
 ----
-kn workflow deploy
+kn workflow deploy --namespace my-sonataflow-application
 ----
+* Using k9s cli you can examine your deployment.
 * In a different bash instance, create a port mapping:
 [source,bash]
 ----
-minikube service hello --namespace default --url
+minikube service hello --namespace my-sonataflow-application --url
 ----
 * Use this URL to access your workflow instances using the Developer UI
-// TODO: Parametrize the devui name
-** <RETURNED_URL>/q/dev/org.kie.kogito.kogito-quarkus-serverless-workflow-devui/workflowInstances
+** <RETURNED_URL>{sonataflow_devmode_devui_url}{workflow_instances}
 * To update the image run the `deploy` again, note that this may take some time.
 
 * To stop the deployment, use the `undeploy` command:
 [source,bash]
 ----
-kn worklow undeploy
+kn worklow undeploy --namespace my-sonataflow-application
 ----
 * You can validate your pod is terminating using k9s cli.
 
