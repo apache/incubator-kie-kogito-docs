@@ -25,7 +25,7 @@ If you have used https://knative.dev/docs/install/quickstart-install/[Knative us
 
 Please note, that if the knative quickstart procedure is not used, you need to install Knative Serving and Eventing manually. See <<proc-additional-options-for-local-environment>>.
 
-+
+
 .To startup the selected cluster without quickstart, use the following command:
 [tabs]
 ====
@@ -40,6 +40,7 @@ minikube config set driver docker/podman
 minikube config set container-runtime docker/podman
 
 # Set cpu and memory
+# 4096 is minimal baseline, increase to 6144 or 8192 if possible
 minikube config set cpus 4
 minikube config set memory 4096
 
@@ -74,6 +75,8 @@ If you are interested in our Java and Quarkus development path, consider complet
 
 [[proc-additional-options-for-local-environment]]
 == Additional options for local environment setup
+
+Points listed in this section provide extra posibilties when working with our guides and are considered optional.
 
 * Install https://www.graalvm.org/[GraalVM] {graalvm_min_version}. This will allow you to create https://www.graalvm.org/22.0/reference-manual/native-image/[native image] of your {product_name} application.
 * Install https://knative.dev/docs/install/yaml-install/serving/install-serving-with-yaml/[Knative Serving using YAML files] for advanced customizations or in cases where the quickstart procedure fails.

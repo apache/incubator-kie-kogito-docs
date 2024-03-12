@@ -50,22 +50,22 @@ Use the `deploy` command with kn workflow to deploy the {product_name} project i
 * Deploy to cluster
 [source,bash]
 ----
-kn workflow deploy --namespace my-sonataflow-application
+kn workflow deploy --namespace my-sf-application
 ----
 * Using k9s cli you can examine your deployment.
 * In a different bash instance, create a port mapping:
 [source,bash]
 ----
-minikube service hello --namespace my-sonataflow-application --url
+minikube service hello --namespace my-sf-application --url
 ----
 * Use this URL to access your workflow instances using the Developer UI
-** <RETURNED_URL>{sonataflow_devmode_devui_url}{workflow_instances}
+** <RETURNED_URL>{sonataflow_devmode_devui_url}/workflowInstances
 * To update the image run the `deploy` again, note that this may take some time.
 
 * To stop the deployment, use the `undeploy` command:
 [source,bash]
 ----
-kn worklow undeploy --namespace my-sonataflow-application
+kn worklow undeploy --namespace my-sf-application
 ----
 * You can validate your pod is terminating using k9s cli.
 
