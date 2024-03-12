@@ -62,6 +62,37 @@ minikube service hello --namespace my-sf-application --url
 ** <RETURNED_URL>{sonataflow_devmode_devui_url}/workflowInstances
 * To update the image run the `deploy` again, note that this may take some time.
 
+. In a separate bash instance create a port mapping:
++
+[tabs]
+====
+Minikube::
++
+--
+[source,shell]
+----
+minikube service hello --namespace my-sf-application --url
+----
+--
+Kind::
++
+--
+[source,shell]
+----
+# Execute
+kubectl get services -n my-sf-application
+
+# You should see output like this, note the ports
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)            AGE
+hello        ClusterIP   10.96.0.1    <none>        <RANDOM_PORT>/80   39s
+
+# Execute
+kubectl port-forward service/hello <RANDOM_PORT>:80 -n my-sf-application
+
+----
+--
+====
+
 * To stop the deployment, use the `undeploy` command:
 [source,bash]
 ----
