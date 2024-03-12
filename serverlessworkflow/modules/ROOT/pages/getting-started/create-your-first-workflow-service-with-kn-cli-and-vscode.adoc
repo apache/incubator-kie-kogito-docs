@@ -53,16 +53,7 @@ Use the `deploy` command with kn workflow to deploy the {product_name} project i
 kn workflow deploy --namespace my-sf-application
 ----
 * Using k9s cli you can examine your deployment.
-* In a different bash instance, create a port mapping:
-[source,bash]
-----
-minikube service hello --namespace my-sf-application --url
-----
-* Use this URL to access your workflow instances using the Developer UI
-** <RETURNED_URL>{sonataflow_devmode_devui_url}/workflowInstances
-* To update the image run the `deploy` again, note that this may take some time.
-
-. In a separate bash instance create a port mapping:
+* In a separate bash instance create a port mapping:
 +
 [tabs]
 ====
@@ -73,6 +64,8 @@ Minikube::
 ----
 minikube service hello --namespace my-sf-application --url
 ----
+* Use this URL to access your workflow instances using the Developer UI
+** <RETURNED_URL>{sonataflow_devmode_devui_url}/workflowInstances
 --
 Kind::
 +
@@ -93,6 +86,7 @@ kubectl port-forward service/hello <RANDOM_PORT>:80 -n my-sf-application
 --
 ====
 
+* To update the image run the `deploy` again, note that this may take some time.
 * To stop the deployment, use the `undeploy` command:
 [source,bash]
 ----
