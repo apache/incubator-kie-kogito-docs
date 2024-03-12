@@ -86,13 +86,7 @@ In dev profile, all the SonataFlow `.spec.resources` objects are mounted in the 
 [#operator-profiles]
 == About {operator_name} Profiles
 
-Essentially, the operator can work with three different profiles:
-
-1. `Devmode`: The workflow will be deployed as a mutable container that will react upon any changes on the `SonataFlow` custom resource immediatelly.
-2. `Preview`: The operator will rely on an internal build system to build an immutable container and every change to the `SonataFlow` will kick a new build.
-3. `Gitops`: Meaning that the image will be built externaly by another system (such as Tekton) and the `SonataFlow` custom resource will be deployed with a custom `.spec.podTemplate.container.image`
-
-The profile is set in the `annotations` attribute in the `SonataFlow` custom resource by the operator. By default, it's use the `preview` profile. For example:
+Profiles are a way to change the runtime and deployment behavior of workflows. You can change the `SonataFlow` custom resource profile using `annotations`. For example:
 
 .Example of a SonataFlow CR with a profile annotation
 [source,yaml,subs="attributes+"]
@@ -115,7 +109,14 @@ spec:
         end: true
 ----
 
-1. Preview profile defined in the `sonataflow.org/profile` annotation
+1. Preview profile defined in the `sonataflow.org/profile` annotation. This is the default profile.
+
+The {operator_name} supports three different profiles:
+
+1. `dev`: The workflow will be deployed as a mutable container that will react upon any changes on the `SonataFlow` custom resource immediatelly. Ideal for scenarios where the flow definition is under active development and testing in the cluster context. See xref:cloud/operator/developing-workflows.adoc[].
+2. `preview`: The operator will rely on an internal build system to build an immutable container based on the flow definition. Every change to the `SonataFlow` will kick a new build. Use this profile to evaluate the workflow behavior in the cluster or if you have a simple use case where you don't need any complex build customizations. See xref:cloud/operator/build-and-deploy-workflows.adoc[]
+// TODO: missing tekton/argocd guide https://issues.redhat.com/browse/KOGITO-7278
+3. `gitops`: Ideal for production use cases. This profile is automatically defined by the operator when the `SonataFlow` CR is deployed with a custom `.spec.podTemplate.container.image`. In this scenario, the user is responsible to build the workflow application and provide the image to the operator. 
 
 There's a correlation on the operator profile and the internal runtime workflow Quarkus application. See the table below.
 
@@ -137,6 +138,8 @@ There's a correlation on the operator profile and the internal runtime workflow 
 | Workflow image externally built by another system. The configuration file managed by the operator is `application-prod.properties`
 
 |===
+
+For more information about configuring workflows see xref:cloud/operator/configuring-workflows.adoc[].
 
 [#custom-image-default-container]
 === Setting a custom image in the default container
