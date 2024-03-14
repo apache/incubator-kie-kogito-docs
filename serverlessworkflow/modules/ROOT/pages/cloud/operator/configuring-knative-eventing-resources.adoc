@@ -1,0 +1,59 @@
+= Knative Eventing
+:compat-mode!:
+// Metadata:
+:description: Configuration of knatve eventing deployed by the operator
+:keywords: kogito, sonataflow, workflow, serverless, operator, kubernetes, knative, knative-eventing, events
+
+This document describes how you can configure the workflows to let operator create the knative eventing resources on Kubernetes.
+
+{operator_name} can analyze the event definitions from the `spec.flow` and create `SinkBinding`/`Trigger` based on the type of the event. Then the workflow service can utilize them for event communications. The same purpose of this feature in quarkus extension can be found xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-produce-events-with-knative-eventing.adoc#ref-example-sw-event-definition-knative[here].
+
+== Prerequisite
+1. Knative is installed on the cluster and Knative Eventing is initiated with a `KnativeEventing` CR.
+2. A broker named `default` is created. Currently all Triggers created by the {operator_name} will read events from `default`
+
+== Configuring the workflow
+
+For the operator to create the `SinkBinding` resources, the workflow must provide the sink information in `spec.sink`.
+
+.Example of a workflow with events
+[source,yaml,subs="attributes+"]
+--
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+...
+spec:
+  sink:
+    ref: <1>
+      name: default
+      namespace: greeting
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+  flow:
+    events: <2>
+      - name: requestQuote
+        type: kogito.sw.request.quote
+        kind: produced
+      - name: aggregatedQuotesResponse,
+        type: kogito.loanbroker.aggregated.quotes.response,
+        kind: consumed,
+        source: /kogito/serverless/loanbroker/aggregator
+...
+--
+<1> `spec.sink.ref` defines the sink that all created sinkBinding will use as the destination sink for producing events
+<2> `spec.flow.events` lists all the events referenced in the workflow. Events with `produced` kind will trigger the creation of `SinkBindings` by the {operator_name}, while those labeled as `consumed` will lead to the generation of `Triggers`.
+
+[NOTE]
+====
+Knative resources are not watched by the operator, indicating they will not undergo automatic reconciliation. This grants users the freedom to make updates at their preference.
+====
+
+== Additional resources
+
+* https://knative.dev/docs/eventing/[Knative Eventing official site]
+* xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-produce-events-with-knative-eventing.adoc[quarkus extension for knative eventing]
+* xref:job-services/core-concepts.adoc#knative-eventing-supporting-resources[knative eventing for Job service]
+* xref:data-index/data-index-core-concepts.adoc#_knative_eventing[knative eventing for data index]
+
+include::../../../pages/_common-content/report-issue.adoc[]
