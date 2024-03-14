@@ -1,0 +1,90 @@
+= Environment setup
+
+This guide lists the different ways to set up your environment for {product_name} development. 
+If you are new, start with the minimal one.
+
+[[proc-minimal-local-environment-setup]]
+== Minimal local environment setup
+
+Recommended steps to setup your local development environment. By completing these steps you are able to
+start the development on your local machine using our guides.
+
+.Procedure
+. Install https://docs.docker.com/engine/install/[Docker] or https://podman.io/docs/installation[Podman].
+. Install https://minikube.sigs.k8s.io/docs/start/[minikube] or https://kind.sigs.k8s.io/docs/user/quick-start/#installation[kind].
+. Install https://kubernetes.io/docs/tasks/tools/[Kubernetes CLI].
+. Install https://knative.dev/docs/install/quickstart-install/[Knative using quickstart]. This will also setup Knative Serving and Eventing for you and the cluster should be running.
+. xref:cloud/operator/install-serverless-operator.adoc[]
+. Install xref:testing-and-troubleshooting/kn-plugin-workflow-overview.adoc[Knative Workflow CLI].
+. Install https://code.visualstudio.com/[Visual Studio Code] with https://marketplace.visualstudio.com/items?itemName=kie-group.swf-vscode-extension[our extension] that simplifies development of workflows by provifing visual aids and auto-complete features.
+
+[[proc-starting-cluster-fo-local-development]]
+== Starting the cluster for local development
+
+If you have used https://knative.dev/docs/install/quickstart-install/[Knative using quickstart] guide, your selected cluster should be running and properly configured to work with our guides.
+
+Please note, that if the knative quickstart procedure is not used, you need to install Knative Serving and Eventing manually. See <<proc-additional-options-for-local-environment>>.
+
+
+.To startup the selected cluster without quickstart, use the following command:
+[tabs]
+====
+Minikube::
++
+--
+.Configure and startup minikube
+[source,shell]
+----
+# Set a driver and container runtime
+minikube config set driver docker/podman
+minikube config set container-runtime docker/podman
+
+# Set cpu and memory
+# 4096 is minimal baseline, increase to 6144 or 8192 if possible
+minikube config set cpus 4
+minikube config set memory 4096
+
+# Start the cluster
+minikube start --cpus 4 --memory 4096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"
+
+# Set the active profile
+minikube profile minikube
+----
+--
+Kind::
++
+--
+.Start a kind cluster
+[source,shell]
+----
+kind create cluster
+----
+--
+====
+
+[[proc-advanced-local-environment-setup]]
+== Advanced local environment setup
+
+If you are interested in our Java and Quarkus development path, consider completing this procedure in addition to the
+<<proc-minimal-local-environment-setup>>. By completing these steps you are able to start the development of applications on your local machine using our xref:use-cases/advanced-developer-use-cases/index.adoc[advanced developer guides].
+
+.Procedure
+. Install https://openjdk.org/[OpenJDK] {java_min_version} and cofigure `JAVA_HOME` appropriately by adding it to the `PATH`.
+. Install https://maven.apache.org/index.html[Apache Maven] {maven_min_version}.
+. Install https://quarkus.io/guides/cli-tooling[Quarkus CLI] corresponding to currently supported version by {product_name}. Currently it is {quarkus_version}.
+
+[[proc-additional-options-for-local-environment]]
+== Additional options for local environment setup
+
+Points listed in this section provide extra posibilties when working with our guides and are considered optional.
+
+* Install https://www.graalvm.org/[GraalVM] {graalvm_min_version}. This will allow you to create https://www.graalvm.org/22.0/reference-manual/native-image/[native image] of your {product_name} application.
+* Install https://knative.dev/docs/install/yaml-install/serving/install-serving-with-yaml/[Knative Serving using YAML files] for advanced customizations or in cases where the quickstart procedure fails.
+* Install https://knative.dev/docs/install/yaml-install/eventing/install-eventing-with-yaml/[Knative Eventing using YAML files] for advanced customizations or in cases where the quickstart procedure fails.
+
+== Additional resources
+
+* xref:getting-started/production-environment.adoc[]
+* xref:getting-started/create-your-first-workflow-service-with-kn-cli-and-vscode.adoc[]
+
+include::../../pages/_common-content/report-issue.adoc[]

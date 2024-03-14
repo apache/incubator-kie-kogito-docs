@@ -9,26 +9,17 @@
 :google_jib_url: https://github.com/GoogleContainerTools/jib
 :kogito_sw_examples_git_repo_url: https://github.com/apache/incubator-kie-kogito-examples.git
 
-This document describes how to build a Serverless Application Container image using the link:{quarkus_cli_url}[Quarkus CLI].
+This document describes how to build a {product_name} container image using the link:{quarkus_cli_url}[Quarkus CLI].
 
 .Prerequisites
-include::./../../../../pages/_common-content/getting-started-requirement.adoc[]
-* Latest version of Docker is installed. Alternatively, you can use link:{google_jib_url}[Jib] to build container images. However, Docker is required to build GraalVM native image using the Quarkus native builder image.
-* Optionally, GraalVM {graalvm_min_version} is installed.
+include::./../../../../pages/_common-content/getting-started-requirement-quarkus.adoc[]
+* You have setup your environment according to xref:getting-started/preparing-environment.adoc#proc-advanced-local-environment-setup[advanced environment setup] guide and you cluster is ready.
+* Optionally, GraalVM {graalvm_min_version} is installed. See xref:getting-started/preparing-environment.adoc#proc-additional-options-for-local-environment[]
 
 Quarkus provides a few extensions to build container images, such as `Jib`, `docker`, `s2i`, and `buildpacks`. For more information about the Quarkus extensions, see the link:{quarkus_container_images_url}[Quarkus documentation].
 
-The examples in this document assume that you have the Quarkus tooling installed. For more information about the tooling, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {product_name} tooling].
-
 [[proc-building-serverless-workflow-application]]
 == Building the workflow application
-
-After installing the required tooling, you can start building your workflow application.
-
-.Prerequisites
-* You have created a Quarkus project.
-* Quarkus CLI is installed. 
-For more information about installing the Quarkus CLI, see link:{quarkus_cli_url}#installing-the-cli[Installing the Quarkus CLI].
 
 .Procedure
 . In a command terminal, navigate to your Quarkus project.
@@ -70,7 +61,7 @@ The added Jib extension caches the `target/lib` directory. Based on the size of 
 [source,shell]
 ----
 quarkus build -Dquarkus.container-image.build=true \
-    -Dquarkus.container-image.group=kogito \
+    -Dquarkus.container-image.group=sonataflow \
     -Dquarkus.container-image.name=serverless-workflow-greeting-quarkus \
     -Dquarkus.container-image.tag=1.0 \
     -Dquarkus.container-image.registry=quay.io \
@@ -79,7 +70,7 @@ quarkus build -Dquarkus.container-image.build=true \
 +
 The previous command results in the following container image pushed to `quay.io`:
 +
-`quay.io/kogito/serverless-workflow-greeting-quarkus:1.0`
+`quay.io/sonataflow/serverless-workflow-greeting-quarkus:1.0`
 
 . Alternatively, you can create an Apache Maven profile to build the container image, which can be triggered by setting the target profile.
 +
@@ -113,11 +104,6 @@ You can activate the created Apache Maven profile using Quarkus CLI:
 === Building the workflow application using a native image
 
 When it comes to workflows, a small startup footprint is expected, which can be better when using the native builds to build a workflow application.
-
-.Prerequisites
-* You have created a Quarkus project.
-* Quarkus CLI is installed. 
-For more information about installing the Quarkus CLI, see link:{quarkus_cli_url}[Installing the Quarkus CLI].
 
 .Procedure
 . In a command terminal, navigate to your Quarkus project.

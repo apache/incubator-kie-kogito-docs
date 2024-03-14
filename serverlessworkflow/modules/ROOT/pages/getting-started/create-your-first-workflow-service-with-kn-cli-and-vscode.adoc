@@ -3,21 +3,8 @@
 This guide showcases using the Knative Workflow CLI plugin and Visual Studio code to create & run {product_name} projects.
 
 .Prerequisites
-* xref:testing-and-troubleshooting/kn-plugin-workflow-overview.adoc[Knative Workflow CLI] {kn_cli_version} is installed.
-* Visual Studio Code with https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-serverless-workflow-editor[Red Hat Serverless Workflow Editor] is installed to edit your workflows.
-
-.Preparing your environment for local development with locally deployed cluster instance
-* Install https://docs.docker.com/engine/install/[Docker] or https://podman.io/docs/installation[Podman].
-* Install https://minikube.sigs.k8s.io/docs/start/[minikube]
-* Install https://kubernetes.io/docs/tasks/tools/[kubectl].
-* Start minikube. Depending on your environment, set `--driver` flag to `podman` or `docker`
-[source,bash]
-----
-minikube start --cpus 4 --memory 8096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"  --driver=docker
-----
-* (optional) Install https://k9scli.io/[k9scli.io] 
-* xref:cloud/operator/install-serverless-operator.adoc[]
-* Install https://github.com/kiegroup/kie-tools/releases/tag/{kn_cli_version}[SonataFlow plug-in for Knative CLI]. Follow xref:testing-and-troubleshooting/kn-plugin-workflow-overview.adoc[] guide.
+* You have setup your environment according xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
+* Install https://k9scli.io/[k9scli.io] for easier inspection of your application resources in cluster. This is optional, you can use any tool you are fimiliar with in this regard. 
 
 [[proc-creating-app-with-kn-cli]]
 == Creating a workflow project with Visual Studio Code and KN CLI
@@ -60,25 +47,50 @@ To deploy the finished project to a local cluster, proceed to the next section.
 
 Use the `deploy` command with kn workflow to deploy the {product_name} project into your local cluster.
 
-* Deploy to minikube
+* Deploy to cluster
 [source,bash]
 ----
-kn workflow deploy
+kn workflow deploy --namespace my-sf-application
 ----
-* (Optional) Using k9scli you can examine your deployment.
-* In a different bash instance, create a port mapping:
-[source,bash]
+* Using k9s cli you can examine your deployment.
+* In a separate bash instance create a port mapping:
++
+[tabs]
+====
+Minikube::
++
+--
+[source,shell]
 ----
-minikube service hello --namespace default --url
+minikube service hello --namespace my-sf-application --url
 ----
 * Use this URL to access your workflow instances using the Developer UI
-** <RETURNED_URL>/q/dev/org.kie.kogito.kogito-quarkus-serverless-workflow-devui/workflowInstances
-* To update the image run the `deploy` again, note that this may take some time.
+** <RETURNED_URL>{sonataflow_devmode_devui_url}/workflowInstances
+--
+Kind::
++
+--
+[source,shell]
+----
+# Execute
+kubectl get services -n my-sf-application
 
+# You should see output like this, note the ports
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)            AGE
+hello        ClusterIP   10.96.0.1    <none>        <RANDOM_PORT>/80   39s
+
+# Execute
+kubectl port-forward service/hello <RANDOM_PORT>:80 -n my-sf-application
+
+----
+--
+====
+
+* To update the image run the `deploy` again, note that this may take some time.
 * To stop the deployment, use the `undeploy` command:
 [source,bash]
 ----
-kn worklow undeploy
+kn worklow undeploy --namespace my-sf-application
 ----
 * You can validate your pod is terminating using k9s cli.
 
