@@ -13,9 +13,26 @@ Each workflow instance is associated with a data model. A data model consists of
 
 The workflow expressions in the link:{spec_doc_url}#workflow-expressions[Serverless Workflow specification] are used to interact with the data model. The supported expression languages include link:{jsonpath_url}[JsonPath] and link:{jq_url}[jq]. jq expression language is the default language. However, you can change the expression language to JsonPath using the `expressionLang` property. 
 
-This document describes the usage of jq expressions in switch state conditions, action function arguments, and data filtering. 
+This document describes the usage of jq expressions in functions, switch state conditions, action function arguments, data filtering, and event publishing. 
 
 JQ expression might be tricky to master, for non trivial cases, it is recommended to use helper tools like link:{jq_play}[JQ Play] to validate the expression before including it in the workflow file. 
+
+[[ref-example-jq-expression-function]]
+== Example  of jq expression in functions
+
+Expressions can be used in functions of type `expression` to manipulate the workflow model. As with any other function, the result of the expression evaluation will be merged into the model.
+
+For example, in the link:{kogito_sw_examples_url}/serverless-workflow-expression-quarkus[`serverless-workflow-expression-quarkus`] example application, a max function adds to the model two properties: `max`, containing the maximum value of `x` coordinate in the `numbers` array (which is a workflow input parameter) and `min`, containing the minimum value of `y` coordinate
+
+.Example conditions in `serverless-workflow-expression-quarkus`
+[source,json]
+----
+  {
+      "name": "max",
+      "type": "expression",
+      "operation": "{max: .numbers | max_by(.x), min: .numbers | min_by(.y)}"
+    }
+----
 
 [[ref-example-jq-expression-switch-conditions]]
 == Example of jq expressions in switch conditions
@@ -197,6 +214,29 @@ You can find an example of event data filtering in the link:{kogito_sw_examples_
 ----
 
 The previous example of the event filter copies the content of CloudEvent data `result` field into the workflow model `move` field.
+
+[[ref-example-jq-expression-event-publishing]]
+== Example of jq expressions in event publishing. 
+
+When publishing a Cloud Event, you can select the data that is being published using a jq expression that generates a JSON object. Note that in yaml double quotes are required to allow using `{}` characters. 
+
+.Example data expression returning an object
+[source,yaml]
+----
+transition:
+      nextState: WaitForSaveTransformationCompletionEvent
+      produceEvents:
+        - eventRef: saveTransformationEvent
+          data: "{gitRepo:.repositoryURL|sub(\"http(s)?://\";\"ssh://\"), branch: .targetBranch, token: .token, workspaceId: .workspaceId, projectId: .projectId, transformId: .transformId, workflowCallerId: $WORKFLOW.instanceId}" 
+----
+
+In the previous example, a CloudEvent was published when the state transitioned. Its `data` field looks like 
+
+.Example of generated event
+[source,json]
+----
+data={"gitRepo":"ssh://bitbucket.org/m2k-test","branch":"aaaaaaasssss","token":null,"workspaceId":"b93980cb-3943-4223-9441-8694c098eeb9","projectId":"9b305fe3-d441-48ce-b01b-d314e86e14ec","transformId":"723dce89-c25c-4c7b-9ef3-842de92e6fe6","workflowCallerId":"7ddb5193-bedc-4942-a857-596b31f377ed"}
+----
 --
 
 == Workflow secrets, constants and context
@@ -204,11 +244,21 @@ The previous example of the event filter copies the content of CloudEvent data `
 As per specification, you can use link:{spec_doc_url}#workflow-constants[Workflow Constants] and link:{spec_doc_url}#workflow-secrets[Workflow Secrets] whenever an expression is accepted. 
 In {product_name} you can use `$SECRET` to access any configuration property, not just sensitive ones.
 So, assuming you have added to your `application.properties` a line with the `myname=john` property, the following function will append the string `my name is john` to the `message` variable
+[source,json]
 ----
 {
       "name": "secretMessage",
       "type": "expression",
       "operation": ".message |= \"my name is \"+$SECRET.my_name"
+}
+----
+
+`$SECRET` always returns a value of type string. If you want to use it in a comparison with a value that is not a string, you must perform the conversion explicitly. In the next example, the `retries` property is a number, so we need to convert the property value accordingly by calling the `tonumber` built-in jq function. 
+
+[source,json]
+----
+{
+  "condition": ".retries > ($SECRET._max_retries|tonumber)"
 }
 ----
 
