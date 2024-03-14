@@ -64,7 +64,7 @@ Besides customizing the default container, you can add more `containers`, `initC
 | workflow-properties
 | `ConfigMap`
 | `/deployments/config/application.properties`, `/deployments/config/application-prod.properties`
-| prod
+| preview
 
 | workflow-properties
 | `ConfigMap`
@@ -83,7 +83,66 @@ Besides customizing the default container, you can add more `containers`, `initC
 In dev profile, all the SonataFlow `.spec.resources` objects are mounted in the `resources` projected volume listed in this table. Do not mount anything else in this path.
 ====
 
-== Setting a custom image in the default container
+[#operator-profiles]
+== About {operator_name} Profiles
+
+Profiles are a way to change the runtime and deployment behavior of workflows. You can change the `SonataFlow` custom resource profile using `annotations`. For example:
+
+.Example of a SonataFlow CR with a profile annotation
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: simple
+  annotations:
+    sonataflow.org/profile: preview <1>
+    sonataflow.org/version: 0.0.1
+spec:
+  flow:
+    start: HelloWorld
+    states:
+      - name: HelloWorld
+        type: inject
+        data:
+          message: Hello World
+        end: true
+----
+
+<1> Preview profile defined in the `sonataflow.org/profile` annotation. This is the default profile.
+
+The {operator_name} supports three different profiles:
+
+1. `dev`: The workflow will be deployed as a mutable container that will react upon any changes on the `SonataFlow` custom resource immediatelly. Ideal for scenarios where the flow definition is under active development and testing in the cluster context. See xref:cloud/operator/developing-workflows.adoc[].
+2. `preview`: The operator will rely on an internal build system to build an immutable container based on the flow definition. Every change to the `SonataFlow` will kick a new build. Use this profile to evaluate the workflow behavior in the cluster or if you have a simple use case where you don't need any complex build customizations. See xref:cloud/operator/build-and-deploy-workflows.adoc[]
+// TODO: missing tekton/argocd guide https://issues.redhat.com/browse/KOGITO-7278
+3. `gitops`: Ideal for production use cases. This profile is automatically defined by the operator when the `SonataFlow` CR is deployed with a custom `.spec.podTemplate.container.image`. In this scenario, the user is responsible to build the workflow application and provide the image to the operator. 
+
+There's a correlation on the operator profile and the internal runtime workflow Quarkus application. See the table below.
+
+.Correlation of the operator and Quarkus profiles
+[cols="1,1,2"]
+|===
+|Operator Profile | Quarkus Profile | Description
+
+| dev
+| dev
+| Suitable for testing only. The configuration file managed by the operator is `application-dev.properties`
+
+| preview
+| prod
+| Suitable for quick evaluation and use of the internal builder system. The configuration file managed by the operator is `application-prod.properties`
+
+| gitops
+| prod
+| Workflow image externally built by another system. The configuration file managed by the operator is `application-prod.properties`
+
+|===
+
+For more information about configuring workflows see xref:cloud/operator/configuring-workflows.adoc[].
+
+[#custom-image-default-container]
+=== Setting a custom image in the default container
 
 When setting the attribute `.spec.podTemplate.container.image` the operator understands that the workflow already have an image built and the user is responsible for the build and image maintainence. That means that the operator won't try to upgrade this image in the future or do any reconciliation changes to it.
 
@@ -91,9 +150,9 @@ When setting the attribute `.spec.podTemplate.container.image` the operator unde
 
 In xref:cloud/operator/developing-workflows.adoc[development profile], it's expected that the image is based on the default `quay.io/kiegroup/kogito-swf-devmode:latest`. 
 
-=== Setting a custom image in production
+=== Setting a custom image in preview
 
-When xref:cloud/operator/build-and-deploy-workflows.adoc[deploying in production], you can opt in to have the operator to handle the build process for you. However, in more complex scenarios it's expected that the user owns and controls the build process. For this reason, when overriding the image the operator won't build the workflow. The operator will try to deploy the workflow using the given image. 
+When xref:cloud/operator/build-and-deploy-workflows.adoc[building workflows], you can opt in to have the operator to handle the build process for you. However, in more complex scenarios it's expected that the user owns and controls the build process. For this reason, when overriding the image the operator won't build the workflow. The operator will try to deploy the workflow using the given image. 
 
 In this scenario, the `.spec.resources` attribute is ignored since it's only used during the build process in the production profile. 
 

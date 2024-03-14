@@ -20,12 +20,12 @@ This document describes how to build and deploy your workflow on a cluster using
 
 Every time you need to change the workflow definition the system will (re)build a new immutable version of the workflow. If you're still in development phase, please see the xref:cloud/operator/developing-workflows.adoc[] guide.
 
-Follow the <<building-kubernetes, Kubernetes>> or <<building-openshift, OpenShift>> sections of this document based on the cluster you wish to build your workflows on.
-
 [IMPORTANT]
 ====
-{operator_name} is under active development with features yet to be implemented. Please see xref:cloud/operator/known-issues.adoc[].
+The build system implemented by the {operator_name} is not suitable for complex production use cases. Consider using an external tool to build your application such as Tekton and ArgoCD. The resulting image can then be deployed with `SonataFlow` custom resource. See more at xref:cloud/operator/customize-podspec.adoc#custom-image-default-container[Setting a custom image in the default container] section in the xref:cloud/operator/customize-podspec.adoc#custom-image-default-container[] guide.
 ====
+
+Follow the <<building-kubernetes, Kubernetes>> or <<building-openshift, OpenShift>> sections of this document based on the cluster you wish to build your workflows on.
 
 .Prerequisites
 * A Workflow definition.
@@ -34,13 +34,13 @@ Follow the <<building-kubernetes, Kubernetes>> or <<building-openshift, OpenShif
 [#configure-build-system]
 == Configuring the build system
 
-The operator can build workflows on Kubernetes or OpenShift. On Kubernetes, it uses link:{kaniko_url}[Kaniko] and on OpenShift a link:{openshift_build_url}[standard BuildConfig]. The operator build system is not tailored for advanced use cases and you can do only a few customizations.
+The operator can build workflows on Kubernetes or OpenShift. On Kubernetes, it uses link:{kaniko_url}[Kaniko] and on OpenShift a link:{openshift_build_url}[standard BuildConfig]. The operator build system is not tailored for advanced production use cases and you can do only a few customizations.
 
 === Using another Workflow base builder image
 
 If your scenario has strict policies for image usage, such as security or hardening constraints, you can replace the default image used by the operator to build the final workflow container image. Alternatively, you might want to test a nightly build with a bug fix or a custom image containing your customizations.
 
-By default, the operator will use the image distributed upstream to run the workflows in the development profile. You can change this image by editing the `SonataFlowPlatform` custom resource in the namespace where you deployed your workflows:
+By default, the operator will use the image distributed upstream to build workflows. You can change this image by editing the `SonataFlowPlatform` custom resource in the namespace where you deployed your workflows:
 
 .Patching the current SonataFlowPlatform with the new builder image
 [source,bash,subs="attributes+"]
