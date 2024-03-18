@@ -4,7 +4,7 @@
 :description: Building custom development images for SonataFlow
 :keywords: sonataflow, workflow, serverless, operator, kubernetes, minikube, devmode
 // Links:
-:rh_ubi8_url: https://catalog.redhat.com/software/containers/ubi8/ubi-minimal/5c359a62bed8bd75a2c3fba8
+:rh_jdk17_url: https://catalog.redhat.com/software/containers/ubi9/openjdk-17/61ee7c26ed74b2ffb22b07f6
 
 // NOTE: this guide can be expanded in the future to include prod images, hence the file name
 //       please change the title section and rearrange the others once it's done
@@ -13,42 +13,9 @@ This document describes how to build a custom development image to use in Sonata
 
 == The development mode image structure
 
-The development image is based on the link:{rh_ubi8_url}[Red Hat UBI 8 minimal] container image. You can read its documentation for more detailed information about that image's architecture.
+The development image is based on the link:{rh_jdk17_url}[Red Hat OpenJDK 17 UBI 9] container image. You can read its documentation for more detailed information about that image's architecture.
 
-The table below lists the additional packages installed in the development mode container image.
-
-.List of packages
-[cols="1,2"]
-|===
-|Package | Description
-
-|shadow-utils
-|The shadow-utils package includes the necessary programs for converting UNIX password files to the shadow password format.
-
-|tar
-|
-
-|gzip
-|
-
-|unzip
-|
-
-|zip
-|
-
-|tzdata-java
-|
-
-|java-17-openjdk-devel
-|OpenJDK 17
-
-|apache-maven-3.9.3-bin.tar.gz
-|Apache Maven
-
-|===
-
-The next table lists the important paths in the container image's file system.
+The table bellow lists the important paths in the container image's file system.
 
 .Important file system paths
 [cols="1,1"]

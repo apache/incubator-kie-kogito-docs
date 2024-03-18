@@ -49,6 +49,7 @@ By default, the operator will use the image distributed upstream to build workfl
 kubectl patch sonataflowplatform <name> --patch  'spec:\n    build:\n    config:\n    baseImage: <your new image full name with tag>' -n <your_namespace>
 ----
 
+[#customize-base-build]
 === Customize the base build Dockerfile
 
 The operator uses the sonataflow-operator-builder-config `ConfigMap` in the operator's installation namespace ({operator_installation_namespace}) to configure and run the workflow build process. 
@@ -59,7 +60,6 @@ You can change the `Dockerfile` entry in this `ConfigMap` to tailor the Dockerfi
 ----
 apiVersion: v1
 data:
-  DEFAULT_BUILDER_RESOURCE_NAME: Dockerfile
   DEFAULT_WORKFLOW_EXTENSION: .sw.json
   Dockerfile: "FROM quay.io/kiegroup/kogito-swf-builder-nightly:latest AS builder\n\n#
     variables that can be overridden by the builder\n# To add a Quarkus extension
@@ -414,13 +414,14 @@ You don't need to do anything to build on OpenShift since the operator will conf
 
 In general, the operator will create a link:{openshift_build_url}[`BuildConfig` to build] the workflow using the mapped xref:cloud/operator/referencing-resource-files.adoc[resource files] and your workflow definition. After the build is finished, the image will be pushed to the internal OpenShift registry backed by an `ImageStream` object.
 
+[#changing-base-builder]
 === Changing the base builder image
 
 If you are running on OpenShift, you have access to the Red Hat's supported registry. You can change the default builder image by editing the sonataflow-operator-builder-config `ConfigMap`.
 
 [source,bash,subs="attributes+"]
 ----
-oc edit cm/sonataflow-operator-builder-config -n {operator_installation_namespace}
+kubectl edit cm/sonataflow-operator-builder-config -n {operator_installation_namespace}
 ----
 
 In your editor, change the first line in the `Dockerfile` entry where it reads `FROM quay.io/kiegroup/kogito-swf-builder-nightly:latest` to the desired image.
@@ -570,7 +571,7 @@ Ideally you should use this feature if there's a problem with your workflow or t
 
 == Additional resources
 
-* xref:cloud/operator/known-issues.adoc[]
-* xref:cloud/operator/developing-workflows.adoc[]
+* xref:cloud/operator/build-and-deploy-workflows.adoc[]
+* xref:cloud/operator/building-custom-images.adoc[]
 
 include::../../../pages/_common-content/report-issue.adoc[]
