@@ -9,27 +9,9 @@ The workflow definition to be executed can be read from a `.json` or `.yaml` fil
 [[embedded-file-quick-start]]
 == Hello world (using existing definition file)
 
-The first step is to set up an empty Maven project with the following dependency:
+The first step is to set up an empty Maven project that includes link:{swf_executor_core_maven_repo}[Workflow executor core] dependency.
 
-[source,xml]
-----
-<dependency>
-  <groupId>org.kie.kogito</groupId>
-  <artifactId>kogito-serverless-workflow-executor-core</artifactId>
-  <version>RELEASE</version>
-</dependency>
-----
-
-This guide uses [slf4j dependency](https://mvnrepository.com/artifact/org.slf4j/slf4j-simple). Consider using any other logger for java to avoid using `System.out.println`
-
-[source,xml]
-----
- <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.7.36</version>
-  </dependency>
-----
+This guide also uses [slf4j dependency](https://mvnrepository.com/artifact/org.slf4j/slf4j-simple) to avoid using `System.out.println`
 
 Let's assume you already have a workflow definition written in a JSON file in your project root directory. For example, link:{kogito_sw_examples_url}/serverless-workflow-hello-world/src/main/resources/hello.sw.json[Hello World] definition. To execute it, you must write the following main Java class (standard Java imports and package declaration are intentionally skipped for briefness)
 
