@@ -1,0 +1,115 @@
+= Invoking Python from {product_name}
+:compat-mode!:
+// Metadata:
+:description: Describe Python execution capabilities
+:keywords: kogito, workflow, quarkus, serverless, python, AI
+
+This document describes how to integrate python scripts and functions into your workflow using {product_name} custom functions. The code appearing in this document is copied from link:{kogito_sw_examples_url}/serverless-workflow-python-quarkus[`serverless-workflow-python-quarkus`] example application and link:{kogito_runtimes_url}/quarkus/addons/python/integration-tests/src/main/resources/PythonService.sw.json[PythonService] integration test.
+
+== Enable Python support
+
+ To enable Python support, you must add the Python add-on dependency to your {prouct_name} module `pom.xml` file
+
+[source,xml]
+----
+<dependency>
+      <groupId>org.apache.kie.sonataflow</groupId>
+      <artifactId>sonataflow-addons-quarkus-python</artifactId>
+</dependency>
+----
+
+== Invoking embedded Python script.
+
+{product_name} supports the execution of Python script in the same memory address as the running workflow.
+
+To invoke a Python script the first step is to define a custom Python function at the beginning of the flow. 
+
+[source,json]
+----
+ "functions": [
+    {
+      "name": "python",
+      "type": "custom",
+      "operation": "script:python"
+    }
+  ]
+----
+
+Once done, you can use that function several times to execute arbitrary Python code. The Python code is provided as an argument of the function call through the `script` property. 
+
+[source,json]
+----
+"functionRef": 
+    "refName": "python",
+    "arguments": {
+      "script": "import numpy as np"
+     }
+ }
+----
+
+Previous snippet imports link:https://numpy.org/[numpy] library. The same Python function can be invoked again to generate an array containing three random numbers between `0` and `10`. 
+
+[source,json]
+----
+"functionRef": {
+   "refName": "python",
+   "arguments": {
+      "script": "rng = np.random.default_rng().integers(low=0,high=10,size=3)"
+    }
+  }
+----
+
+To access the result of the embedded python invocation, {product_name} provides a special context variable: `$WORKFLOW.python`. Therefore, if you want to set the `rng` variable from the previous script as the `output` property of the workflow model, you write 
+
+[source,json]
+----
+"stateDataFilter" : {
+  "output" : "{result:$WORKFLOW.python.rng}"
+}
+----
+
+== Invoking Python function. 
+
+You can also invoke functions from standard or custom python modules. 
+
+You must define a serverless workflow function definition that invokes the Python function. You should specify, within the `operation` property, the name of the Python module and function to be invoked when the function is called. You should separate the module name and the function name using `::` and prefix them with `services::python:`
+
+The following example defines a function that invokes a standard Python function link:https://www.geeksforgeeks.org/python-math-factorial-function/[math.factorial(x)]
+[source,json]
+----
+ "functions" : [ {
+    "name" : "factorial",
+    "operation" : "service:python:math::factorial",
+    "type" : "custom"
+  } 
+----
+
+Once you have defined the function, you might call it passing the expected arguments. In the case of factorial, a integer stored in property `x` of the workflow model. 
+
+[source,json]
+----
+ "functionRef" : {
+          "refName": "factorial",
+          "arguments" : ".x"
+       }
+----
+
+The return value of the function can be handled as any other function result using the `actionDataFilter.toStateData` Serverless Workflow construct. The following will set a workflow model property called `result` with the factorial invocation returned value. 
+
+[source,json]
+----
+  "actionDataFilter" : {
+        "toStateData" : ".result"
+      }
+----
+
+== Further reading 
+
+The link:{kogito_sw_examples_url}/serverless-workflow-openvino-quarkus[Openvino] illustrates the powerful AI capabilities of integrating workflows with Python. It is a must-see for all interested in the topic. 
+
+== Additional resources
+
+* xref:core/custom-functions-support.adoc[Custom functions for your {product_name} service]
+* xref:core/understanding-jq-expressions.adoc[Understanding JQ expressions]
+
+include::../../../_common-content/report-issue.adoc[]
