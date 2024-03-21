@@ -1,0 +1,91 @@
+= Workflow embedded execution in Java 
+
+This guide uses a standard Java virtual machine and a small set of Maven dependencies to execute a link:{spec_doc_url}[CNCF Serverless Workflow] definition. Therefore, it is assumed you are fluent both in Java and Maven. 
+The workflow definition to be executed can be read from a `.json` or `.yaml` file or programmatically defined using the {product_name} fluent API. 
+.Prerequisites
+. Install https://openjdk.org/[OpenJDK] {java_min_version} 
+. Install https://maven.apache.org/index.html[Apache Maven] {maven_min_version}.
+
+[[embedded-file-quick-start]]
+== Hello world (using existing definition file)
+
+The first step is to set up an empty Maven project that includes link:{swf_executor_core_maven_repo}[Workflow executor core] dependency.
+
+This guide also uses [slf4j dependency](https://mvnrepository.com/artifact/org.slf4j/slf4j-simple) to avoid using `System.out.println`
+
+Let's assume you already have a workflow definition written in a JSON file in your project root directory. For example, link:{kogito_sw_examples_url}/serverless-workflow-hello-world/src/main/resources/hello.sw.json[Hello World] definition. To execute it, you must write the following main Java class (standard Java imports and package declaration are intentionally skipped for briefness)
+
+[source,java]
+----
+import org.kie.kogito.serverless.workflow.executor.StaticWorkflowApplication;
+import org.kie.kogito.serverless.workflow.models.JsonNodeModel;
+import org.kie.kogito.serverless.workflow.utils.ServerlessWorkflowUtils;
+import org.kie.kogito.serverless.workflow.utils.WorkflowFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.serverlessworkflow.api.Workflow;
+
+public class DefinitionFileExecutor {
+    private static final Logger logger = LoggerFactory.getLogger(DefinitionFileExecutor.class);
+
+    public static void main(String[] args) throws IOException {
+        try (Reader reader = new FileReader("hello.sw.json"); <1>
+                StaticWorkflowApplication application = StaticWorkflowApplication.create()) { <2>
+            Workflow workflow = ServerlessWorkflowUtils.getWorkflow(reader, WorkflowFormat.JSON); <3>
+            JsonNodeModel result = application.execute(workflow, Collections.emptyMap()); <4>
+            logger.info("Workflow execution result is {}", result.getWorkflowdata()); <5>
+        }
+    }
+}
+----
+<1> Reads the workflow file definition from the project root directory
+<2> Creates a static workflow application object. It is done within the try block since the instance is `Closeable`. This is the reference that allow you to execute workflow definitions.
+<3> Reads the Serverless Workflow Java SDK `Workflow` object from the file. 
+<4> Execute the workflow, passing `Workflow` reference and no parameters (an empty Map). The result of the workflow execution: process instance id and workflow output model, can accessed using `result` variable. 
+<5> Prints the workflow model in the configured standard output. 
+
+If you compile and execute this Java class, you will see the following log in your configured standard output:
+----
+Workflow execution result is {"greeting":"Hello World","mantra":"Serverless Workflow is awesome!"}
+----
+
+[[embedded-fluent-quick-start]]
+== Hello world (using fluent API)
+
+Using the same Maven setup as in the previous section, you can programmatically generate that workflow definition rather than loading it from a file definition by using the link:{kogito_runtimes_url}/kogito-serverless-workflow/kogito-serverless-workflow-fluent/src/main/java/org/kie/kogito/serverless/workflow/fluent[fluent API]
+
+Therefore, you can modify the previous example to generate the same output when it is executed, but rather than creating a `FileReader` that reads the `Workflow` object, we create the `Workflow` object using Java statements. The resulting modified main method is the following
+
+[source,java]
+----
+      try (StaticWorkflowApplication application = StaticWorkflowApplication.create()) {
+            Workflow workflow = workflow("HelloWorld"). <1>
+            		start( <2>
+            				inject( <3>
+            						jsonObject().put("greeting", "Hello World").put("mantra","Serverless Workflow is awesome!"))) <4>
+            		.end() <5>
+            		.build(); <6>
+            logger.info("Workflow execution result is {}",application.execute(workflow, Collections.emptyMap()).getWorkflowdata());  <7>
+        }
+----
+<1> Creates a workflow which name is `HelloWorld`
+<2> Indicate that you are going to specify the start state
+<3> A Inject state is the start state
+<4> Inject state accepts static json, therefore this line creates the JSON data
+<5> End the workflow definition 
+<6> Build the workflow definition
+<7> Execute and print as in previous example
+
+
+== Further reading
+
+You can find additional and commented examples of fluent API usage (including jq expression evaluation and orchestration of rest services) link:{{kogito_sw_examples_url}/sonataflow-fluent[here]
+
+== Additional resources
+
+include::../../pages/_common-content/report-issue.adoc[]
+
+ifeval::["{kogito_version_redhat}" != ""]
+include::../../pages/_common-content/downstream-project-setup-instructions.adoc[]
+endif::[]
