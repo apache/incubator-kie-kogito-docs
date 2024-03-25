@@ -11,7 +11,7 @@ The workflow definition to be executed can be read from a `.json` or `.yaml` fil
 
 The first step is to set up an empty Maven project that includes link:{swf_executor_core_maven_repo_url}[Workflow executor core] dependency.
 
-This guide also uses [slf4j dependency](https://mvnrepository.com/artifact/org.slf4j/slf4j-simple) to avoid using `System.out.println`
+This guide also uses https://mvnrepository.com/artifact/org.slf4j/slf4j-simple[slf4j dependency] to avoid using `System.out.println`
 
 Let's assume you already have a workflow definition written in a JSON file in your project root directory. For example, link:{kogito_sw_examples_url}/serverless-workflow-hello-world/src/main/resources/hello.sw.json[Hello World] definition. To execute it, you must write the following main Java class (standard Java imports and package declaration are intentionally skipped for briefness)
 
@@ -59,13 +59,13 @@ Therefore, you can modify the previous example to generate the same output when 
 
 [source,java]
 ----
-      try (StaticWorkflowApplication application = StaticWorkflowApplication.create()) {
+        try (StaticWorkflowApplication application = StaticWorkflowApplication.create()) {
             Workflow workflow = workflow("HelloWorld"). <1>
-            		start( <2>
-            				inject( <3>
-            						jsonObject().put("greeting", "Hello World").put("mantra","Serverless Workflow is awesome!"))) <4>
-            		.end() <5>
-            		.build(); <6>
+                start( <2>
+                    inject( <3>
+                        jsonObject().put("greeting", "Hello World").put("mantra","Serverless Workflow is awesome!"))) <4>
+                .end() <5>
+                .build(); <6>
             logger.info("Workflow execution result is {}",application.execute(workflow, Collections.emptyMap()).getWorkflowdata());  <7>
         }
 ----
@@ -80,7 +80,7 @@ Therefore, you can modify the previous example to generate the same output when 
 
 == Further reading
 
-You can find additional and commented examples of fluent API usage (including jq expression evaluation and orchestration of rest services) link:{{kogito_sw_examples_url}/sonataflow-fluent[here]
+You can find additional and commented examples of fluent API usage (including jq expression evaluation and orchestration of rest services) link:{kogito_sw_examples_url}/sonataflow-fluent[here]
 
 == Additional resources
 
