@@ -29,22 +29,36 @@ Please note, that if the knative quickstart procedure is not used, you need to i
 .To startup the selected cluster without quickstart, use the following command:
 [tabs]
 ====
-Minikube::
+Minikube with Docker::
 +
 --
-.Configure and startup minikube
+.Configure and startup minikube with Docker
 [source,shell]
 ----
 # Set a driver and container runtime
-minikube config set driver docker/podman
-minikube config set container-runtime docker/podman
-
-# Set cpu and memory
-# 4096 is minimal baseline, increase to 6144 or 8192 if possible
-minikube config set cpus 4
-minikube config set memory 4096
+minikube config set driver docker
+minikube config set container-runtime docker
 
 # Start the cluster
+# Set the memory to at least 4096, increase to 6144 or 8192 if possible
+minikube start --cpus 4 --memory 4096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"
+
+# Set the active profile
+minikube profile minikube
+----
+--
+Minikube with Podman::
++
+--
+.Configure and startup minikube with Podman
+[source,shell]
+----
+# Set a driver and container runtime
+minikube config set driver podman
+minikube config set container-runtime podman
+
+# Start the cluster
+# Set the memory to at least 4096, increase to 6144 or 8192 if possible
 minikube start --cpus 4 --memory 4096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"
 
 # Set the active profile
