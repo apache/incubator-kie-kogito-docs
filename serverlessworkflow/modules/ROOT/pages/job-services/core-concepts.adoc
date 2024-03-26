@@ -15,7 +15,7 @@
 
 The Job Service facilitates the scheduled execution of tasks in a cloud environment. These tasks are implemented by independent services, and can be started by using any of the Job Service supported interaction modes, based on Http calls or Knative Events delivery.
 
-To schedule the execution of a task you must create a Job, that is configured with the following information:
+To schedule task execution, you must create a Job configured with the following information:
 
 * `Schedule`: the job triggering periodicity.
 * `Recipient`: the entity that is called on the job execution for the given interaction mode, and  receives the execution parameters.
@@ -25,7 +25,7 @@ image::job-services/Job-Service-Generic-Diagram.png[]
 [#integration-with-the-workflows]
 == Integration with the Workflows
 
-In the context of the {product_name}s, the Job Service is responsible for controlling the execution of the time-triggered actions. And thus, all the time-base states that you can use in a workflow, are handled by the interaction between the workflow and the Job Service.
+In the context of the {product_name}, the Job Service is responsible for controlling the execution of the time-triggered actions. And thus, all the time-based states that you can use in a workflow, are handled by the interaction between the workflow and the Job Service.
 
 For example, every time the workflow execution reaches a state with a configured timeout, a corresponding job is created in the Job Service, and when the timeout is met, a http callback is executed to notify the workflow.
 
@@ -36,8 +36,7 @@ To set up this integration you can use different xref:use-cases/advanced-develop
 [NOTE]
 ====
 If the project is not configured to use the Job Service, all time-based actions will use an in-memory implementation of that service.
-However, this setup must not be used in production, since every time the application is restarted, all the timers are lost.
-This last is not suited for serverless architectures, where the applications might scale to zero at any time, etc.
+However, this setup must not be used in production, since every time the application is restarted, all the timers are lost, making it unsuitable for serverless architectures where applications might scale to zero at any time, etc.
 ====
 
 == Jobs life-span
@@ -48,7 +47,7 @@ However, in some cases where you want to keep the information about the jobs in 
 [#executing]
 == Executing
 
-To execute the Job Service in your docker or kubernetes environment, you must use the following image:
+To execute the Job Service in your docker or Kubernetes environment, you must use the following image:
 
 * link:{jobs_service_image_allinone_url}[kogito-jobs-service-allinone]
 
@@ -126,7 +125,7 @@ spec:
 
 [NOTE]
 ====
-This is the recommended approach when you execute the Job Service in kubernetes.
+This is the recommended approach when you execute the Job Service in Kubernetes.
 The timeouts showcase example xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] contains an example of this configuration, https://github.com/apache/incubator-kie-kogito-examples/blob/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase-extended/kubernetes/jobs-service-postgresql.yml#L65[see].
 ====
 
@@ -151,7 +150,7 @@ For example, the name `quarkus.datasource.jdbc.url` must be converted to `QUARKU
 [#job-service-global-configurations]
 == Global configurations
 
-Global configurations that affects the job execution retries, startup procedure, etc.
+Global configurations that affect the job execution retries, startup procedure, etc.
 
 [tabs]
 ====
@@ -284,7 +283,7 @@ In your local environment you might have to change some of these values to point
 [#job-service-ephemeral]
 === Ephemeral
 
-The Ephemeral persistence mechanism is based on an embedded PostgresSQL database and does not require any external configuration. However, the database is recreated on each service restart, and thus, it must be used only for testing purposes.
+The Ephemeral persistence mechanism is based on an embedded PostgreSQL database and does not require any external configuration. However, the database is recreated on each service restart, and thus, it must be used only for testing purposes.
 
 [cols="2,1,1"]
 |===
@@ -328,7 +327,7 @@ Using environment variables::
 |The enablement of this parameter depends on your local infinispan installation. If not set, the default value is `true`.
 
 |`QUARKUS_INFINISPAN_CLIENT_SASL_MECHANISM`
-|Sets SASL mechanism used by authentication. For more information about this parameter, see link:{quarkus_guides_infinispan_client_reference_url}#quarkus-infinispan-client_quarkus.infinispan-client.sasl-mechanism[Quarkus Infinispan Client Reference].
+|Sets SASL mechanism used by authentication. For more information about this parameter, see link:{quarkus_guides_infinispan_client_reference_url}#quarkus-infinispan-client_quarkus-infinispan-client-sasl-mechanism[Quarkus Infinispan Client Reference].
 |When the authentication is enabled the default value is `DIGEST-MD5`.
 
 |`QUARKUS_INFINISPAN_CLIENT_AUTH_REALM`
@@ -365,7 +364,7 @@ Using system properties with java like names::
 |The enablement of this parameter depends on your local infinispan installation. If not set, the default value is `true`.
 
 |`quarkus.infinispan-client.sasl-mechanism`
-|Sets SASL mechanism used by authentication. For more information about this parameter, see link:{quarkus_guides_infinispan_client_reference_url}#quarkus-infinispan-client_quarkus.infinispan-client.sasl-mechanism[Quarkus Infinispan Client Reference].
+|Sets SASL mechanism used by authentication. For more information about this parameter, see link:{quarkus_guides_infinispan_client_reference_url}#quarkus-infinispan-client_quarkus-infinispan-client-sasl-mechanism[Quarkus Infinispan Client Reference].
 |When the authentication is enabled the default value is `DIGEST-MD5`.
 
 |`quarkus.infinispan-client.auth-realm`
@@ -400,8 +399,8 @@ This API is useful in deployment scenarios where you want to use an event based 
 [#knative-eventing]
 === Knative eventing
 
-By default, the Job Service Eventing API is prepared to work in a link:{knative_eventing_url}[knative eventing] system. This means that by adding no additional configurations parameters, it'll be able to receive cloud events via the link:{knative_eventing_url}[knative eventing] system to manage the jobs.
-However, you must still prepare your link:{knative_eventing_url}[knative eventing] environment to ensure these events are properly delivered to the Job Service, see <<knative-eventing-supporting-resources, knative eventing supporting resources>>.
+By default, the Job Service Eventing API is prepared to work in a link:{knative_eventing_url}[Knative eventing] system. This means that by adding no additional configurations parameters, it'll be able to receive cloud events via the link:{knative_eventing_url}[Knative eventing] system to manage the jobs.
+However, you must still prepare your link:{knative_eventing_url}[Knative eventing] environment to ensure these events are properly delivered to the Job Service, see <<knative-eventing-supporting-resources, knative eventing supporting resources>>.
 
 Finally, the only configuration parameter that you must set, when needed, is to enable the propagation of the Job Status Change events, for example, if you want to register these events in the {data_index_xref}[Data Index Service].
 
@@ -548,11 +547,11 @@ Using environment variables::
 |`localhost:9092` when the `kafka-events-support` profile is set.
 
 |`MP_MESSAGING_INCOMING_KOGITO_JOB_SERVICE_JOB_REQUEST_EVENTS_V2_TOPIC`
-|Kafka topic for events API incoming events. I general you don't need to change this value.
+|Kafka topic for events API incoming events. In general you don't need to change this value.
 |`kogito-job-service-job-request-events-v2` when the `kafka-events_support` profile is set.
 
 |`MP_MESSAGING_OUTGOING_KOGITO_JOB_SERVICE_JOB_STATUS_EVENTS_TOPIC`
-|Kafka topic for job status change outgoing events. I general you don't need to change this value.
+|Kafka topic for job status change outgoing events. In general you don't need to change this value.
 |`kogito-jobs-events` when the `kafka-events_support` profile is set.
 
 |===
@@ -577,11 +576,11 @@ Using system properties with java like names::
 |`localhost:9092` when the `kafka-events-support` profile is set.
 
 |`mp.messaging.incoming.kogito-job-service-job-request-events-v2.topic`
-|Kafka topic for events API incoming events. I general you don't need to change this value.
+|Kafka topic for events API incoming events. In general you don't need to change this value.
 |`kogito-job-service-job-request-events-v2` when the `kafka-events_support` profile is set.
 
 |`mp.messaging.outgoing.kogito-job-service-job-status-events.topic`
-|Kafka topic for job status change outgoing events. I general you don't need to change this value.
+|Kafka topic for job status change outgoing events. In general you don't need to change this value.
 |`kogito-jobs-events` when the `kafka-events_support` profile is set.
 
 |===
