@@ -1,7 +1,7 @@
 = Workflow embedded execution in Java 
 
 This guide uses a standard Java virtual machine and a small set of Maven dependencies to execute a link:{spec_doc_url}[CNCF Serverless Workflow] definition. Therefore, it is assumed you are fluent both in Java and Maven. 
-The workflow definition to be executed can be read from a `.json` or `.yaml` file or programmatically defined using the {product_name} fluent API. 
+The workflow definition to be executed can be read from a `.json` or `.yaml` file or programmatically defined using the {product_name} fluent API.
 .Prerequisites
 . Install https://openjdk.org/[OpenJDK] {java_min_version} 
 . Install https://maven.apache.org/index.html[Apache Maven] {maven_min_version}.
@@ -42,7 +42,7 @@ public class DefinitionFileExecutor {
 <1> Reads the workflow file definition from the project root directory
 <2> Creates a static workflow application object. It is done within the try block since the instance is `Closeable`. This is the reference that allow you to execute workflow definitions.
 <3> Reads the Serverless Workflow Java SDK `Workflow` object from the file. 
-<4> Execute the workflow, passing `Workflow` reference and no parameters (an empty Map). The result of the workflow execution: process instance id and workflow output model, can accessed using `result` variable. 
+<4> Execute the workflow, passing `Workflow` reference and no parameters (an empty Map). The result of the workflow execution: process instance id and workflow output model, can be accessed using `result` variable.
 <5> Prints the workflow model in the configured standard output. 
 
 If you compile and execute this Java class, you will see the following log in your configured standard output:

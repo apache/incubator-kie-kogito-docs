@@ -6,15 +6,15 @@ We accept all kinds of contributions:
 2. Opening [an issue](https://github.com/apache/incubator-kie-kogito-docs/issues/new) by describing what problem you see that we need to fix
 3. Opening [a PR](https://github.com/apache/incubator-kie-kogito-docs/compare) if you see a typo, broken link, or any other minor changes.
 
-> To include a new guide or documentation content, please **open an issue first** so we can discuss in more detail what needs to be done. We use [Issues](https://github.com/apache/incubator-kie-kogito-docs/issues) to track our tasks. Please include a good title and thorought description.
+> To include a new guide or documentation content, please **open an issue first** so we can discuss in more detail what needs to be done. We use [Issues](https://github.com/apache/incubator-kie-kogito-docs/issues) to track our tasks. Please include a good title and thorough description.
 
 ## Including a new guide
 
-1. Open a [an issue](https://github.com/apache/incubator-kie-kogito-docs/issues/new) provide a description and link any pull-requests realted to the guide. 
+1. Open [an issue](https://github.com/apache/incubator-kie-kogito-docs/issues/new) provide a description and link any pull-requests related to the guide. 
 2. Write the guide.
 3. Add a link to the guide in [serverlessworkflow/modules/ROOT/nav.adoc](serverlessworkflow/modules/ROOT/nav.adoc)
 4. Add a card for the guide in [serverlessworkflow/modules/ROOT/pages/index.adoc](serverlessworkflow/modules/ROOT/pages/index.adoc)
-5. Submit a [a PR](https://github.com/apache/incubator-kie-kogito-docs/compare)
+5. Submit [a PR](https://github.com/apache/incubator-kie-kogito-docs/compare)
 
 ## Opening an Issue
 
@@ -84,7 +84,7 @@ Use active voice.
 :x: _Passive:_ The Limits window is used to specify the minimum and maximum values.  
 :white_check_mark: _Active:_ In the Limits window, specify the minimum and maximum values.
 
-Use second person (you). Avoid first person (I, we, us). Be gender neutral. Use the appropriate tone. Write for a global audience.
+Use second person (you). Avoid first person (I, we, us). Be gender-neutral. Use the appropriate tone. Write for a global audience.
 
 :x: We can add a model to the project that we created in the previous step.  
 :white_check_mark: You can add a model to the project that you created in the previous step.
@@ -203,7 +203,7 @@ Content
 ====
 ```
 
-Similarly you can have other admonitions:
+Similarly, you can have other admonitions:
 
 - `TIP`
 - `IMPORTANT`
