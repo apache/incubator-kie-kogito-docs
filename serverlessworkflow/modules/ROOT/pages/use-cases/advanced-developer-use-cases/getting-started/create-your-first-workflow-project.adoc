@@ -20,7 +20,7 @@ As a common application development, we have different phases: Analysis, Develop
 
 
 .Prerequisites
-* You have setup your environment according to the xref:getting-started/preparing-environment.html#proc-advanced-local-environment-setup[advanced environment setup] guide.
+* You have setup your environment according to the xref:getting-started/preparing-environment.adoc#proc-advanced-local-environment-setup[advanced environment setup] guide.
 
 For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {product_name} tooling].
 
@@ -36,25 +36,32 @@ Start by analyzing the requirements for your {product_name} application. This wi
 
 [[proc-adding-persistence]]
 === Adding persistence?
+Service orchestration is a relevant use case regarding the rise of microservices and event driven architectures. These architectures focus on communication between services and there is always the need to coordinate that communication without the persistence addition requirement.
 
-We need to decide if we need to ensure that your workflow instances remain consistent in the context.
-When the persistence is not configured, an in-memory persistence is used, making all the {workflow_instance} information volatile upon runtime restarts. In this case if the workflow runtime is restarted.
+{product_name} applications use an in-memory persistence by default. This makes all the {workflow_instance} information volatile upon runtime restarts. In case of this guide, when the workflow runtime is restarted.
+As a developer, you need to decide if there is a need to ensure that your workflow instances remain consistent in the context.
 
 If your application requires persistence, you need to decide what kind of persistence is needed and configure it properly.
 Follow the {product_name} xref:use-cases/advanced-developer-use-cases/persistence/persistence-core-concepts.adoc[persistence guide] for more information.
 
 You can find more information about how to create an application which writes to and reads from a database following link:https://quarkus.io/guides/getting-started-dev-services[Your second Quarkus application] guide.
+
 [[proc-adding-eventing]]
 === Adding eventing?
 
 Quarkus unifies reactive and imperative programming you can find more information about this in the link:https://quarkus.io/guides/quarkus-reactive-architecture[Quarkus Reactive Architecture] guide.
 
-In this phase we need to decide how the Event-Driven Architecture needs to be added to our project. We have different options here:
+In this phase we need to decide how the Event-Driven Architecture needs to be added to our project.
+As an event-driven architecture, it uses events to trigger and communicate between services. It allows decoupled applications to asynchronously publish and subscribe to events through an event broker. The event-driven architecture is a method of developing systems that allows information to flow in real time between applications, microservices, and connected devices.
+
+This means that applications and devices do not need to know where they are sending information or where the information they are consuming comes from.
+
+If we choose to add eventing, {product_name} supports different options like:
 
 * *Kafka Connector* for Reactive Messaging. See xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-producing-events-with-kafka.adoc[] for more details.
 * *Knative* eventing.  See xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-produce-events-with-knative-eventing.adoc[] for more details.
 
-When we choose how the different project components will communicate. More details about link:https://quarkus.io/guides/quarkus-reactive-architecture#quarkus-extensions-enabling-reactive[Quarkus Extensions enabling Reactive]
+We need to choose how the different project components will communicate and what kind of communication is needed. More details about link:https://quarkus.io/guides/quarkus-reactive-architecture#quarkus-extensions-enabling-reactive[Quarkus Extensions enabling Reactive]
 
 [[proc-adding-data-index-service]]
 === Adding Data Index service?
