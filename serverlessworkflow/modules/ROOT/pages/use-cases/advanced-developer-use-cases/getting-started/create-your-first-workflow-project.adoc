@@ -66,11 +66,10 @@ We need to choose how the different project components will communicate and what
 [[proc-adding-data-index-service]]
 === Adding Data Index service?
 
-The decision is if we need the {data_index_ref} service enabled to be able to index the {workflow_instance} information in order to  be consumed from {product_name} tooling or just through a GraphQl endpoint.
+The {data_index_ref} service is able to index the {workflow_instance} information using GraphQL. This is very useful if you want to consume the workflow data in different applications through a GraphQL endpoint.
+For more information about {data_index_ref} service see xref:data-index/data-index-core-concepts.adoc[] for more details.
 
-The {data_index_ref} service is available for this purpose. See xref:data-index/data-index-core-concepts.adoc[] for more details.
-
-Once we decide we want to index the data, we need to select how to integrate the service in our topology. Having different options like:
+If you decide to index the data, you need to select how to integrate the {data_index_ref} service in your topology. Here are some options:
 
 * We can choose to have the data indexation service integrated directly in our application using the different xref:use-cases/advanced-developer-use-cases/data-index/data-index-quarkus-extension.adoc[].
 This allows just using the same Datasource as the application persistence without any extra service deployment.
