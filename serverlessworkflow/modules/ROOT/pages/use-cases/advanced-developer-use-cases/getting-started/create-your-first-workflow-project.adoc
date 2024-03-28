@@ -1,0 +1,187 @@
+= Creating a Quarkus Workflow project
+
+As a developer, you can use {product_name} to create an application and in this guide we want to explore different options and provide an overview of available tools that can help.
+
+We will also use Quarkus dev mode for iterative development and testing.
+
+As a common application development, you have different phases like Analysis, Development and Deployment. Let's explore in detail each phase and what {product_name} provides in each case:
+
+* <<proc-analysis-phase,Analysis and taking decisions phase>>
+** <<proc-adding-persistence,Adding persistence?>>
+** <<proc-adding-eventing,Adding eventing?>>
+** <<proc-adding-data-index-service,Adding Data Index service?>>
+** <<proc-adding-job-service,Adding Job service?>>
+
+* <<proc-development-phase,Development phase>>
+** <<proc-boostrapping-the-project,Bootstrapping a project, Creating a workflow, Running your workflow application and Testing your workflow application >>
+** <<proc-logging-configuration,How to configure logging>>
+** <<proc-dev-ui, Refine your workflow testing with Dev-UI>>
+* <<proc-deployment-phase,Deployment phase>>
+
+
+.Prerequisites
+* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-advanced-local-environment-setup[advanced environment setup] guide.
+
+For more information about the tooling and the required dependencies, see xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {product_name} tooling].
+
+ifeval::["{kogito_version_redhat}" != ""]
+include::../../pages/_common-content/downstream-project-setup-instructions.adoc[]
+endif::[]
+
+
+[[proc-analysis-phase]]
+== Analysis phase
+
+Start by analyzing the requirements for your {product_name} application. This will enable you to make decisions about the persistence, eventing, security, topology, and component interaction needs of your application.
+
+[[proc-adding-persistence]]
+=== Adding persistence
+Service orchestration is a relevant use case regarding the rise of microservices and event-driven architectures. These architectures focus on communication between services and there is always the need to coordinate that communication without the persistence addition requirement.
+
+{product_name} applications use an in-memory persistence by default. This makes all the {workflow_instance} information volatile upon runtime restarts. In the case of this guide, when the workflow runtime is restarted.
+As a developer, you must decide if you need to ensure that your workflow instances remain consistent in the context.
+
+If your application requires persistence, you must decide what kind of persistence is needed and configure it properly.
+Follow the {product_name} xref:use-cases/advanced-developer-use-cases/persistence/persistence-core-concepts.adoc[persistence guide] for more information.
+
+You can find more information about how to create an application that writes to and reads from a database following link:https://quarkus.io/guides/getting-started-dev-services[Your second Quarkus application] guide.
+
+[[proc-adding-eventing]]
+=== Adding eventing
+
+Quarkus unifies reactive and imperative programming you can find more information about this in the link:https://quarkus.io/guides/quarkus-reactive-architecture[Quarkus Reactive Architecture] guide.
+
+In this phase, we must decide how the Event-Driven Architecture needs to be added to our project.
+As an event-driven architecture, it uses events to trigger and communicate between services. It allows decoupled applications to publish and subscribe to events through an event broker asynchronously. The event-driven architecture is a method of developing systems that allows information to flow in real time between applications, microservices, and connected devices.
+
+This means that applications and devices do not need to know where they are sending information or where the information they are consuming comes from.
+
+If we choose to add eventing, {product_name} supports different options like:
+
+* *Kafka Connector* for Reactive Messaging. See xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-producing-events-with-kafka.adoc[] for more details.
+* *Knative* eventing.  See xref:use-cases/advanced-developer-use-cases/event-orchestration/consume-produce-events-with-knative-eventing.adoc[] for more details.
+
+You must choose how the different project components will communicate and what kind of communication is needed. More details about link:https://quarkus.io/guides/quarkus-reactive-architecture#quarkus-extensions-enabling-reactive[Quarkus Extensions enabling Reactive]
+
+[[proc-adding-data-index-service]]
+=== Adding Data Index service
+
+The {data_index_ref} service can index the {workflow_instance} information using GraphQL. This is very useful if you want to consume the workflow data in different applications through a GraphQL endpoint.
+For more information about {data_index_ref} service see xref:data-index/data-index-core-concepts.adoc[] for more details.
+
+If you decide to index the data, you must select how to integrate the {data_index_ref} service in your topology. Here are some options:
+
+* You can choose to have the data indexation service integrated directly into our application using the different xref:use-cases/advanced-developer-use-cases/data-index/data-index-quarkus-extension.adoc[].
+This allows you to use the same data source as the application persistence uses, without the need for extra service deployment.
+** *{data_index_ref} persistence extension*. That persists the indexed data directly at the application data source.
+** *{data_index_ref} extension*. That persist directly the indexed data at the application data source and also provide the GraphQL endpoint to interact with the persisted data.
+* Another option is to have the Data Index as a standalone service. In this case, you must properly configure the communication between your {product_name} application and the {data_index_ref} service. More details in xref:data-index/data-index-service.adoc[]
+
+
+[[proc-adding-job-service]]
+=== Adding Job service
+
+The Job Service facilitates the scheduled execution of tasks in a cloud environment. If any of your {product_name} workflow needs some kind of temporary schedule, you will need to integrate the Job service.
+
+If you decide to use Job Service, you need to select how to integrate the service into your topology. Here are some options:
+
+* You can choose to have the Job service integrated directly into your {product_name} Quarkus application using xref:use-cases/advanced-developer-use-cases/job-service/quarkus-extensions.adoc[] guide.
+* Explore how to integrate the Job service and define the interaction with your {product_name} application workflows. You can find more Job service-related details in xref:job-services/core-concepts.adoc[Job Service Core concepts].
+
+[[proc-development-phase]]
+== Development phase
+
+Once you decide which components you must integrate into {product_name} project, you can jump into the workflow development phase.
+
+The goal is to create a workflow and be able to test and improve it. {product_name} provides some tooling to facilitate the developer to try the workflows during this development phase and refine them before going to the deployment phase.
+As an overview, you have the following resources to help in this development phase:
+
+** <<proc-boostrapping-the-project,Bootstrapping a project, Creating a workflow, Running your workflow application and Testing your workflow application >>
+** <<proc-logging-configuration,How to configure logging>>
+** <<proc-dev-ui,Refine your workflow testing with Dev-UI>>
+
+[[proc-boostrapping-the-project]]
+=== Bootstrapping a project, Creating a workflow, Running your workflow application and Testing your workflow application
+
+To create your workflow service, first you need to bootstrap a project.
+Follow the {product_name} xref:use-cases/advanced-developer-use-cases/getting-started/create-your-first-workflow-service.adoc[] guide to setup a minimal working project.
+
+[[proc-logging-configuration]]
+=== How to configure logging
+
+In order to understand what's happening in the environment. {product_name} is using Quarkus Log Management. Logs can provide a detailed history of what happened leading up to the issue.
+
+Quarkus uses the JBoss Log Manager logging backend for publishing application and framework logs.
+Quarkus supports the JBoss Logging API and multiple other logging APIs, seamlessly integrated with JBoss Log Manager
+In order to be able to see the in detail access to link:{quarkus_guides_logging_url}[Quarkus Logging Configuration guide]
+
+.Example adding Logging configuration properties in `application.properties` file
+[source,properties]
+----
+quarkus.log.console.enable=true <1>
+quarkus.log.level=INFO <2>
+quarkus.log.category."org.apache.kafka.clients".level=INFO
+quarkus.log.category."org.apache.kafka.common.utils".level=INFO <3>
+----
+<1> If console logging should be enabled, even by default is set to true
+<2> The log level of the root category, which is used as the default log level for all categories
+<3> Logging is configured on a per-category basis, with each category being configured independently. Configuration for a category applies recursively to all subcategories unless there is a more specific subcategory configuration
+
+[NOTE]
+====
+Access to link:{quarkus_guides_logging_url}#loggingConfigurationReference[Logging configuration reference] to see how logs properties can be configured
+====
+
+[[proc-dev-ui]]
+=== Refining your workflow testing with Dev-UI
+
+Quarkus provides a host of features when dev mode is enabled allowing things like:
+
+* *Change configuration values*.
+* *Running Development services*, including Zero-config setup of data sources. When testing or running in dev mode Quarkus can even provide you with a zero config database out of the box, a feature we refer to as Dev Services. More information can be found in link:{quarkus_guides_logging_url}#dev-services[Quarkus introduction to Dev services].
+* *Access to Swagger-UI* that allows exploring the different {product_name} application endpoints. The quarkus-smallrye-openapi extension will expose the Swagger UI when Quarkus is running in dev mode. Additional information can be found link:{quarkus_guides_swaggerui_url}#dev-mode[Use Swagger UI for development].
+* *Data index Graph UI* that allows to perform GraphQL queries or to explore the data schema
+* Allow to *explore the {workflow_instances}* if the {product_name} Runtime tools Quarkus Dev UI is included
+
+[NOTE]
+====
+By default, Swagger UI is only available when Quarkus is started in dev or test mode.
+
+If you want to make it available in production too, you can include the following configuration in your application.properties:
+
+```
+quarkus.swagger-ui.always-include=true
+```
+This is a build time property, it cannot be changed at runtime after your application is built.
+====
+
+[[proc-deployment-phase]]
+== Deployment phase
+
+At this stage you have a {product_name} Quarkus application well tested and ready to be deployed.
+
+There are two basic modes that a Quarkus application can be deployed:
+
+* As an standard Java application (executable jar with libraries on the classpath)
+* As a native executable which can be built using GraalVM link:{quarkus_guides_building_native}#producing-a-native-executable[Quarkus Building a native executable guide]
+
+If you put either the Java application or the native executable app inside a container, you can deploy the container anywhere that supports running containers.
+
+Quarkus provides extensions for building (and pushing) container images.
+You can find more details about that container images generation in link:{quarkus_guides_container_image_url}[Quarkus Container Image extensions]
+
+Once this container image is built it can be used as part of the decided topology. You have different options like:
+
+* xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-minikube.adoc[]
+* xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-kubernetes.adoc[]
+* xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-openshift.adoc[]
+
+== Additional resources
+
+* xref:getting-started/getting-familiar-with-our-tooling.adoc[Getting familiar with {product_name} tooling]
+* xref:service-orchestration/orchestration-of-openapi-based-services.adoc[Orchestrating the OpenAPI services]
+* xref:use-cases/advanced-developer-use-cases/event-orchestration/newsletter-subscription-example.adoc[]
+* xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc[]
+
+include::../../../../pages/_common-content/report-issue.adoc[]
+
