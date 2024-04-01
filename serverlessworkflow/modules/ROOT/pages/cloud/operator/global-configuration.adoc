@@ -1,0 +1,95 @@
+= Global Configuration Settings
+:compat-mode!:
+// Metadata:
+:description: Global Configuration {operator_name} for cluster admins
+:keywords: sonataflow, workflow, serverless, operator, kubernetes, minikube, openshift, containers, configuration
+// links
+
+This document describes how to set global configuration options for the {operator_name}.
+
+.Prerequisites
+* You have installed the operator in the target cluster. You can find more information at the xref:cloud/operator/install-serverless-operator.adoc[] guide.
+
+== Modifying configuration options
+
+After installing the operator, you can access the ConfigMap named `{operator_controller_config}` in the namespace `{operator_installation_namespace}`.
+This configuration file governs the operator's behavior when creating new resources in the cluster. Existing resources won't be changed after this configuration.
+See the section <<config-changes>> for more information.
+
+You can freely edit any of the options in the key `controllers_cfg.yaml` entry. The table bellow lists each possible entry.
+
+.Description of Global Configuration
+[cols="1,1,2"]
+|===
+|Configuration Key | Default Value | Description
+
+| `defaultPvcKanikoSize` | 1Gi | The default size of Kaniko PVC when using the internal operator builder manager.
+| `healthFailureThresholdDevMode` | 50 | How much time (in seconds) to wait for a devmode workflow to start. This information is used for the controller manager to create new devmode containers and setup the healthcheck probes.
+| `kanikoDefaultWarmerImageTag` | gcr.io/kaniko-project/warmer:v1.9.0 | Default image used internally by the Operator Managed Kaniko builder to create the warmup pods.
+| `kanikoExecutorImageTag` | gcr.io/kaniko-project/executor:v1.9.0 | Default image used internally by the Operator Managed Kaniko builder to create the executor pods.
+| `jobsServicePostgreSQLImageTag` | empty | The Jobs Service image for PostgreSQL to use, if empty the operator will use the default Apache Community one based on the current operator's version.
+| `jobsServiceEphemeralImageTag` | empty | The Jobs Service image without persistence to use, if empty the operator will use the default Apache Community one based on the current operator's version.
+| `dataIndexPostgreSQLImageTag` | empty | The Data Index image for PostgreSQL to use, if empty the operator will use the default Apache Community one based on the current operator's version.
+| `dataIndexEphemeralTag` | empty | The Data Index image without persistence to use, if empty the operator will use the default Apache Community one based on the current operator's version.
+| `sonataFlowBaseBuilderImageTag` | empty | {product_name} base builder image used in the internal Dockerfile to build workflow applications in preview profile. If empty the operator will use the default Apache Community one based on the current operator's version.
+| `sonataFlowDevModeImageTag` | empty | The image to use to deploy {product_name} workflow images in devmode profile. If empty the operator will use the default Apache Community one based on the current operator's version.
+
+|===
+
+To edit this file, update the ConfigMap `sonataflow-operator-controllers-config` using your preferred tool such as `kubectl`.
+
+[#config-changes]
+== Configuration Changes Impact
+
+When updating the global configuration, the changes will be taken impact immediately for *newly* created resources only.
+For example, if you change `sonataFlowDevModeImageTag` property, given that you already have a workflow deployed in _devmode_, the operator won't rollout a new one with the new image configuration. Only new deployments will be affected.
+
+== A Note About the Base Builder Image
+
+As noted in xref:cloud/operator/build-and-deploy-workflows.adoc#changing-base-builder[Changing Base Builder] section, you can directly change the base builder image in the Dockerfile used by the {operator_name}.
+
+Additionally, you can also change the base builder image in the `SonataFlowPlatform` in the current namespace:
+
+.Example of SonataFlowPlatform with a custom base builder
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  build:
+    config:
+        baseImage: dev.local/my-workflow-builder:1.0.0
+----
+
+And finally, you can also change this information directly in the global confinguration ConfigMap
+
+.Example of ConfigMap global configuration with a custom base builder
+[source,yaml,subs="attributes+"]
+----
+apiVersion: v1
+data:
+  controllers_cfg.yaml: |
+    sonataFlowBaseBuilderImageTag: dev.local/my-workflow-builder:1.0.0
+kind: ConfigMap
+metadata:
+  name: sonataflow-operator-controllers-config
+  namespace: sonataflow-operator-system
+----
+
+The order of precedence is:
+
+1. The `SonataFlowPlatform` in the current context
+2. The global configuration entry
+3. The `FROM` clause in the Dockerfile in the operator's namespace `sonataflow-operator-builder-config` ConfigMap
+
+In summary, the entry in `SonataFlowPlatform` will always override any other value.
+
+== Additional resources
+
+* xref:cloud/operator/known-issues.adoc[]
+* xref:cloud/operator/developing-workflows.adoc[]
+* xref:cloud/operator/global-configuration.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
