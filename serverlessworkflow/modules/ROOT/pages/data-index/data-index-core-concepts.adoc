@@ -47,7 +47,7 @@ The indexing functionality in the {data_index_ref} service is provided by choosi
 * link:{mongo_url}[MongoDB]
 ====
 
-The {data_index_ref} Service has been thought of as an application to store and query the existing workflow data. The data comes contained in events. The service allows multiple connection options as described in the <<data-index-service-communication, {data_index_ref} service communication configuration>> section.
+The {data_index_ref} Service has been thought of as an application to store and query the existing workflow data. The data comes within events. The service allows multiple connection options as described in the <<data-index-service-communication, {data_index_ref} service communication configuration>> section.
 
 [#data-index-deployments]
 == {data_index_ref} scenarios
@@ -67,11 +67,11 @@ This type of deployment requires to choose the right image depending on the pers
 [#data-index-dev-service]
 === {data_index_ref} service as Quarkus Development service
 It also can be deployed, transparently as a *Quarkus Development Service* when the Quarkus Dev mode is used in the {product_name} application.
-When you use the {product_name} Process Quarkus extension, a temporary {data_index_ref} Service is automatically provisioned while the Quarkus application is running in development mode and the Dev Service is set up for immediate use.
+When the {product_name} Process Quarkus extension is utilized, a temporary {data_index_ref} Service is automatically provisioned while the Quarkus application runs in development mode. The Quarkus Dev Service is immediately available for use.
 
 image::data-index/data-index-dev-service.png[Image of data-index deployment an Quarkus Dev Service]
 
-More details are provided in the xref:data-index/data-index-service.adoc#data-index-dev-service-details[{data_index_ref} as a Quarkus Development service] section.
+More details are provided in the xref:use-cases/advanced-developer-use-cases/data-index/data-index-as-quarkus-dev-service.adoc[{data_index_ref} as a Quarkus Development service] section.
 
 The {product_name} Process Quarkus extension sets up your Quarkus application to automatically replicate any {product_name} messaging events related to {workflow_instances} or jobs into the provisioned Data Index instance.
 
@@ -96,7 +96,7 @@ More details are available in the xref:use-cases/advanced-developer-use-cases/da
 
 In order to store the indexed data, {data_index_ref} needs some specific tables to be created. {data_index_ref} is ready to use link:{flyway_quarkus_url}[Quarkus flyway] for that purpose.
 
-It's necessary to activate the migrate-at-start option to migrate the {data_index_ref} schema automatically.
+Activating the 'migrate-at-start' option enables automatic migration of the {data_index_ref} schema.
 
 For more details about Flyway migrations, see xref:use-cases/advanced-developer-use-cases/persistence/postgresql-flyway-migration.adoc[] section.
 
@@ -104,7 +104,7 @@ For more details about Flyway migrations, see xref:use-cases/advanced-developer-
 == {data_index_ref} GraphQL endpoint
 
 {data_index_ref} provides GraphQL endpoint that allows users to interact with the stored data.
-For more information about GraphQL see {graphql_url}[GraphQL]
+For more information about GraphQL see {graphql_url}[GraphQL documentation]
 
 [#data-index-ext-queries]
 === GraphQL queries for {workflow_instances} and jobs
@@ -445,12 +445,12 @@ mutation{
 
 [NOTE]
 ====
-To enable described management operations on workflow instances, make sure your project is configured to have the `kogito-addons-quarkus-process-management` dependency on its `pom.xml` file to have this management operations enabled, like:
+To enable described management operations on workflow instances, make sure your project is configured to have the `kie-addons-quarkus-process-management` dependency on its `pom.xml` file to have this management operations enabled, like:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.kie.kogito</groupId>
-  <artifactId>kogito-addons-quarkus-process-management</artifactId>
+  <groupId>org.kie</groupId>
+  <artifactId>kie-addons-quarkus-process-management</artifactId>
 </dependency>
 ----
 ====
@@ -471,12 +471,12 @@ Retrieves the {workflow_instance} source file. When the `source` field of a {wor
 
 [NOTE]
 ====
-The workflow instance source field only will be available when `kogito-addons-quarkus-source-files` dependency is added on {product_name} runtime service `pom.xml` file.
+The workflow instance source field only will be available when `kie-addons-quarkus-source-files` dependency is added on {product_name} runtime service `pom.xml` file.
 [source,xml]
 ----
     <dependency>
-      <groupId>org.kie.kogito</groupId>
-      <artifactId>kogito-addons-quarkus-source-files</artifactId>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-addons-quarkus-source-files</artifactId>
     </dependency>
 ----
 ====
@@ -522,7 +522,7 @@ image::data-index/data-index-graphql-ui.png[Image of data-index GraphQL UI]
 
 When the {data_index_ref} is deployed as a standalone service, this UI will be available at `/graphiql/` endpoint (i.e: at http://localhost:8180/graphiql/)
 
-To have the GraphQL UI available when the {data_index_ref} extension is deployed the property `quarkus.kogito.data-index.graphql.ui.always-include` needs to be enabled.
+To enable the GraphQL UI when deploying the {data_index_ref} extension, the property `quarkus.kogito.data-index.graphql.ui.always-include` must be enabled.
 
 It will be accessible at: <quarkus.http.root-path><quarkus.http.non-application-root-path>/graphql-ui/ (i.e: http://localhost:8080/q/graphql-ui/)
 
