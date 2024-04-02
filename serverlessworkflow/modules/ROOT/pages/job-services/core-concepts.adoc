@@ -394,13 +394,13 @@ And thus, the table above shows only a sub-set of all the available options. To 
 == Eventing API
 
 The Job Service provides a Cloud Event based API that can be used to create and delete jobs.
-This API is useful in deployment scenarios where you want to use an event based communication from the workflow runtime to the Job Service. For the transport of these events you can use the <<knative-eventing, knative eventing>> system or the <<kafka-messaging, kafka messaging>> system.
+This API is useful in deployment scenarios where you want to use an event based communication from the workflow runtime to the Job Service. For the transport of these events you can use the <<knative-eventing, Knative eventing>> system or the <<kafka-messaging, kafka messaging>> system.
 
 [#knative-eventing]
 === Knative eventing
 
 By default, the Job Service Eventing API is prepared to work in a link:{knative_eventing_url}[Knative eventing] system. This means that by adding no additional configurations parameters, it'll be able to receive cloud events via the link:{knative_eventing_url}[Knative eventing] system to manage the jobs.
-However, you must still prepare your link:{knative_eventing_url}[Knative eventing] environment to ensure these events are properly delivered to the Job Service, see <<knative-eventing-supporting-resources, knative eventing supporting resources>>.
+However, you must still prepare your link:{knative_eventing_url}[Knative eventing] environment to ensure these events are properly delivered to the Job Service, see <<knative-eventing-supporting-resources, Knative eventing supporting resources>>.
 
 Finally, the only configuration parameter that you must set, when needed, is to enable the propagation of the Job Status Change events, for example, if you want to register these events in the {data_index_xref}[Data Index Service].
 
@@ -438,7 +438,7 @@ Using system properties with java like names::
 [#knative-eventing-supporting-resources]
 ==== Knative eventing supporting resources
 
-To ensure the Job Service receives the knative events to manage the jobs, you must create the <<knative-eventing-supporting-resources-trigger-create, create job events>> and <<knative-eventing-supporting-resources-trigger-delete, delete job events>> triggers shown in the diagram below.
+To ensure the Job Service receives the Knative events to manage the jobs, you must create the <<knative-eventing-supporting-resources-trigger-create, create job events>> and <<knative-eventing-supporting-resources-trigger-delete, delete job events>> triggers shown in the diagram below.
 Additionally, if you have enabled the Job Status Change events propagation you must create the <<knative-eventing-supporting-resources-sink-binding, sink binding>>.
 
 .Knative eventing supporting resources
