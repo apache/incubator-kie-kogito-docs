@@ -1,0 +1,86 @@
+= Using an Ingress to add Authentication and Authorization to Workflow Applications
+:compat-mode!:
+// Metadata:
+:description: Securing workflow applications via a 
+:keywords: cloud, kubernetes, docker, image, podman, openshift, oidc, keycloak, apisix
+// links
+:oidc_spec_url: https://openid.net/specs/openid-connect-core-1_0.html
+:kubernetes_svc_url: https://kubernetes.io/docs/concepts/services-networking/service/
+:kubernetes_networkpolicy_url: https://kubernetes.io/docs/concepts/services-networking/network-policies/
+:sonataflow_apisix_example_url: 
+
+This document describes how you add an Ingress to a {product_name} workflow to handle authentication and authorization use cases.
+
+In the approach outlined in this guide, you will be able to protect your workflows from anonymous access outside the cluster with link:{oidc_spec_url}[OpenID Connect]. 
+
+== Architecture
+
+The following image illustrates a simplified architecture view of the recommended approach for protecting {product_name} workflow endpoints.
+
+image::cloud/ingress-apisix-keycloak.png[]
+
+1. User makes a request with their credentials
+2. APISIX do the JWT token instrospection in the OIDC Server (Keycloak)
+3. Keycloak validates the token
+4. APISIX forwards the request to the workflow application
+
+This is a simplified approach for OIDC use cases. In production environments, you can tailor your gateway and OIDC server to meet your requirements and scope.
+
+[IMPORTANT]
+====
+This approach only protects the communication made via Ingress. Direct calls to the workflow application link:{kubernetes_svc_url}[internal service] would be anonymous.
+For example, another microservice in the cluster making requests to the workflow internal service.
+Make sure to set link:{kubernetes_networkpolicy_url}[Kuberbetes NetworkPolicies] to your workflow applications if this is not the desired behavior.
+====
+
+== How to Deploy the Example Architecture
+
+In the following sections you will be able to understand and deploy the example architecture using APISIX and Keycloak to protect your {product_name} workflows.
+
+.Prerequisities
+
+* Minikube installed. You can try using KIND or any other cluster if you have admin access. Just ensure to adapt the steps bellow to your environment.
+* link:{sonataflow_apisix_example_url}[Clone the example SonataFlow APISIX with Keycloak in a local directory].
+* (Optional) xref:cloud/operator/install-serverless-operator.adoc[{product_name} operator installed] if you're going to deploy via the operator.
+* (Optional) xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-minikube.adoc[Quarkus {product_name} workflow deployed] if you're not using the operator.
+
+=== Installing Keycloak
+
+From the example's directory, run the following command:
+
+.Running kustomize to install Keycloak
+[source,shell,subs="attributes+"]
+----
+kubectl create ns keycloak
+kubectl kustomize manifests/bases | kubectl apply -f - -n keycloak
+----
+
+This command will create a namespace called `keycloak` and a Keycloak server deployment connected to a PostgreSQL database to persist your data accross cluster restarts.
+
+==== Exposing Keycloak Locally
+
+[TIP]
+====
+You can skip this section if you're running on OpenShift or any cluster that you can expose Keycloak via an Ingress DNS or Route.
+====
+
+Since Keycloak is running on Minikube, you must expose the service port to your local network. To be able to do this, run the following command:
+
+.Exposing Keycloak to the local network
+[source,shell,subs="attributes+"]
+----
+# Let's use kubectl port-forward to equalize the Keycloak endpoint URI so APISIX and your local env access Keycloak using the same URL
+# This method works even in Windows/Darwin where Podman/Docker won't give access to the internal network
+# Hence, we must rely on tunnel/port-forward
+kubectl port-forward $(kubectl get pods -l app=keycloak --output=jsonpath='{.items[*].metadata.name}' -n keycloak) 8080:8080 -n keycloak
+----
+
+From now on, every connection to the `8080` port will be forwarded to the Keycloak service endpoint.
+
+The next step is to configure your local `/etc/hosts`. This step is needed because the token you're going to generate must come from the same URL that APISIX server will introspect once you try to access the workflow.
+
+[IMPORTANT]
+====
+Of course in real-life environments this step is not needed since Keycloak or any OIDC server will be served by a load balancer with the correct DNS configured.
+====
+
