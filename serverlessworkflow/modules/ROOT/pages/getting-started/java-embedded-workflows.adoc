@@ -90,7 +90,7 @@ You can find additional and commented examples of fluent API usage (including jq
 
 == Dependencies explanation
 
-Embedded workflow uses a modular approach keep the number of required dependencies as smaller as possible. The rationale is to avoid adding to the dependency set something that you are not going to use. For example, OpenAPI module is based on Swagger parser, if you are not going to call any OpenAPI service, it is better to avoid adding Swagger to the dependency set. This means the link:{swf_executor_core_maven_repo_url}[Core] dependency does not include the stuff to use gRPC, OpenAPI or most custom function types.  
+Embedded workflow uses a modular approach to keep the number of required dependencies as small as possible. The rationale is to avoid adding to the dependency set something that you are not going to use. For example, OpenAPI module is based on Swagger parser, if you are not going to call any OpenAPI service, it is better to avoid adding Swagger to the dependency set. This means the link:{swf_executor_core_maven_repo_url}[Core] dependency does not include the stuff to use gRPC, OpenAPI or most custom function types.  
 
 This is the list of additional dependencies you might need to add depending on the functionality you are using:
 
@@ -112,7 +112,7 @@ Since, within an embedded environment, you usually do not want to contact an ext
   StaticWorkflowApplication.create().processInstancesFactory(new RocksDBProcessInstancesFactory(new Options().setCreateIfMissing(true), tempDir.toString()))
 ----
 
-See link:{kogito_runtimes_swf_test_url}/PersistentApplicationTest.java[persistence example] 
+See the link:{kogito_runtimes_swf_test_url}/PersistentApplicationTest.java[persistence example].
 
 
 == Additional resources
