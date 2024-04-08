@@ -6,7 +6,7 @@
 // links
 :quarkus_config_guide_url: https://quarkus.io/guides/config-reference
 
-This document describes the information about the implementation of the link:{spec_website_url}[Cloud Native Computing Foundation (CNCF) Serverless Workflow] specification. {product_name} implements version link:{spec_doc_url}[{spec_version}] of the Serverless Workflow specification.
+This document provides an overview of how SonataFlow implements the link:{spec_website_url}[Cloud Native Computing Foundation (CNCF) Serverless Workflow] specification. {product_name} implements version link:{spec_doc_url}[{spec_version}] of the Serverless Workflow specification.
 
 The following table shows the implementation status for each Serverless Workflow specification feature.
 
@@ -23,13 +23,13 @@ specification.
 | Icon | Description
 
 | emoji:full_moon[]
-| Fully implemented feature and compliant with the Serverless Workflow specification
+| Feature fully implemented and compliant with the Serverless Workflow specification
 
 | emoji:last_quarter_moon[]
-| Partially implemented feature
+| Feature partially implemented
 
 | emoji:construction[]
-| Not implemented
+| Feature not implemented
 
 |===
 
@@ -37,38 +37,6 @@ specification.
 [cols="35%,30%,35%", options="header"]
 |===
 | Feature | Status | Reference
-
-| <<states>>
-| emoji:full_moon[]
-| link:{spec_doc_url}#workflow-states[Workflow States]
-
-| <<functions>>
-| emoji:last_quarter_moon[]
-| link:{spec_doc_url}#Function-Definition[Function Definition]
-
-| <<events>>
-| emoji:last_quarter_moon[]
-| link:{spec_doc_url}#Event-Definition[Event Definition]
-
-| <<workflow_data>>
-| emoji:full_moon[]
-| link:{spec_doc_url}#Workflow-Data[Workflow Data]
-
-| <<expressions>>
-| emoji:full_moon[]
-| link:{spec_doc_url}#Workflow-Expressions[Workflow Expressions]
-
-| <<error_handling>>
-| emoji:full_moon[]
-| link:{spec_doc_url}#Workflow-Error-Handling[Workflow Error Handling]
-
-| <<retries>>
-| emoji:construction[]
-| link:{spec_doc_url}#Retry-Definition[Retry Definition]
-
-| <<timeouts>>
-| emoji:last_quarter_moon[]
-| link:{spec_doc_url}#workflow-timeouts[Workflow Timeouts]
 
 | <<compensation>>
 | emoji:full_moon[]
@@ -78,9 +46,41 @@ specification.
 | emoji:full_moon[]
 | link:{spec_doc_url}#workflow-constants[Workflow Constants]
 
+| <<error_handling>>
+| emoji:full_moon[]
+| link:{spec_doc_url}#Workflow-Error-Handling[Workflow Error Handling]
+
+| <<events>>
+| emoji:last_quarter_moon[]
+| link:{spec_doc_url}#Event-Definition[Event Definition]
+
+| <<expressions>>
+| emoji:full_moon[]
+| link:{spec_doc_url}#Workflow-Expressions[Workflow Expressions]
+
+| <<functions>>
+| emoji:last_quarter_moon[]
+| link:{spec_doc_url}#Function-Definition[Function Definition]
+
+| <<retries>>
+| emoji:construction[]
+| link:{spec_doc_url}#Retry-Definition[Retry Definition]
+
 | <<secrets>>
 | emoji:full_moon[]
 | link:{spec_doc_url}#workflow-secrets[Workflow Secrets]
+
+| <<workflow_data>>
+| emoji:full_moon[]
+| link:{spec_doc_url}#Workflow-Data[Workflow Data]
+
+| <<states>>
+| emoji:full_moon[]
+| link:{spec_doc_url}#workflow-states[Workflow States]
+
+| <<timeouts>>
+| emoji:last_quarter_moon[]
+| link:{spec_doc_url}#workflow-timeouts[Workflow Timeouts]
 |===
 
 [[states]]
@@ -88,78 +88,74 @@ specification.
 
 The link:{spec_doc_url}#parallel-state[Parallel State] of the workflow states feature works in a single thread. This means that a Parallel State does not create one thread per branch, simulating an actual parallel behavior.
 
- If an exclusive property is set to `false`, you should not use the link:{spec_doc_url}#event-state[Event State] of the workflow states feature as the starting state. In case, if it is specified that way, then it will behave as if an exclusive property was set to `true`. 
+If an `exclusive` property is set to `false`, you should not use the link:{spec_doc_url}#Event-State[Event State] of the workflow states feature as the starting state. In case that it is specified that way, it will behave as if an `exclusive` property was set to `true`. 
 
 [NOTE]
 ====
 {product_name} does not support the link:{spec_doc_url}#sleep-state[Sleep State] feature. However, this feature will be supported in a future release.
 ====
 
-The following table shows all the workflow states that {product_name} supports in the Serverless Workflow specification {spec_version} version:
+The following table shows the implementation status in {product_name} of workflow states of the Serverless Workflow specification {spec_version} version:
 
 .Workflow States implementation status
 [cols="35%,30%,35%", options="header"]
 |===
 | State | Status | Reference
 
+| Callback
+| emoji:full_moon[]
+| link:{spec_doc_url}#Callback-State[Callback State]
+
 | Event
 | emoji:last_quarter_moon[]
 | link:{spec_doc_url}#Event-State[Event State]
-
-| Operation
-| emoji:full_moon[]
-| link:{spec_doc_url}#Operation-State[Operation State]
-
-| Switch
-| emoji:full_moon[]
-| link:{spec_doc_url}#Switch-State[Switch State]
-
-| Sleep
-| emoji:construction[]
-| link:{spec_doc_url}#sleep-state[Sleep State]
-
-| Parallel
-| emoji:last_quarter_moon[]
-| link:{spec_doc_url}#Parallel-State[Parallel State]
-
-| Inject
-| emoji:full_moon[]
-| link:{spec_doc_url}#Inject-State[Inject State]
 
 | ForEach
 | emoji:full_moon[]
 | link:{spec_doc_url}#ForEach-State[ForEach State]
 
-| Callback
+| Inject
 | emoji:full_moon[]
-| link:{spec_doc_url}#Callback-State[Callback State]
+| link:{spec_doc_url}#Inject-State[Inject State]
+
+| Operation
+| emoji:full_moon[]
+| link:{spec_doc_url}#Operation-State[Operation State]
+
+| Parallel
+| emoji:last_quarter_moon[]
+| link:{spec_doc_url}#Parallel-State[Parallel State]
+
+| Sleep
+| emoji:construction[]
+| link:{spec_doc_url}#sleep-state[Sleep State]
+
+| Switch
+| emoji:full_moon[]
+| link:{spec_doc_url}#Switch-State[Switch State]
 |===
 
 [[functions]]
 == Functions
 
-The following table shows the status of the workflow functions that {product_name} supports:
+The following table shows the implementation status of the workflow functions that {product_name} supports:
 
 .Workflow Functions implementation status
 [cols="35%,30%,35%", options="header"]
 |===
 | Function | Status | Reference
 
-| REST
-| emoji:full_moon[]
-| link:{spec_doc_url}#using-functions-for-restful-service-invocations[Using Functions for RESTful Service Invocations]
+| AsyncAPI
+| emoji:construction[]
+| link:{spec_doc_url}#using-functions-for-async-api-service-invocations[Using Functions for AsyncAPI Service Invocations]
 
-| RPC
+| Custom
 | emoji:full_moon[]
-| link:{spec_doc_url}#using-functions-for-rpc-service-invocations[Using Functions for RPC Service Invocations]
+| link:{spec_doc_url}#defining-custom-function-types[Defining custom function types]
 
 | Expression
 | emoji:full_moon[]
 | link:{spec_doc_url}#using-functions-for-expression-evaluation[Using Functions for Expression Evaluation]
-
-| AsyncAPI
-| emoji:construction[]
-| link:{spec_doc_url}#using-functions-for-async-api-service-invocations[Using Functions for AsyncAPI Service Invocations]
 
 | GraphQL
 | emoji:construction[]
@@ -169,9 +165,13 @@ The following table shows the status of the workflow functions that {product_nam
 | emoji:construction[]
 | link:{spec_doc_url}#using-functions-for-odata-service-invocations[Using Functions for OData Service Invocations]
 
-| Custom
+| REST
 | emoji:full_moon[]
-| link:{spec_doc_url}#defining-custom-function-types[Defining custom function types]
+| link:{spec_doc_url}#using-functions-for-restful-service-invocations[Using Functions for RESTful Service Invocations]
+
+| RPC
+| emoji:full_moon[]
+| link:{spec_doc_url}#using-functions-for-rpc-service-invocations[Using Functions for RPC Service Invocations]
 |===
 
 For additional functions, the Serverless Workflow specification support the `custom` function type, such as `sysout` and `java`. For more information about these custom function types, see xref:core/custom-functions-support.adoc[Custom functions for your {product_name} service].
@@ -233,7 +233,7 @@ Alternatively, you can use xref:core/understanding-workflow-error-handling.adoc[
 [[timeouts]]
 == Timeouts
 
-{product_name} has limited support for the timeouts feature, which covers only workflow and event timeouts.
+{product_name} has limited support for the timeouts feature, covering only workflow and event timeouts.
 
 For start event state the `exclusive` property is not supported if set to `false`, therefore the timeout is not supported for the event state when starting a workflow.
 
