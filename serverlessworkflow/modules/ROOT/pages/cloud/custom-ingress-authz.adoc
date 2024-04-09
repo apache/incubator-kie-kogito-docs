@@ -13,7 +13,7 @@
 
 This document describes how you add an Ingress to a {product_name} workflow to handle authentication and authorization use cases.
 
-In the approach outlined in this guide, you will be able to protect your workflows from anonymous access outside the cluster with the link:{oidc_spec_url}[OpenID Connect] specification. 
+In the approach outlined in this guide, protect your workflows from anonymous access outside the cluster with the link:{oidc_spec_url}[OpenID Connect] specification. 
 
 Although the example demonstrated in this document is not meant to be used in production, you can use it as a reference to create your own architecture.
 
@@ -39,14 +39,14 @@ Make sure to set link:{kubernetes_networkpolicy_url}[Kuberbetes NetworkPolicies]
 
 == How to Deploy the Example Architecture
 
-In the following sections you will be able to understand and deploy the example architecture using APISIX and Keycloak to protect your {product_name} workflows.
+The following sections describe how to deploy the example architecture using APISIX and Keycloak to protect your {product_name} workflows.
 
 .Prerequisites
 
-* Minikube installed. You can use KIND or any other cluster if you have admin access. Just ensure to adapt the steps below to your environment.
+* Minikube is installed. You can use Kind or any other cluster if you have admin access. Just ensure to adapt the steps below to your environment.
 * link:{sonataflow_apisix_example_url}[Clone the example SonataFlow APISIX with Keycloak in a local directory].
-* (Optional) xref:cloud/operator/install-serverless-operator.adoc[{operator_name} installed] if you're going to deploy via the operator.
-* (Optional) xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-minikube.adoc[Quarkus {product_name} workflow deployed] if you're not using the operator.
+* (Optional) xref:cloud/operator/install-serverless-operator.adoc[{operator_name} is installed] if you are going to deploy via the operator.
+* (Optional) xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-minikube.adoc[Quarkus {product_name} workflow is deployed] if you are not using the operator.
 
 === Installing Keycloak
 
@@ -59,16 +59,16 @@ kubectl create ns keycloak
 kubectl kustomize manifests/bases | kubectl apply -f - -n keycloak
 ----
 
-This command will create a namespace called `keycloak` and a Keycloak server deployment connected to a PostgreSQL database to persist your data across cluster restarts.
+This command creates a namespace called `keycloak` and a Keycloak server deployment connected to a PostgreSQL database to persist your data across cluster restarts.
 
 ==== Exposing Keycloak Locally
 
 [TIP]
 ====
-You can skip this section if you're running on OpenShift or any cluster that you can expose Keycloak via an Ingress DNS or Route.
+You can skip this section if you are running on OpenShift or any cluster that you can expose Keycloak via an Ingress DNS or Route.
 ====
 
-Since Keycloak is running on Minikube, you must expose the service port to your local network. To be able to do this, run the following command:
+Since Keycloak is running on Minikube, expose the service port to your local network by running the following command:
 
 .Exposing Keycloak to the local network
 [source,shell,subs="attributes+"]
@@ -76,9 +76,9 @@ Since Keycloak is running on Minikube, you must expose the service port to your 
 kubectl port-forward $(kubectl get pods -l app=keycloak --output=jsonpath='{.items[*].metadata.name}' -n keycloak) 8080:8080 -n keycloak
 ----
 
-From now on, every connection to the `8080` port will be forwarded to the Keycloak service endpoint.
+From now on, every connection to the `8080` port is forwarded to the Keycloak service endpoint.
 
-The next step is to configure your local `/etc/hosts`. This step is needed because the token you're going to generate must come from the same URL that APISIX server will introspect once you try to access the workflow.
+The next step is to configure your local `/etc/hosts`. This step is needed because the token you are going to generate must come from the same URL that APISIX server introspects once you access the workflow.
 
 Edit your local `/etc/hosts` file and add the following line:
 
@@ -92,75 +92,75 @@ You can try accessing your Keycloak admin console in the address link:http://key
 
 [IMPORTANT]
 ====
-In real-life environments this step is not needed since Keycloak or any OIDC server will be served by a load balancer with the correct address configured.
+In real-life environments this step is not needed since Keycloak or any OIDC server is served by a load balancer with the correct address configured.
 ====
 
 ==== Configuring the Keycloak OIDC Server
 
-In this next step, you should be able to log in to the Keycloak admin console in the address link:http://keycloak.keycloak.svc.cluster.local:8080[] using the default credentials.
+In the next step, log in to the Keycloak admin console in the address link:http://keycloak.keycloak.svc.cluster.local:8080[] using the default credentials.
 
-Once in the console, click on "Create realm" in the top left menu. In this screen you will be able to create a new realm named "sonataflow". See the image below for more details:
+Once you are logged into the console, click on *Create realm* in the top left menu. In this screen, create a new realm named `sonataflow`. See the image below for more details:
 
-.Creation of the new realm "sonataflow"
+.Creation of the new sonataflow realm
 image::cloud/apisix-keycloak/01-create-realm.png[]
 
-Next, you must create a client for the APISIX Ingress to introspect the JWT tokens.
+Next, create a client for the APISIX Ingress to introspect the JWT tokens.
 
-In the left menu, make sure that you're in the "sonataflow" realm and click on "Clients", then "Create client". Give the name "apisix-ingress" and then click on "Next".
+In the left menu, make sure that you are in the `sonataflow` realm and click on *Clients*, then *Create client*. Give the name `apisix-ingress` and then click on *Next*.
 
 .Creation of the APISIX Ingress client
 image::cloud/apisix-keycloak/02-create-client.png[]
 
-Next, you should be able to add the details about this client:
+Next, add the details about this client:
 
-1. Turn the "Client authentication" option on.
-2. Leave "Authorization" off.
-3. Mark the options "Standard flow" and "Direct access grants" and leave the rest blank.
+1. Turn the *Client authentication* option on.
+2. Leave *Authorization* off.
+3. Mark the options *Standard flow* and *Direct access grants* and leave the rest blank.
 
 .APISIX Ingress client details
 image::cloud/apisix-keycloak/03-create-client.png[]
 
-Click on "Next", leave everything blank in the next screen and click on "Save".
+Click on *Next*, leave everything blank in the next screen and click on *Save*.
 
-==== Creating the user
+==== Creating a user
 
-You will access the workflow application in this example with a user registered in the Keycloak server. 
+In this example, create a user registered in the Keycloak server to access the workflow application.
 
 [IMPORTANT]
 ====
-For simplicity, we will use the link:{keycloak_resource_owner_granttype_url}[Grant Type Resource Owner Password]. This flow is not recommended for production architectures. Consider using other mechanisms such as Authorization Code or Client Credentials.
+For simplicity, use the link:{keycloak_resource_owner_granttype_url}[Grant Type Resource Owner Password]. This flow is not recommended for production architectures. Consider using other mechanisms such as Authorization Code or Client Credentials.
 ====
 
-In the left menu, make sure that you're in the "sonataflow" realm and click on "Users" and then "Create new user".
+In the left menu, make sure that you are in the `sonataflow` realm and click on *Users* and then click *Create new user*.
 
 In this screen, fill in the details according to the figure below:
 
-1. Turn "Email verified" option on.
-2. Set "Username" to `luke`.
-3. Set "Email" to `luke@republic.org`
-4. Set "First name" to `Luke` and "Last name" to `Skywalker`
+1. Switch *Email verified* option on.
+2. Set *Username* to `luke`.
+3. Set *Email* to `luke@republic.org`
+4. Set *First name* to `Luke` and *Last name* to `Skywalker`
 
-.Creating the workflow user
+.Creating a workflow user
 image::cloud/apisix-keycloak/05-create-user.png[]
 
-Click on "Create".
+Click on *Create*.
 
-Next, set the credentials for this newly created user. Click on "Users" in the left menu and then in the name "luke". 
+Next, set the credentials for this newly created user. Click on *Users* in the left menu and then in the name `luke`. 
 
-In this screen, click on the tab "Credentials", and then on "Set password".
+In this screen, click on the tab *Credentials*, and then on *Set password*.
 
 .Setting user's password
 image::cloud/apisix-keycloak/06-user-set-password.png[]
 
-Set the password as "luke" (same as the username), leave the "Temporary" option off and click on "Save".
+Set the password as `luke` (same as the username), leave the *Temporary* option off and click on *Save*.
 
-You will use the credentials `luke`/`luke` later in this guide to acquire a JWT token to make requests to the workflow application.
+Use the credentials `luke`/`luke` later in this guide to acquire a JWT token to make requests to the workflow application.
 
 === Installing the APISIX Ingress
 
-Follow the documentation on link:{apisix_install_url}[APISIX Documentation website] and install the APISIX Ingress in your cluster. You should have to install HELM client first.
+Follow the documentation on link:{apisix_install_url}[APISIX Documentation website] and install the APISIX Ingress in your cluster (install the HELM client first).
 
-If you're running on minikube, you must expose the APISIX Ingress server:
+If you are running on Minikube, expose the APISIX Ingress server:
 
 .Exposing Keycloak to the local network
 [source,shell,subs="attributes+"]
@@ -168,18 +168,18 @@ If you're running on minikube, you must expose the APISIX Ingress server:
 minikube service apisix-gateway --url -n ingress-apisix
 ----
 
-The command outcome is the local URL which you can access the Ingress you will create later in this guide. Leave the terminal open.
+The command outcome is the local URL which you can access the Ingress you create later in this guide. Leave the terminal open.
 
 [TIP]
 ====
-If you're not running on Minikube, you must have a way to expose the Ingress already in your cluster. Consult the APISIX Ingress documentation for more information on how to proceed.
+If you are not running on Minikube, see the APISIX Ingress documentation for more information on how to expose the Ingress already in your cluster. 
 ====
 
-After this step you will have a Keycloak OIDC Server and a APISIX Ingress Controller on your cluster able to protect your {product_name} workflow applications from external requests.
+After this step, Keycloak OIDC Server and APISIX Ingress Controller on your cluster are able to protect your {product_name} workflow applications from external requests.
 
 == Deploying the {product_name} sample workflow
 
-In this section, you will learn how to deploy the example "Greeting" workflow and a custom APIXSIX Ingress to protect external requests to the application's endpoints.
+In this section, learn how to deploy the Greeting workflow example and a custom APIXSIX Ingress to protect external requests to the application's endpoints.
 
 .Prerequisites
 
@@ -249,7 +249,7 @@ spec:
 ----
 
 <1> The link:{}[OpenID Connect plugin] to make the Ingress connect to Keycloak
-<2> The `apisix-ingress` client credential that you will change
+<2> The `apisix-ingress` client credential to be changed
 
 Open the Keycloak server (link:http://keycloak.keycloak.svc.cluster.local:8080[]) and in the realm "sonataflow" click on "Clients", and then on "apisix-ingress".
 
@@ -266,11 +266,11 @@ Paste the "Client Secret" into the `ApisixRoute` file `workflow-app/02-sonataflo
 kubectl apply -f workflow-app/02-sonataflow-route.yaml -n sonataflow
 ----
 
-To this point, you should have installed in your cluster the Keycloak and APISIX Ingress server, and deployed the example "Greetings" workflow application.
+To this point, you have installed in your cluster the Keycloak and APISIX Ingress server, and deployed the example "Greetings" workflow application.
 
 === Accessing the Workflow
 
-You should not be able to access the workflow without a token, so to test it you can run:
+Access the workflow without a token to see a rejection:
 
 .Directly accessing the workflow without a token
 [source,shell,subs="attributes+"]
@@ -278,9 +278,9 @@ You should not be able to access the workflow without a token, so to test it you
 curl -v POST http://127.0.0.1:$\{INGRESS_PORT\}/greeting -H "Content-type: application/json" -H "Host: local.greeting.sonataflow.org" --data '{ "name": "Luke" }' 
 ----
 
-You should receive a 401 HTTP Status message denying your access to the workflow.
+See a 401 HTTP Status message denying your access to the workflow.
 
-Next, try to access the application using an access token. First, you need to get the access token from the Keycloak server:
+Next, access the application using an access token. First, you need to get the access token from the Keycloak server:
 
 .Requesting an access token to Keycloak server
 [source,shell,subs="attributes+"]
@@ -308,9 +308,9 @@ INGRESS_PORT= <1>
 curl -v POST http://127.0.0.1:$\{INGRESS_PORT\}/greeting -H "Content-type: application/json" -H "Host: local.greeting.sonataflow.org" -H "Authorization: Bearer $\{ACCESS_TOKEN\}" --data '{ "name": "Luke" }' 
 ----
 
-<1> The ingress port should be accessible via the Minikube service command. You haven't done it already, you can run it with `minikube service apisix-gateway --url -n ingress-apisix`.
+<1> The ingress port is accessible via the Minikube service command. If you have not done it already, run `minikube service apisix-gateway --url -n ingress-apisix`.
 
-This request is passing through the APISIX Gateway, which is validating the token via the `Authorization: Bearer` header. Then the request is passed internally to the workflow application, which will process and return to the original client.
+This request is passing through the APISIX Gateway, which is validating the token via the `Authorization: Bearer` header. Then the request is passed internally to the workflow application which process and return to the original client.
 
 == Conclusion
 
