@@ -1,4 +1,10 @@
 = Workflow embedded execution in Java 
+:compat-mode!:
+// Metadata:
+:description: Embedded execution of Workflows
+:keywords: kogito, workflow, embedded, java, sonataflow
+
+
 
 This guide uses a standard Java virtual machine and a small set of Maven dependencies to execute a link:{spec_doc_url}[CNCF Serverless Workflow] definition. Therefore, it is assumed you are fluent both in Java and Maven. 
 The workflow definition to be executed can be read from a `.json` or `.yaml` file or programmatically defined using the {product_name} fluent API.
@@ -54,7 +60,7 @@ Workflow execution result is {"greeting":"Hello World","mantra":"Serverless Work
 [[embedded-fluent-quick-start]]
 == Hello world (using fluent API)
 
-Using the same Maven setup as in the previous section, you can programmatically generate that workflow definition rather than loading it from a file definition by using the link:{kogito_runtimes_url}/kogito-serverless-workflow/kogito-serverless-workflow-fluent/src/main/java/org/kie/kogito/serverless/workflow/fluent[fluent API]
+Adding link:{swf_fluent_maven_repo_url}[kogito-serverless-workflow-fluent] dependency to the Maven setup in the previous section, you can programmatically generate that workflow definition rather than loading it from a file definition by using the link:{kogito_runtimes_url}/kogito-serverless-workflow/kogito-serverless-workflow-fluent/src/main/java/org/kie/kogito/serverless/workflow/fluent[fluent API]
 
 Therefore, you can modify the previous example to generate the same output when it is executed, but rather than creating a `FileReader` that reads the `Workflow` object, we create the `Workflow` object using Java statements. The resulting modified main method is the following
 
@@ -78,10 +84,36 @@ Therefore, you can modify the previous example to generate the same output when 
 <6> Build the workflow definition
 <7> Execute and print as in previous example
 
-
-== Further reading
+=== Additional fluent examples
 
 You can find additional and commented examples of fluent API usage (including jq expression evaluation and orchestration of rest services) link:{kogito_sw_examples_url}/sonataflow-fluent[here]
+
+== Dependencies explanation
+
+Embedded workflow uses a modular approach to keep the number of required dependencies as small as possible. The rationale is to avoid adding something that you will not use to the dependency set. For example, the OpenAPI module is based on a Swagger parser, if you are not going to call any OpenAPI service, it is better to avoid adding Swagger to the dependency set. This means the link:{swf_executor_core_maven_repo_url}[Core] dependency does not include the stuff to use gRPC, OpenAPI, or most custom function types.  
+
+This is the list of additional dependencies you might need to add depending on the functionality you are using:
+
+* link:{swf_executor_rest_maven_repo_url}[REST]: Add if you use xref:core/custom-functions-support#con-func-rest[custom Rest] function type. 
+* link:{swf_executor_service_maven_repo_url}[Service]: Add if your use xref:core/custom-functions-support#con-func-java[custom Service] function type. 
+* link:{swf_executor_openapi_maven_repo_url}[OpenAPI]: Add if you use  link:{spec_doc_url}#using-functions-for-restful-service-invocations[OpenAPI] function type. See link:{kogito_runtimes_swf_test_url}/OpenAPIWorkflowApplicationTest.java[example].
+* link:{swf_executor_grpc_maven_repo_url}[gRPC]: Add if you use link:{spec_doc_url}#using-functions-for-rpc-service-invocations[gRPC] function type. See link:{kogito_runtimes_swf_test_url}/RPCWorkflowApplicationTest.java[example]. 
+* link:{swf_executor_python_maven_repo_url}[Python]: Add if you use xref:core/custom-functions-support#con-func-python[custom Python] function type. See link:{kogito_runtimes_swf_url}/kogito-serverless-workflow-executor-python/src/test/java/org/kie/kogito/serverless/workflow/executor/PythonFluentWorkflowApplicationTest.java[example].
+* link:{swf_executor_events_maven_repo_url}[Events]: Add if you use Event or Callback state in your workflow. Only Kafka events are supported right now. See link:{kogito_runtimes_swf_url}/kogito-serverless-workflow-executor-kafka/src/test/java/org/kie/kogito/serverless/workflow/executor/WorkflowEventPublisherTest.java[Publisher] and link:{kogito_runtimes_swf_url}/kogito-serverless-workflow-executor-kafka/src/test/java/org/kie/kogito/serverless/workflow/executor/WorkflowEventSusbcriberTest.java[Subscriber] examples.
+
+== Persistence support
+
+To enable persistence, you must include the desired {product_name} persistence add-on as a dependency and set up `StaticWorkflowApplication` to use the `ProcessInstances` implementation provided by the add-on. 
+
+Since, within an embedded environment, you usually do not want to contact an external database, the recommendation is to use the link:{rocksdb_url}[rocksdb] embedded database. You do that by adding the link:{rocksdb_addon_maven_repo_url}[rocksdb add-on] dependency and adding the following code snippet when you create your `StaticWorkflowApplication` object.
+
+[source,java]
+----
+  StaticWorkflowApplication.create().processInstancesFactory(new RocksDBProcessInstancesFactory(new Options().setCreateIfMissing(true), tempDir.toString()))
+----
+
+See the link:{kogito_runtimes_swf_test_url}/PersistentApplicationTest.java[persistence example].
+
 
 == Additional resources
 
