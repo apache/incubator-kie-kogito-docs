@@ -192,7 +192,7 @@ The first step is to deploy the {product_name} workflow.
 
 Enter the example project directory that you cloned locally and run the command below:
 
-.Deploying the "Greeting" workflow
+.Deploying the Greeting workflow
 [source,shell,subs="attributes+"]
 ----
 kubectl create ns sonataflow
@@ -216,49 +216,48 @@ Once you deploy the {product_name} workflow you can configure and deploy the API
 
 Open the file `workflow-app/02-sonataflow-route.yaml` in the example application you cloned earlier and change the credentials for the `apisix-ingress` client that you created in the Keycloak server:
 
-."Greetings" workflow APISIX Route
+.Greeting workflow APISIX Route
 [source,yaml,subs="attributes+"]
 ----
 apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
 metadata:
   name: sonataflow
-  namespace: sonataflow
 spec:
   http:
-  - name: greeting
-    match:
-      hosts:
-      - local.greeting.sonataflow.org
-      paths:
-      - "/*"
-    backends:
-    - serviceName: greeting
-      servicePort: 80
-    plugins:
-    - name: openid-connect <1>
-      enable: true
-      config:
-        client_id: apisix-ingress
-        client_secret:  <2>
-        discovery: http://keycloak.keycloak.svc.cluster.local:8080/realms/sonataflow/.well-known/openid-configuration
-        scope: profile email
-        bearer_only: true
-        realm: sonataflow
-        introspection_endpoint_auth_method: client_secret_post
+    - name: greeting
+      match:
+        hosts:
+          - local.greeting.sonataflow.org
+        paths:
+          - "/*"
+      backends:
+        - serviceName: greeting
+          servicePort: 80
+      plugins:
+        - name: openid-connect <1>
+          enable: true
+          config:
+            client_id: apisix-ingress
+            client_secret: <2>
+            discovery: http://keycloak.keycloak.svc.cluster.local:8080/realms/sonataflow/.well-known/openid-configuration
+            scope: profile email
+            bearer_only: true
+            realm: sonataflow
+            introspection_endpoint_auth_method: client_secret_post
 ----
 
 <1> The link:{}[OpenID Connect plugin] to make the Ingress connect to Keycloak
 <2> The `apisix-ingress` client credential to be changed
 
-Open the Keycloak server (link:http://keycloak.keycloak.svc.cluster.local:8080[]) and in the realm "sonataflow" click on "Clients", and then on "apisix-ingress".
+Open the Keycloak server (link:http://keycloak.keycloak.svc.cluster.local:8080[]) and in the realm `sonataflow` click on *Clients*, and then on `apisix-ingress`.
 
-Click on the tab "Credentials" and copy the "Client Secret":
+Click on the tab *Credentials* and copy the *Client Secret*:
 
 .Creating the workflow user
 image::cloud/apisix-keycloak/04-client-credentials.png[]
 
-Paste the "Client Secret" into the `ApisixRoute` file `workflow-app/02-sonataflow-route.yaml` in the example application and run:
+Paste the *Client Secret* into the `ApisixRoute` file `workflow-app/02-sonataflow-route.yaml` in the example application and run:
 
 .Deploy the `ApisixRoute`
 [source,shell,subs="attributes+"]
@@ -266,7 +265,7 @@ Paste the "Client Secret" into the `ApisixRoute` file `workflow-app/02-sonataflo
 kubectl apply -f workflow-app/02-sonataflow-route.yaml -n sonataflow
 ----
 
-To this point, you have installed in your cluster the Keycloak and APISIX Ingress server, and deployed the example "Greetings" workflow application.
+To this point, you have installed in your cluster the Keycloak and APISIX Ingress server, and deployed the example Greeting workflow application.
 
 === Accessing the Workflow
 
@@ -275,8 +274,12 @@ Access the workflow without a token to see a rejection:
 .Directly accessing the workflow without a token
 [source,shell,subs="attributes+"]
 ----
-curl -v POST http://127.0.0.1:$\{INGRESS_PORT\}/greeting -H "Content-type: application/json" -H "Host: local.greeting.sonataflow.org" --data '{ "name": "Luke" }' 
+INGRESS_URL= <1>
+
+curl -v POST $\{INGRESS_URL\}/greeting -H "Content-type: application/json" -H "Host: local.greeting.sonataflow.org" --data '{ "name": "Luke" }' 
 ----
+
+<1> The ingress url is accessible via the Minikube service command. If you have not done it already, run `minikube service apisix-gateway --url -n ingress-apisix`.
 
 See a 401 HTTP Status message denying your access to the workflow.
 
@@ -303,12 +306,12 @@ Having the access token set in an environment variable, access the application a
 
 [source,shell,subs="attributes+"]
 ----
-INGRESS_PORT= <1>
+INGRESS_URL= <1>
 
-curl -v POST http://127.0.0.1:$\{INGRESS_PORT\}/greeting -H "Content-type: application/json" -H "Host: local.greeting.sonataflow.org" -H "Authorization: Bearer $\{ACCESS_TOKEN\}" --data '{ "name": "Luke" }' 
+curl -v POST $\{INGRESS_URL\}/greeting -H "Content-type: application/json" -H "Host: local.greeting.sonataflow.org" -H "Authorization: Bearer $\{ACCESS_TOKEN\}" --data '{ "name": "Luke" }' 
 ----
 
-<1> The ingress port is accessible via the Minikube service command. If you have not done it already, run `minikube service apisix-gateway --url -n ingress-apisix`.
+<1> The ingress url is accessible via the Minikube service command. If you have not done it already, run `minikube service apisix-gateway --url -n ingress-apisix`.
 
 This request is passing through the APISIX Gateway, which is validating the token via the `Authorization: Bearer` header. Then the request is passed internally to the workflow application which process and return to the original client.
 
