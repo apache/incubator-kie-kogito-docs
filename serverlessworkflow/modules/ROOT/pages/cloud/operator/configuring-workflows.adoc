@@ -4,6 +4,8 @@
 :description: Configuration of Workflow Services deployed by the operator
 :keywords: kogito, sonataflow, workflow, serverless, operator, kubernetes, minikube, config, openshift, containers
 
+:k8s_envvar_url: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#envvar-v1-core
+
 This document describes how to configure a Workflow service with the {operator_name}.
 
 == Editing the Workflow Configuration
@@ -82,6 +84,61 @@ Other managed properties include:
 
 
 If you try to change any of them, the operator will override them with the default, but preserving your changes in other property keys.
+
+=== Defining Global Managed Properties
+
+It's possible to set custom global managed properties for your workflows by defining them in the `SonataFlowPlatform` resource in the same namespace.
+
+Edit the `SonataFlowPlatform` instance and add the required properties to the `.spec.properties.flow` attribute. For example:
+
+.Example of a SonataFlowPlatform with flow properties
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+    properties:
+        flow: <1>
+         - name: quarkus.log.category <2>
+           value: INFO <3>
+----
+
+<1> Attribute to set the array of custom global managed properties
+<2> The property key
+<3> The property value
+
+Every workflow in this `SonataFlowPlatform` instance's namespace will have the property `quarkus.log.category: INFO` added to its managed properties.
+
+[IMPORTANT]
+====
+You can't override the default managed properties set by the operator using this feature.
+====
+
+You can add properties from other `ConfigMap` or `Secret` from the same namespace. For example:
+
+.Example of a SonataFlowPlatform properties from ConfigMap and Secret
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+    properties:
+        flow:
+         - name: my.petstore.auth.token
+           valueFrom:
+                secretKeyRef: petstore-credentials
+                    keyName: AUTH_TOKEN
+         - name: my.petstore.url
+           valueFrom:
+                configMapRef: petstore-props
+                    keyName: PETSTORE_URL
+----
+
+The `valueFrom` attribute derives from the link:{k8s_envvar_url}[EnvVar Kubernetes API].
 
 == Additional resources
 
