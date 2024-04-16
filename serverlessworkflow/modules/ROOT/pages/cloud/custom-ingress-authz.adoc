@@ -162,7 +162,7 @@ Follow the documentation on link:{apisix_install_url}[APISIX Documentation websi
 
 If you are running on Minikube, expose the APISIX Ingress server:
 
-.Exposing Keycloak to the local network
+.Exposing apisix-ingress service to the local network
 [source,shell,subs="attributes+"]
 ----
 minikube service apisix-gateway --url -n ingress-apisix
@@ -302,6 +302,10 @@ ACCESS_TOKEN=$(curl \
 <1> Copy the secret from the `apisix-ingress` client
 <2> Request an access token from the Keycloak server using the user `luke` credentials
 
+[NOTE]
+====
+The token returned with the command above has a default timeout of 5 minutes, which means that if you take too long to use it, or want to execute several requests, you might need to execute the command again and get a new token.
+====
 Having the access token set in an environment variable, access the application again:
 
 [source,shell,subs="attributes+"]
@@ -314,6 +318,13 @@ curl -v POST $\{INGRESS_URL\}/greeting -H "Content-type: application/json" -H "H
 <1> The ingress url is accessible via the Minikube service command. If you have not done it already, run `minikube service apisix-gateway --url -n ingress-apisix`.
 
 This request is passing through the APISIX Gateway, which is validating the token via the `Authorization: Bearer` header. Then the request is passed internally to the workflow application which process and return to the original client.
+
+Finally, this time, in the last part of the command output, you should see a JSON document similar to the excerpt below, which indicates that the workflow instance was created successfully.
+
+[source,json]
+----
+{"id":"a9fc1a97-e274-4e40-80e5-4ff5ba203231","workflowdata":{"message":"Hello from YAML Workflow, anonymous"}}
+----
 
 == Conclusion
 
