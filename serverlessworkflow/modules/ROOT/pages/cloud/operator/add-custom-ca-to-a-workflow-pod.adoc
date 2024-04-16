@@ -1,0 +1,191 @@
+= Adding a custom CA certificate to a container running Java
+:compat-mode!:
+:keywords: kogito, sonataflow, workflow, serverless, operator, kubernetes, minikube, openshift, containers
+:keytool-docs: https://docs.oracle.com/en/java/javase/21/docs/specs/man/keytool.html
+
+If you're working with containers running Java applications and need to add a CA (Certificate Authority) certificate for secure communication, you can follow these steps. This guide assumes you are familiar with containers and have basic knowledge of working with YAML files.
+
+:toc:
+
+
+== Problem space 
+
+If you have a containerized Java application that connects to an SSL endpoint with a certificate signed by an internal authority (like SSL terminated routes on a cluster), you need to make sure Java can read and verify the CA Authority certificate. Java unfortunately doesn't load certificates directly but rather stores them in a {keytool-docs}[keystore].
+
+The default trust store under `$JAVA_HOME/lib/security/cacerts` contains only CA's that are shipped with the Java distribution and there is the `keytool` tool that knows how to manipulate those key stores.
+The containerized application may not know the CA certificate in build time, so we need to add it to the `trust-store` in deployment. To automate that we can use a combination of an init-container and a shared directory to pass the mutated trust store to the container before it runs. Let's run this step by step:
+
+=== Step 1: Obtain the CA Certificate
+
+Before proceeding, ensure you have the CA certificate file (in PEM format) that you want to add to the Java container. If you don't have it, you may need to obtain it from your system administrator or certificate provider.
+
+For this guide, we would take the k8s cluster root CA that is automatically deployed into every container under `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`
+
+=== Step 2: Prepare a trust store in an init-container
+
+Add or amend these volumes and init-container snippet to your pod spec or `podTemplate` in a deployment:
+
+[source,yaml]
+---
+spec:
+  volumes:
+    - name: new-cacerts
+      emptyDir: {}
+  initContainers:
+    - name:  add-kube-root-ca-to-cacerts
+      image: registry.access.redhat.com/ubi9/openjdk-17
+      volumeMounts:
+        - mountPath: /opt/new-cacerts
+          name: new-cacerts
+      command:
+        - /bin/bash
+        - -c
+        - |
+          cp $JAVA_HOME/lib/security/cacerts /opt/new-cacerts/
+          chmod +w /opt/new-cacerts/cacerts
+          keytool -importcert -no-prompt -keystore /opt/new-cacerts/cacerts -storepass changeit -file /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+---
+
+The default keystore under `$JAVA_HOME` is part of the container image and is not mutable. We have to create the mutated copy to a shared volume, hence the 'new-cacerts' one.
+
+=== Step 3: Configure Java to load the new keystore
+
+Here you can mount the new, modified `cacerts` into the default location where the JVM looks.
+The `Main.java` example uses the standard HTTP client so alternatively you could mount the `cacerts` to a different location and
+configure the Java runtime to load the new keystore with a `-Djavax.net.ssl.trustStore` system property.
+Note that libraries like RESTEasy don't respect that flag and may need to programmatically set the trust store location.
+
+[source,yaml]
+---
+ containers:
+   - command:
+     - /bin/bash
+     - -c
+     - |
+       curl -L https://gist.githubusercontent.com/rgolangh/b949d8617709d10ba6c690863e52f259/raw/bdea4d757a05b75935bbb57f3f05635f13927b34/Main.java -o curl.java
+       java curl.java https://kubernetes
+     image: registry.access.redhat.com/ubi9/openjdk-17
+     imagePullPolicy: Always
+     name: openjdk-17
+     volumeMounts:
+       - mountPath: /lib/jvm/java-17/lib/security
+         name: new-cacerts
+         readOnly: true
+       - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+         name: kube-api-access-5npmd
+         readOnly: true
+---
+
+Notice the volume mount of the previously mutated keystore.
+
+
+=== Full working example
+
+[source,yaml]
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: root-ca-to-cacerts
+spec:
+  initContainers:
+    - name:  add-kube-root-ca-to-cacerts
+      image: registry.access.redhat.com/ubi9/openjdk-17
+      volumeMounts:
+        - mountPath: /opt/new-cacerts
+          name: new-cacerts
+      command:
+        - /bin/bash
+        - -c
+        - |
+          cp $JAVA_HOME/lib/security/cacerts /opt/new-cacerts/
+          chmod +w /opt/new-cacerts/cacerts
+          keytool -importcert -no-prompt -keystore /opt/new-cacerts/cacerts -storepass changeit -file /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+  containers:
+    - command:
+      - /bin/bash
+      - -c
+      - |
+        curl -L https://gist.githubusercontent.com/rgolangh/b949d8617709d10ba6c690863e52f259/raw/bdea4d757a05b75935bbb57f3f05635f13927b34/Main.java -o curl.java
+        java curl.java https://kubernetes
+      image: registry.access.redhat.com/ubi9/openjdk-17
+      imagePullPolicy: Always
+      name: openjdk-17
+      volumeMounts:
+      - mountPath: /lib/jvm/java-17/lib/security/
+        name: new-cacerts
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-5npmd
+        readOnly: true
+  volumes:
+  - name: new-cacerts
+    emptyDir: {}
+  - name: kube-api-access-5npmd
+    projected:
+      sources:
+      - serviceAccountToken:
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+---
+
+=== {product_name} Example
+
+Similar to a deployment spec, a serverless workflow has a spec.podTemplate, with minor differences, but the change is almost identical.
+In this case, we are mounting some ingress ca-bundle because we want our workflow to reach the `.apps.my-cluster-name.my-cluster-domain` SSL endpoint.
+Here is the relevant spec section of a workflow with the changes:
+
+[source,yaml]
+---
+#...
+spec:
+  flow:
+  # ...
+  podTemplate:
+    container:
+      volumeMounts:
+      - mountPath: /lib/jvm/java-17/lib/security/
+        name: new-cacerts
+    initContainers:
+    - command:
+      - /bin/bash
+      - -c
+      - |
+        cp $JAVA_HOME/lib/security/cacerts /opt/new-cacerts/
+        chmod +w /opt/new-cacerts/cacerts
+        keytool -importcert -no-prompt -keystore /opt/new-cacerts/cacerts -storepass changeit -file /opt/ingress-ca/ca-bundle.crt
+      image: registry.access.redhat.com/ubi9/openjdk-17
+      name: add-kube-root-ca-to-cacerts
+      volumeMounts:
+      - mountPath: /opt/new-cacerts
+        name: new-cacerts
+      - mountPath: /opt/ingress-ca
+        name: ingress-ca
+    volumes:
+    - emptyDir: {}
+      name: new-cacerts
+    - configMap:
+        name: default-ingress-cert
+      name: ingress-ca
+    - name: kube-api-access-5npmd
+      projected:
+        sources:
+        - serviceAccountToken:
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+---
+
+== Additional Resources
+
+* Keytool documentation: {keytool-docs}
+* Dynamically Creating Java keystores OpenShift - Blog Post: https://developers.redhat.com/blog/2017/11/22/dynamically-creating-java-keystores-openshift#end_to_end_springboot_demo
+
+
