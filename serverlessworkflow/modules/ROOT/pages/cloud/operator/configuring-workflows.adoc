@@ -129,7 +129,7 @@ spec:
     properties:
         flow:
          - name: my.petstore.auth.token
-           valueFrom:
+           valueFrom: <1>
                 secretKeyRef: petstore-credentials
                     keyName: AUTH_TOKEN
          - name: my.petstore.url
@@ -138,7 +138,7 @@ spec:
                     keyName: PETSTORE_URL
 ----
 
-The `valueFrom` attribute derives from the link:{k8s_envvar_url}[EnvVar Kubernetes API].
+<1> The `valueFrom` attribute derives from the link:{k8s_envvar_url}[EnvVar Kubernetes API].
 
 == Additional resources
 
