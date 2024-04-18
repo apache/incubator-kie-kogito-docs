@@ -1,4 +1,4 @@
-= Using an Ingress to add Authentication and Authorization to Workflow Applications
+= Using an Ingress to add authentication and authorization to Workflow applications
 :compat-mode!:
 // Metadata:
 :description: Securing workflow applications via a 
@@ -28,16 +28,16 @@ image::cloud/apisix-keycloak/ingress-apisix-keycloak.png[]
 3. Keycloak validates the token
 4. APISIX forwards the request to the workflow application
 
-This is a simplified approach for OIDC use cases. In production environments, you can tailor your gateway and OIDC server to meet your requirements and scope.
+This is a simplified approach for OIDC (OpenID Connect protocol) use cases. In production environments, you can tailor your gateway and OIDC server to meet your requirements and scope.
 
 [IMPORTANT]
 ====
 This approach only protects the communication via Ingress. Direct calls to the workflow application link:{kubernetes_svc_url}[internal service] would be anonymous.
 For example, another microservice in the cluster making requests to the workflow internal service.
-Make sure to set link:{kubernetes_networkpolicy_url}[Kuberbetes NetworkPolicies] to your workflow applications if this is not the desired behavior.
+Set link:{kubernetes_networkpolicy_url}[Kuberbetes NetworkPolicies] to your workflow applications if this is not the desired behavior.
 ====
 
-== How to Deploy the Example Architecture
+== How to deploy the example architecture
 
 The following sections describe how to deploy the example architecture using APISIX and Keycloak to protect your {product_name} workflows.
 
@@ -61,7 +61,7 @@ kubectl kustomize manifests/bases | kubectl apply -f - -n keycloak
 
 This command creates a namespace called `keycloak` and a Keycloak server deployment connected to a PostgreSQL database to persist your data across cluster restarts.
 
-==== Exposing Keycloak Locally
+==== Exposing Keycloak locally
 
 [TIP]
 ====
@@ -78,7 +78,7 @@ kubectl port-forward $(kubectl get pods -l app=keycloak --output=jsonpath='{.ite
 
 From now on, every connection to the `8080` port is forwarded to the Keycloak service endpoint.
 
-The next step is to configure your local `/etc/hosts`. This step is needed because the token you are going to generate must come from the same URL that APISIX server introspects once you access the workflow.
+The next step is to configure your local `/etc/hosts`. This step is needed because the token you are going to generate must come from the same URL that the APISIX server introspects once you access the workflow.
 
 Edit your local `/etc/hosts` file and add the following line:
 
@@ -92,14 +92,14 @@ You can try accessing your Keycloak admin console in the address link:http://key
 
 [IMPORTANT]
 ====
-In real-life environments this step is not needed since Keycloak or any OIDC server is served by a load balancer with the correct address configured.
+In real-life environments, this step is not needed since Keycloak or any OIDC server is served by a load balancer with the correct address configured.
 ====
 
 ==== Configuring the Keycloak OIDC Server
 
 In the next step, log in to the Keycloak admin console in the address link:http://keycloak.keycloak.svc.cluster.local:8080[] using the default credentials.
 
-Once you are logged into the console, click on *Create realm* in the top left menu. In this screen, create a new realm named `sonataflow`. See the image below for more details:
+Once you are logged into the console, click *Create realm* in the top left menu. In this screen, create a new realm named `sonataflow`. See the image below for more details:
 
 .Creation of the new sonataflow realm
 image::cloud/apisix-keycloak/01-create-realm.png[]
