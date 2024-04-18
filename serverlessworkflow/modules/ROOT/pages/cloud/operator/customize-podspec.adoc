@@ -7,8 +7,9 @@
 
 :k8s_resources_limits_url: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
 :k8s_podspec_api_url: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.26/#podspec-v1-core
+:knative_serving_service_url: https://github.com/knative/specs/blob/main/specs/serving/knative-api-specification-1.0.md#service
 
-This document describes how to customize the pod specification definition in thew `SonataFlow` custom resource.
+This document describes how to customize the pod specification definition in the `SonataFlow` custom resource.
 
 Sometimes you may have a specific requirement to deploy containers on Kubernetes or OpenShift such as setting link:{k8s_resources_limits_url}[Resource Limits].
 
@@ -48,6 +49,49 @@ spec:
 The `.spec.podTemplate` attribute has the majority of fields defined in the default link:{k8s_podspec_api_url}[Kubernetes PodSpec API]. The same Kubernetes API validation rules applies to these fields.
 
 The `.spec.podTemplate.container` is a special attribute that you won't find in the default Kubernetes API. The reason is to avoid misconfiguration when users require to change the specific container where the workflow application is deployed.
+
+== Deployment Model
+
+By default, the {operator_name} deploys a `SonataFlow` instance in a regular Kubernetes Deployment object. Although it's possible to change this behavior and deploy the workflow instance as a link:{knative_serving_service_url}[Knative Serving Service] instead.
+
+To change the deployment to Knative, set the `.spec.podTemplate.deploymentModel` attribute to `knative`. For example:
+
+.Setting PodSpec Resources Limits example
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: simple
+  annotations:
+    sonataflow.org/description: Simple example on k8s!
+    sonataflow.org/version: 0.0.1
+    sonataflow.org/version: preview  
+spec:
+  podTemplate: 
+    deploymentModel: knative <1>
+  flow:
+    start: HelloWorld
+    states:
+      - name: HelloWorld
+        type: inject
+        data:
+          message: Hello World
+        end: true
+----
+
+<1> The `deploymentModel` attribute
+
+After changing the deployment model to `knative`, the `SonataFlow` instance will be deployed as a Knative Serving Service.
+
+[IMPORTANT]
+====
+It's not possible to deploy a `SonataFlow` instance as a Knative Service in dev profile. In this profile, this attribute is ignored by the operator.
+====
+
+Note that not every use case leverage a Knative deployment. Long-running workflow instances, for example, that calls services that might take too long to respond, might not be an ideal deployment model. Opt to use Knative deployments for workflows that won't take too long to run. 
+
+The exception are workflows that have callback states. In this case, you must configure xref:cloud/operator/using-persistence.adoc[persistence]. This is required becase once the workflow waits for the event to resume the execution, Knative will kill the pod. Since the workflow has persistence, it will resume the execution once it receives the callback event.
 
 == Customization Exceptions
 
@@ -167,3 +211,11 @@ It's advised that the SonataFlow `.spec.flow` definition and the workflow built 
 ====
 xref:cloud/operator/known-issues.adoc[It's on the roadmap] to add integrity check to the built images provided to the operator by customizing the default container.
 ====
+
+== Additional resources
+
+* xref:cloud/operator/developing-workflows.adoc[]
+* xref:cloud/operator/build-and-deploy-workflows.adoc[]
+* xref:cloud/operator/building-custom-images.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
