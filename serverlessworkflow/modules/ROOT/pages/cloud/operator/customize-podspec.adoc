@@ -91,7 +91,7 @@ It's not possible to deploy a `SonataFlow` instance as a Knative Service in dev 
 
 Note that not every use case leverage a Knative deployment. Long-running workflow instances, for example, that calls services that might take too long to respond, might not be an ideal deployment model. Opt to use Knative deployments for workflows that won't take too long to run. 
 
-The exception are workflows that have callback states. In this case, you must configure xref:cloud/operator/using-persistence.adoc[persistence]. This is required becase once the workflow waits for the event to resume the execution, Knative will kill the pod. Since the workflow has persistence, it will resume the execution once it receives the callback event.
+The exception are workflows that have callback states. In this case, you must configure xref:cloud/operator/using-persistence.adoc[persistence]. This is required because once the workflow waits for the event to resume the execution, Knative will kill the pod. Since the workflow has persistence, it will resume the execution once it receives the callback event.
 
 == Customization Exceptions
 
