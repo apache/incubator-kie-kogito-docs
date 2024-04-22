@@ -14,10 +14,12 @@
 This guide describes how to install the {operator_name} in a Kubernetes or OpenShift cluster. The operator is in an xref:cloud/operator/known-issues.adoc[early development stage] (community only) and has been tested on OpenShift {openshift_version_min}+, Kubernetes {kubernetes_version}+, and link:{minikube_url}[Minikube].
 
 .Prerequisites
-* A Kubernetes or OpenShift cluster with admin privileges. Alternatively, you can use Minikube or KIND.
-* `kubectl` command-line tool is installed. Otherwise, Minikube provides it.
+* A Kubernetes or OpenShift cluster with admin privileges and `kubectl` installed. 
+* Alternatively, you can use Minikube or KIND in your local environment. See xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] and xref:getting-started/preparing-environment.adoc#proc-starting-cluster-fo-local-development[starting the cluster for local development] guides.
 
 == {product_name} Operator OpenShift installation
+
+=== Install
 
 To install the operator on OpenShift refer to the "link:{openshift_operator_install_url}[Adding Operators to a cluster]" from the OpenShift's documentation.
 
@@ -28,6 +30,8 @@ When searching for the operator in the *Filter by keyword* field, use the word `
 To remove the operator on OpenShift refer to the "link:{openshift_operator_uninstall_url}[Deleting Operators from a cluster]" from the OpenShift's documentation.
 
 == {product_name} Operator Kubernetes installation
+
+=== Install
 
 To install the operator on Kubernetes refer to the  "link:{kubernetes_operator_install_url}[How to install an Operator from OperatorHub.io]" from the OperatorHub's documentation.
 
@@ -46,37 +50,11 @@ When searching for the subscription to remove, use the word `{operator_k8s_subsc
 If you're running on Kubernetes or OpenShift, it is highly recommended to install the operator from the OperatorHub or OpenShift Console instead since the installation is managed by OLM. Use this method only if you need a snapshot version or you're running locally on Minikube or KIND.
 ====
 
-=== Prepare a Minikube instance
-
-[NOTE]
-====
-You can safely skip this section if you're not using Minikube.
-====
-
 .Prerequisites
-* A machine with at least 8GB memory and a link:https://en.wikipedia.org/wiki/Multi-core_processor[CPU with 8 cores]
-* Docker or Podman installed
+* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
+* You have the cluster instance up and running. See xref:getting-started/preparing-environment.adoc#proc-starting-cluster-fo-local-development[starting the cluster for local development] guide.
 
-Run the following command to create a new instance capable of installing the operator and deploy workflows:
-
-[source,shell,subs="attributes+"]
-----
-minikube start --cpus 4 --memory 4096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"
-----
-
-[NOTE]
-====
-To speed up the build time, you can increase the CPUs and memory options so that your Minikube instance will have more resources. For example, use `--cpus 12 --memory 16384`. If you have already created your Minikube instance, you will need to recreate it for these changes to apply.
-====
-
-If Minikube does not work with the default driver, also known as `docker`, you can try to start with the `podman` driver as follows:
-
-.Start Minikube with the Podman driver
-[source,shell,subs="attributes+"]
-----
-minikube start [...] --driver podman
-----
-
+[[proc-install-serverless-operator-snapshot]]
 === Install
 
 To install the {product_name} Operator, you can use the following command:
@@ -86,11 +64,11 @@ To install the {product_name} Operator, you can use the following command:
 ----
 kubectl create -f https://raw.githubusercontent.com/apache/incubator-kie-kogito-serverless-operator/{operator_version}/operator.yaml
 ----
-You can also specify a version:
+Replace `main` with specific version if needed:
 ----
-kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/v<version>/operator.yaml
+kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/<version>/operator.yaml
 ----
-`<version>` could be `1.43.0` for instance.
+`<version>` could be `1.44.1` for instance.
 
 You can follow the deployment of the {product_name} Operator:
 
@@ -144,7 +122,7 @@ To uninstall the correct version of the operator, first you must get the current
 ----
 kubectl get deployment sonataflow-operator-controller-manager -n sonataflow-operator-system -o jsonpath="{.spec.template.spec.containers[?(@.name=='manager')].image}"
 
-quay.io/kiegroup/kogito-serverless-operator-nightly:1.41.0
+quay.io/kiegroup/kogito-serverless-operator-nightly:latest
 ----
 
 .Uninstalling the operator
@@ -155,9 +133,7 @@ kubectl delete -f https://raw.githubusercontent.com/apache/incubator-kie-kogito-
 
 [TIP]
 ====
-If you're running a snapshot version, use this URL instead `https://raw.githubusercontent.com/apache/incubator-kie-kogito-serverless-operator/main/operator.yaml`.
-
-The URL should be the same used when installing the operator.
+The URL should be the same as the one you used when installing the operator.
 ====
 
 == Additional resources
