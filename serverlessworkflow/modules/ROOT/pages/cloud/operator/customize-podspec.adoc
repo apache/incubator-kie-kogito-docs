@@ -8,6 +8,8 @@
 :k8s_resources_limits_url: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
 :k8s_podspec_api_url: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.26/#podspec-v1-core
 :knative_serving_service_url: https://github.com/knative/specs/blob/main/specs/serving/knative-api-specification-1.0.md#service
+:knative_serving_initcontainer: https://knative.dev/docs/serving/configuration/feature-flags/#kubernetes-init-containers
+:kubernetes_init_containers: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
 
 This document describes how to customize the pod specification definition in the `SonataFlow` custom resource.
 
@@ -92,6 +94,8 @@ It's not possible to deploy a `SonataFlow` instance as a Knative Service in dev 
 Note that not every use case leverage a Knative deployment. Long-running workflow instances, for example, that calls services that might take too long to respond, might not be an ideal deployment model. Opt to use Knative deployments for workflows that won't take too long to run. 
 
 The exception are workflows that have callback states. In this case, you must configure xref:cloud/operator/using-persistence.adoc[persistence]. This is required because once the workflow waits for the event to resume the execution, Knative will kill the pod. Since the workflow has persistence, it will resume the execution once it receives the callback event.
+
+Knative **does not support** link:{kubernetes_init_containers}[`initContainers`] by default. If your workflow requires it, you must first enable the extension in the Knative installation. See more information on the link:{knative_serving_initcontainer}[Knative documentation].
 
 == Customization Exceptions
 
