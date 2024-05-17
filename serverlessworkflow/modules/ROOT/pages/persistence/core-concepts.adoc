@@ -6,11 +6,38 @@
 :keywords: sonataflow, workflow, serverless, timeout, timer, expiration, persistence
 // links
 
-Persistence in {product_name} is available on demand as a service.
-Using configuration properties, users are able to configure the persistence for their workflows as required.
+SonataFlow provides two persistence mechanisms to store information about the workflow instances.
+The <<_workflow_runtime_persistence, Workflow runtime persistence>>, and <<_data_index_persistence, Data Index persistence>>.
 
-The persistence is provided by our Data Index service.
-To learn more about the service, examine the links in additional resources.
+Each mechanism is intended for different a purpose:
+
+image::persistence/Persistence-Types.png[]
+
+== Workflow runtime persistence
+The workflow runtime persistence is designed to ensure that your workflow instances remain consistent in the context of an error or a runtime restart. For example, a pod restart, a programmed maintenance shutdown, etc.
+This is achieved by storing snapshots of the executing workflow instances [xref:use-cases/advanced-developer-use-cases/persistence/persistence-core-concepts.adoc#saving_of_workflow_snapshots[see more details]].
+That information is stored in an internal format, and usually, you must only focus on providing the proper configurations to use it.
+
+To learn how to configure it we recommend that you read the following sections depending on your use case:
+
+* xref:cloud/operator/using-persistence.adoc[Using persistence in {operator_name} managed workflow deployments]
+* xref:use-cases/advanced-developer-use-cases/persistence/persistence-core-concepts.adoc[Using persistence in advanced development cases of {product_name} applications using Quarkus and Java]
+
+[NOTE]
+====
+In production environments, or when your workflows use timeouts, or you use operator managed knative serving deployments, it's strongly recommended that you configure the workflow runtime persistence.
+====
+
+== Data Index persistence
+The data index persistence is designed to store information about your workflow instances in a way that this information can be consumed by other services using graphql queries.
+This is achieved by properly configuring and deploying the xref:data-index/data-index-core-concepts.adoc[Data Index Service] in your installation.
+
+To learn how to configure and deploy the Data Index Service we recommend that you read the following sections depending on your use case:
+
+* xref:cloud/operator/supporting-services.adoc[Deploying supporting services with {operator_name}]
+* xref:data-index/data-index-service.adoc/[Data Index standalone service]
+
+To learn more about this service, examine the links in additional resources.
 
 == Additional resources
 

@@ -1,26 +1,33 @@
-= Using persistence in the SonataFlow Workflow CR
+= Using persistence in {product_name} workflows
 :compat-mode!:
 // Metadata:
 :description: Using persistence in the workflow instance to store its context
 :keywords: sonataflow, workflow, serverless, operator, kubernetes, persistence
 
-
-This document describes how to configure a SonataFlow instance to use persistence to store the flow's context in a relational database.
-
-== Configuring the SonataFlow CR to use persistence
+This document describes how to configure a SonataFlow instance to use persistence and store the workflow context in a relational database.
 
 Kubernetes's pods are stateless by definition. In some scenarios, this can be a challenge for workloads that require maintaining the status of 
-the application regardless of the pod's lifecycle. In the case of {product_name}, the context of the workflow is lost when the pod restarts.
-If your workflow requires recovery from such scenarios, you have to make these additions to your workflow CR:
-Use the `persistence` field in the `SonataFlow` workflow spec to define the database service located in the same cluster.
-There are 2 ways to accomplish this:
+the application regardless of the pod's lifecycle. In the case of {product_name}, by default, the context of the workflow is lost when the pod restarts.
 
-* Using the Platform CR's defined persistence
-When the Platform CR is deployed with its persistence spec populated it enables workflows to leverage its configuration to populate the persistence
-properties in the workflows. 
+If your workflow requires recovery from such scenarios, you must provide additional configuration to enable the xref:persistence/core-concepts.adoc#_workflow_runtime_persistence[Workflow Runtime Persistence].
+That configuration must be provided by using the <<_configuring_the_persistence_using_the_sonataflowplatform_cr, SonataFlowPlatform CR>> or the <<_configuring_the_persistence_using_the_sonataflow_cr, SonataFlow CR>>, and has different scopes depending on each case.
 
-[source,yaml,subs="attributes+"]
----
+== Configuring the persistence using the SonataFlowPlatform CR
+
+The SonataFlowPlatform CR facilitates the configuration of the persistence with namespace scope. It means that it will be automatically applied to all the workflows deployed in
+that namespace. This can be useful to reduce the amount resources to configure, for example, in cases where the workflows deployed in that namespace belongs to the same application, etc.
+That decision is left to each particular use case, however, it's important to know, that this configuration can be overridden by any workflow in that namespace by using the <<_configuring_the_persistence_using_the_sonataflow_cr, SonataFlow CR>>.
+
+[NOTE]
+====
+Persistence configurations are applied at workflow deployment time, and potential changes in the SonataFlowPlatform will not impact already deployed workflows.
+====
+
+To configure the persistence you must use the `persistence` field in the SonataFlowPlatform CR `spec`:
+
+.SonataFlowPlatform CR persistence configuration example
+[source,yaml]
+----
 apiVersion: sonataflow.org/v1alpha08
 kind: SonataFlowPlatform
 metadata:
@@ -29,82 +36,261 @@ spec:
   persistence:
     postgresql:
       secretRef:
-        name: postgres-secrets
-        userKey: POSTGRES_USER
-        passwordKey: POSTGRES_PASSWORD
+        name: postgres-secrets <1>
+        userKey: POSTGRESQL_USER <2>
+        passwordKey: POSTGRESQL_PASSWORD <3>
       serviceRef:
-        name: postgres
-        port: 5432
-        databaseName: sonataflow
-        databaseSchema: shared
-  build:
-    config:
-      strategyOptions:
-        KanikoBuildCacheEnabled: "true"
----
+        name: postgres <4>
+        namespace: sonataflow-infra <5>
+        databaseName: sonataflow <6>
+        port: 1234 <7>
+----
 
-The values of `POSTGRES_USER` and `POSTGRES_PASSWORD` are the keys in the [Kubernetes secret](https://kubernetes.io/docs/concepts/configuration/secret/) that contains the credentials to connect to the postgreSQL instance. 
-The SonataFlow Workflow CR 
-is defined with its `Persistence` field defined as empty.
+<1> Name of the link:{k8n_secrets_url}[Kubernetes Secret] containing the username and password to connect with the database.
+<2> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the username to connect with the database.
+<3> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the password to connect with the database.
+<4> Name of the Kubernetes Service to connect with the PostgreSQL database server.
+<5> (Optional) Kubernetes namespace containing the PostgreSQL Service. Defaults to the SonataFlowPlatform's local namespace.
+<6> Name of the PostgreSQL database to store the workflow's data.
+<7> (Optional) Port number to connect with the PostgreSQL Service. Defaults to 5432.
 
-[source,yaml,subs="attributes+"]
-apiVersion: sonataflow.org/v1alpha08
-kind: SonataFlow
-metadata:
-  name: callbackstatetimeouts
-  annotations:
-    sonataflow.org/description: Callback State Timeouts Example k8s
-    sonataflow.org/version: 0.0.1
-spec:
-  persistence: {}
-  ...
----
+This configuration signals the operator that the every workflow deployed in current SonataFlowPlatform's namespace must be properly configured to connect with that PostgreSQL database server.
+And the operator will add the relevant JDBC connection parameters in the form of environment variables to the workflow container.
 
-This configuration signals the operator that the workflow requires persistence and that it expects its configuration to be populated accordingly. 
-The operator will add the relevant JDBC properties in the `application.properties`
-generated and as part of the pod´s environment so that it can connect to the persistence service defined in the `Platform` CR.
+Additionally, for SonataFlow CR deployments that use the `preview` profile, it will configure the {product_name} build system to include specific Quarkus extensions required for persistence.
 
 [NOTE]
 ====
-Currently, PostgreSQL is the only persistence supported.
+Currently, PostgreSQL is the only supported persistence.
 ====
 
-* Using the custom defined persistence in the `SonataFlow` CR
+Below you can see an example of the configurations produced for a workflow with the name `example-workflow`, that was deployed using the previous SonataFlowPlatform.
+For simplicity, only the `env` configurations related to the persistence has been included. These operator managed configurations are immutable.
 
-Alternatively, you can define a dedicated configuration in the `SonataFlow` CR instance using the same schema format found in the Platform CRD:
-
+[#persistence_env_vars_config_example]
+.Generated persistence `env` configurations in the workflow container
 [source,yaml,subs="attributes+"]
+----
+      env:
+        - name: QUARKUS_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRESQL_USER
+        - name: QUARKUS_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRESQL_PASSWORD
+        - name: QUARKUS_DATASOURCE_DB_KIND
+          value: postgresql
+        - name: QUARKUS_DATASOURCE_JDBC_URL
+          value: >-
+            jdbc:postgresql://postgres.sonataflow-infra:1234/sonataflow?currentSchema=example-workflow
+        - name: KOGITO_PERSISTENCE_TYPE
+          value: jdbc
+----
+
+[IMPORTANT]
+====
+When you use the SonataFlowPlatform persistence, every workflow is configured to use a PostgreSQL schema name equal to the workflow name.
+====
+
+To learn how to initialize the database schema see: <<_database_schema_initialization, Database schema initialization>>.
+
+== Configuring the persistence using the SonataFlow CR
+
+The SonataFlow CR facilitates the configuration of the persistence with workflow scope, and you can use it independently if the SonataFlowPlatform persistence was already configured in the current namespace, see: <<_persistence_configuration_precedence_rules, Persistence configuration precedence rules>>.
+
+To configure the persistence, you must use the `persistence` field in the SonataFlow CR `spec`:
+
+.SonataFlow CR persistence configuration example
+[source,yaml]
+----
 apiVersion: sonataflow.org/v1alpha08
 kind: SonataFlow
 metadata:
-  name: callbackstatetimeouts
+  name: example-workflow
   annotations:
-    sonataflow.org/description: Callback State Timeouts
+    sonataflow.org/description: Example Workflow
     sonataflow.org/version: 0.0.1
 spec:
   persistence:
     postgresql:
       secretRef:
-        name: postgres-secrets
-        userKey: POSTGRES_USER
-        passwordKey: POSTGRES_PASSWORD
+        name: postgres-secrets <1>
+        userKey: POSTGRESQL_USER <2>
+        passwordKey: POSTGRESQL_PASSWORD <3>
       serviceRef:
-        name: postgres
-        port: 5432
-        databaseName: sonataflow
-        databaseSchema: callbackstatetimeouts
-  ...
----
+        name: postgres <4>
+        namespace: sonataflow-infra <5>
+        databaseName: sonataflow <6>
+        databaseSchema: my-example-schema <7>
+        port: 1234 <8>
+  flow:
+     ...
+----
 
-Like in the Platform CR case, the values of the `POSTGRES_USER` and `POSTGRES_PASSWORD` are the secret keys in the secret that contain the credentials to connect to
-the PostgreSQL instace.
+<1> Name of the link:{k8n_secrets_url}[Kubernetes Secret] containing the username and password to connect with the database.
+<2> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the username to connect with the database.
+<3> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the password to connect with the database.
+<4> Name of the Kubernetes Service to connect with the PostgreSQL database server.
+<5> (Optional) Kubernetes namespace containing the PostgreSQL Service. Defaults to the workflow's local namespace.
+<6> Name of the PostgreSQL database to store the workflow's data.
+<7> (Optional) Name of the database schema to store workflow's data. Defaults to the workflow's name.
+<8> (Optional) Port number to connect with the PostgreSQL Service. Defaults to 5432.
+
+This configuration signals the operator that the current workflow must be properly configured to connect with that PostgreSQL database server when deployed.
+Similar to the SonataFlowPlatform persistence, the operator will add the relevant JDBC connection parameters in the form of <<persistence_env_vars_config_example, environment variables>> to the workflow container.
+
+Additionally, for SonataFlow CR deployments that use the `preview` profile, it can configure the {product_name} build system to include specific Quarkus extensions required for persistence.
+
+[NOTE]
+====
+Currently, PostgreSQL is the only supported persistence.
+====
+
+To learn how to initialize the database schema see: <<_database_schema_initialization, Database schema initialization>>.
+
+== Persistence configuration precedence rules
+
+<<_configuring_the_persistence_using_the_sonataflow_cr, SonataFlow CR persistence>> can be used with or without the <<_configuring_the_persistence_using_the_sonataflowplatform_cr, SonataFlowPlatform CR persistence>>.
+
+And, if the current namespace has an already configured <<_configuring_the_persistence_using_the_sonataflowplatform_cr, SonataFlowPlatform CR persistence>>, the following rules apply:
+
+* If the SonataFlow CR has a configured persistence, that configuration will apply.
+* If the SonataFlow CR has no configured persistence, i.e., the field `spec.persistence` is not present at all, the persistence configuration will be taken from the current platform.
+* If you don't want that the current workflow use persistence, you must use the following configuration in the SonataFlow CR: `spec.persistence : {}` to ban the SonataFlowPlatform persistence.
+
+== Persistence configuration and SonataFlow profiles
+
+All the configurations shown in this guide apply exactly the same for both the `preview` and the `gitops` profiles, however, you must not use them when you use the `dev` profile.
+
+Finally, the only distinction between `preview` and `gitops` profiles, is that when you use the `gitops` profile, the following Quarkus extensions must be added when you build your workflow image.
+
+[cols="40%,40%,20%", options="header"]
+|===
+|groupId
+|artifactId
+|version
+
+| {groupId_quarkus-agroal}
+| {artifactId_quarkus-agroal}
+| {quarkus_version}
+
+| {groupId_quarkus-jdbc-postgresql}
+| {artifactId_quarkus-jdbc-postgresql}
+| {quarkus_version}
+
+| {groupId_kie-addons-quarkus-persistence-jdbc}
+| {artifactId_kie-addons-quarkus-persistence-jdbc}
+| {kogito_version}
+|===
+
+This last can be done by passing the following build argument to the `kogito-swf-builder`:
+
+
+[source,bash,subs="attributes+"]
+----
+QUARKUS_EXTENSIONS={groupId_quarkus-agroal}:{artifactId_quarkus-agroal}:{quarkus_version},{groupId_quarkus-jdbc-postgresql}:{artifactId_quarkus-jdbc-postgresql}:{quarkus_version},{groupId_kie-addons-quarkus-persistence-jdbc}:{artifactId_kie-addons-quarkus-persistence-jdbc}:{kogito_version}
+----
+
+== Database schema initialization
+
+When you use the SonataFlow PostgreSQL persistence, you can either opt to use Flyway to produce the database initialization, or manually upgrade your database via DDL scripts.
+
+=== Flyway managed database initialization
+
+To enable Flyway you must use any of the following configuration procedures:
+
+[NOTE]
+====
+The Flyway schema initialization is disabled by default.
+====
+
+=== Flyway configuration by using the workflow ConfigMap
+
+Add the following property to your workflow ConfigMap.
+
+.Example of enabling Flyway by using the workflow ConfigMap
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: example-workflow
+  name: example-workflow-props
+data:
+  application.properties: |
+    quarkus.flyway.migrate-at-start = true
+----
+
+=== Flyway configuration by using the workflow container env vars
+
+Add the following `env` var in the  `spec.podTemplate.container` of the SonataFlow CR.
+
+.Example of enabling Flyway by using the workflow container env vars
+[source, yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: example-workflow
+  annotations:
+    sonataflow.org/description: Example Workflow
+    sonataflow.org/version: 0.0.1
+spec:
+  podTemplate:
+    container:
+      env:
+        - name: QUARKUS_FLYWAY_MIGRATE_AT_START
+          value: 'true'
+  flow: ...
+----
+
+=== Flyway configuration by using SonataFlowPlatForm properties
+
+To apply a common Flyway configuration to all the workflows in a given namespace, you can use the `spec.properties` of the SonataFlowPlatform in that namespace.
+
+.Example of enabling Flyway by using the SonataFlowPlatform properties.
+[source,yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  properties:
+    - name: quarkus.flyway.migrate-at-start
+      value: true
+----
+
+[NOTE]
+====
+The configuration above takes effect at workflow deployment time, so you must be sure that property is configured before you deploy your workflows.
+====
+
+=== Manual database initialization by using DDL
+
+To initialize the database schema manually, you must be sure that the following application property `quarkus.flyway.migrate-at-start` is not configured, or is set to `false`, and follow this xref:use-cases/advanced-developer-use-cases/persistence/postgresql-flyway-migration.adoc#manually-executing-scripts[procedure].
+
+[NOTE]
+====
+Remember that:
+
+* By default, every workflow is configured use a schema name equal to the workflow name, and thus, that manual initialization must be applied for every workflow.
+* When you use the <<_configuring_the_persistence_using_the_sonataflow_cr, SonataFlow CR persistence configuration>> it is possible to use the schema name of your choice.
+====
 
 == Conclusion
-You can enable SQL persistence in your workflows by configuring each `SonataFlow` CR instance. And when the `SonataFlowPlatform` CR contains the persistence field configured,
-the operator uses this information to configure those `SonataFlow` CRs that request persistence. When both the `Platform CR` and the `SonataFlow CR` contain persistence 
-configuration, the operator will use the `Persistence` values from the `SonataFlow` CR. 
+By using the `SonataFlowPlatform` CR you can enable the persistence for all the workflows that you deploy in that namespace.
+And, by using the `SonataFlow` CR you can enable the persistence of a particular workflow. If both methods are present in the current namespace, the `SonataFlow` CR configuration has precedence over the `SonataFlowpPlatform` configuration.
+
+
 
 == Additional resources
 * xref:cloud/operator/developing-workflows.adoc[]
+* xref:persistence/core-concepts.adoc[]
 
 include::../../../pages/_common-content/report-issue.adoc[]
