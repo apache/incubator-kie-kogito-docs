@@ -33,6 +33,17 @@ You can freely edit any of the options in the key `controllers_cfg.yaml` entry. 
 | `dataIndexEphemeralTag` | empty | The Data Index image without persistence to use, if empty the operator will use the default Apache Community one based on the current operator's version.
 | `sonataFlowBaseBuilderImageTag` | empty | {product_name} base builder image used in the internal Dockerfile to build workflow applications in preview profile. If empty the operator will use the default Apache Community one based on the current operator's version.
 | `sonataFlowDevModeImageTag` | empty | The image to use to deploy {product_name} workflow images in devmode profile. If empty the operator will use the default Apache Community one based on the current operator's version.
+| `builderConfigMapName` | sonataflow-operator-builder-config | The default name of the builder configMap in the operator's namespace.
+| `postgreSQLPersistenceExtensions` | next column
+| Quarkus extensions required for workflows persistence. These extensions are used by the {operator_name} builder in cases where the workflow being built has configured xref:cloud/operator/using-persistence.adoc[postgresql persistence].
+
+`Default values`:
+
+{groupId_quarkus-agroal}:{artifactId_quarkus-agroal}:{quarkus_version}
+
+{groupId_quarkus-jdbc-postgresql}:{artifactId_quarkus-jdbc-postgresql}:{quarkus_version}
+
+{groupId_kie-addons-quarkus-persistence-jdbc}:{artifactId_kie-addons-quarkus-persistence-jdbc}:{kogito_version}
 
 |===
 
