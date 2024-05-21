@@ -54,7 +54,7 @@ spec:
 <6> Name of the PostgreSQL database to store the workflow's data.
 <7> (Optional) Port number to connect with the PostgreSQL Service. Defaults to 5432.
 
-This configuration signals the operator that the every workflow deployed in current SonataFlowPlatform's namespace must be properly configured to connect with that PostgreSQL database server.
+This configuration signals the operator that every workflow deployed in current SonataFlowPlatform's namespace must be properly configured to connect with that PostgreSQL database server.
 And the operator will add the relevant JDBC connection parameters in the form of environment variables to the workflow container.
 
 Additionally, for SonataFlow CR deployments that use the `preview` profile, it will configure the {product_name} build system to include specific Quarkus extensions required for persistence.
@@ -160,7 +160,7 @@ And, if the current namespace has an already configured <<_configuring_the_persi
 
 * If the SonataFlow CR has a configured persistence, that configuration will apply.
 * If the SonataFlow CR has no configured persistence, i.e., the field `spec.persistence` is not present at all, the persistence configuration will be taken from the current platform.
-* If you don't want that the current workflow use persistence, you must use the following configuration in the SonataFlow CR: `spec.persistence : {}` to ban the SonataFlowPlatform persistence.
+* If you don't want the current workflow to use persistence, you must use the following configuration in the SonataFlow CR: `spec.persistence : {}` to ban the SonataFlowPlatform persistence.
 
 == Persistence configuration and SonataFlow profiles
 
