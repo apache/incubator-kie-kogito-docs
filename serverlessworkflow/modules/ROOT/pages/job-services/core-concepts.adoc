@@ -3,15 +3,6 @@
 // Metadata:
 :description: Job Service to control timeouts in {product_name}
 :keywords: sonataflow, workflow, serverless, timeout, timer, expiration, job service
-// links
-:jobs_service_image_allinone_url: https://quay.io/repository/kiegroup/kogito-jobs-service-allinone
-:jobs_service_image_ephemeral_url: https://quay.io/repository/kiegroup/kogito-jobs-service-ephemeral
-:jobs_service_image_postgresql_url: https://quay.io/repository/kiegroup/kogito-jobs-service-postgresql
-:jobs_service_image_infinispan_url: https://quay.io/repository/kiegroup/kogito-jobs-service-infinispan
-:jobs_service_image_usage_url: https://github.com/apache/incubator-kie-kogito-images#jobs-services-all-in-one
-:knative_eventing_url: https://knative.dev/docs/eventing/
-:knative_eventing_trigger_url: https://knative.dev/docs/eventing/triggers/
-:knative_eventing_sink_binding_url: https://knative.dev/docs/eventing/sinks/#sink-parameter-example
 
 The Job Service facilitates the scheduled execution of tasks in a cloud environment. These tasks are implemented by independent services, and can be started by using any of the Job Service supported interaction modes, based on Http calls or Knative Events delivery.
 
@@ -32,6 +23,7 @@ For example, every time the workflow execution reaches a state with a configured
 image::job-services/Time-Based-States-And-Job-Service-Interaction.png[]
 
 To set up this integration you can use different xref:use-cases/advanced-developer-use-cases/job-service/quarkus-extensions.adoc#job-service-quarkus-extensions[communication alternatives], that must be configured by combining the Job Service and the Quarkus Workflow Project configurations.
+Alternatively, when you work with {operator_name} workflow deployments, the operator can manage all these configurations.
 
 [NOTE]
 ====
@@ -39,10 +31,22 @@ If the project is not configured to use the Job Service, all time-based actions 
 However, this setup must not be used in production, since every time the application is restarted, all the timers are lost, making it unsuitable for serverless architectures where applications might scale to zero at any time, etc.
 ====
 
+[IMPORTANT]
+====
+If you are working with the {operator_name} be sure that you read this section <<_sonataflow_operator_managed_deployment, {operator_name} managed deployments>>.
+====
+
 == Jobs life-span
 
 Since the main goal of the Job Service is to work with the active jobs, such as the scheduled jobs that needs to be executed, when a job reaches a final state, it is removed from the Job Service.
 However, in some cases where you want to keep the information about the jobs in a permanent repository, you can configure the Job Service to produce status change events, that can be collected by the {data_index_xref}[Data Index Service], where they can be indexed and made available by GraphQL queries.
+
+== {operator_name} managed deployment
+
+When you work with the {operator_name} to deploy your workflows, there's no need to do any manual Job Service installation or configuration, the operator already has the ability to do that.
+Additionally, it can manage all the required configurations for every workflow to connect with it.
+
+To learn how to install and configure the Job Service in this case, you must read the xref:cloud/operator/supporting-services.adoc[Operator Supporting Services] section.
 
 [#executing]
 == Executing
@@ -73,7 +77,7 @@ Finally, to run the image, you must use the <<exposed-environment-variables, env
 |Enable debug level of the image and its operations.
 
 |`JOBS_SERVICE_PERSISTENCE`
-|Any of the following values:  `postgresql`, `ephemeral`, or `infinispan` to select the persistence mechanism to use, <<job-service-persistence, see>>.
+|Any of the following values:  `postgresql` or `ephemeral`, to select the persistence mechanism to use, <<job-service-persistence, see>>.
 
 |===
 
@@ -88,18 +92,18 @@ If used, these values must always be passed as environment variables.
 To configure the image by using environment variables you must pass one environment variable per each parameter.
 
 .Job Service image configuration for docker execution example
-[source, bash]
+[source, bash,subs="attributes+"]
 ----
-docker run -it -e JOBS_SERVICE_PERSISTENCE=postgresql -e VARIABLE_NAME=value quay.io/kiegroup/kogito-jobs-service-allinone:latest
+docker run -it -e JOBS_SERVICE_PERSISTENCE=postgresql -e VARIABLE_NAME=value {jobs_service_image_allinone}:latest
 ----
 
 .Job Service image configuration for Kubernetes execution example
-[source, yaml]
+[source, yaml,subs="attributes+"]
 ----
 spec:
   containers:
     - name: jobs-service-postgresql
-      image: quay.io/kiegroup/kogito-jobs-service-allinone-nightly:latest
+      image: {jobs_service_image_allinone}:latest
       imagePullPolicy: Always
       ports:
         - containerPort: 8080
@@ -127,6 +131,7 @@ spec:
 ====
 This is the recommended approach when you execute the Job Service in Kubernetes.
 The timeouts showcase example xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] contains an example of this configuration, https://github.com/apache/incubator-kie-kogito-examples/blob/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase-extended/kubernetes/jobs-service-postgresql.yml#L65[see].
+On the other hand, when you work with the {operator_name}, it can automatically manage all this these configurations, xref:cloud/operator/supporting-services.adoc[see].
 ====
 
 [#using-java-like-system-properties]
@@ -135,10 +140,10 @@ The timeouts showcase example xref:use-cases/advanced-developer-use-cases/timeou
 To configure the image by using system properties you must pass one property per parameter, however, in this case, all these properties are passed as part of a single environment with the name `JAVA_OPTIONS`.
 
 .Job Service image configuration for docker execution example
-[source, bash]
+[source, bash,subs="attributes+"]
 ----
 docker run -it -e JOBS_SERVICE_PERSISTENCE=postgresql -e JAVA_OPTIONS='-Dmy.sys.prop1=value1 -Dmy.sys.prop2=value2' \
-quay.io/kiegroup/kogito-jobs-service-allinone:latest
+{jobs_service_image_allinone}:latest
 ----
 
 [NOTE]
@@ -195,14 +200,14 @@ Using system properties with java like names::
 
 An important configuration aspect of the Job Service is the persistence mechanism, it is where all the jobs information is stored, and guarantees no information is lost upon service restarts.
 
-The Job Service image is shipped with the <<job-service-postgresql, PostgreSQL>>, <<job-service-ephemeral, Ephemeral>>, and <<job-service-infinispan, Infinispan>> persistence mechanisms, that can be switched by setting the JOBS_SERVICE_PERSISTENCE environment variable to any of these values `postgresql`, `ephemeral`, or `infinispan`. If not set, it defaults to the `ephemeral` option.
+The Job Service image is shipped with the <<job-service-postgresql, PostgreSQL>> and <<job-service-ephemeral, Ephemeral>> persistence mechanisms, that can be switched by setting the JOBS_SERVICE_PERSISTENCE environment variable to any of these values `postgresql` or `ephemeral`. If not set, it defaults to the `ephemeral` option.
 
 [NOTE]
 ====
 The <<executing, kogito-jobs-service-allinone>> image is a composite packaging that include one different image per each persistence mechanism, making it clearly bigger sized than the individual ones. If that size represents an issue in your installation you can use the individual ones instead.
 Finally, if you use this alternative, the JOBS_SERVICE_PERSISTENCE must not be used, since the persistence mechanism is auto-determined.
 
-These are the individual images: {jobs_service_image_postgresql_url}[kogito-jobs-service-postgresql], {jobs_service_image_ephemeral_url}[kogito-jobs-service-ephemeral], or {jobs_service_image_infinispan_url}[kogito-jobs-service-infinispan]
+These are the individual images: {jobs_service_image_postgresql_url}[kogito-jobs-service-postgresql] and {jobs_service_image_ephemeral_url}[kogito-jobs-service-ephemeral].
 ====
 
 [#job-service-postgresql]
@@ -298,96 +303,6 @@ The Ephemeral persistence mechanism is based on an embedded PostgreSQL database 
 [NOTE]
 ====
 If the image is started by not configuring any persistence mechanism, the Ephemeral will be defaulted.
-====
-
-[#job-service-infinispan]
-=== Infinispan
-
-To configure the Infinispan persistence you must provide these configurations:
-
-[tabs]
-====
-Using environment variables::
-+
-
-[cols="2,1,1"]
-|===
-|Variable | Description| Example value
-
-|`JOBS_SERVICE_PERSISTENCE`
-|Configure the persistence mechanism that must be used.
-|`infinispan`
-
-|`QUARKUS_INFINISPAN_CLIENT_HOSTS`
-|Sets the host name/port to connect to. Each one is separated by a semicolon.
-|`host1:11222;host2:11222`
-
-|`QUARKUS_INFINISPAN_CLIENT_USE_AUTH`
-|Enables or disables authentication. Set it to `false` when connecting to an Infinispan Server without authentication.
-|The enablement of this parameter depends on your local infinispan installation. If not set, the default value is `true`.
-
-|`QUARKUS_INFINISPAN_CLIENT_SASL_MECHANISM`
-|Sets SASL mechanism used by authentication. For more information about this parameter, see link:{quarkus_guides_infinispan_client_reference_url}#quarkus-infinispan-client_quarkus-infinispan-client-sasl-mechanism[Quarkus Infinispan Client Reference].
-|When the authentication is enabled the default value is `DIGEST-MD5`.
-
-|`QUARKUS_INFINISPAN_CLIENT_AUTH_REALM`
-|Sets realm used by authentication.
-|When the authentication is enabled the default value is `default`.
-
-|`QUARKUS_INFINISPAN_CLIENT_USERNAME`
-|Sets username used by authentication.
-|Use this property if the authentication is enabled.
-
-|`QUARKUS_INFINISPAN_CLIENT_PASSWORD`
-|Sets password used by authentication.
-|Use this property if the authentication is enabled.
-
-|===
-
-Using system properties with java like names::
-+
-
-[cols="2,1,1"]
-|===
-|Variable | Description| Example value
-
-|`JOBS_SERVICE_PERSISTENCE`
-|**Always an environment variable**
-|`infinispan`
-
-|`quarkus.infinispan-client.hosts`
-|Sets the host name/port to connect to. Each one is separated by a semicolon.
-|`host1:11222;host2:11222`
-
-|`quarkus.infinispan-client.use-auth`
-|Enables or disables authentication. Set it to `false` when connecting to an Infinispan Server without authentication.
-|The enablement of this parameter depends on your local infinispan installation. If not set, the default value is `true`.
-
-|`quarkus.infinispan-client.sasl-mechanism`
-|Sets SASL mechanism used by authentication. For more information about this parameter, see link:{quarkus_guides_infinispan_client_reference_url}#quarkus-infinispan-client_quarkus-infinispan-client-sasl-mechanism[Quarkus Infinispan Client Reference].
-|When the authentication is enabled the default value is `DIGEST-MD5`.
-
-|`quarkus.infinispan-client.auth-realm`
-|Sets realm used by authentication.
-|When the authentication is enabled the default value is `default`.
-
-|`quarkus.infinispan-client.username`
-|Sets username used by authentication.
-|Use this property if the authentication is enabled.
-
-|`quarkus.infinispan-client.password`
-|Sets password used by authentication.
-|Use this property if the authentication is enabled.
-
-|===
-
-====
-
-[#infinispan-client-config-note]
-[NOTE]
-====
-The Infinispan client configuration parameters that you must configure depends on your local Infinispan service.
-And thus, the table above shows only a sub-set of all the available options. To see the list of all the options supported by the quarkus infinispan client you must read the link:{quarkus_guides_infinispan_client_reference_url}[Quarkus Infinispan Client Reference].
 ====
 
 [#job-service-eventing-api]
