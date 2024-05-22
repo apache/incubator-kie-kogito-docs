@@ -164,9 +164,10 @@ And, if the current namespace has an already configured <<_configuring_the_persi
 
 == Persistence configuration and SonataFlow profiles
 
-All the configurations shown in this guide apply exactly the same for both the `preview` and the `gitops` profiles. These configurations are ignored and you must not use them in the`dev` profile.
+All the configurations shown for the `SonataFlowPlatform CR` and `SonataFlow CR`, apply exactly the same for both the `preview` and the `gitops` profiles.
+However, you must not use them in the `dev` profile, since this profile will simply ignore them.
 
-Finally, the only distinction between `preview` and `gitops` profiles, is that when you use the `gitops` profile, the following Quarkus extensions must be added when you build your workflow image.
+Finally, the only distinction between `preview` and `gitops` profiles is that, when you use the `gitops` profile, the following Quarkus extensions must be added when you build your workflow image. Since that build is accomplished outside the operator scope.
 
 [cols="40%,40%,20%", options="header"]
 |===
@@ -187,8 +188,7 @@ Finally, the only distinction between `preview` and `gitops` profiles, is that w
 | {kogito_version}
 |===
 
-This last can be done by passing the following build argument to the `kogito-swf-builder`:
-
+If you generate your images by using the `kogito-swf-builder`, you can do it by passing it the following build argument:
 
 [source,bash,subs="attributes+"]
 ----
