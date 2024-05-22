@@ -12,8 +12,6 @@
 :kogito_sw_timeouts_showcase_embedded_example_application_properties_url: {kogito_sw_timeouts_showcase_embedded_example_url}/src/main/resources/application.properties
 :kogito_sw_dataindex_persistence_example_url: {kogito_sw_examples_url}/serverless-workflow-data-index-persistence-addon-quarkus
 
-:infinispan_url: https://infinispan.org/
-:mongo_url: https://www.mongodb.com/
 :postgresql_url: https://www.postgresql.org/
 
 This document describes how you add the {data_index_ref} features to your workflow. You simply need to add the {data_index_ref} extension to the workflow and
@@ -34,15 +32,11 @@ These extensions are distributed as addons ready to work with different types of
 
 * kogito-addons-quarkus-data-index-inmemory (inmemory PostgreSQL)
 * kogito-addons-quarkus-data-index-postgresql
-* kogito-addons-quarkus-data-index-infinispan
-* kogito-addons-quarkus-data-index-mongodb
 
 With the same purpose, the Quarkus {data_index_ref} persistence extension can be added to any workflow application and incorporates only the {data_index_ref} indexation and data persistence functionality into the same application without needing an external {data_index_ref} service to do that.
 These extensions are distributed as addons ready to work with different types of persistence:
 
 * kogito-addons-quarkus-data-index-persistence-postgresql
-* kogito-addons-quarkus-data-index-persistence-infinispan
-* kogito-addons-quarkus-data-index-persistence-mongodb
 
 In this case to interact with that data and related runtimes using GraphQL you will need an external {data_index_ref} service that makes that endpoint available.
 
@@ -53,7 +47,7 @@ The {data_index_ref} extensions are provided as addons for each kind of supporte
 
 Once one of these `kogito-addons-quarkus-data-index` or `kogito-addons-quarkus-data-index-persistence` addons is added to a workflow, it incorporates the functionality to index and store the workflow data. In case of the `kogito-addons-quarkus-data-index` also incorporates the GraphQL endpoint to perform queries and management operations.
 
-In the same way as the {data_index_ref} service, there is a specific addon for each type of persistence you want to work with. Currently, you can find {data_index_ref} addons for: link:{postgresql_url}[PostgreSQL], link:{infinispan_url}[Infinispan], and link:{mongo_url}[MongoDB]
+In the same way as the {data_index_ref} service, there is a specific addon for each type of persistence you want to work with. Currently, you can find {data_index_ref} addons for: link:{postgresql_url}[PostgreSQL].
 
 [IMPORTANT]
 ====
