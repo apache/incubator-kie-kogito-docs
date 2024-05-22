@@ -58,11 +58,11 @@ spec:
 <1> The workflow defines an input schema
 <2> The workflow requires an OpenAPI specification file to make a REST invocation
 
-The `Hello Service` workflow int the example offer two options. You can either create two `ConfigMaps`, each for one file, to have a clear separation of concerns or group them into one.
+The `Hello Service` workflow in the example offers two options. You can either create two `ConfigMaps`, each for one file, to have a clear separation of concerns or group them into one.
 
 From the operator perspective, it won't make any difference since both files will be available for the workflow application at runtime.
 
-To make it simple, you can create only one `ConfigMap`. Navigate into the directory where your resources files are available and create the config map using following command:
+To make it simple, you can create only one `ConfigMap`. Navigate into the directory where your resource files are available and create the config map using following command:
 
 .Creating a ConfigMap from the current directory
 [source,bash,subs="attributes+"]
@@ -81,7 +81,7 @@ You should have a `ConfigMap` with two data entries similar to this one:
 [source,yaml,subs="attributes+"]
 ----
 kind: ConfigMap
-apiVersion: v1w
+apiVersion: v1
 metadata:
   name: service-files
 data:

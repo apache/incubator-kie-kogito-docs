@@ -6,7 +6,7 @@
 // links
 :kogito_serverless_operator_url: https://github.com/apache/incubator-kie-kogito-serverless-operator/
 
-Uder the hood, {operator_name} supports several services that ehnance its capabilities. For example 
+Under the hood, {operator_name} supports several services that enhance its capabilities. For example 
 xref:data-index/data-index-core-concepts.adoc[Data Index] or xref:job-services/core-concepts.adoc[Job service].
 Please take a look at these guides to learn more about them.
 
@@ -19,7 +19,7 @@ By default, workflows deployed by the operator use an embedded version of xref:d
 
 .Prerequisites
 * The {operator_name} installed. See xref:cloud/operator/install-serverless-operator.adoc[] guide
-* A postgresql database. Required when you are targetting non-embedded postgresql versions of supporting services. We recommend creating a postgresql deployment in your cluster. Please note your credentials.
+* A postgresql database. Required if you are planning to use non-embedded postgresql versions of supporting services. We recommend creating a postgresql deployment in your cluster. Please note your credentials.
 
 [#deploy-supporting-services]
 == Deploy supporting services
@@ -27,7 +27,7 @@ By default, workflows deployed by the operator use an embedded version of xref:d
 [#deploy-data-index-service]
 === Data Index
 
-You can deploy Data Index via `SonataFlowPlatform` configuration. The operator will then configure all new workflows, with the "preview" profile, to use that Data Index.
+You can deploy Data Index via `SonataFlowPlatform` configuration. The operator will then configure all new workflows, with the "preview" or "gitops" profile, to use that Data Index.
 
 Following is a basic configuration. It will deploy an ephemeral Data Index to the same namespace as the `SonataFlowPlatform`.
 
@@ -96,7 +96,7 @@ spec:
           image: <image:tag> <5>
 ----
 
-<1> Determines whether "preview" profile workflows should be configured to use this service, defaults to `true`
+<1> Determines whether "preview"  or "gitops" profile workflows should be configured to use this service, defaults to `true`
 <2> Secret key of your postgresql credentials user, defaults to `POSTGRESQL_USER`
 <3> PostgreSql JDBC URL
 <4> Number of Data Index pods, defaults to `1`
@@ -104,7 +104,7 @@ spec:
 
 
 [#deploy-job-service]
-=== Jobs Service
+=== Job Service
 
 You can deploy Job Service via `SonataFlowPlatform` configuration. The operator will then configure all new workflows, with the "preview" profile, to use that Job Service.
 
@@ -175,7 +175,7 @@ spec:
           image: <image:tag> <5>
 ----
 
-<1> Determines whether "preview" profile workflows should be configured to use this service, defaults to `true`
+<1> Determines whether "preview" or "gitops" profile workflows should be configured to use this service, defaults to `true`
 <2> Secret key of your postgresql credentials user, defaults to `POSTGRESQL_USER`
 <3> PostgreSql JDBC URL
 <4> Number of Job Service pods, defaults to `1`
