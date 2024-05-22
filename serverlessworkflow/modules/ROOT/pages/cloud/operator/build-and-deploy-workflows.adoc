@@ -16,7 +16,7 @@
 :docker_doc_arg_url: https://docs.docker.com/engine/reference/builder/#arg
 :quarkus_extensions_url: https://quarkus.io/extensions/
 
-This document describes how to build and deploy your workflow on a cluster using the link:{kogito_serverless_operator_url}[{operator_name}]. w
+This document describes how to build and deploy your workflow on a cluster using the link:{kogito_serverless_operator_url}[{operator_name}].
 
 Every time you need to change the workflow definition the system will (re)build a new immutable version of the workflow. If you're still in development phase, please see the xref:cloud/operator/developing-workflows.adoc[] guide.
 
@@ -31,7 +31,7 @@ Follow the <<building-kubernetes, Kubernetes>> or <<building-openshift, OpenShif
 * A Workflow definition.
 * The {operator_name} installed. See xref:cloud/operator/install-serverless-operator.adoc[] guide.
 
-[#configure-build-system]
+[[configure-workflow-build-system]]
 == Configuring the build system
 
 The operator can build workflows on Kubernetes or OpenShift. On Kubernetes, it uses link:{kaniko_url}[Kaniko] and on OpenShift a link:{openshift_build_url}[standard BuildConfig].
@@ -92,6 +92,7 @@ metadata:
 The excerpt above is just an example. The current version might have a slightly different version. Don't use this example in your installation.
 ====
 
+[[changing-sfplatform-resource-requirements]]
 === Changing resources requirements
 
 You can create or edit a `SonataFlowPlatform` in the workflow namespace specifying the link:{kubernetes_resource_management_url}[resources requirements] for the internal builder pods:
@@ -143,6 +144,7 @@ spec:
 
 This parameters will only apply to new build instances.
 
+[[passing-build-arguments-to-internal-workflow-builder]]
 === Passing arguments to the internal builder
 
 You can pass build arguments (see link:{docker_doc_arg_url}[Dockerfile ARG]) to the `SonataFlowBuild` instance.
@@ -215,6 +217,7 @@ The table below lists the Dockerfile arguments available in the default {operato
 |MAVEN_ARGS_APPEND | Arguments passed to the maven build when the workflow build is produced. | -Dkogito.persistence.type=jdbc -Dquarkus.datasource.db-kind=postgresql
 |===
 
+[[setting-env-variables-for-internal-workflow-builder]]
 === Setting environment variables in the internal builder
 
 You can set environment variables to the `SonataFlowBuild` internal builder pod. This is useful in cases where you would like to influence only the build of the workflow. 
@@ -280,7 +283,7 @@ Since the `envs` attribute is an array of link:{kubernetes_envvar_url}[Kubernete
 On Minikube and Kubernetes only plain values, `ConfigMap` and `Secret` are supported due to a restriction on the build system provided by these platforms.
 ====
 
-[#building-kubernetes]
+[[building-and-deploying-on-kubernetes]]
 == Building on Kubernetes
 
 [TIP]
