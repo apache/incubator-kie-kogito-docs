@@ -42,7 +42,7 @@ When you use the Acme Financial Services, you can query the exchange rates using
 * Potential vendor lock-in problems, in case you want to change the provider in the future.
 * Domain-specific validations and optimizations.
 
-The further sections describes how an end-to-end solution is created in the `serverless-workflow-oauth2-orchestration-quarkus` example application. To see the source code of `serverless-workflow-oauth2-orchestration-quarkus` example application, you can clone the link:{kogito_examples_repository_url}[kogito-examples] repository in GitHub and select the `serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus` directory.
+The further sections describes how an end-to-end solution is created in the `serverless-workflow-oauth2-orchestration-quarkus` example application. To see the source code of `serverless-workflow-oauth2-orchestration-quarkus` example application, you can clone the link:{kogito_examples_repository_url}[{kie_kogito_examples_repo_name}] repository in GitHub and select the `serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus` directory.
 
 The `serverless-workflow-oauth2-orchestration-quarkus` example application contains the following services to compose the solution:
 
@@ -463,15 +463,16 @@ Once you clone the `serverless-workflow-oauth2-orchestration-quarkus` example ap
 
 
 .Procedure
-. In a command terminal, clone the `kogito-examples` repository and navigate to the cloned directory:
+. In a command terminal, clone the `{kie_kogito_examples_repo_name}` repository and navigate to the cloned directory:
 +
 --
-.Clone `kogito-examples` repository and navigate to the directory
-[source, bash]
-----
-git clone https://github.com/apache/incubator-kie-kogito-examples.git
+.Clone `{kie_kogito_examples_repo_name}` repository and navigate to the directory
 
-cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus
+[source,bash,subs="attributes+"]
+----
+git clone {kogito_examples_url}
+
+cd {kie_kogito_examples_repo_name}/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus
 ----
 --
 
@@ -491,7 +492,7 @@ mvn clean install
 .Start the Keycloak server
 [source, bash]
 ----
-cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/scripts
+cd {kie_kogito_examples_repo_name}/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/scripts
 
 ./startKeycloak.sh
 ----
@@ -501,7 +502,7 @@ Alternatively, you can start the Docker Compose using the following command:
 .Start Docker Compose
 [source, bash]
 ----
-cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/docker-compose
+cd {kie_kogito_examples_repo_name}/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/docker-compose
 
 docker-compose up
 ----
@@ -513,7 +514,7 @@ docker-compose up
 .Start Acme Financial Service
 [source, bash]
 ----
-cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/acme-financial-service
+cd {kie_kogito_examples_repo_name}/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/acme-financial-service
 
 java -jar target/quarkus-app/quarkus-run.jar
 ----
@@ -525,7 +526,7 @@ java -jar target/quarkus-app/quarkus-run.jar
 .Start currency exchange workflow
 [source, bash]
 ----
-cd kogito-examples/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/currency-exchange-workflow
+cd {kie_kogito_examples_repo_name}/serverless-workflow-examples/serverless-workflow-oauth2-orchestration-quarkus/currency-exchange-workflow
 
 java -jar target/quarkus-app/quarkus-run.jar
 ----
