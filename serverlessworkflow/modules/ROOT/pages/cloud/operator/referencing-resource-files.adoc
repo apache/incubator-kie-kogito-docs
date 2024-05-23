@@ -14,15 +14,17 @@ For example, when doing xref:service-orchestration/orchestration-of-openapi-base
 
 If these files are not in a remote location that can be accessed via the HTTP protocol, you must describe in the `SonataFlow` CR where to find them within the cluster. This is done via link:{kubernetes_configmap_url}[`ConfigMaps`].
 
-== Creating ConfigMaps with Workflow Additional Files
+== Creating ConfigMaps with Workflow referencing additional files
 
 .Prerequisites
-* You have the files available in your file system
-* You have permissions to create `ConfigMaps` in the target namespace
+* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
+* You have the cluster instance up and running. See xref:getting-started/preparing-environment.adoc#proc-starting-cluster-fo-local-development[starting the cluster for local development] guide.
+* You have permissions to create `ConfigMaps` in the target namespace of your cluster.
+* (Optional) You have the files that you want to reference in your workflow definition ready.
 
-Given that you already have the file you want to add to your workflow definition, you link:{kubernetes_create_configmap_url}[can create a `ConfigMap`] as you normally would with the contents of the file.
+If you already have the files referenced in your workflow definition, you link:{kubernetes_create_configmap_url}[can create a `ConfigMap`] in your target namespace with the contents of the file.
 
-For example, given the following workflow:
+In the example below, you need to use the contents of the `specs/workflow-service-schema.json` file and `specs/workflow-service-openapi.json` file to create the `ConfigMap`:
 
 .Example of a workflow referencing additional files
 [source,yaml,subs="attributes+"]
@@ -56,11 +58,11 @@ spec:
 <1> The workflow defines an input schema
 <2> The workflow requires an OpenAPI specification file to make a REST invocation
 
-For this example, you have two options. You can either create two `ConfigMaps` to have a clear separation of concerns or only one with both files.
+The `Hello Service` workflow in the example offers two options. You can either create two `ConfigMaps`, each for one file, to have a clear separation of concerns or group them into one.
 
 From the operator perspective, it won't make any difference since both files will be available for the workflow application at runtime.
 
-To make it simple, you can create only one `ConfigMap`. Given that the files are available in the current directory:
+To make it simple, you can create only one `ConfigMap`. Navigate into the directory where your resource files are available and create the config map using following command:
 
 .Creating a ConfigMap from the current directory
 [source,bash,subs="attributes+"]
@@ -84,10 +86,12 @@ metadata:
   name: service-files
 data:
   workflow-service-schema.json: # data was removed to save space
+                                # <CONTENT OF THE FILE>
   workflow-service-openapi.json: # data was removed to save space
+                                 # <CONTENT OF THE FILE>
 ----
 
-Now you can reference this `ConfigMap` to your `SonataFlow` CR:
+Now you can add reference to this `ConfigMap` into your `SonataFlow` CR:
 
 .SonataFlow CR referencing a ConfigMap resource
 [source,yaml,subs="attributes+"]

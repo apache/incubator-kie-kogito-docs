@@ -16,6 +16,11 @@ Workflows in the development profile are not tailored for production environment
 {operator_name} is under active development with features yet to be implemented. Please see xref:cloud/operator/known-issues.adoc[].
 ====
 
+.Prerequisites
+* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
+* You have the cluster instance up and running. See xref:getting-started/preparing-environment.adoc#proc-starting-cluster-fo-local-development[starting the cluster for local development] guide.
+
+[[proc-introduction-to-development-profile]]
 == Introduction to the Development Profile
 
 The development profile is the easiest way to start playing around with Workflows and the operator.
@@ -74,13 +79,13 @@ spec:
 
 <2> In the `flow` attribute goes the Workflow definition as described by the xref:core/cncf-serverless-workflow-specification-support.adoc[CNCF Serverless Workflow specification]. So if you already have a workflow definition, you can use it there. Alternatively, you can use the xref:tooling/serverless-workflow-editor/swf-editor-overview.adoc[editors to create your workflow definition].
 
+[[proc-deploying-new-workflow]]
 == Deploying a New Workflow
 
 .Prerequisites
-* You have xref:cloud/operator/install-serverless-operator.adoc[installed the {operator_name}]
-* You have created a new {product_name} Kubernetes YAML file
+* You have a new {product_name} Kubernetes Workflow definition in YAML file. You can use the Greeting example in <<proc-introduction-to-development-profile,introduction to development profile>> section.
 
-Having a new Kubernetes Workflow definition in a YAML file (you can use the above example), you can deploy it in your cluster with the following command:
+Having a Kubernetes Workflow definition in a YAML file , you can deploy it in your cluster with the following command:
 
 .Deploying a new SonataFlow Custom Resource in Kubernetes
 [source,bash,subs="attributes+"]
@@ -134,7 +139,7 @@ and changing the Workflow definition inside the Custom Resource Spec section.
 
 Alternatively, you can save the Custom Resource definition file and edit it with your desired editor and re-apply it.
 
-For example using VS Code, there are the commands needed:
+For example using VS Code, these are the commands needed:
 
 [source,bash,subs="attributes+"]
 ----
@@ -146,22 +151,58 @@ kubectl apply -f workflow_devmode.yaml -n <your_namespace>
 The operator ensures that the latest Workflow definition is running and ready.
 This way, you can include the Workflow in your development scenario and start making requests to it.
 
+[[proc-check-if-workflow-is-running]]
 == Check if the Workflow is running
+
+.Prerequisites
+* You have deployed a workflow to your cluster following the example in <<proc-deploying-new-workflow,deploying new workflow>> section.
 
 In order to check that the {product_name} Greeting workflow is up and running, you can try to perform a test HTTP call. First, you must get the service URL:
 
-.Exposing the Workflow
-[source,bash,subs="attributes+"]
+. Exposing the workflow
+[tabs]
+====
+Minikube::
++
+--
+.Expose the workflow on minikube
+[source,shell]
 ----
+# Input
 minikube service greeting -n <your_namespace> --url
+
+# Example output, use the URL as a base to acces the current workflow
 http://127.0.0.1:57053
 
-# use the above output to get the current Workflow URL in your environment
+# Your workflow is accessible at http://127.0.0.1:57053/greeting
 ----
+--
+Kind::
++
+--
+.Expose the workflow on kind
+[source,shell]
+----
+# Find the service of your workflow
+kubectl get service -n <namespace>
+
+# Example output
+NAME            TYPE       CLUSTER-IP EXTERNAL-IP PORT(S)  AGE
+greetings    ClusterIP    10.96.0.1    <none>    31852/TCP  21h
+
+# Now forward the port and keep the terminal window open
+kubectl port-forward service/greeting 31852:80 -n <namespace>
+
+# Your workflow is accessible at localhost:31852/greetings
+----
+--
+====
 
 [TIP]
 ====
-When running on Minikube, the service is already exposed for you via `NodePort`. On OpenShift, link:{openshift_route_url}[a Route is automatically created in devmode]. If you're running on Kubernetes you can link:{kubernetes_url}[expose your service using an Ingress].
+* When running on Minikube, the service is already exposed for you via `NodePort`. 
+* On OpenShift, link:{openshift_route_url}[a Route is automatically created in devmode]. 
+* If you're running on Kubernetes you can link:{kubernetes_url}[expose your service using an Ingress].
 ====
 
 You can now point your browser to the Swagger UI and start making requests with the REST interface.
@@ -259,7 +300,7 @@ It can give you a clue about what might be happening. See xref:cloud/operator/wo
 .Watch the workflow logs
 [source,shell,subs="attributes+"]
 ----
-kubectl logs deployment/<workflow-name> -f
+kubectl logs deployment/<workflow-name> -f -n <your_namespace>
 ----
 +
 If you decide to open an issue or ask for help in {product_name} communication channels, this logging information is always useful for the person who will try to help you.

@@ -3,7 +3,7 @@
 :keywords: kogito, sonataflow, workflow, serverless, operator, kubernetes, minikube, openshift, containers
 :keytool-docs: https://docs.oracle.com/en/java/javase/21/docs/specs/man/keytool.html
 
-If you're working with containers running Java applications and need to add a CA (Certificate Authority) certificate for secure communication, you can follow these steps. This guide assumes you are familiar with containers and have basic knowledge of working with YAML files.
+{product_name} applications are containers running Java. If you're working with containers running Java applications and need to add a CA (Certificate Authority) certificate for secure communication this guide will explain the necesarry steps to setup CA for your workflow application. The guide assumes you are familiar with containers and have basic knowledge of working with YAML files.
 
 :toc:
 
@@ -19,11 +19,11 @@ The containerized application may not know the CA certificate in build time, so 
 
 Before proceeding, ensure you have the CA certificate file (in PEM format) that you want to add to the Java container. If you don't have it, you may need to obtain it from your system administrator or certificate provider.
 
-For this guide, we would take the k8s cluster root CA that is automatically deployed into every container under `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`
+For this guide, we are using the k8s cluster root CA that is automatically deployed into every container under `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`
 
 === Step 2: Prepare a trust store in an init-container
 
-Add or amend these volumes and init-container snippet to your pod spec or `podTemplate` in a deployment:
+Add or amend these `volumes` and `init-container` snippet to your pod spec or `podTemplate` in a deployment:
 
 [source,yaml]
 ---
@@ -51,8 +51,7 @@ The default keystore under `$JAVA_HOME` is part of the container image and is no
 === Step 3: Configure Java to load the new keystore
 
 Here you can mount the new, modified `cacerts` into the default location where the JVM looks.
-The `Main.java` example uses the standard HTTP client so alternatively you could mount the `cacerts` to a different location and
-configure the Java runtime to load the new keystore with a `-Djavax.net.ssl.trustStore` system property.
+The `Main.java` example uses the standard HTTP client so alternatively you could mount the `cacerts` to a different location and configure the Java runtime to load the new keystore with a `-Djavax.net.ssl.trustStore` system property.
 Note that libraries like RESTEasy don't respect that flag and may need to programmatically set the trust store location.
 
 [source,yaml]
@@ -185,7 +184,7 @@ spec:
 
 == Additional Resources
 
-* Keytool documentation: {keytool-docs}
-* Dynamically Creating Java keystores OpenShift - Blog Post: https://developers.redhat.com/blog/2017/11/22/dynamically-creating-java-keystores-openshift#end_to_end_springboot_demo
+* link:keytool-docs[Keytool documentation]
+* link:https://developers.redhat.com/blog/2017/11/22/dynamically-creating-java-keystores-openshift#end_to_end_springboot_demo[Dynamically Creating Java keystores OpenShift]
 
 

@@ -16,25 +16,30 @@
 :docker_doc_arg_url: https://docs.docker.com/engine/reference/builder/#arg
 :quarkus_extensions_url: https://quarkus.io/extensions/
 
-This document describes how to build and deploy your workflow on a cluster using the link:{kogito_serverless_operator_url}[{operator_name}] only by having a `SonataFlow` custom resource.
+This document describes how to build and deploy your workflow on a cluster using the link:{kogito_serverless_operator_url}[{operator_name}].
 
 Every time you need to change the workflow definition the system will (re)build a new immutable version of the workflow. If you're still in development phase, please see the xref:cloud/operator/developing-workflows.adoc[] guide.
 
 [IMPORTANT]
 ====
-The build system implemented by the {operator_name} is not suitable for complex production use cases. Consider using an external tool to build your application such as Tekton and ArgoCD. The resulting image can then be deployed with `SonataFlow` custom resource. See more at xref:cloud/operator/customize-podspec.adoc#custom-image-default-container[Setting a custom image in the default container] section in the xref:cloud/operator/customize-podspec.adoc#custom-image-default-container[] guide.
+The build system implemented by the {operator_name} is not suitable for complex production use cases. Consider using an external tool to build your application such as Tekton and ArgoCD. The resulting image can then be deployed with `SonataFlow` custom resource. More details available at xref:cloud/operator/customize-podspec.adoc#custom-image-default-container[Setting a custom image in the default container] section of the xref:cloud/operator/customize-podspec.adoc[] guide.
 ====
 
 Follow the <<building-kubernetes, Kubernetes>> or <<building-openshift, OpenShift>> sections of this document based on the cluster you wish to build your workflows on.
 
 .Prerequisites
 * A Workflow definition.
-* The {operator_name} installed. See xref:cloud/operator/install-serverless-operator.adoc[] guide
+* The {operator_name} installed. See xref:cloud/operator/install-serverless-operator.adoc[] guide.
 
-[#configure-build-system]
+[[configure-workflow-build-system]]
 == Configuring the build system
 
-The operator can build workflows on Kubernetes or OpenShift. On Kubernetes, it uses link:{kaniko_url}[Kaniko] and on OpenShift a link:{openshift_build_url}[standard BuildConfig]. The operator build system is not tailored for advanced production use cases and you can do only a few customizations.
+The operator can build workflows on Kubernetes or OpenShift. On Kubernetes, it uses link:{kaniko_url}[Kaniko] and on OpenShift a link:{openshift_build_url}[standard BuildConfig].
+
+[IMPORTANT]
+====
+The operator build system is not tailored for advanced production use cases and you can do only a few customizations.
+====
 
 === Using another Workflow base builder image
 
@@ -52,7 +57,7 @@ kubectl patch sonataflowplatform <name> --patch  'spec:\n    build:\n    config:
 [#customize-base-build]
 === Customize the base build Dockerfile
 
-The operator uses the sonataflow-operator-builder-config `ConfigMap` in the operator's installation namespace ({operator_installation_namespace}) to configure and run the workflow build process. 
+The operator uses the `ConfigMap` named `sonataflow-operator-builder-config` in the operator's installation namespace ({operator_installation_namespace}) to configure and run the workflow build process. 
 You can change the `Dockerfile` entry in this `ConfigMap` to tailor the Dockerfile to your needs. Just be aware that this can break the build process.
 
 .Example of the sonataflow-operator-builder-config `ConfigMap`
@@ -87,6 +92,7 @@ metadata:
 The excerpt above is just an example. The current version might have a slightly different version. Don't use this example in your installation.
 ====
 
+[[changing-sfplatform-resource-requirements]]
 === Changing resources requirements
 
 You can create or edit a `SonataFlowPlatform` in the workflow namespace specifying the link:{kubernetes_resource_management_url}[resources requirements] for the internal builder pods:
@@ -138,6 +144,7 @@ spec:
 
 This parameters will only apply to new build instances.
 
+[[passing-build-arguments-to-internal-workflow-builder]]
 === Passing arguments to the internal builder
 
 You can pass build arguments (see link:{docker_doc_arg_url}[Dockerfile ARG]) to the `SonataFlowBuild` instance.
@@ -210,9 +217,10 @@ The table below lists the Dockerfile arguments available in the default {operato
 |MAVEN_ARGS_APPEND | Arguments passed to the maven build when the workflow build is produced. | -Dkogito.persistence.type=jdbc -Dquarkus.datasource.db-kind=postgresql
 |===
 
+[[setting-env-variables-for-internal-workflow-builder]]
 === Setting environment variables in the internal builder
 
-You can set environment variables to the `SonataFlowBuild` internal builder pod. 
+You can set environment variables to the `SonataFlowBuild` internal builder pod. This is useful in cases where you would like to influence only the build of the workflow. 
 
 [IMPORTANT]
 ====
@@ -275,7 +283,7 @@ Since the `envs` attribute is an array of link:{kubernetes_envvar_url}[Kubernete
 On Minikube and Kubernetes only plain values, `ConfigMap` and `Secret` are supported due to a restriction on the build system provided by these platforms.
 ====
 
-[#building-kubernetes]
+[[building-and-deploying-on-kubernetes]]
 == Building on Kubernetes
 
 [TIP]
