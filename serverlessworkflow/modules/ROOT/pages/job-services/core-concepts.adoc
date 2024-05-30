@@ -49,42 +49,27 @@ Additionally, it can manage all the required configurations for every workflow t
 To learn how to install and configure the Job Service in this case, you must read the xref:cloud/operator/supporting-services.adoc[Operator Supporting Services] section.
 
 [#executing]
-== Executing
+== Custom Execution
 
-To execute the Job Service in your docker or Kubernetes environment, you must use the following image:
+To execute the Job Service in your docker or Kubernetes environment, you must use any of the following images, depending on the persistence mechanism to use <<job-service-postgresql, PostgreSQL>> or <<job-service-ephemeral, Ephemeral>>.
 
-* link:{jobs_service_image_allinone_url}[kogito-jobs-service-allinone]
+* `{jobs_service_image_postgresql}`
+* `{jobs_service_image_ephemeral}`
 
-In the next topics you can see the different configuration parameters that you must use, for example, to configure the <<job-service-persistence,persistence mechanism>>, the <<job-service-eventing-api, eventing system>>, etc.
-More information on this image can be found link:{jobs_service_image_usage_url}[here].
-
-We recommend that you follow this procedure:
-
-1. Identify the <<job-service-persistence,persistence mechanism>> to use and see the required configuration parameters.
-2. Identify if the <<job-service-eventing-api, Eventing API>> is required for your needs and see the required configuration parameters.
-3. Identify if the project containing your workflows is configured with the appropriate xref:use-cases/advanced-developer-use-cases/job-service/quarkus-extensions.adoc#job-service-quarkus-extensions[Job Service Quarkus Extension].
-
-Finally, to run the image, you must use the <<exposed-environment-variables, environment variables exposed by the image>>, and other configurations that you can set using <<using-environent-variables, additional environment variables>> or using <<using-java-like-system-properties, system properties with java like names>>.
-
-[#exposed-environment-variables]
-=== Exposed environment variables
-
-[cols="1,2"]
-|===
-|Variable | Description
-
-|`SCRIPT_DEBUG`
-|Enable debug level of the image and its operations.
-
-|`JOBS_SERVICE_PERSISTENCE`
-|Any of the following values:  `postgresql` or `ephemeral`, to select the persistence mechanism to use, <<job-service-persistence, see>>.
-
-|===
+In the next topics you can see how to configure them.
 
 [NOTE]
 ====
-If used, these values must always be passed as environment variables.
+The <<job-service-global-configurations, common configurations>> and the <<job-service-eventing-api, eventing API configurations>> are the same for both images.
 ====
+
+We recommend that you follow this procedure:
+
+1. Identify the image to use depending on the persistence mechanism, and see the required configuration parameters specific for that image.
+2. Identify if the <<job-service-eventing-api, Eventing API>> is required for your needs and see the required configuration parameters.
+3. Identify if the project containing your workflows is configured with the appropriate xref:use-cases/advanced-developer-use-cases/job-service/quarkus-extensions.adoc#job-service-quarkus-extensions[Job Service Quarkus Extension].
+
+Finally, when you run the image, you must pass these configurations using <<using-environent-variables, environment variables>> or using <<using-java-like-system-properties, system properties with java like names>>.
 
 [#using-environent-variables]
 === Using environment variables
@@ -94,7 +79,7 @@ To configure the image by using environment variables you must pass one environm
 .Job Service image configuration for docker execution example
 [source, bash,subs="attributes+"]
 ----
-docker run -it -e JOBS_SERVICE_PERSISTENCE=postgresql -e VARIABLE_NAME=value {jobs_service_image_allinone}:latest
+docker run -it -e QUARKUS_DATASOURCE_USERNAME=postgres -e VARIABLE_NAME=value {jobs_service_image_postgresql}:latest
 ----
 
 .Job Service image configuration for Kubernetes execution example
@@ -103,7 +88,7 @@ docker run -it -e JOBS_SERVICE_PERSISTENCE=postgresql -e VARIABLE_NAME=value {jo
 spec:
   containers:
     - name: jobs-service-postgresql
-      image: {jobs_service_image_allinone}:latest
+      image: {jobs_service_image_postgresql}:latest
       imagePullPolicy: Always
       ports:
         - containerPort: 8080
@@ -115,8 +100,6 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        - name: JOBS_SERVICE_PERSISTENCE
-          value: "postgresql"
         - name: QUARKUS_DATASOURCE_USERNAME
           value: postgres
         - name: QUARKUS_DATASOURCE_PASSWORD
@@ -130,8 +113,8 @@ spec:
 [NOTE]
 ====
 This is the recommended approach when you execute the Job Service in Kubernetes.
-The timeouts showcase example xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] contains an example of this configuration, https://github.com/apache/incubator-kie-kogito-examples/blob/main/serverless-workflow-examples/serverless-workflow-timeouts-showcase-extended/kubernetes/jobs-service-postgresql.yml#L65[see].
-On the other hand, when you work with the {operator_name}, it can automatically manage all this these configurations, xref:cloud/operator/supporting-services.adoc[see].
+The timeouts showcase example xref:use-cases/advanced-developer-use-cases/timeouts/timeout-showcase-example.adoc#execute-quarkus-project-standalone-services[Quarkus Workflow Project with standalone services] contains an example of this configuration, link:{kogito_sw_examples_url}/serverless-workflow-timeouts-showcase-extended/kubernetes/jobs-service-postgresql.yml#L65[see].
+On the other hand, when you work with the {operator_name}, it can automatically manage all these configurations, xref:cloud/operator/supporting-services.adoc[see].
 ====
 
 [#using-java-like-system-properties]
@@ -142,8 +125,8 @@ To configure the image by using system properties you must pass one property per
 .Job Service image configuration for docker execution example
 [source, bash,subs="attributes+"]
 ----
-docker run -it -e JOBS_SERVICE_PERSISTENCE=postgresql -e JAVA_OPTIONS='-Dmy.sys.prop1=value1 -Dmy.sys.prop2=value2' \
-{jobs_service_image_allinone}:latest
+docker run -it -e JAVA_OPTIONS='-Dquarkus.datasource.username=postgres -Dmy.sys.prop1=value1 -Dmy.sys.prop2=value2' \
+{jobs_service_image_postgresql}:latest
 ----
 
 [NOTE]
@@ -153,9 +136,9 @@ For example, the name `quarkus.datasource.jdbc.url` must be converted to `QUARKU
 ====
 
 [#job-service-global-configurations]
-== Global configurations
+== Common configurations
 
-Global configurations that affect the job execution retries, startup procedure, etc.
+Common configurations that affect the job execution retries, startup procedure, etc.
 
 [tabs]
 ====
@@ -196,22 +179,8 @@ Using system properties with java like names::
 ====
 
 [#job-service-persistence]
-== Persistence
-
-An important configuration aspect of the Job Service is the persistence mechanism, it is where all the jobs information is stored, and guarantees no information is lost upon service restarts.
-
-The Job Service image is shipped with the <<job-service-postgresql, PostgreSQL>> and <<job-service-ephemeral, Ephemeral>> persistence mechanisms, that can be switched by setting the JOBS_SERVICE_PERSISTENCE environment variable to any of these values `postgresql` or `ephemeral`. If not set, it defaults to the `ephemeral` option.
-
-[NOTE]
-====
-The <<executing, kogito-jobs-service-allinone>> image is a composite packaging that include one different image per each persistence mechanism, making it clearly bigger sized than the individual ones. If that size represents an issue in your installation you can use the individual ones instead.
-Finally, if you use this alternative, the JOBS_SERVICE_PERSISTENCE must not be used, since the persistence mechanism is auto-determined.
-
-These are the individual images: {jobs_service_image_postgresql_url}[kogito-jobs-service-postgresql] and {jobs_service_image_ephemeral_url}[kogito-jobs-service-ephemeral].
-====
-
 [#job-service-postgresql]
-=== PostgreSQL
+== Job Service PostgreSQL Configuration
 
 PostgreSQL is the recommended database to use with the Job Service.
 Additionally, it provides an initialization procedure that integrates Flyway for the database initialization. Which automatically controls the database schema, in this way, the tables are created or updated by the service when required.
@@ -219,7 +188,7 @@ Additionally, it provides an initialization procedure that integrates Flyway for
 In case you need to externally control the database schema, you can check and apply the DDL scripts for the Job Service in the same way as described in
 xref:use-cases/advanced-developer-use-cases/persistence/postgresql-flyway-migration.adoc#manually-executing-scripts[Manually executing scripts] guide.
 
-To configure the PostgreSQL persistence you must provide these configurations:
+To configure the Job Service PostgreSQL you must provide these configurations:
 
 [tabs]
 ====
@@ -229,10 +198,6 @@ Using environment variables::
 [cols="2,1,1"]
 |===
 |Variable | Description| Example value
-
-|`JOBS_SERVICE_PERSISTENCE`
-|Configure the persistence mechanism that must be used.
-|`postgresql`
 
 |`QUARKUS_DATASOURCE_USERNAME`
 |Username to connect to the database.
@@ -259,10 +224,6 @@ Using system properties with java like names::
 |===
 |Variable | Description| Example value
 
-|`JOBS_SERVICE_PERSISTENCE`
-|**Always an environment variable**
-|`postgresql`
-
 |`quarkus.datasource.username`
 |Username to connect to the database.
 |`postgres`
@@ -286,23 +247,13 @@ The timeouts showcase example xref:use-cases/advanced-developer-use-cases/timeou
 In your local environment you might have to change some of these values to point to your own PostgreSQL database.
 
 [#job-service-ephemeral]
-=== Ephemeral
+== Job Service Ephemeral Configuration
 
-The Ephemeral persistence mechanism is based on an embedded PostgreSQL database and does not require any external configuration. However, the database is recreated on each service restart, and thus, it must be used only for testing purposes.
-
-[cols="2,1,1"]
-|===
-|Variable | Description| Example value
-
-|`JOBS_SERVICE_PERSISTENCE`
-|Configure the persistence mechanism that must be used.
-|`ephemeral`
-
-|===
+The Ephemeral persistence mechanism is based on an embedded PostgreSQL database and does not require any specific configuration other thant the <<job-service-global-configurations, common configurations>> and the <<job-service-eventing-api, Eventing API>>.
 
 [NOTE]
 ====
-If the image is started by not configuring any persistence mechanism, the Ephemeral will be defaulted.
+The database is recreated on each service restart, and thus, it must be used only for testing purposes.
 ====
 
 [#job-service-eventing-api]
