@@ -214,9 +214,10 @@ You can find an example of event data filtering in the link:{kogito_sw_examples_
 ----
 
 The previous example of the event filter copies the content of CloudEvent data `result` field into the workflow model `move` field.
+--
 
 [[ref-example-jq-expression-event-publishing]]
-== Example of jq expressions in event publishing. 
+== Example of jq expressions in event publishing
 
 When publishing a Cloud Event, you can select the data that is being published using a jq expression that generates a JSON object. Note that in yaml double quotes are required to allow using `{}` characters. 
 
@@ -237,7 +238,7 @@ In the previous example, a CloudEvent was published when the state transitioned.
 ----
 data={"gitRepo":"ssh://bitbucket.org/m2k-test","branch":"aaaaaaasssss","token":null,"workspaceId":"b93980cb-3943-4223-9441-8694c098eeb9","projectId":"9b305fe3-d441-48ce-b01b-d314e86e14ec","transformId":"723dce89-c25c-4c7b-9ef3-842de92e6fe6","workflowCallerId":"7ddb5193-bedc-4942-a857-596b31f377ed"}
 ----
---
+
 
 == Workflow secrets, constants and context
 
@@ -264,14 +265,15 @@ So, assuming you have added to your `application.properties` a line with the `my
 
 Besides constants and secrets, you might access contextual information of the running workflow by using the $WORKFLOW reserved word.
 {product_name} supports the following contextual keys:
- * `id`: The id of the running workflow definition
- * `name`: The name of the running workflow definition
- * `instanceId`: The id of the running workflow instance
- * `headers`: Optional map containing the headers, if any, of the invocation that started the running workflow instance 
- * `prevActionResult`: In a `foreach` state using multiple actions per loop cycle, give access to the result of the previous action. See link:{kogito_sw_examples_url}/serverless-workflow-foreach-quarkus/src/main/resources/foreach.sw.json#L11[example]
- * `identity`: Quarkus security identity
+
+* `id`: The id of the running workflow definition
+* `name`: The name of the running workflow definition
+* `instanceId`: The id of the running workflow instance
+* `headers`: Optional map containing the headers, if any, of the invocation that started the running workflow instance 
+* `prevActionResult`: In a `foreach` state using multiple actions per loop cycle, give access to the result of the previous action. See link:{kogito_sw_examples_url}/serverless-workflow-foreach-quarkus/src/main/resources/foreach.sw.json#L11[example]
+* `identity`: Quarkus security identity
  
- Therefore, the following function, for a serverless workflow definition whose id  is `expressionTest`, will append the string `worklow id is expressionTest` to the `message` variable
+Therefore, the following function, for a serverless workflow definition whose id is `expressionTest`, will append the string `worklow id is expressionTest` to the `message` variable
 
 ----
 {
