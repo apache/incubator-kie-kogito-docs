@@ -6,190 +6,228 @@
 // links
 :kogito_serverless_operator_url: https://github.com/apache/incubator-kie-kogito-serverless-operator/
 
-Under the hood, {operator_name} supports several services that enhance its capabilities. For example 
-xref:data-index/data-index-core-concepts.adoc[Data Index] or xref:job-services/core-concepts.adoc[Job service].
-Please take a look at these guides to learn more about them.
 
-By default, workflows deployed by the operator use an embedded version of xref:data-index/data-index-core-concepts.adoc[Data Index], however non-embedded options are supported as well. This document describes how to deploy and configure supporting services, like Data Index or Job Service, on a cluster using the link:{kogito_serverless_operator_url}[{operator_name}].
+This document describes how to configure and deploy the {product_name}'s xref:data-index/data-index-core-concepts.adoc[Data Index] and xref:job-services/core-concepts.adoc[Job Service] supporting services, using the {operator_name}.
 
-[IMPORTANT]
-====
-{operator_name} is under active development with features yet to be implemented. Please see xref:cloud/operator/known-issues.adoc[].
-====
+In general, in a regular {product_name} installation you must deploy both services to ensure a successful execution of your workflows. To get more information about each service please read the respective guides.
 
 .Prerequisites
-* The {operator_name} installed. See xref:cloud/operator/install-serverless-operator.adoc[] guide
-* A postgresql database. Required if you are planning to use non-embedded postgresql versions of supporting services. We recommend creating a postgresql deployment in your cluster. Please note your credentials.
+* The {operator_name} installed. See xref:cloud/operator/install-serverless-operator.adoc[] guide.
+* A PostgreSQL database service instance. Required if you are planning to use the <<postgresql-persistence-configuration>> for a supporting service.
+
+[#supporting-services-workflow-communications]
+== Supporting Services and Workflow communications
+
+When you deploy a supporting service in a given namespace, you can do it by using an <<enabled-deployment-field, enabled or disabled>> deployment.
+
+An enabled deployment, signals the {operator_name} to automatically intercept every workflow deployment with the `preview` or `gitops` profile, in this namespace, and automatically configure it to connect with that service.
+
+For example, if the Data Index is enabled, a workflow will be automatically configured to send workflow status change events to it.
+And, similar configurations are produced if the Job Service is enabled, to create a Job, every time a workflow requires a timeout.
+Additionally, the operator will configure the Job Service to send events to the Data Index Service, etc.
+
+As you can see, the operator can not only deploy a supporting service, but also, manage other configurations to ensure the successful execution of a workflow.
+
+Fortunately, all these configurations are managed automatically, and you must only provide the supporting services configuration in the `SonataFlowPlatform` CR.
+
+[NOTE]
+====
+Scenarios where you only deploy one of the supporting services, or configure a disabled deployment, are intended for advanced use cases.
+In a regular installation, you must normally configure an enabled deployment of both services to ensure a successful execution of your workflows.
+====
 
 [#deploy-supporting-services]
-== Deploy supporting services
+== Deploying the supporting services using the `SonataFlowPlatform` CR
 
-[#deploy-data-index-service]
-=== Data Index
+To deploy the supporting services you must use the sub-fields `dataIndex` and `jobService` in the `SonataFlowPlatform` CR `spec.services`.
+That information signals the {operator_name} to deploy each service when the `SonataFlowPlatform` CR is deployed.
 
-You can deploy Data Index via `SonataFlowPlatform` configuration. The operator will then configure all new workflows, with the "preview" or "gitops" profile, to use that Data Index.
+[NOTE]
+====
+Each service configuration is considered independently, and you can combine these configurations with any other configuration present in the `SonataFlowPlatform` CR.
+====
 
-Following is a basic configuration. It will deploy an ephemeral Data Index to the same namespace as the `SonataFlowPlatform`.
-
-.Example of a SonataFlowPlatform instance with an ephemeral Data Index deployment
-[source,yaml,subs="attributes+"]
+The following `SonataFlowPlatform` CR fragment shows a scaffold configuration that you can use as reference:
+[#supporting-services-configuration]
+.Supporting services configuration
+[source,yam]
 ----
 apiVersion: sonataflow.org/v1alpha08
 kind: SonataFlowPlatform
 metadata:
-  name: sonataflow-platform
+  name: sonataflow-platform-example
+  namespace: example-namespace
 spec:
   services:
-    dataIndex: {}
+    dataIndex: <1>
+      enabled: true <2>
+      # Specific configurations for the Data Index Service
+      # might be included here
+    jobService: <3>
+      enabled: true <4>
+      # Specific configurations for the Job Service
+      # might be included here
 ----
+[#enabled-deployment-field]
+<1> Data Index Service configuration field.
+<2> If true, produces an enabled Data Index Service deployment, <<supporting-services-workflow-communications, see>>. Other cases produce a disabled deployment. The default is `false`.
+<3> Job Service configuration field.
+<4>  If true, produces an enabled Job Service deployment, <<supporting-services-workflow-communications, see>>. Other cases produce a disabled deployment. The default is `false`.
 
-If your use case requires persistence, Data Index supports a `postgresql` database.
-First, you need to create a secret with credentials to access your postgresql deployment.
+[NOTE]
+====
+The configuration above produces an ephemeral deployment of each service, <<ephemeral-persistence-configuration, see>>.
+====
 
-.Create a Secret for datasource authentication.
-[source,bash,subs="attributes+"]
-----
-kubectl create secret generic <creds-secret> --from-literal=POSTGRESQL_USER=<user> --from-literal=POSTGRESQL_PASSWORD=<password> --from-literal=POSTGRESQL_DATABASE=<db_name> -n workflows
-----
+== Supporting Services Scope
 
-.Example of a SonataFlowPlatform instance with a Data Index deployment persisted to a postgresql database
-[source,yaml,subs="attributes+"]
+The `SonataFlowPlatform` CR facilitates the deployment of the supporting services with namespace scope.
+It means that, all the automatically configured <<supporting-services-workflow-communications>>, are restricted to the namespace of the given platform.
+This can be useful, in cases where you need separate supporting service instances for a set of workflows.
+For example, a given application can be deployed isolated with its workflows, and the supporting services.
+
+Additionally, using the `SonataFlowClusterPlatform` CR it's possible to configure a <<cluster-scoped-deployment, cluster scoped deployment>> of the supporting services.
+
+== Configuring the Supporting Services Persistence
+
+[#ephemeral-persistence-configuration]
+=== Ephemeral persistence configuration
+
+The ephemeral persistence of a service is supported by and embedded PostgreSQL database dedicated to it. That database, is re-created by the operator on every service restart.
+And thus, it's only recommended for development and testing purposes.
+
+The ephemeral deployment of a service requires no additional configurations than the shown, <<supporting-services-configuration, here>>.
+
+[#postgresql-persistence-configuration]
+=== PostgreSQL persistence configuration
+
+The PosgreSQL persistence of a service is supported by a PostgreSQL server instance, that you must previously install on the cluster.
+The administration of that instance is totally independent of the {operator_name} scope, and to connect a supporting service with it, you must only configure the correct database connection parameters.
+
+The following `SonataFlowPlatform` CR fragment shows the configuration options that you must use:
+
+.PostgreSQL persistence configuration
+[source,yaml]
 ----
 apiVersion: sonataflow.org/v1alpha08
 kind: SonataFlowPlatform
 metadata:
-  name: sonataflow-platform
+  name: sonataflow-platform-example
+  namespace: example-namespace
 spec:
   services:
     dataIndex:
+      enabled: true
       persistence:
         postgresql:
-          secretRef:
-            name: <creds-secret> <1>
           serviceRef:
-            name: <postgresql-service> <2>
+            name: postgres-example <1>
+            namespace: postgres-example-namespace <2>
+            databaseName: example-database <3>
+            databaseSchema: data-index-schema <4>
+            port: 1234 <5>
+          secretRef:
+            name: postgres-secrets-example <6>
+            userKey: POSTGRESQL_USER <7>
+            passwordKey: POSTGRESQL_PASSWORD <8>
+    jobService:
+      enabled: true
+      persistence:
+        postgresql:
+        # Specific database configuration for the Job Service
+        # might be included here.
 ----
 
-<1> Name of your postgresql credentials secret
-<2> Name of your postgresql k8s service
+<1> Name of the Kubernetes Service to connect with the PostgreSQL database server.
+<2> (Optional) Kubernetes namespace containing the PostgreSQL Service. Defaults to the `SonataFlowPlatform's` local namespace.
+<3> Name of the PostgreSQL database to store the supporting service data.
+<4> (Optional) Name of the PostgreSQL database schema to store the supporting service data.
+Defaults to the `SonataFlowPlatform's` `name`, suffixed with `-data-index-service` or `-jobs-service`. For example, `sonataflow-platform-example-data-index-service`.
+<5> (Optional) Port number to connect with the PostgreSQL Service. Defaults to 5432.
+<6> Name of the link:{k8n_secrets_url}[Kubernetes Secret] containing the username and password to connect with the database.
+<7> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the username to connect with the database.
+<8> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the password to connect with the database.
 
-.Example of a SonataFlowPlatform instance with a persisted Data Index deployment and custom pod configuration
-[source,yaml,subs="attributes+"]
+[NOTE]
+====
+The persistence of each service can be configured independently by using the respective `persistence` field.
+====
+
+To create the secrets for the example above you can use a command like this:
+
+.Create secret example
+[source,bash]
+----
+kubectl create secret generic postgres-secrets-example  --from-literal=POSTGRESQL_USER=<user> --from-literal=POSTGRESQL_PASSWORD=<password> -n postgres-example-namespace
+----
+
+
+[#common-persistence-configuration]
+=== Common PostgreSQL persistence configuration
+
+To configure common a PostgreSQL service instance for all the supporting services you must read, xref:cloud/operator/using-persistence.adoc#configuring-persistence-using-the-sonataflowplatform-cr[Configuring the persistence using the SonataFlowPlatform CR].
+
+In that case, the {operator_name} will automatically connect any of the supporting services with that common server configured in the field `spec.persistence`. And, similarly to the workflow's persistence, the following precedence rules apply:
+
+* If a supporting service, has a configured persistence, for example, the field `services.dataIndex.persistence` is configured. That configuration will apply.
+
+* If a supporting service, has no configured persistence, for example, the field `services.dataIndex.persistence` is not set at all, the persistence configuration will be taken from the current platform.
+
+
+[NOTE]
+====
+When you use the common PostgreSQL configuration, the database schema for each supporting service is automatically configured as the SonataFlowPlatform’s `name`, suffixed with `-data-index-service` or `-jobs-service` respectively.
+For example, `sonataflow-platform-example-data-index-service`.
+====
+
+== Advanced Supporting Services Configurations
+
+To configure the advanced options for any of the supporting services you must use the `podTemplate` field respectively, for example `dataIndex.podTemplate`:
+
+.Advanced configurations example for the Data Index Service.
+[source,yaml]
 ----
 apiVersion: sonataflow.org/v1alpha08
 kind: SonataFlowPlatform
 metadata:
-  name: sonataflow-platform
+  name: sonataflow-platform-example
+  namespace: example-namespace
 spec:
   services:
     dataIndex:
-      enabled: false <1>
-      persistence:
-        postgresql:
-          secretRef:
-            name: <creds-secret>
-            userKey: <secret-user-key> <2>
-          jdbcUrl: "jdbc:postgresql://host:port/database?currentSchema=data-index-service" <3>
+      enabled: true
       podTemplate:
-        replicas: 1 <4>
-        container:
-          image: <image:tag> <5>
+        replicas: 2 <1>
+        container: <2>
+          env: <3>
+            - name: ANY_ADVANCED_CONFIG_PROPERTY
+              value: any-value
+          image: <4>
+        initContainers: <5>
 ----
 
-<1> Determines whether "preview"  or "gitops" profile workflows should be configured to use this service, defaults to `true`
-<2> Secret key of your postgresql credentials user, defaults to `POSTGRESQL_USER`
-<3> PostgreSql JDBC URL
-<4> Number of Data Index pods, defaults to `1`
-<5> Custom Data Index container image name, if customization is required
+<1> Number of replicas. Defaults to 1. In the case of the jobService this value is always overridden to 1 by the operator, since that service is a singleton service.
+<2> Holds the particular configurations for the container that will execute the given supporting service.
+<3> Standard Kubernetes `env` configuration. This can be useful in cases where you need to fine tune any of the supporting services properties.
+<4> Standard Kubernetes `image` configuration. This can be useful in cases where you need to use an updated image for any of the supporting services.
+<5> Standard Kubernetes `initContainers` for the Pod that executes the supporting service.
 
+[NOTE]
+====
+The `podTemplate` field of any supporting has the majority of fields defined in the default Kubernetes PodSpec API.
+The same Kubernetes API validation rules applies to these fields.
+====
 
-[#deploy-job-service]
-=== Job Service
+[#cluster-scoped-deployment]
+== Cluster Scoped Supporting Services
 
-You can deploy Job Service via `SonataFlowPlatform` configuration. The operator will then configure all new workflows, with the "preview" profile, to use that Job Service.
+The `SonataFlowClusterPlatform` CR is optionally used to specify a cluster-wide set of supporting services for workflow consumption.
+This is done by referencing an existing, namespaced `SonataFlowPlatform` CR.
 
-Following is a basic configuration. It will deploy an ephemeral Job Service to the same namespace as the `SonataFlowPlatform`.
+Following is a basic configuration that allows workflows, deployed in any namespace, to leverage supporting services deployed in the chosen `example-namespace` namespace.
 
-.Example of a SonataFlowPlatform instance with an ephemeral Job Service deployment
-[source,yaml,subs="attributes+"]
-----
-apiVersion: sonataflow.org/v1alpha08
-kind: SonataFlowPlatform
-metadata:
-  name: sonataflow-platform
-spec:
-  services:
-    jobService: {}
-----
-
-If your use case requires persistence, Job Service supports a `postgresql` database.
-First, you need to create a secret with credentials to access your postgresql deployment.
-
-.Create a Secret for datasource authentication.
-[source,bash,subs="attributes+"]
-----
-kubectl create secret generic <creds-secret> --from-literal=POSTGRESQL_USER=<user> --from-literal=POSTGRESQL_PASSWORD=<password> --from-literal=POSTGRESQL_DATABASE=<db_name> -n workflows
-----
-
-.Example of a SonataFlowPlatform instance with a Job Service deployment persisted to a postgresql database
-[source,yaml,subs="attributes+"]
-----
-apiVersion: sonataflow.org/v1alpha08
-kind: SonataFlowPlatform
-metadata:
-  name: sonataflow-platform
-spec:
-  services:
-    jobService:
-      persistence:
-        postgresql:
-          secretRef:
-            name: <creds-secret> <1>
-          serviceRef:
-            name: <postgresql-service> <2>
-----
-
-<1> Name of your postgresql credentials secret
-<2> Name of your postgresql k8s service
-
-.Example of a SonataFlowPlatform instance with a persisted Job Service deployment and custom pod configuration
-[source,yaml,subs="attributes+"]
-----
-apiVersion: sonataflow.org/v1alpha08
-kind: SonataFlowPlatform
-metadata:
-  name: sonataflow-platform
-spec:
-  services:
-    jobService:
-      enabled: false <1>
-      persistence:
-        postgresql:
-          secretRef:
-            name: <creds-secret>
-            userKey: <secret-user-key> <2>
-          jdbcUrl: "jdbc:postgresql://host:port/database?currentSchema=data-index-service" <3>
-      podTemplate:
-        replicas: 1 <4>
-        container:
-          image: <image:tag> <5>
-----
-
-<1> Determines whether "preview" or "gitops" profile workflows should be configured to use this service, defaults to `true`
-<2> Secret key of your postgresql credentials user, defaults to `POSTGRESQL_USER`
-<3> PostgreSql JDBC URL
-<4> Number of Job Service pods, defaults to `1`
-<5> Custom Job Service container image name, if customization is required
-
-[#cluster-wide-services]
-== Cluster-Wide Supporting Services
-
-The `SonataFlowClusterPlatform` CR is optionally used to specify a cluster-wide set of supporting services for workflow consumption. This is done by referencing an existing, namespaced `SonataFlowPlatform` resource.
-
-Following is a basic configuration that allows workflows, deployed in any namespace, to leverage supporting services configured in the chosen "central" namespace.
-
-.Example of a basic SonataFlowClusterPlatform CR
-[source,yaml,subs="attributes+"]
+.Example of a SonataFlowClusterPlatform CR
+[source,yaml]
 ----
 apiVersion: sonataflow.org/v1alpha08
 kind: SonataFlowClusterPlatform
@@ -197,19 +235,30 @@ metadata:
   name: cluster-platform
 spec:
   platformRef:
-    name: sonataflow-platform
-    namespace: <central namespace>
+    name: sonataflow-platform-example <1>
+    namespace: example-namespace <2>
 ----
+
+<1> Name of the already installed `SonatataFlowPlatform` CR that configures the supporting services.
+<2> Namespace of the already installed `SontataFlowPlatform` CR that configures the supporting services.
 
 [NOTE]
 ====
 These cluster-wide services can be overridden in any namespace, by configuring that namespace's `SonataFlowPlatform.spec.services`.
 ====
 
+== Conclusions
+
+The {operator_name} extends its scope to manage the lifecycle of the xref:data-index/data-index-core-concepts.adoc[Data Index] and xref:job-services/core-concepts.adoc[Job Service] instances, thus removing the burden on the users and allowing them to focus on the implementation of the workflows.
+It takes care also of managing all the configurations to facilitate communication between the workflows and the supporting services.
+Additionally, it can manage different persistence options for each service, and advanced configurations.
+
+
 == Additional resources
 
-* xref:data-index/data-index-service.adoc[]
-* xref:cloud/operator/enabling-jobs-service.adoc[]
+* xref:data-index/data-index-core-concepts.adoc[]
+* xref:job-services/core-concepts.adoc[Job Service Core Concepts]
+* xref:cloud/operator/using-persistence.adoc[]
 * xref:cloud/operator/known-issues.adoc[]
 
 include::../../../pages/_common-content/report-issue.adoc[]

@@ -10,13 +10,16 @@ Kubernetes's pods are stateless by definition. In some scenarios, this can be a 
 the application regardless of the pod's lifecycle. In the case of {product_name}, by default, the context of the workflow is lost when the pod restarts.
 
 If your workflow requires recovery from such scenarios, you must provide additional configuration to enable the xref:persistence/core-concepts.adoc#_workflow_runtime_persistence[Workflow Runtime Persistence].
-That configuration must be provided by using the <<_configuring_the_persistence_using_the_sonataflowplatform_cr, `SonataFlowPlatform` CR>> or the <<_configuring_the_persistence_using_the_sonataflow_cr, `SonataFlow` CR>>, and has different scopes depending on each case.
+That configuration must be provided by using the <<configuring-persistence-using-the-sonataflowplatform-cr, `SonataFlowPlatform` CR>> or the <<_configuring_the_persistence_using_the_sonataflow_cr, `SonataFlow` CR>>, and has different scopes depending on each case.
 
+[#configuring-persistence-using-the-sonataflowplatform-cr]
 == Configuring the persistence using the SonataFlowPlatform CR
 
 The `SonataFlowPlatform` CR facilitates the configuration of the persistence with namespace scope. It means that it will be automatically applied to all the workflows deployed in
 that namespace. This can be useful to reduce the amount resources to configure, for example, in cases where the workflows deployed in that namespace belongs to the same application, etc.
 That decision is left to each particular use case, however, it's important to know, that this configuration can be overridden by any workflow in that namespace by using the <<_configuring_the_persistence_using_the_sonataflow_cr, `SonataFlow` CR>>.
+
+Finally, the {operator_name} can also use this configuration to set the xref:cloud/operator/supporting-services.adoc#common-persistence-configuration[supporting service's persistence].
 
 [NOTE]
 ====
@@ -31,30 +34,31 @@ To configure the persistence you must use the `persistence` field in the SonataF
 apiVersion: sonataflow.org/v1alpha08
 kind: SonataFlowPlatform
 metadata:
-  name: sonataflow-platform
+  name: sonataflow-platform-example
+  namespace: example-namespace
 spec:
   persistence:
     postgresql:
-      secretRef:
-        name: postgres-secrets <1>
-        userKey: POSTGRESQL_USER <2>
-        passwordKey: POSTGRESQL_PASSWORD <3>
       serviceRef:
-        name: postgres <4>
-        namespace: sonataflow-infra <5>
-        databaseName: sonataflow <6>
-        port: 1234 <7>
+        name: postgres-example <1>
+        namespace: postgres-example-namespace <2>
+        databaseName: example-database <3>
+        port: 1234 <4>
+      secretRef:
+        name: postgres-secrets-example <5>
+        userKey: POSTGRESQL_USER <6>
+        passwordKey: POSTGRESQL_PASSWORD <7>
 ----
 
-<1> Name of the link:{k8n_secrets_url}[Kubernetes Secret] containing the username and password to connect with the database.
-<2> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the username to connect with the database.
-<3> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the password to connect with the database.
-<4> Name of the Kubernetes Service to connect with the PostgreSQL database server.
-<5> (Optional) Kubernetes namespace containing the PostgreSQL Service. Defaults to the `SonataFlowPlatform`'s local namespace.
-<6> Name of the PostgreSQL database to store the workflow's data.
-<7> (Optional) Port number to connect with the PostgreSQL Service. Defaults to 5432.
+<1> Name of the Kubernetes Service to connect with the PostgreSQL database server.
+<2> (Optional) Kubernetes namespace containing the PostgreSQL Service. Defaults to the `SonataFlowPlatform's` local namespace.
+<3> Name of the PostgreSQL database to store the workflow's data.
+<4> (Optional) Port number to connect with the PostgreSQL Service. Defaults to 5432.
+<5> Name of the link:{k8n_secrets_url}[Kubernetes Secret] containing the username and password to connect with the database.
+<6> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the username to connect with the database.
+<7> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the password to connect with the database.
 
-This configuration signals the operator that every workflow deployed in the current `SonataFlowPlatform`'s namespace must be properly configured to connect with that PostgreSQL database server.
+This configuration signals the operator that every workflow deployed in the current `SonataFlowPlatform's` namespace must be properly configured to connect with that PostgreSQL database server.
 And the operator will add the relevant JDBC connection parameters in the form of environment variables to the workflow container.
 
 Additionally, for `SonataFlow` CR deployments that use the `preview` profile, it will configure the {product_name} build system to include specific Quarkus extensions required for persistence.
@@ -75,18 +79,18 @@ For simplicity, only the `env` configurations related to the persistence has bee
         - name: QUARKUS_DATASOURCE_USERNAME
           valueFrom:
             secretKeyRef:
-              name: postgres-secrets
+              name: postgres-secrets-example
               key: POSTGRESQL_USER
         - name: QUARKUS_DATASOURCE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: postgres-secrets
+              name: postgres-secrets-example
               key: POSTGRESQL_PASSWORD
         - name: QUARKUS_DATASOURCE_DB_KIND
           value: postgresql
         - name: QUARKUS_DATASOURCE_JDBC_URL
           value: >-
-            jdbc:postgresql://postgres.sonataflow-infra:1234/sonataflow?currentSchema=example-workflow
+            jdbc:postgresql://postgres-example.postgres-example-namespace:1234/sonataflow?currentSchema=example-workflow
         - name: KOGITO_PERSISTENCE_TYPE
           value: jdbc
 ----
@@ -117,28 +121,29 @@ metadata:
 spec:
   persistence:
     postgresql:
-      secretRef:
-        name: postgres-secrets <1>
-        userKey: POSTGRESQL_USER <2>
-        passwordKey: POSTGRESQL_PASSWORD <3>
       serviceRef:
-        name: postgres <4>
-        namespace: sonataflow-infra <5>
-        databaseName: sonataflow <6>
-        databaseSchema: my-example-schema <7>
-        port: 1234 <8>
+        name: postgres-example <1>
+        namespace: postgres-example-namespace <2>
+        databaseName: example-database <3>
+        databaseSchema: example-schema <4>
+        port: 1234 <5>
+      secretRef:
+        name: postgres-secrets-example <6>
+        userKey: POSTGRESQL_USER <7>
+        passwordKey: POSTGRESQL_PASSWORD <8>
   flow:
      ...
 ----
 
-<1> Name of the link:{k8n_secrets_url}[Kubernetes Secret] containing the username and password to connect with the database.
-<2> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the username to connect with the database.
-<3> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the password to connect with the database.
-<4> Name of the Kubernetes Service to connect with the PostgreSQL database server.
-<5> (Optional) Kubernetes namespace containing the PostgreSQL Service. Defaults to the workflow's local namespace.
-<6> Name of the PostgreSQL database to store the workflow's data.
-<7> (Optional) Name of the database schema to store workflow's data. Defaults to the workflow's name.
-<8> (Optional) Port number to connect with the PostgreSQL Service. Defaults to 5432.
+<1> Name of the Kubernetes Service to connect with the PostgreSQL database server.
+<2> (Optional) Kubernetes namespace containing the PostgreSQL Service. Defaults to the workflow's local namespace.
+<3> Name of the PostgreSQL database to store the workflow's data.
+<4> (Optional) Name of the database schema to store workflow's data. Defaults to the workflow's name.
+<5> (Optional) Port number to connect with the PostgreSQL Service. Defaults to 5432.
+<6> Name of the link:{k8n_secrets_url}[Kubernetes Secret] containing the username and password to connect with the database.
+<7> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the username to connect with the database.
+<8> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the password to connect with the database.
+
 
 This configuration signals the operator that the current workflow must be properly configured to connect with that PostgreSQL database server when deployed.
 Similar to the `SonataFlowPlatform` persistence, the operator will add the relevant JDBC connection parameters in the form of <<persistence_env_vars_config_example, environment variables>> to the workflow container.
@@ -154,9 +159,9 @@ To learn how to initialize the database schema see: <<_database_schema_initializ
 
 == Persistence configuration precedence rules
 
-<<_configuring_the_persistence_using_the_sonataflow_cr, `SonataFlow` CR persistence>> can be used with or without the <<_configuring_the_persistence_using_the_sonataflowplatform_cr, `SonataFlowPlatform` CR persistence>>.
+<<configuring-persistence-using-the-sonataflowplatform-cr, `SonataFlow` CR persistence>> can be used with or without the <<configuring-persistence-using-the-sonataflowplatform-cr, `SonataFlowPlatform` CR persistence>>.
 
-And, if the current namespace has an already configured <<_configuring_the_persistence_using_the_sonataflowplatform_cr, `SonataFlowPlatform` CR persistence>>, the following rules apply:
+And, if the current namespace has an already configured <<configuring-persistence-using-the-sonataflowplatform-cr, `SonataFlowPlatform` CR persistence>>, the following rules apply:
 
 * If the `SonataFlow` CR has a configured persistence, that configuration will apply.
 * If the `SonataFlow` CR has no configured persistence, i.e., the field `spec.persistence` is not present at all, the persistence configuration will be taken from the current platform.
@@ -280,7 +285,7 @@ To initialize the database schema manually, you must be sure that the following 
 Remember that:
 
 * By default, every workflow is configured use a schema name equal to the workflow name, and thus, that manual initialization must be applied for every workflow.
-* When you use the <<_configuring_the_persistence_using_the_sonataflow_cr, `SonataFlow` CR persistence configuration>> it is possible to use the schema name of your choice.
+* When you use the <<configuring-persistence-using-the-sonataflowplatform-cr, `SonataFlow` CR persistence configuration>> it is possible to use the schema name of your choice.
 ====
 
 == Conclusion
