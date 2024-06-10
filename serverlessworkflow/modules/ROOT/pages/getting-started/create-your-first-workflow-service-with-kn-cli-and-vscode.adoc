@@ -47,6 +47,11 @@ To deploy the finished project to a local cluster, proceed to the next section.
 
 Use the `deploy` command with kn workflow to deploy the {product_name} project into your local cluster.
 
+* Create a namespace for your application
+[source,bash]
+----
+kubectl create namespace my-sf-application
+----
 * Deploy to cluster
 [source,bash]
 ----
@@ -65,7 +70,7 @@ Minikube::
 minikube service hello --namespace my-sf-application --url
 ----
 * Use this URL to access your workflow instances using the Developer UI
-** <RETURNED_URL>{sonataflow_devmode_devui_url}workflowInstances
+** <RETURNED_URL>{sonataflow_devmode_devui_url}workflows
 --
 Kind::
 +
@@ -90,7 +95,7 @@ kubectl port-forward service/hello <RANDOM_PORT>:80 -n my-sf-application
 * To stop the deployment, use the `undeploy` command:
 [source,bash]
 ----
-kn worklow undeploy --namespace my-sf-application
+kn workflow undeploy --namespace my-sf-application
 ----
 * You can validate your pod is terminating using k9s cli.
 
