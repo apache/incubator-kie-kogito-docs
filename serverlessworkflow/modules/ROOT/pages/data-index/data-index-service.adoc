@@ -13,7 +13,7 @@
 [#data-index-service]
 == {data_index_ref} service deployment
 
-{data_index_ref} service can be deployed referencing directly a distributed {data_index_ref} image. There are different images provided that take into account what persistence layer is required in each case.
+{data_index_ref} service can be deployed by referencing a distributed {data_index_ref} image directly. There are different images provided that take into account what persistence layer is required in each case.
 In each distribution, there are some properties to configure things like the connection with the database or the communication with other services.
 The goal is to configure the container to allow to process ProcessInstances and Jobs *events* that incorporate their related data, to index and store that in the database and finally, to provide the xref:data-index/data-index-core-concepts.adoc#data-index-graphql[{data_index_ref} GraphQL] endpoint to consume it.
 
@@ -29,7 +29,7 @@ There are several ways to deploy the {data_index_ref} service. But there are som
 
 . Reference the right {data_index_ref} image to match with the type of Database that will store the indexed data.
 . Provide the database connection properties, to allow data index store the indexed data. {data_index_ref} service does not initialize its database schema automatically. To initialize the database schema, you need to enable Flyway migration by setting QUARKUS_FLYWAY_MIGRATE_AT_START=true.
-. Define the `KOGITO_DATA_INDEX_QUARKUS_PROFILE` to set the way that the events will be connected (by default: `kafka-event-support`).
+. Define the `KOGITO_DATA_INDEX_QUARKUS_PROFILE` to set the way that the events will be connected (by default: `kafka-events-support` but could be also `http-events-support`).
 
 [NOTE]
 ====
@@ -187,7 +187,7 @@ spec:
             - name: QUARKUS_FLYWAY_MIGRATE_AT_START <4>
               value: "true"
             - name: KOGITO_DATA_INDEX_QUARKUS_PROFILE <3>
-              value: "http-events-support"
+              value: http-events-support
             - name: QUARKUS_HTTP_PORT
               value: "8080"
 ---
