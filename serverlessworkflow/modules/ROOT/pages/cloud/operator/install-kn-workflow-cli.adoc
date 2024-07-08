@@ -1,0 +1,90 @@
+= Installing the Knative Workflow Plugin
+:compat-mode!:
+// Metadata:
+:description: Install the operator on Kubernetes clusters
+:keywords: kogito, sonataflow, workflow, serverless, operator, kubernetes, minikube, openshift, containers
+// links
+
+*Prerequisites*
+
+https://75129--ocpdocs-pr.netlify.app/openshift-serverless/latest/install/installing-kn
+
+* You have first installed the  link:https://76490--ocpdocs-pr.netlify.app/openshift-serverless/latest/install/installing-kn[Knative CLI].
+
+== Installing the Knative Workflow Plugin using the artifacts image
+
+To install the Knative Workflow Plugin using the artifacts image you must follow this procedure:
+
+*Start the `kn-workflow-cli-artifacts-rhel8` image*
+
+[source, shell]
+----
+export KN_IMAGE=registry.redhat.io/openshift-serverless-1/kn-workflow-cli-artifacts-rhel8:1.33.0
+
+export KN_CONTAINER_ID=$(docker run -di $KN_IMAGE)
+----
+
+*Copy the Knative Workflow Plugin binary according to your environment*
+
+.Binaries copy for `Linux` amd64 / arm64 architectures
+[source, shell]
+----
+docker cp $KN_CONTAINER_ID:/usr/share/kn/linux_amd64/kn-workflow-linux-amd64.tar.gz kn-workflow-linux-amd64.tar.gz
+
+docker cp $KN_CONTAINER_ID:/usr/share/kn/linux_arm64/kn-workflow-linux-arm64.tar.gz kn-workflow-linux-arm64.tar.gz
+----
+
+.Binaries copy for `macOS` amd64 / arm64 architectures
+[source, shell]
+----
+docker cp $KN_CONTAINER_ID:/usr/share/kn/macos_amd64/kn-workflow-macos-amd64.tar.gz kn-workflow-macos-amd64.tar.gz
+
+docker cp $KN_CONTAINER_ID:/usr/share/kn/macos_arm64/kn-workflow-macos-arm64.tar.gz kn-workflow-macos-arm64.tar.gz
+----
+
+.Binaries copy for `Windows` amd64 architecture
+[source, shell]
+----
+docker cp $KN_CONTAINER_ID:/usr/share/kn/windows/kn-workflow-windows-amd64.zip kn-workflow-windows-amd64.zip
+----
+
+*Stop the Container*
+
+[source, shell]
+----
+docker stop $KN_CONTAINER_ID
+
+docker rm $KN_CONTAINER_ID
+----
+
+*Extract the selected Knative Workflow Plugin binary*
+
+.Extract the binary example
+[source,shell]
+----
+tar xvzf kn-workflow-linux-amd64.tar.gz <install_dir_path>
+----
+
+In the `<install_dir_path>`, you'll find the `kn` executable that you must rename to `kn-workflow`
+
+[source,shell]
+----
+mv <install_dir_path>/kn <install_dir_path>/kn-workflow
+----
+
+[IMPORTANT]
+====
+Make sure that `<install_dir_path>` is included in your system PATH.
+====
+
+To verify that the installation was successful, you can execute the following command:
+[source,shell]
+----
+kn workflow version
+----
+output:
+[source,shell]
+----
+1.33.0
+----
+
