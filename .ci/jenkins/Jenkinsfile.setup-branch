@@ -23,6 +23,8 @@ import org.jenkinsci.plugins.workflow.libs.Library
 
 pipeline {
     agent {
+        image env.AGENT_DOCKER_BUILDER_IMAGE
+        args env.AGENT_DOCKER_BUILDER_ARGS
         label util.avoidFaultyNodes('ubuntu')
     }
 
@@ -32,7 +34,7 @@ pipeline {
     }
 
     environment {
-        CI_EMAIL_TO = credentials("${JENKINS_EMAIL_CREDS_ID}")\
+        CI_EMAIL_TO = credentials("${JENKINS_EMAIL_CREDS_ID}")
         PR_BRANCH_HASH = "${util.generateHash(10)}"
     }
 
