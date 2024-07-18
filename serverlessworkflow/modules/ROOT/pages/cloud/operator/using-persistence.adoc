@@ -256,7 +256,7 @@ spec:
 
 === Flyway configuration by using SonataFlowPlatForm properties
 
-To apply a common Flyway configuration to all the workflows in a given namespace, you can use the `spec.properties` of the `SonataFlowPlatform` in that namespace.
+To apply a common Flyway configuration to all the workflows in a given namespace, you can use the `spec.properties.flow` of the `SonataFlowPlatform` in that namespace.
 
 .Example of enabling Flyway by using the SonataFlowPlatform properties.
 [source,yaml]
@@ -267,13 +267,14 @@ metadata:
   name: sonataflow-platform
 spec:
   properties:
-    - name: quarkus.flyway.migrate-at-start
-      value: true
+       flow:
+          - name: quarkus.flyway.migrate-at-start
+            value: true
 ----
 
 [NOTE]
 ====
-The configuration above takes effect at workflow deployment time, so you must be sure that property is configured before you deploy your workflows.
+The configuration above takes effect at workflow deployment time, so you must be sure that the property is configured before you deploy your workflows.
 ====
 
 === Manual database initialization by using DDL
