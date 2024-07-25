@@ -120,12 +120,9 @@ The `create` command sets up {product_name} project containing a minimal "hello 
 * {product_name} plug-in for Knative CLI is installed.
 +
 For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plug-in for Knative CLI>>.
-ifeval::["{kogito_version_redhat}" != ""]
-* You followed the steps in xref:use-cases/advanced-developer-use-cases/getting-started/create-your-first-workflow-service.adoc#proc-configuring-maven-rhbq[Configuring your Maven project to Red Hat build of Quarkus and OpenShift Serverless Logic]
-endif::[]
 
 .Procedure
-. In Knative CLI, enter the following command to create a new project:
+. You can use the following command to create a new project:
 +
 --
 .Creates a project named `new-project`
@@ -143,12 +140,21 @@ kn workflow create --name my-project
 ----
 --
 
+This will scaffold a directory named `my-project` with a simple workflow in JSON format. You can overwrite the format of the workflow to YAML by using the `[--yaml-workflow]` flag as follows:
+
+.Create a project named `my-project` with default workflow in YAML format
+[source,shell]
+----
+kn workflow create --name my-project --yaml-workflow
+----
+--
+
 [[proc-build-sw-project-kn-cli]]
 == Running a workflow project using Knative CLI
 
-After creating your workflow project, you can use the `run` command with `kn workflow` to build & run your workflow project in your current directory. 
+After creating your workflow project, you can use the `run` command with `kn workflow` to build & run your workflow project. You must be in the root folder of your workflow project.
 
-This will start a {product_name} docker image and map your local folder to this image.
+This plugin will build your project and start a {product_name} container image that will be mapped to your local folder. 
 
 .Prerequisites
 * {product_name} plug-in for Knative CLI is installed.
@@ -158,11 +164,10 @@ For more information about installing the plug-in, see <<proc-install-sw-plugin-
 * A workflow project is created.
 +
 For more information about creating a workflow project, see <<proc-create-sw-project-kn-cli, Creating workflow project using Knative CLI>>.
-* Minikube cluster is running locally.
 
 
 .Procedure
-. In Knative CLI, enter the following command to build and run your workflow project:
+. Enter the following command to build and run your workflow project:
 +
 --
 .Run the project and start a local development image.
@@ -171,7 +176,17 @@ For more information about creating a workflow project, see <<proc-create-sw-pro
 kn workflow run
 ----
 --
-. Once the project is ready, the Development UI will be opened up in a browser automatically (on `localhost:8080/q/dev`).
+. Once the project is ready, the Development UI will be opened up in a browser automatically (on `localhost:8080/q/dev`). You can disable this behavior by using the `[--open-dev-ui=false] flag`
+. While running, any changes to your workflow project are detected and the image is rebuilt, allowing you so quickly develop the project.
+
+By default, the development image is using port `8080`. You can map it to a different port using the `[--port <string>]` flag as follows:
+
+.Run a project and start a local development image using different port
+[source,shell]
+----
+kn workflow run --port 8081
+----
+--
 
 [[proc-deploy-sw-project-kn-cli]]
 == Deploying a workflow project using Knative CLI
