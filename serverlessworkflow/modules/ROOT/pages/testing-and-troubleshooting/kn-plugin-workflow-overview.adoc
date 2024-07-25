@@ -7,9 +7,11 @@
 // links
 :apple_support_url: https://support.apple.com/guide/mac-help/mh40616/mac
 
-{product_name} provides a plug-in named `kn-plugin-workflow` for Knative CLI, which enables you to set up a local workflow project quickly using the command line.
+{product_name} provides a plug-in named `kn-workflow` for Knative CLI, which provides command line features that help you develop a local workflow project quickly. 
 
-This document describes how you can install and use the `kn-plugin-workflow` plug-in in {product_name}.
+This document describes how you can install and use the `kn-workflow` plug-in in {product_name}.
+
+You can also find brief introduction for some of the commands that the plugin provides.
 
 [[proc-install-sw-plugin-kn-cli]]
 == Installing the {product_name} plug-in for Knative CLI
@@ -25,19 +27,23 @@ You can use the {product_name} plug-in to set up your local workflow project qui
 * link:{kn_cli_install_url}[Knative CLI] is installed.
 
 .Procedure
-. Download the latest binary file from the link:{kie_tools_releases_page_url}[KIE Tooling Releases] page.
+. Download the latest binary file, suitable for your environment, from the link:{kie_tools_releases_page_url}[KIE Tooling Releases] page.
 . Install the `kn workflow` command as a plug-in of the Knative CLI using the following steps:
 +
 --
-.. Copy the `kn-workflow` binary file to a directory in your `PATH`, such as `/usr/local/bin` and ensure that the file name is `kn-workflow`.
+.. Rename the downloaded binary as follows:
++
+mv kn-workflow-linux-amd64 kn-workflow
++
 .. Make the binary file executable as follows:
 +
-`chmod +x /usr/local/bin/kn-workflow`
+`chmod +x kn-workflow`
 +
 [WARNING]
 ==== 
 On Mac, some systems might block the application to run due to Apple enforcing policies. To fix this problem, check the *Security & Privacy* section in the *System Preferences* -> *General* tab to approve the application to run. For more information, see link:{apple_support_url}[Apple support article: Open a Mac app from an unidentified developer].
 ====
+.. Copy the `kn-workflow` binary file to `/usr/local/bin`.
 .. Run the following command to verify that `kn-workflow` plug-in is installed successfully:
 +
 `kn plugin list`
