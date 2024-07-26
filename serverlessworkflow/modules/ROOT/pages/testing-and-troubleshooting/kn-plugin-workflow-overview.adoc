@@ -188,10 +188,12 @@ kn workflow run --port 8081
 ----
 --
 
-[[proc-deploy-sw-project-kn-cli]]
-== Deploying a workflow project using Knative CLI
+[[proc-gen-manifests-sw-project-kn-cli]]
+== Generating a list of Operator manifests using Knative CLI
 
-You can use the `deploy` command combined with `kn workflow` to deploy your workflow project in your current directory. 
+After creating your workflow project, you can use the `gen-manifest` command with `kn workflow` to generate operator manifest files for your workflow project in your current directory. 
+
+This will screate a new file in `./manifests` directory in your project.
 
 .Prerequisites
 * {product_name} plug-in for Knative CLI is installed.
@@ -202,16 +204,57 @@ For more information about installing the plug-in, see <<proc-install-sw-plugin-
 +
 For more information about creating a workflow project, see <<proc-create-sw-project-kn-cli, Creating workflow project using Knative CLI>>.
 
-* A minikube cluster is running locally.
+* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
+
 
 .Procedure
-. In Knative CLI, enter the following command to deploy your workflow project:
+. Enter the following command to generate operator manifests for your workflow project:
 +
 --
-.Deploy a workflow project
+.Generate the operator manifest files for your project.
 [source,shell]
 ----
-kn workflow deploy
+kn workflow gen-manifest
+----
+--
+. Apply the generated operator manifest to your cluster:
++
+--
+.Apply the manifest file.
+[source,shell]
+----
+kubectl apply -f manifests/01-sonataflow_hello.yaml -n <namespace>
+----
+--
+
+For more options with `gen-manifest` command use `[-h|--help]`. 
+
+[[proc-deploy-sw-project-kn-cli]]
+== Deploying a workflow project using Knative CLI
+
+You can use the `deploy` command combined with `kn workflow` to deploy your workflow project. You must be in the root folder of your workflow project. 
+
+.Prerequisites
+* {product_name} plug-in for Knative CLI is installed.
++
+For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plug-in for Knative CLI>>.
+
+* A workflow project is created.
++
+For more information about creating a workflow project, see <<proc-create-sw-project-kn-cli, Creating workflow project using Knative CLI>>.
+
+* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
+
+* You have installed {operator_name} in your kubernetes cluster according to xref:cloud/operator/install-serverless-operator.adoc[operator installation] guide.
+
+.Procedure
+. Enter the following command to deploy your workflow project:
++
+--
+.Deploy a workflow project, you must specify a namespace
+[source,shell]
+----
+kn workflow deploy --namespace <your_namespace>
 ----
 
 Also, ensure that you have access to your cluster and your cluster can access the generated container image.
@@ -238,7 +281,7 @@ ifeval::["{kogito_version_redhat}" != ""]
 endif::[]
 
 .Procedure
-. In Knative CLI, enter the following command to create a new project:
+. Enter the following command to create a new project:
 +
 --
 .Creates a project named `new-project`
@@ -271,6 +314,8 @@ When you run the `create` command for the first time, it might take a while due 
 ====
 --
 
+For more options with `quarkus create` command use `[-h|--help]`. 
+
 [[proc-build-quarkus-sw-project-kn-cli]]
 == Building a Quarkus workflow project using Knative CLI
 
@@ -288,7 +333,7 @@ For more information about installing the plug-in, see <<proc-install-sw-plugin-
 For more information about creating a workflow project, see <<proc-create-sw-project-kn-cli, Creating workflow project using Knative CLI>>.
 
 .Procedure
-. In Knative CLI, enter the following command to build your workflow project:
+. Enter the following command to build your workflow project:
 +
 --
 .Build the project and generate a local image named `dev.local/my-project`
@@ -386,6 +431,8 @@ kn workflow quarkus build --image my-project --push
 ----
 --
 
+For more options with `quarkus build` command use `[-h|--help]`. 
+
 [[proc-deploy-quarkus-sw-project-kn-cli]]
 == Deploying a Quarkus workflow project using Knative CLI
 
@@ -404,8 +451,10 @@ For more information about created a workflow project, see <<proc-create-sw-proj
 +
 For more information about building your workflow project, see <<proc-build-sw-project-kn-cli, Building workflow project using Knative CLI>>.
 
+* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
+
 .Procedure
-. In Knative CLI, enter the following command to deploy your workflow project:
+. Enter the following command to deploy your workflow project:
 +
 --
 .Deploy a workflow project
@@ -416,10 +465,10 @@ kn workflow quarkus deploy
 
 If the deployment files (`knative.yml` and `kogito.yml`) are saved in any other folder instead of `./target/kubernetes`, then you can override the path using the `--path` flag with deployment command as follows:
 
-.Deploy a workflow project using `--path`
+.Deploy a workflow project using `--path` with `knative.yml`
 [source,shell]
 ----
-kn workflow quarkus deploy --path other-path
+kn workflow quarkus deploy --path <other_path>
 ----
 
 Also, ensure that you have access to your cluster and your cluster can access the generated container image.
@@ -434,6 +483,6 @@ You can use the `kubectl` command line if you want to use a complex deployment s
 == Additional resources
 
 * xref:getting-started/create-your-first-workflow-service-with-kn-cli-and-vscode.adoc[Creating your first SonataFlow project]
-* xref:use-cases/advanced-developer-use-cases/getting-started/create-your-first-workflow-service.adoc[Creating your first Quarkus Workflow project]
+* xref:use-cases/advanced-developer-use-cases/getting-started/create-your-first-workflow-service.adoc[Creating your first SonataFlow project with Quarkus]
 
 include::../../pages/_common-content/report-issue.adoc[]
