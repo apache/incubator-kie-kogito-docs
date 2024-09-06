@@ -136,6 +136,16 @@ spec:
 
 Similar to a deployment spec, a serverless workflow has a spec.podTemplate, with minor differences, but the change is almost identical.
 In this case, we are mounting some ingress ca-bundle because we want our workflow to reach the `.apps.my-cluster-name.my-cluster-domain` SSL endpoint.
+
+In this example, we pull the ingress CA of OpenShift's ingress deployment because this is the CA that signs the target routes' certificates. It can be any CA that is signing the target service certificate.
+Here's how to copy the ingress ca cert to the desired namespace:
+
+[source,shell]
+---
+kubectl config set-context --current --namespace=my-namespace
+kubectl get cm -n openshift-config-managed default-ingress-cert  -o yaml | awk '!/namespace:.*$/' | sed 's/default-ingress-cert/ingress-ca/'  | kubectl create -f -
+---
+
 Here is the relevant spec section of a workflow with the changes:
 
 [source,yaml]
