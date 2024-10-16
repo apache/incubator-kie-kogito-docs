@@ -239,6 +239,59 @@ In the previous example, a CloudEvent was published when the state transitioned.
 data={"gitRepo":"ssh://bitbucket.org/m2k-test","branch":"aaaaaaasssss","token":null,"workspaceId":"b93980cb-3943-4223-9441-8694c098eeb9","projectId":"9b305fe3-d441-48ce-b01b-d314e86e14ec","transformId":"723dce89-c25c-4c7b-9ef3-842de92e6fe6","workflowCallerId":"7ddb5193-bedc-4942-a857-596b31f377ed"}
 ----
 
+== ForEach state 
+
+ForEach `iteratiomParam` should be accessed as a variable, using a `$` prefix,  not as a JSON property, since the loop variable is not part of the workflow model the expression is evaluated against. Therefore, instead of accessing it like a JSON property (with a `.` prefix), the loop variable should be referenced with a `$` prefix
+
+For instance, this link:{spec_doc_url}#foreach-state[ForEach specification example]
+
+[source,json]
+----
+ "states": [
+  {
+      "name":"SendConfirmState",
+      "type":"foreach",
+      "inputCollection": "${ [.orders[] | select(.completed == true)] }",
+      "iterationParam": "completedorder",
+      "outputCollection": "${ .confirmationresults }",
+      "actions":[
+      {
+       "functionRef": {
+         "refName": "sendConfirmationFunction",
+         "arguments": {
+           "orderNumber": "${ .completedorder.orderNumber }",
+           "email": "${ .completedorder.email }"
+         }
+       }
+      }],
+      "end": true
+  }]
+----
+
+should be modified to
+
+----
+ "states": [
+  {
+      "name":"SendConfirmState",
+      "type":"foreach",
+      "inputCollection": "${ [.orders[] | select(.completed == true)] }",
+      "iterationParam": "completedorder",
+      "outputCollection": "${ .confirmationresults }",
+      "actions":[
+      {
+       "functionRef": {
+         "refName": "sendConfirmationFunction",
+         "arguments": {
+           "orderNumber": "${ $completedorder.orderNumber }",
+           "email": "${ $completedorder.email }"
+         }
+       }
+      }],
+      "end": true
+  }]
+----
+
 
 == Workflow secrets, constants and context
 
