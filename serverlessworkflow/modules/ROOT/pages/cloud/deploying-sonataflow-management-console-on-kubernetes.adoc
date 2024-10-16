@@ -1,7 +1,7 @@
-= Deploying {product_name} Management Console on OpenShift
+= Deploying {product_name} Management Console on Kubernetes
 :compat-mode!:
 // Metadata:
-:description: Deploying Management Console on OpenShift
+:description: Deploying Management Console on Kubernetes
 :keywords: kogito, workflow, quarkus, serverless, kn, oc, openshift, sonataflow
 :table-caption: Data Set
 // envs for common content
@@ -11,20 +11,18 @@
 :command_line_tool_name: OpenShift CLI
 :ocp_name: OpenShift Container Platform
 :platform: OpenShift
-// links
-:ocp_cli_url: https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html#cli-about-cli_cli-developer-commands
 
 
-This document describes how to deploy the {product_name} Management Console using on OpenShift.
+This document describes how to deploy the {product_name} Management Console using on Kubernetes.
 
 The SonataFlow Management Console is a web interface designed to manage and monitor workflows. It allows users to initiate workflows, trigger Cloud Events, and monitor their execution.
 
 .Prerequisites
-* Your xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-openshift.adoc[{product_name} application] is deployed and ready to use.
-* link:{ocp_cli_url}[OpenShift CLI] is installed.
-* (Optional) xref:security/orchestrating-third-party-services-with-oauth2.adoc[Keycloak server] is installed in OpenShift.
+* Your xref:cloud/operator/build-and-deploy-workflows.adoc[{product_name} application] is deployed and ready to use.
+* A Kubernetes or OpenShift cluster with admin privileges and kubectl installed.
+* (Optional) xref:security/orchestrating-third-party-services-with-oauth2.adoc[Keycloak server] is installed.
 
-== Set up {ocp_name} and deploy your SonataFlow application on OpenShift
+== Set up {ocp_name} and deploy your SonataFlow application
 
 The SonataFlow Management Console relies on the underlying services of the SonataFlow application, including the Data Index service. The Data Index provides data from workflow executions, enabling the Management Console to display workflow information. 
 
@@ -139,6 +137,13 @@ spec:
 ----
 kubeclt apply -f osl-management-console-route.yaml
 ----
+
+== Create the Ingress (Kubernetes only)
+
+For Kubernetes you can expose the SonataFlow Management Console using an Ingress.
+
+To create an Ingress, refer to the official Kubernetes documentation here: link:https://kubernetes.io/docs/concepts/services-networking/ingress/[Kubernetes Ingress Guide].
+
 
 == Optional: Keycloak authentication for Production
 
