@@ -1,4 +1,4 @@
-= Deploying {product_name} Management Console on Kubernetes
+= Deploying {product_name} Management Console on {platform}
 :compat-mode!:
 // Metadata:
 :description: Deploying Management Console on Kubernetes
@@ -6,23 +6,21 @@
 :table-caption: Data Set
 // envs for common content
 :management_console: SonataFlow Management Console
-:registry: OpenShift's
-:command_line_tool: oc
-:command_line_tool_name: OpenShift CLI
-:ocp_name: OpenShift Container Platform
-:platform: OpenShift
+:management_console_prefix: sonataflow-management-console
+:command_line_tool: kubectl
+:platform: Kubernetes
 
 
-This document describes how to deploy the {product_name} Management Console using on Kubernetes.
+This document describes how to deploy the {product_name} Management Console on {platform}
 
 The SonataFlow Management Console is a web interface designed to manage and monitor workflows. It allows users to initiate workflows, trigger Cloud Events, and monitor their execution.
 
 .Prerequisites
 * Your xref:cloud/operator/build-and-deploy-workflows.adoc[{product_name} application] is deployed and ready to use.
-* A Kubernetes or OpenShift cluster with admin privileges and kubectl installed.
+* A {platform} or OpenShift cluster with admin privileges and {command_line_tool} installed.
 * (Optional) xref:security/orchestrating-third-party-services-with-oauth2.adoc[Keycloak server] is installed.
 
-== Set up {ocp_name} and deploy your SonataFlow application
+== Set up {platform} and deploy your SonataFlow application
 
 The SonataFlow Management Console relies on the underlying services of the SonataFlow application, including the Data Index service. The Data Index provides data from workflow executions, enabling the Management Console to display workflow information. 
 
@@ -36,31 +34,31 @@ Ensure that your Data Index service is deployed and accessible before deploying 
 
 _If you already have Keycloak deployment or server available you can skip this section._
 
-For production environments, deploy Keycloak to handle authentication or choose your orwn OAuth2 server. You can refer to the SonataFlow Keycloak documentation xref:security/orchestrating-third-party-services-with-oauth2.adoc[here].
+For production environments, deploy Keycloak to handle authentication or choose your own OAuth2 server. You can refer to the SonataFlow Keycloak documentation xref:security/orchestrating-third-party-services-with-oauth2.adoc[here].
 
 == Deploy {management_console}
 
 Create the deployment for the SonataFlow Management Console by applying the following YAML definition:
 
-.Example configuration in `osl-management-console-deployment.yaml`
+.Example configuration in `{management_console_prefix}-deployment.yaml`
 [source,yaml,subs="attributes+"]
 ----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: osl-management-console
+  name: {management_console_prefix}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: osl-management-console
+      app: {management_console_prefix}
   template:
     metadata:
       labels:
-        app: osl-management-console
+        app: {management_console_prefix}
     spec:
       containers:
-        - name: osl-management-console
+        - name: {management_console_prefix}
           image: {sonataflow_management_console_imagename}:latest
           imagePullPolicy: Always
           ports:
@@ -78,25 +76,25 @@ spec:
 Please note it's required the Data Index URL to be exposed.
 
 .Apply {management_console} Deployment
-[source,shell]
+[source,shell,subs="attributes+"]
 ----
-kubeclt apply -f osl-management-console-deployment.yaml
+{command_line_tool} apply -f {management_console_prefix}-deployment.yaml
 ----
 
 == Create the Service
 
 Once the deployment is created, expose it through a service. Create a service definition by applying the following YAML:
 
-.Example configuration in `osl-management-console-service.yaml`
-[source,yaml]
+.Example configuration in `{management_console_prefix}-service.yaml`
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: v1
 kind: Service
 metadata:
-  name: osl-management-console-service
+  name: {management_console_prefix}-service
 spec:
   selector:
-    app: osl-management-console
+    app: {management_console_prefix}
   ports:
     - name: http
       protocol: TCP
@@ -105,9 +103,9 @@ spec:
 ----
 
 .Apply {management_console} Service
-[source,shell]
+[source,shell,subs="attributes+"]
 ----
-kubeclt apply -f osl-management-console-service.yaml
+{command_line_tool} apply -f {management_console_prefix}-service.yaml
 ----
 This will create a service exposing the SonataFlow Management Console.
 
@@ -117,32 +115,32 @@ Finally, expose the service with a route, so that it can be accessed externally.
 
 Create the route by applying the following YAML:
 
-.Example configuration in `osl-management-console-route.yaml`
-[source,yaml]
+.Example configuration in `{management_console_prefix}-route.yaml`
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: osl-management-console-route
+  name: {management_console_prefix}-route
 spec:
   to:
     kind: Service
-    name: osl-management-console-service
+    name: {management_console_prefix}-service
   port:
     targetPort: http
 ----
 
 .Apply {management_console} Route
-[source,shell]
+[source,shell,subs="attributes+"]
 ----
-kubeclt apply -f osl-management-console-route.yaml
+{command_line_tool} apply -f {management_console_prefix}-route.yaml
 ----
 
-== Create the Ingress (Kubernetes only)
+== Create the Ingress ({platform} only)
 
-For Kubernetes you can expose the SonataFlow Management Console using an Ingress.
+For {platform} you can expose the SonataFlow Management Console using an Ingress.
 
-To create an Ingress, refer to the official Kubernetes documentation here: link:https://kubernetes.io/docs/concepts/services-networking/ingress/[Kubernetes Ingress Guide].
+To create an Ingress, refer to the official {platform} documentation here: link:https://kubernetes.io/docs/concepts/services-networking/ingress/[{platform} Ingress Guide].
 
 
 == Optional: Keycloak authentication for Production
