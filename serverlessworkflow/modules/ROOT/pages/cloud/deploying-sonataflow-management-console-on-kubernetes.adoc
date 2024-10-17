@@ -1,4 +1,4 @@
-= Deploying {product_name} Management Console on {platform}
+= Deploying {product_name} Management Console on Kubernetes
 :compat-mode!:
 // Metadata:
 :description: Deploying Management Console on Kubernetes
@@ -8,19 +8,18 @@
 :management_console: SonataFlow Management Console
 :management_console_prefix: sonataflow-management-console
 :command_line_tool: kubectl
-:platform: Kubernetes
 
 
-This document describes how to deploy the {product_name} Management Console on {platform}
+This document describes how to deploy the {product_name} Management Console on Kubernetes
 
 The SonataFlow Management Console is a web interface designed to manage and monitor workflows. It allows users to initiate workflows, trigger Cloud Events, and monitor their execution.
 
 .Prerequisites
 * Your xref:cloud/operator/build-and-deploy-workflows.adoc[{product_name} application] is deployed and ready to use.
-* A {platform} or OpenShift cluster with admin privileges and {command_line_tool} installed.
+* A Kubernetes or OpenShift cluster with admin privileges and {command_line_tool} installed.
 * (Optional) xref:security/orchestrating-third-party-services-with-oauth2.adoc[Keycloak server] is installed.
 
-== Set up {platform} and deploy your SonataFlow application
+== Set up Kubernetes and deploy your SonataFlow application
 
 The SonataFlow Management Console relies on the underlying services of the SonataFlow application, including the Data Index service. The Data Index provides data from workflow executions, enabling the Management Console to display workflow information. 
 
@@ -136,11 +135,11 @@ spec:
 {command_line_tool} apply -f {management_console_prefix}-route.yaml
 ----
 
-== Create the Ingress ({platform} only)
+== Create the Ingress (Kubernetes only)
 
-For {platform} you can expose the SonataFlow Management Console using an Ingress.
+For Kubernetes you can expose the SonataFlow Management Console using an Ingress.
 
-To create an Ingress, refer to the official {platform} documentation here: link:https://kubernetes.io/docs/concepts/services-networking/ingress/[{platform} Ingress Guide].
+To create an Ingress, refer to the official Kubernetes documentation here: link:https://kubernetes.io/docs/concepts/services-networking/ingress/[Kubernetes Ingress Guide].
 
 
 == Optional: Keycloak authentication for Production
