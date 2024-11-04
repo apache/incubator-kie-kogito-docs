@@ -180,6 +180,241 @@ When you use the common PostgreSQL configuration, the database schema for each s
 For example, `sonataflow-platform-example-data-index-service`.
 ====
 
+== Configuring the Supporting Services Eventing System
+
+In general, the following events are produced in a {product_name} installation:
+
+* Workflow outgoing and incoming business events.
+* {product_name} system events sent from the workflow to the Data Index and Job Service respectively.
+* {product_name} system events sent from the Jobs Service to the Data Index Service.
+
+The {operator_name} is designed to use the link:{knative_eventing_url}[Knative Eventing] system to resolve all the event communication between these services.
+
+[NOTE]
+====
+In a regular {product_name} installation, the preferred method is to use the <<platform-scoped-eventing-system-configuration, Platform scoped Eventing System Configuration>>, while the <<service-scoped-eventing-system-configuration, Service scoped Eventing System configuration>> is reserved only for advanced use cases.
+====
+
+[#platform-scoped-eventing-system-configuration]
+=== Platform scoped Eventing System Configuration
+
+To configure a platform scoped eventing system, you must use the field `spec.eventing.broker.ref` in the `SonataFlowPlatform` CR to refer a Knative Eventing Broker.
+
+This information signals the {operator_name} to automatically link the supporting services to `produce` and `consume` the events by using that Broker.
+
+Additionally, workflows deployed in that namespace, that don't provide a custom eventing system configuration, will be linked to that Broker.
+// TODO, uncomment when the workflows section is in.
+// For more information about configuring the workflow eventing system, xref:cloud/operator/configuring-workflow-eventing-system.adoc[see].
+
+The following `SonataFlowPlatform` CR fragment shows an example of such configuration:
+
+.Platform scoped eventing system configuration example
+[source,yam]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform-example
+  namespace: example-namespace
+spec:
+  eventing:
+    broker:
+      ref:
+        name: example-broker <1>
+        namespace: example-broker-namespace <2>
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+----
+
+<1> Name of the Knative Eventing Broker.
+<2> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlowPlatform namespace. In general, we recommend to create the Knative Eventing Broker in the same namespace as the SonataFlowPlatform.
+
+[NOTE]
+====
+In production environments, you must use a production-ready broker, like the link:{knative_eventing_kafka_broker_url}[Knative Kafka Broker].
+====
+
+[#service-scoped-eventing-system-configuration]
+=== Service scoped Eventing System configuration
+
+A service scoped eventing system configuration provides the ability to do a fine-grained configuration of the eventing system for the <<data-index-eventing-system-configuration, Data Index>> or the <<jos-service-eventing-system-configuration, Jobs Service>>.
+
+[NOTE]
+====
+In a regular {product_name} installation, the preferred method is to use a <<platform-scoped-eventing-system-configuration, Platform scoped Eventing System Configuration>>, while the service scoped configuration is reserved only for advanced use cases.
+====
+
+[#data-index-eventing-system-configuration]
+=== Data Index Eventing System configuration
+
+To configure a service scoped eventing system for the Data Index, you must use the field `spec.services.dataIndex.source.ref` in the `SonataFlowPlatform` CR to refer a specific Knative Eventing Broker.
+
+This information signals the {operator_name} to automatically link the Data Index to `consume` the {product_name} system events from that Broker.
+
+.Data Index service scoped eventing system configuration example
+[source,yam]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform-example
+spec:
+  services:
+    dataIndex:
+      source:
+        ref:
+          name: data-index-source-example-broker <1>
+          namespace: data-index-source-example-broker-namespace <2>
+          apiVersion: eventing.knative.dev/v1
+          kind: Broker
+----
+
+<1> Name of the Knative Eventing Broker to `consume` events from.
+<2> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlowPlatform namespace. In general, we recommend to create the Knative Eventing Broker in the same namespace as the SonataFlowPlatform.
+
+[NOTE]
+====
+In production environments, you must use a production-ready broker, like the link:{knative_eventing_kafka_broker_url}[Knative Kafka Broker].
+====
+
+[#jos-service-eventing-system-configuration]
+=== Jobs Service Eventing System configuration
+
+To configure a service scoped eventing system for the Jobs Service, you must use the fields `spec.services.jobService.source.ref` and `spec.services.jobService.sink.ref` in the `SonataFlowPlatform` CR.
+
+This information signals the {operator_name} to automatically link the Jobs Service to `consume` and `produce` the {product_name} system events from that configurations respectively.
+
+.Jobs Service scoped eventing system configuration example
+[source,yam]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform-example
+spec:
+  services:
+    jobService:
+      source:
+        ref:
+          name: jobs-service-source-example-broker <1>
+          namespace: jobs-service-source-example-broker-namespace <2>
+          apiVersion: eventing.knative.dev/v1
+          kind: Broker
+      sink:
+        ref:
+          name: jobs-service-sink-example-broker <3>
+          namespace: jobs-service-sink-example-broker-namespace <4>
+          apiVersion: eventing.knative.dev/v1
+          kind: Broker
+----
+
+<1> Name of the Knative Eventing Broker to `consume` events from.
+<2> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlowPlatform namespace. In general, we recommend to create the Knative Eventing Broker in the same namespace as the SonataFlowPlatform.
+<3> Name of the Knative Eventing Broker to `produce` events on.
+<4> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlowPlatform namespace. In general, we recommend to create the Knative Eventing Broker in the same namespace as the SonataFlowPlatform.
+
+[NOTE]
+====
+In production environments, you must use production-ready brokers, like the link:{knative_eventing_kafka_broker_url}[Knative Kafka Broker].
+====
+
+[#cluster-scoped-eventing-system-configuration]
+=== Cluster scoped Eventing System configuration
+
+When you use a <<cluster-scoped-deployment>> deployment, the supporting services are automatically linked to the `Broker` configured in the `SonataFlowPlatform` CR referred by the `SonataFlowClusterPlatform` CR.
+
+=== Eventing System configuration precedence rules
+
+To configure the eventing system for a supporting service, the {operator_name} use the following precedence rules:
+
+* If the supporting service has a configured eventing system, by using any of the <<data-index-eventing-system-configuration>> or <<jos-service-eventing-system-configuration>> respectively, that configuration apply.
+
+* If the `SonataFlowPlatform` CR enclosing the supporting service, is configured with a <<platform-scoped-eventing-system-configuration>>, that configuration apply.
+
+* If the current cluster, is configured with a <<cluster-scoped-eventing-system-configuration>>, that configuration apply.
+
+* If none of the previous configurations exists, the supporting service is configured to produce direct Http calls to deliver events.
+
+=== Eventing System linking objects
+
+The linking of the supporting services with the Eventing System is produced by using Knative Eventing SinkBindings and Triggers.
+These objects are automatically created by the {operator_name}, and facilitate the events production and consumption from the supporting services.
+
+The example below shows the Knative Native eventing objects created for the following `SonataFlowPlatform` CR.
+
+.SonataFlowPlatform eventing system configuration example
+[source,yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform-example
+  namespace: example-namespace
+spec:
+  eventing:
+    broker:
+      ref:
+        name: example-broker <1>
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+  services:
+    dataIndex: <2>
+      enabled: true
+    jobService: <3>
+      enabled: true
+----
+
+<1> Platform Broker configuration used by the Data Index, Jobs Service, and the workflows if not overridden.
+<2> Data Index ephemeral deployment.
+<3> Jobs Service ephemeral deployment.
+
+.Knative Kafka Broker example used by the SonataFlowPlatform
+[source,yaml]
+----
+apiVersion: eventing.knative.dev/v1
+kind: Broker
+metadata:
+  annotations:
+    eventing.knative.dev/broker.class: Kafka <1>
+  name: example-broker
+  namespace: example-namespace
+spec:
+  config:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kafka-broker-config
+    namespace: knative-eventing
+----
+
+<1> Use the Kafka class to create a Kafka Knative Broker
+
+.Knative Eventing Triggers created for the Data Index and Jobs Service events consumption
+[source,bash]
+----
+kn trigger list -n example-namespace
+
+NAME                                                              BROKER           SINK                                                     AGE    CONDITIONS   READY   REASON
+data-index-jobs-fbf285df-c0a4-4545-b77a-c232ec2890e2              example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
+data-index-process-definition-e48b4e4bf73e22b90ecf7e093ff6b1eaf   example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
+data-index-process-error-fbf285df-c0a4-4545-b77a-c232ec2890e2     example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
+data-index-process-node-fbf285df-c0a4-4545-b77a-c232ec2890e2      example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
+data-index-process-sla-fbf285df-c0a4-4545-b77a-c232ec2890e2       example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
+data-index-process-state-fbf285df-c0a4-4545-b77a-c232ec2890e2     example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
+data-index-process-variable-ac727d6051750888dedb72f697737c0dfbf   example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
+
+jobs-service-create-job-fbf285df-c0a4-4545-b77a-c232ec2890e2      example-broker   service:sonataflow-platform-example-jobs-service         106s   7 OK / 7     True
+jobs-service-delete-job-fbf285df-c0a4-4545-b77a-c232ec2890e2      example-broker   service:sonataflow-platform-example-jobs-service         106s   7 OK / 7     True
+----
+
+.Knative Eventing SinkBinding created for the Jobs Service events production
+[source,bash]
+----
+kn source list -n example-namespace
+
+NAME                                          TYPE          RESOURCE                           SINK                    READY
+sonataflow-platform-example-jobs-service-sb   SinkBinding   sinkbindings.sources.knative.dev   broker:example-broker   True
+----
+
 == Advanced Supporting Services Configurations
 
 To configure the advanced options for any of the supporting services you must use the `podTemplate` field respectively, for example `dataIndex.podTemplate`:
