@@ -180,6 +180,7 @@ When you use the common PostgreSQL configuration, the database schema for each s
 For example, `sonataflow-platform-example-data-index-service`.
 ====
 
+[#configuring-supporting-services-eventing-system]
 == Configuring the supporting services Eventing system
 
 In general, the following events are produced in a {product_name} installation:
@@ -203,36 +204,13 @@ To configure a platform-scoped eventing system, you must use the field `spec.eve
 This information signals the {operator_name} to automatically link the supporting services to `produce` and `consume` the events by using that Broker.
 
 Additionally, workflows deployed in that namespace, that don't provide a custom eventing system configuration, will be linked to that Broker.
-// TODO, uncomment when the workflows section is in.
-// For more information about configuring the workflow eventing system, xref:cloud/operator/configuring-workflow-eventing-system.adoc[see].
+For more information about configuring the workflow eventing system, xref:cloud/operator/configuring-workflow-eventing-system.adoc[see].
 
 The following `SonataFlowPlatform` CR fragment shows an example of such configuration:
 
 .Platform scoped eventing system configuration example
-[source,yam]
-----
-apiVersion: sonataflow.org/v1alpha08
-kind: SonataFlowPlatform
-metadata:
-  name: sonataflow-platform-example
-  namespace: example-namespace
-spec:
-  eventing:
-    broker:
-      ref:
-        name: example-broker <1>
-        namespace: example-broker-namespace <2>
-        apiVersion: eventing.knative.dev/v1
-        kind: Broker
-----
+include::common/platform-scoped-eventing-system-configuration-example.adoc[]
 
-<1> Name of the Knative Eventing Broker.
-<2> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlowPlatform namespace. In general, we recommend creating the Knative Eventing Broker in the same namespace as the SonataFlowPlatform.
-
-[NOTE]
-====
-In production environments, you must use a production-ready broker, like the link:{knative_eventing_kafka_broker_url}[Knative Kafka Broker].
-====
 
 [#service-scoped-eventing-system-configuration]
 === Service-scoped Eventing system configuration
@@ -327,13 +305,13 @@ When you use a <<cluster-scoped-deployment>> deployment, the supporting services
 
 To configure the eventing system for a supporting service, the {operator_name} use the following precedence rules:
 
-* If the supporting service has a configured eventing system, by using any of the <<data-index-eventing-system-configuration>> or <<jos-service-eventing-system-configuration>> respectively, that configuration applies.
+. If the supporting service has a configured eventing system, by using any of the <<data-index-eventing-system-configuration>> or <<jos-service-eventing-system-configuration>> respectively, that configuration applies.
 
-* If the `SonataFlowPlatform` CR enclosing the supporting service, is configured with a <<platform-scoped-eventing-system-configuration>>, that configuration applies.
+. If the `SonataFlowPlatform` CR enclosing the supporting service, is configured with a <<platform-scoped-eventing-system-configuration>>, that configuration applies.
 
-* If the current cluster, is configured with a <<cluster-scoped-eventing-system-configuration>>, that configuration apply.
+. If the current cluster, is configured with a <<cluster-scoped-eventing-system-configuration>>, that configuration apply.
 
-* If none of the previous configurations exists, the supporting service is configured to produce direct HTTP calls to deliver events.
+. If none of the previous configurations exists, the supporting service is configured to produce direct HTTP calls to deliver events.
 
 === Eventing System linking objects
 
@@ -397,6 +375,7 @@ NAME                                                              BROKER        
 data-index-jobs-fbf285df-c0a4-4545-b77a-c232ec2890e2              example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
 data-index-process-definition-e48b4e4bf73e22b90ecf7e093ff6b1eaf   example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
 data-index-process-error-fbf285df-c0a4-4545-b77a-c232ec2890e2     example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
+data-index-process-instance-mul35f055c67a626f51bb8d2752606a6b54   example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
 data-index-process-node-fbf285df-c0a4-4545-b77a-c232ec2890e2      example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
 data-index-process-sla-fbf285df-c0a4-4545-b77a-c232ec2890e2       example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
 data-index-process-state-fbf285df-c0a4-4545-b77a-c232ec2890e2     example-broker   service:sonataflow-platform-example-data-index-service   106s   7 OK / 7     True
@@ -493,7 +472,8 @@ Additionally, it can manage different persistence options for each service, and 
 
 * xref:data-index/data-index-core-concepts.adoc[]
 * xref:job-services/core-concepts.adoc[Job Service Core Concepts]
-* xref:cloud/operator/using-persistence.adoc[]
+* xref:cloud/operator/using-persistence.adoc[Workflow Persistence]
+* xref:cloud/operator/configuring-workflow-eventing-system.adoc[Workflow Eventing System]
 * xref:cloud/operator/known-issues.adoc[]
 
 include::../../../pages/_common-content/report-issue.adoc[]
