@@ -14,7 +14,7 @@ In general, the following events are produced in a {product_name} installation:
 
 * SonataFlow system events sent from the Jobs Service to the Data Index Service.
 
-The SonataFlow Operator is designed to use the link:{knative_eventing_url}[Knative Eventing] system to resolve all the event communication between these services.
+The {operator_name} is designed to use the link:{knative_eventing_url}[Knative Eventing] system to resolve all the event communication between these services.
 
 [NOTE]
 ====
@@ -24,11 +24,11 @@ In a regular SonataFlow installation, the preferred method is to use the <<platf
 [#platform-scoped-eventing-system-configuration]
 == Platform-scoped Eventing system configuration
 
-To configure a platform-scoped eventing system, you must use the field `spec.eventing.broker.ref` in the `SonataFlowPlatform` CR to refer to a Knative Eventing Broker.
+To configure a platform-scoped eventing system, you must use the field `spec.eventing.broker.ref` in the `SonataFlowPlatform` CR to refer to a Knative Eventing broker.
 
 This information signals the {operator_name} to automatically link every workflow deployed in that namespace, to `produce` and `consume` the events by using that Broker.
 
-Additionally, the supporting services deployed in that namespace, that don't provide a custom eventing system configuration, will be linked to that Broker.
+Additionally, the supporting services deployed in that namespace, that do not provide a custom eventing system configuration, will be linked to that broker.
 For more information about configuring the supporting services eventing system, xref:cloud/operator/supporting-services.adoc#configuring-supporting-services-eventing-system[see].
 
 The following `SonataFlowPlatform` CR fragment shows an example of such configuration:
@@ -85,7 +85,7 @@ spec:
 ----
 
 <1> Name of the Knative Eventing Broker to use for all the events produced by the workflow, including the {product_name} system events.
-<2> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlow namespace. In general, we recommend creating the Knative Eventing Broker in the same namespace as the SonataFlow.
+<2> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlow namespace. We recommend creating the Knative Eventing Broker in the same namespace as the SonataFlow.
 <3> Flow definition field in the `SonataFlow` CR.
 <4> Events definition field in the `SonataFlow` CR.
 <5> Example of an outgoing event `outEvent1` definition.
@@ -148,11 +148,11 @@ spec:
 
 <1> Eventing system configuration entry for the workflow incoming events of type `in-event-type1`.
 <2> Name of the Knative Eventing Broker to use for the consumption of the events of type `in-event-type1` sent to this workflow.
-<3> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlow namespace. In general, we recommend creating the Knative Eventing Broker in the same namespace as the SonataFlow.
+<3> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlow namespace. We recommend creating the Knative Eventing Broker in the same namespace as the SonataFlow.
 
 <4> Eventing system configuration entry for the workflow incoming events of type `in-event-type2`.
 <5> Name of the Knative Eventing Broker to use for the consumption of the events of type `in-event-type2` sent to this workflow.
-<6> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlow namespace. In general, we recommend creating the Knative Eventing Broker in the same namespace as the SonataFlow.
+<6> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlow namespace. We recommend creating the Knative Eventing Broker in the same namespace as the SonataFlow.
 
 <7> Flow definition field in the `SonataFlow` CR.
 <8> Events definition field in the `SonataFlow` CR.
@@ -169,7 +169,7 @@ The link of the workflow event, with the corresponding `spec.sources[]` entry, i
 
 [NOTE]
 ====
-* Remember that the link between an `spec.sources[]` entry and the workflow event, is by using the event type.
+* Remember that the link between a `spec.sources[]` entry and the workflow event, is by using the event type.
 * Incoming events without a corresponding `spec.sources[]` entry are consumed by applying the <<eventing-system-configuration-precedence-rules>>.
 ====
 
