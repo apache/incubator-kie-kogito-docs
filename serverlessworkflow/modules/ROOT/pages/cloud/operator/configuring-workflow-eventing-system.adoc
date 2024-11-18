@@ -26,7 +26,7 @@ In a regular SonataFlow installation, the preferred method is to use the <<platf
 
 To configure a platform-scoped eventing system, you must use the field `spec.eventing.broker.ref` in the `SonataFlowPlatform` CR to refer to a Knative Eventing broker.
 
-This information signals the {operator_name} to automatically link every workflow deployed in that namespace, to `produce` and `consume` the events by using that Broker.
+This information signals the {operator_name} to automatically link every workflow deployed in that namespace, with the `preview` or `gitops` profile, to `produce` and `consume` the events by using that Broker.
 
 Additionally, the supporting services deployed in that namespace, that do not provide a custom eventing system configuration, will be linked to that broker.
 For more information about configuring the supporting services eventing system, xref:cloud/operator/supporting-services.adoc#configuring-supporting-services-eventing-system[see].
