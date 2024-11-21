@@ -45,6 +45,16 @@ You can freely edit any of the options in the key `controllers_cfg.yaml` entry. 
 
 {groupId_kie-addons-quarkus-persistence-jdbc}:{artifactId_kie-addons-quarkus-persistence-jdbc}:{kogito_version}
 
+| `kogitoEventsGrouping`         | true | When true, configures every workflow deployment with the `gitops` or `preview` profiles, to send accumulated workflow status change events to the Data Index. Reducing the number of produced events.
+
+Set to false to send individual events.
+
+| `kogitoEventsGroupingBinary`   | true | When true, the accumulated workflow status change events are sent in binary mode. Reducing the size of the produced events.
+
+Set to false to send plain json events.
+
+| `kogitoEventsGroupingCompress` | false | When true, the accumulated workflow status change events, if sent in binary mode, are be gzipped at the cost of some performance.
+
 |===
 
 To edit this file, update the ConfigMap `sonataflow-operator-controllers-config` using your preferred tool such as `kubectl`.
