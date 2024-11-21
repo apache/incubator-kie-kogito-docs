@@ -1,0 +1,24 @@
+[source,yam]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform-example
+  namespace: example-namespace
+spec:
+  eventing:
+    broker:
+      ref:
+        name: example-broker <1>
+        namespace: example-broker-namespace <2>
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+----
+
+<1> Name of the Knative Eventing Broker.
+<2> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlowPlatform namespace. We recommend creating the Knative Eventing Broker in the same namespace as the SonataFlowPlatform.
+
+[NOTE]
+====
+In production environments, you must use a production-ready broker, like the link:{knative_eventing_kafka_broker_url}[Knative Kafka Broker].
+====

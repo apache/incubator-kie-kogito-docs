@@ -1,0 +1,315 @@
+= Configuring the Workflow Eventing system
+:compat-mode!:
+// Metadata:
+:description: Workflows eventing system configuration
+:keywords: kogito, sonataflow, workflow, serverless, operator, kubernetes, knative, knative-eventing, events
+
+This document describes how to configure the eventing system for a {product_name} workflow.
+
+In general, the following events are produced in a {product_name} installation:
+
+* Workflow outgoing and incoming business events.
+
+* SonataFlow system events sent from the workflow to the Data Index and Job Service respectively.
+
+* SonataFlow system events sent from the Jobs Service to the Data Index Service.
+
+The {operator_name} is designed to use the link:{knative_eventing_url}[Knative Eventing] system to resolve all the event communication between these services.
+
+[NOTE]
+====
+In a regular SonataFlow installation, the preferred method is to use the <<platform-scoped-eventing-system-configuration>>, while the <<workflow-scoped-eventing-system-configuration>> is reserved only for advanced use cases.
+====
+
+[#platform-scoped-eventing-system-configuration]
+== Platform-scoped Eventing system configuration
+
+To configure a platform-scoped eventing system, you must use the field `spec.eventing.broker.ref` in the `SonataFlowPlatform` CR to refer to a Knative Eventing broker.
+
+This information signals the {operator_name} to automatically link every workflow deployed in that namespace, with the `preview` or `gitops` profile, to `produce` and `consume` the events by using that Broker.
+
+Additionally, the supporting services deployed in that namespace, that do not provide a custom eventing system configuration, will be linked to that broker.
+For more information about configuring the supporting services eventing system, xref:cloud/operator/supporting-services.adoc#configuring-supporting-services-eventing-system[see].
+
+The following `SonataFlowPlatform` CR fragment shows an example of such configuration:
+
+.Platform scoped eventing system configuration example
+
+include::common/platform-scoped-eventing-system-configuration-example.adoc[]
+
+[#workflow-scoped-eventing-system-configuration]
+== Workflow-scoped Eventing system configuration
+
+A workflow-scoped eventing system configuration provides the ability to do a fine-grained configuration of the eventing system for the events `produced` and `consumed` by a workflow.
+
+To configure a workflow-scoped eventing system you must use the fields `spec.sink.ref` and `spec.sources[]` in the `SonataFlow` CR.
+
+[#outgoing-eventing-system-configuration]
+=== Outgoing Eventing system configuration
+
+To configure a workflow-scoped eventing system for the workflow outgoing events, you must use the field `spec.sink.ref` in the `SonataFlow` CR.
+
+This information signals the {operator_name} to automatically link the current workflow, to produce the events by using that Broker.
+That includes, the {product_name} system events, and the workflow business events.
+
+The following `SonataFlow` CR fragment shows an example of such configuration:
+
+.Workflow-scoped outgoing eventing system configuration example
+[source, yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: example-workflow
+  namespace: example-workflow-namespace
+  annotations:
+    sonataflow.org/description: Example Workflow
+    sonataflow.org/version: 0.0.1
+    sonataflow.org/profile: preview
+spec:
+  sink:
+    ref:
+      name: outgoing-example-broker <1>
+      namespace: outgoing-example-broker-namespace <2>
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+  flow: <3>
+    start: ExampleStartState
+    events: <4>
+      - name: outEvent1 <5>
+        source: ''
+        kind: produced
+        type: out-event-type1 <6>
+
+    ... <7>
+----
+
+<1> Name of the Knative Eventing Broker to use for all the events produced by the workflow, including the {product_name} system events.
+<2> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlow namespace. We recommend creating the Knative Eventing Broker in the same namespace as the SonataFlow.
+<3> Flow definition field in the `SonataFlow` CR.
+<4> Events definition field in the `SonataFlow` CR.
+<5> Example of an outgoing event `outEvent1` definition.
+<6> Event type for the outgoing event `outEvent1`
+<7> Only a fragment of the workflow is shown for simplicity.
+
+[#incoming-eventing-system-configuration]
+=== Incoming Eventing system configuration
+
+To configure a workflow-scoped eventing system for the workflow incoming events, you must use the field `spec.sources[]` in the `SonataFlow` CR.
+And, you must add an entry in the array, for every event type that requires an individual configuration.
+
+This information signals the SonataFlow Operator to automatically link the current workflow, to potentially `consume` the events from different Brokers, depending on the event type.
+
+Incoming event types not configured with a particular Broker, are consumed by applying <<eventing-system-configuration-precedence-rules>>.
+
+The following `SonataFlow` CR fragment shows an example of such configuration:
+
+.Workflow-scoped incoming eventing system configuration example
+
+[source, yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: example-workflow
+  namespace: example-workflow-namespace
+  annotations:
+    sonataflow.org/description: Example Workflow
+    sonataflow.org/version: 0.0.1
+    sonataflow.org/profile: preview
+spec:
+  sources:
+    - eventType: in-event-type1 <1>
+      ref:
+        name: incoming-example-broker1 <2>
+        namespace: incoming-example-broker1-namespace <3>
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+    - eventType: in-event-type2 <4>
+      ref:
+        name: incoming-example-broker2 <5>
+        namespace: incoming-example-broker2-namespace <6>
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+  flow: <7>
+    start: ExampleStartState
+    events: <8>
+      - name: inEvent1 <9>
+        source: ''
+        kind: consumed
+        type: in-event-type1 <10>
+      - name: inEvent2 <11>
+        source: ''
+        kind: consumed
+        type: in-event-type2 <12>
+    ... <13>
+
+----
+
+<1> Eventing system configuration entry for the workflow incoming events of type `in-event-type1`.
+<2> Name of the Knative Eventing Broker to use for the consumption of the events of type `in-event-type1` sent to this workflow.
+<3> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlow namespace. We recommend creating the Knative Eventing Broker in the same namespace as the SonataFlow.
+
+<4> Eventing system configuration entry for the workflow incoming events of type `in-event-type2`.
+<5> Name of the Knative Eventing Broker to use for the consumption of the events of type `in-event-type2` sent to this workflow.
+<6> Optional: Defines the namespace of the Knative Eventing Broker. Defaults to the SonataFlow namespace. We recommend creating the Knative Eventing Broker in the same namespace as the SonataFlow.
+
+<7> Flow definition field in the `SonataFlow` CR.
+<8> Events definition field in the `SonataFlow` CR.
+
+<9> Example of an incoming event `inEvent1` definition.
+<10> Event type for the incoming event `inEvent1`.
+The link of the workflow event, with the corresponding `spec.sources[]` entry, is by using the event type name `in-event-type1`.
+
+<11> Example of an incoming event `inEvent2` definition.
+<12> Event type for the incoming event `inEvent2`.
+The link of the workflow event, with the corresponding `spec.sources[]` entry, is by using the event type name `in-event-type2`.
+
+<13> Only a fragment of the workflow is shown for simplicity.
+
+[NOTE]
+====
+* Remember that the link between a `spec.sources[]` entry and the workflow event, is by using the event type.
+* Incoming events without a corresponding `spec.sources[]` entry are consumed by applying the <<eventing-system-configuration-precedence-rules>>.
+====
+
+[#cluster-scoped-eventing-system-configuration]
+== Cluster-scoped Eventing system configuration
+
+When you use a SonataFlowClusterPlatform, the workflows are automatically linked to the `Broker` configured in the `SonataFlowPlatform` CR referred to by the given `SonataFlowClusterPlatform` CR, according to the <<eventing-system-configuration-precedence-rules>>.
+
+[#eventing-system-configuration-precedence-rules]
+== Eventing system configuration precedence rules
+
+To configure the eventing system for a workflow, the {operator_name} use the following precedence rules:
+
+. If the workflow has a configured eventing system, by using any of the <<outgoing-eventing-system-configuration, workflow-scoped outgoing eventing system>> or <<#incoming-eventing-system-configuration, workflow-scoped incoming eventing system>> configurations, that configuration applies.
+
+. If the `SonataFlowPlatform` CR enclosing the workflow, is configured with a <<platform-scoped-eventing-system-configuration, platform-scoped eventing system>>, that configuration applies.
+
+. If the current cluster, is configured with a <<cluster-scoped-eventing-system-configuration, cluster-scoped eventing system>>, that configuration apply.
+
+. If none of the previous configurations exists, the workflow is configured to:
+** Produce direct HTTP calls to deliver the {product_name} system events to the supporting services.
+** Consume the workflow incoming events in the workflow service root path `/` via HTTP POST calls.
+** No eventing system is configured to produce the workflow business events, and thus, an attempt to produce such event will fail.
+
+== Eventing System linking objects
+
+The linking of the workflow with the eventing system is produced by using Knative Eventing SinkBindings and Triggers.
+These objects are automatically created by the {operator_name}, and facilitate workflow events production and consumption.
+
+The following example shows the Knative Eventing objects created for an `example-workflow` configured with a platform-scoped eventing system.
+
+.Platform-scoped eventing system configuration example
+[source,yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform-example
+  namespace: example-namespace
+spec:
+  eventing:
+    broker:
+      ref:
+        name: example-broker <1>
+        apiVersion: eventing.knative.dev/v1
+        kind: Broker
+  services:
+    dataIndex: <2>
+      enabled: true
+    jobService: <3>
+      enabled: true
+----
+
+<1> Platform Broker configuration used by the Data Index, Jobs Service, and the `example-workflow`.
+<2> Data Index ephemeral deployment.
+<3> Jobs Service ephemeral deployment.
+
+.Knative Kafka Broker example used by the SonataFlowPlatform
+[source,yaml]
+----
+apiVersion: eventing.knative.dev/v1
+kind: Broker
+metadata:
+  annotations:
+    eventing.knative.dev/broker.class: Kafka <1>
+  name: example-broker
+  namespace: example-namespace
+spec:
+  config:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kafka-broker-config
+    namespace: knative-eventing
+----
+
+<1> Use the Kafka class to create a Kafka Knative Broker
+
+.The `example-workflow` is automatically linked to the `example-broker` in the `example-namespace`
+[source, yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: example-workflow
+  namespace: example-namespace
+  annotations:
+    sonataflow.org/description: Example Workflow
+    sonataflow.org/version: 0.0.1
+    sonataflow.org/profile: preview
+spec:
+  flow:
+    start: ExampleStartState
+    events:
+      - name: outEvent1
+        source: ''
+        kind: produced
+        type: out-event-type1 <1>
+      - name: inEvent1
+        source: ''
+        kind: consumed
+        type: in-event-type1 <2>
+      - name: inEvent2
+        source: ''
+        kind: consumed
+        type: in-event-type2 <3>
+    states:
+      - name: ExampleStartState
+    ... <4>
+
+----
+
+<1> The `example-workflow` outgoing events are produced by using the SinkBinding `example-workflow-sb`, <<#workflow-knative-eventing-sinkbindings, see>>.
+<2> The `example-workflow` events of type `in-event-type1` are consumed by using the Trigger `example-workflow-inevent1-b40c067c-595b-4913-81a4-c8efa980bc11`, <<#workflow-knative-eventing-triggers, see>>.
+<3> The `example-workflow` events of type `in-event-type2` are consumed by using the Trigger `example-workflow-inevent2-b40c067c-595b-4913-81a4-c8efa980bc11`, <<#workflow-knative-eventing-triggers, see>>.
+<4> Only a fragment of the workflow is shown for simplicity.
+
+[#workflow-knative-eventing-sinkbindings]
+.Knative Eventing SinkBinding created for the `example-workflow` events production
+[source,bash]
+----
+kn source list -n example-namespace
+
+NAME                                          TYPE          RESOURCE                           SINK                    READY
+example-workflow-sb                           SinkBinding   sinkbindings.sources.knative.dev   broker:example-broker   True
+----
+
+[#workflow-knative-eventing-triggers]
+.Knative Eventing Triggers created for the `example-workflow` events consumption
+[source,bash]
+----
+kn trigger list -n example-namespace
+
+NAME                                                              BROKER           SINK                                                     AGE   CONDITIONS   READY   REASON
+example-workflow-inevent1-b40c067c-595b-4913-81a4-c8efa980bc11    example-broker   service:example-workflow                                 16m   7 OK / 7     True
+example-workflow-inevent2-b40c067c-595b-4913-81a4-c8efa980bc11    example-broker   service:example-workflow                                 16m   7 OK / 7     True
+----
+
+== Additional resources
+
+* xref:cloud/operator/using-persistence.adoc[Workflow Persistence]
+* xref:cloud/operator/supporting-services.adoc[Deploying Supporting Services]
+
+include::../../../pages/_common-content/report-issue.adoc[]
