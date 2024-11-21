@@ -145,14 +145,29 @@ For more information, see <<proc-enable-metrics-sw, Enabling metrics in {product
 For more information about configuring Prometheus, see link:{prometheus_operator_getting_started_guide}[Configure Prometheus to monitor the sample targets] in Prometheus Getting Started document.
 
 [[ref-sw-example-metrics]]
-== Example metrics in {product_name}
+== Metrics in {product_name}
 
-In {product_name}, you can check the following example metrics:
+In {product_name}, you can check the following  metrics:
 
-* `kogito_process_instance_completed_total`: Completed workflows
-* `kogito_process_instance_started_total`: Started workflows
-* `kogito_process_instance_running_total`: Running workflows
-* `kogito_process_instance_duration_seconds_sum`: Workflows total duration 
+* `kogito_process_instance_started_total`: Number of started workflows (a workflow that has started might be running or completed)
+* `kogito_process_instance_running_total`: Number of running workflows
+* `kogito_process_instance_completed_total`: Number of completed workflows
+* `kogito_process_instance_error`: Number of workflows that report an error ( a workflow with an error might be still running or have been completed) 
+* `kogito_process_instance_duration_seconds`: Duration of a process instance in seconds
+* `kogito_node_instance_duration_milliseconds`: Duration of relevant nodes in milliseconds (a workflow is composed by nodes, user might be interested on the time consumed by an specific node type) 
+
+Optionally, if you include dependency 
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.kie</groupId>
+    <artifactId>kie-addons-quarkus-monitoring-sonataflow</artifactId>
+</dependency>
+----
+
+metric `sonataflow_input_parameters_counter`, which tracks input parameter, will be available. This metric is optional because it counts every workflow input parameter key value combination, which might be space consuming. 
+
 
 [NOTE]
 ====
