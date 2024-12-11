@@ -1,0 +1,136 @@
+== Overview
+
+In {product_name}, you can check the following metrics:
+
+* `kogito_process_instance_started_total`: Number of started workflows.
+* `kogito_process_instance_running_total`: Number of running workflows.
+* `kogito_process_instance_completed_total`: Number of completed workflows.
+* `kogito_process_instance_error`: Number of workflows that report an error.
+* `kogito_process_instance_duration_seconds`: Duration of a workflow instance in seconds.
+* `kogito_node_instance_duration_milliseconds`: Duration of relevant nodes in milliseconds. 
+* `sonataflow_input_parameters_counter_total`: Records input parameters, the occurrences of <"param_name","param_value"> per `processId`.
+
+[NOTE]
+====
+Internally, workflows are referred as processes. Therefore, the `processId` and `processName` are workflow id and name respectively.
+====
+
+Each of the metrics mentioned previously contains a label for a specific workflow id. For example, the `kogito_process_instance_completed_total` metric below contains the labels for `callbackstatetimeouts` workflow:
+
+.Example `kogito_process_instance_completed_total` metric
+[source,yaml]
+----
+# HELP kogito_process_instance_completed_total Completed Process Instances
+# TYPE kogito_process_instance_completed_total counter
+kogito_process_instance_completed_total{app_id="sonataflow-process-monitoring-listener",artifactId="serverless-workflow-project",process_id="callbackstatetimeouts",process_state="Completed",version="1.0.0-SNAPSHOT",} 3.0
+----
+
+[NOTE]
+====
+Internally, {product_name} uses Quarkus Micrometer extension, which also exposes built-in metrics. You can disable the Micrometer metrics in {product_name}. For more information, see link:https://quarkus.io/guides/micrometer[Quarkus - Micrometer Metrics].
+====
+
+== Metrics Description
+
+=== kogito_process_instance_started_total
+Count the number of started workflow instances.
+
+[source, yaml]
+----
+# HELP kogito_process_instance_started_total Started Process Instances
+# TYPE kogito_process_instance_started_total counter
+kogito_process_instance_started_total{app_id="sonataflow-process-monitoring-listener",artifactId="serverless-workflow-project",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 7.0
+----
+
+=== kogito_process_instance_running_total
+Records the number of running workflow instances. 
+
+[NOTE]
+====
+This includes workflow instances that are in the `Error` state, since the error state is not a terminal state.
+Process instances that have reached a terminal status, i.e. `Completed` or `Aborted`, are not present in this metric.
+====
+
+[source, yaml]
+----
+# HELP kogito_process_instance_running_total Running Process Instances
+# TYPE kogito_process_instance_running_total gauge
+kogito_process_instance_running_total{app_id="sonataflow-process-monitoring-listener",artifactId="serverless-workflow-project",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 4.0
+----
+
+=== kogito_process_instance_completed_total
+Workflow instances that have reached a terminal status, `Aborted` or `Completed`, and thus are considered as completed.
+
+[NOTE]
+====
+These are the only two terminal status. The `Error` state is not terminal.
+Additionally, the metric has the process_state=`Completed`, or could be `Aborted`, to register exactly which of the two terminal status were reached.
+====
+
+[source, yaml]
+----
+# HELP kogito_process_instance_completed_total Completed Process Instances
+# TYPE kogito_process_instance_completed_total counter
+kogito_process_instance_completed_total{app_id="sonataflow-process-monitoring-listener",artifactId="serverless-workflow-project",process_id="callbackstatetimeouts",process_state="Completed",version="1.0.0-SNAPSHOT",} 3.0
+----
+
+=== kogito_process_instance_error
+Records the number of errors that have occurred per processId and error, including the error message.
+
+[source, yaml]
+----
+# HELP kogito_process_instance_error_total Number of errors that has occurred
+# TYPE kogito_process_instance_error_total counter
+kogito_process_instance_error_total{app_id="sonataflow-process-monitoring-listener",artifactId="serverless-workflow-project",error_message="java.net.ConnectException - Connection refused",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 1.0
+----
+
+=== kogito_process_instance_duration_seconds
+Calculates duration of a workflow instance that has reached a terminal state, i.e. `Aborted` or `Completed`. This metric is registered when the process reaches the terminal state.
+
+[source, yaml]
+----
+# HELP kogito_process_instance_duration_seconds_max Process Instances Duration
+# TYPE kogito_process_instance_duration_seconds_max gauge
+   kogito_process_instance_duration_seconds_max{app_id="sonataflow-process-monitoring-listener",artifactId="serverless-workflow-project",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 30.0
+
+
+# HELP kogito_process_instance_duration_seconds Process Instances Duration
+# TYPE kogito_process_instance_duration_seconds summary
+   kogito_process_instance_duration_seconds_count{app_id="sonataflow-process-monitoring-listener",artifactId="serverless-workflow-project",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 3.0
+   kogito_process_instance_duration_seconds_sum{app_id="sonataflow-process-monitoring-listener",artifactId="serverless-workflow-project",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 90.0
+----
+
+=== kogito_node_instance_duration_milliseconds
+Records the duration of the execution for nodes “relevant” to the workflows. The metric is calculated when a given node has finished executing.
+
+[source, yaml]
+----
+# HELP kogito_node_instance_duration_milliseconds_max Relevant nodes duration in milliseconds
+# TYPE kogito_node_instance_duration_milliseconds_max gauge
+kogito_node_instance_duration_milliseconds_max{artifactId="serverless-workflow-project",node_name="CallbackState",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 30014.0
+
+
+# HELP kogito_node_instance_duration_milliseconds Relevant nodes duration in milliseconds
+# TYPE kogito_node_instance_duration_milliseconds summary
+kogito_node_instance_duration_milliseconds_count{artifactId="serverless-workflow-project",node_name="CallbackState",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 3.0
+kogito_node_instance_duration_milliseconds_sum{artifactId="serverless-workflow-project",node_name="CallbackState",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 90128.0
+----
+
+=== sonataflow_input_parameters_counter_total
+
+Records the occurrences of <"param_name", "param_value"> per processId.
+
+[NOTE]
+====
+Parameters that are json values, or arrays are flattened.
+====
+
+[source, yaml]
+----
+# HELP sonataflow_input_parameters_counter_total Input parameters
+# TYPE sonataflow_input_parameters_counter_total counter
+sonataflow_input_parameters_counter_total{app_id="sonataflow-process-monitoring-listener",artifactId="serverless-workflow-project",param_name="name",param_value="walter",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 1.0
+sonataflow_input_parameters_counter_total{app_id="sonataflow-process-monitoring-listener",artifactId="serverless-workflow-project",param_name="surname.sur1",param_value="Medvedeo",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 1.0
+sonataflow_input_parameters_counter_total{app_id="sonataflow-process-monitoring-listener",artifactId="serverless-workflow-project",param_name="name",param_value="bob",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 5.0
+sonataflow_input_parameters_counter_total{app_id="sonataflow-process-monitoring-listener",artifactId="serverless-workflow-project",param_name="surname",param_value="esponja",process_id="callbackstatetimeouts",version="1.0.0-SNAPSHOT",} 5.0
+----

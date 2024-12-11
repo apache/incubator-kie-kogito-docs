@@ -7,7 +7,6 @@
 :openshift_micrometer_url: https://quarkus.io/blog/micrometer-prometheus-openshift
 :dashbuilder_url: https://www.dashbuilder.org/
 :grafana_url: https://grafana.com/
-:quarkus_micrometer_url: https://quarkus.io/guides/micrometer
 :openshift_monitoring_url: https://docs.openshift.com/container-platform/4.11/monitoring/enabling-monitoring-for-user-defined-projects.html
 :prometheus_operator_url: https://prometheus-operator.dev/
 :prometheus_operator_getting_started_guide: https://prometheus.io/docs/prometheus/latest/getting_started/#configure-prometheus-to-monitor-the-sample-targets
@@ -147,48 +146,5 @@ For more information about configuring Prometheus, see link:{prometheus_operator
 [[ref-sw-example-metrics]]
 == Metrics in {product_name}
 
-In {product_name}, you can check the following  metrics:
-
-* `kogito_process_instance_started_total`: Number of started workflows (a workflow that has started might be running or completed)
-* `kogito_process_instance_running_total`: Number of running workflows
-* `kogito_process_instance_completed_total`: Number of completed workflows
-* `kogito_process_instance_error`: Number of workflows that report an error ( a workflow with an error might be still running or have been completed) 
-* `kogito_process_instance_duration_seconds`: Duration of a process instance in seconds
-* `kogito_node_instance_duration_milliseconds`: Duration of relevant nodes in milliseconds (a workflow is composed by nodes, user might be interested on the time consumed by an specific node type) 
-
-Optionally, if you include dependency 
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.kie</groupId>
-    <artifactId>kie-addons-quarkus-monitoring-sonataflow</artifactId>
-</dependency>
-----
-
-metric `sonataflow_input_parameters_counter`, which tracks input parameter, will be available. This metric is optional because it counts every workflow input parameter key value combination, which might be space consuming. 
-
-
-[NOTE]
-====
-Internally, workflows are referred as processes. Therefore, the `processId` and `processName` is workflow ID and name respectively.
-====
-
-Each of the metrics mentioned previously contains a label for a specific workflow ID. For example, the `kogito_process_instance_completed_total` metric contains labels for `jsongreet`, `yamlgreet`, and `foreach` workflows:
-
-.Example `kogito_process_instance_completed_total` metric
-[source,yaml]
-----
-# HELP kogito_process_instance_completed_total Completed Process Instances
-# TYPE kogito_process_instance_completed_total counter
-kogito_process_instance_completed_total{app_id="default-process-monitoring-listener",artifactId="kogito-serverless-workflow-demo",node_name="2",process_id="jsongreet",version="1.0.0-SNAPSHOT",} 154.0
-kogito_process_instance_completed_total{app_id="default-process-monitoring-listener",artifactId="kogito-serverless-workflow-demo",node_name="2",process_id="yamlgreet",version="1.0.0-SNAPSHOT",} 218.0
-kogito_process_instance_completed_total{app_id="default-process-monitoring-listener",artifactId="kogito-serverless-workflow-demo",node_name="2",process_id="foreach",version="1.0.0-SNAPSHOT",} 162.0
-----
-
-[NOTE]
-====
-Internally, {product_name} uses Quarkus Micrometer extension, which also exposes built-in metrics. You can disable the Micrometer metrics in {product_name}. For more information, see link:{quarkus_micrometer_url}[Quarkus - Micrometer Metrics].
-====
-
+include::../../../../pages/_common-content/sonataflow-metrics.adoc[]
 include::../../../../pages/_common-content/report-issue.adoc[]

@@ -141,7 +141,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum (kogito_process_instance_started_total{service=~\"$workflow\"})",
+          "expr": "sum (kogito_process_instance_started_total{process_id=~\"$workflow\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -216,7 +216,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum (kogito_process_instance_completed_total{service=~\"$workflow\",process_state=\"Completed\"})",
+          "expr": "sum (kogito_process_instance_completed_total{process_id=~\"$workflow\",process_state=\"Completed\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -291,7 +291,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum (kogito_process_instance_running_total{service=~\"$workflow\"})",
+          "expr": "sum (kogito_process_instance_running_total{process_id=~\"$workflow\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -366,7 +366,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum (kogito_process_instance_completed_total{service=~\"$workflow\",process_state=\"Aborted\"})",
+          "expr": "sum (kogito_process_instance_completed_total{process_id=~\"$workflow\",process_state=\"Aborted\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -441,7 +441,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum (kogito_process_instance_error{service=~\"$workflow\"})",
+          "expr": "sum (kogito_process_instance_error_total{process_id=~\"$workflow\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -634,7 +634,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(service) (kogito_process_instance_started_total{service=~\"$workflow\"})",
+          "expr": "sum by(process_id) (kogito_process_instance_started_total{process_id=~\"$workflow\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -709,7 +709,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum (kogito_process_instance_completed_total{service=~\"$workflow\",process_state=\"Completed\"})",
+          "expr": "sum (kogito_process_instance_completed_total{process_id=~\"$workflow\",process_state=\"Completed\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -784,7 +784,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum (kogito_process_instance_running_total{service=~\"$workflow\"})",
+          "expr": "sum (kogito_process_instance_running_total{process_id=~\"$workflow\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -859,7 +859,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum (kogito_process_instance_completed_total{service=~\"$workflow\",process_state=\"Aborted\"})",
+          "expr": "sum (kogito_process_instance_completed_total{process_id=~\"$workflow\",process_state=\"Aborted\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -934,7 +934,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum (kogito_process_instance_error{service=~\"$workflow\"})",
+          "expr": "sum (kogito_process_instance_error_total{process_id=~\"$workflow\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1050,7 +1050,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum(kogito_process_instance_duration_seconds_sum{service=~\"$workflow\"})/sum(kogito_process_instance_duration_seconds_count{service=~\"$workflow\"})",
+          "expr": "sum(kogito_process_instance_duration_seconds_sum{process_id=~\"$workflow\"})/sum(kogito_process_instance_duration_seconds_count{process_id=~\"$workflow\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1141,7 +1141,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by (node_name) (kogito_node_instance_duration_milliseconds_sum{service=~\"$workflow\"})/sum by (node_name) (kogito_node_instance_duration_milliseconds_count{service=~\"$workflow\"})",
+          "expr": "sum by (node_name) (kogito_node_instance_duration_milliseconds_sum{process_id=~\"$workflow\"})/sum by (node_name) (kogito_node_instance_duration_milliseconds_count{process_id=~\"$workflow\"})",
           "format": "heatmap",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -1342,7 +1342,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "process_id"
+              "options": "service"
             },
             "properties": [
               {
@@ -1366,7 +1366,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "service"
+              "options": "process_id"
             },
             "properties": [
               {
@@ -1425,7 +1425,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sonataflow_input_parameters_counter_total{service=~\"$workflow\"}",
+          "expr": "sonataflow_input_parameters_counter_total{process_id=~\"$workflow\"}",
           "format": "table",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -1450,7 +1450,7 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values(kogito_process_instance_started_total,service)",
+        "definition": "label_values(kogito_process_instance_started_total,process_id)",
         "description": "workflow",
         "hide": 0,
         "includeAll": true,
@@ -1460,7 +1460,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(kogito_process_instance_started_total,service)",
+          "query": "label_values(kogito_process_instance_started_total,process_id)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -1476,7 +1476,7 @@
         },
         "filters": [
           {
-            "key": "service",
+            "key": "process_id",
             "operator": "=",
             "value": "greeting"
           }
