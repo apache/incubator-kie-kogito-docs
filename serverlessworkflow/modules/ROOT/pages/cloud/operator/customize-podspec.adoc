@@ -45,7 +45,7 @@ spec:
 ----
 
 <1> The `PodSpec` template definition
-<2> The default workflow service container 
+<2> The default workflow service container
 <3> Resources configuration
 
 The `.spec.podTemplate` attribute has the majority of fields defined in the default link:{k8s_podspec_api_url}[Kubernetes PodSpec API]. The same Kubernetes API validation rules applies to these fields.
@@ -68,9 +68,9 @@ metadata:
   annotations:
     sonataflow.org/description: Simple example on k8s!
     sonataflow.org/version: 0.0.1
-    sonataflow.org/version: preview  
+    sonataflow.org/version: preview
 spec:
-  podTemplate: 
+  podTemplate:
     deploymentModel: knative <1>
   flow:
     start: HelloWorld
@@ -91,7 +91,7 @@ After changing the deployment model to `knative`, the `SonataFlow` instance will
 It's not possible to deploy a `SonataFlow` instance as a Knative Service in dev profile. In this profile, this attribute is ignored by the operator.
 ====
 
-Note that not every use case leverage a Knative deployment. Long-running workflow instances, for example, that calls services that might take too long to respond, might not be an ideal deployment model. Opt to use Knative deployments for workflows that won't take too long to run. 
+Note that not every use case leverage a Knative deployment. Long-running workflow instances, for example, that calls services that might take too long to respond, might not be an ideal deployment model. Opt to use Knative deployments for workflows that won't take too long to run.
 
 The exception are workflows that have callback states. In this case, you must configure xref:cloud/operator/using-persistence.adoc[persistence]. This is required because once the workflow waits for the event to resume the execution, Knative will kill the pod. Since the workflow has persistence, it will resume the execution once it receives the callback event.
 
@@ -164,7 +164,7 @@ The {operator_name} supports three different profiles:
 1. `dev`: The workflow will be deployed as a mutable container that will react upon any changes on the `SonataFlow` custom resource immediatelly. Ideal for scenarios where the flow definition is under active development and testing in the cluster context. See xref:cloud/operator/developing-workflows.adoc[].
 2. `preview`: The operator will rely on an internal build system to build an immutable container based on the flow definition. Every change to the `SonataFlow` will kick a new build. Use this profile to evaluate the workflow behavior in the cluster or if you have a simple use case where you don't need any complex build customizations. See xref:cloud/operator/build-and-deploy-workflows.adoc[]
 // TODO: missing tekton/argocd guide https://issues.redhat.com/browse/KOGITO-7278
-3. `gitops`: Ideal for production use cases. This profile is automatically defined by the operator when the `SonataFlow` CR is deployed with a custom `.spec.podTemplate.container.image`. In this scenario, the user is responsible to build the workflow application and provide the image to the operator. 
+3. `gitops`: Ideal for production use cases. This profile is automatically defined by the operator when the `SonataFlow` CR is deployed with a custom `.spec.podTemplate.container.image`. In this scenario, the user is responsible to build the workflow application and provide the image to the operator.
 
 There's a correlation on the operator profile and the internal runtime workflow Quarkus application. See the table below.
 
@@ -194,15 +194,20 @@ For more information about configuring workflows see xref:cloud/operator/configu
 
 When setting the attribute `.spec.podTemplate.container.image` the operator understands that the workflow already have an image built and the user is responsible for the build and image maintainence. That means that the operator won't try to upgrade this image in the future or do any reconciliation changes to it.
 
+[IMPORTANT]
+====
+The image is expected to contain the workflow definition it is based on. This workflow should be located in /deployments/app/ and have the format *.sw.{json|yaml}. It is also important to remember that the spec.flow defined in the workflow must match the one in the image.
+====
+
 === Setting a custom image in devmode
 
-In xref:cloud/operator/developing-workflows.adoc[development profile], it's expected that the image is based on the default `quay.io/kiegroup/kogito-swf-devmode:latest`. 
+In xref:cloud/operator/developing-workflows.adoc[development profile], it's expected that the image is based on the default `hub.docker.com/r/apache/incubator-kie-sonataflow-devmode:main`.
 
 === Setting a custom image in preview
 
-When xref:cloud/operator/build-and-deploy-workflows.adoc[building workflows], you can opt in to have the operator to handle the build process for you. However, in more complex scenarios it's expected that the user owns and controls the build process. For this reason, when overriding the image the operator won't build the workflow. The operator will try to deploy the workflow using the given image. 
+When xref:cloud/operator/build-and-deploy-workflows.adoc[building workflows], you can opt in to have the operator to handle the build process for you. However, in more complex scenarios it's expected that the user owns and controls the build process. For this reason, when overriding the image the operator won't build the workflow. The operator will try to deploy the workflow using the given image.
 
-In this scenario, the `.spec.resources` attribute is ignored since it's only used during the build process in the production profile. 
+In this scenario, the `.spec.resources` attribute is ignored since it's only used during the build process in the production profile.
 
 [IMPORTANT]
 ====
