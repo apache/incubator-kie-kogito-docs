@@ -81,7 +81,7 @@ Here you can see in example, how the {data_index_ref} resource definition can be
       QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: update
 ----
 
-<1> Reference the right {data_index_ref} image to match with the type of Database, in this case `quay.io/kiegroup/kogito-data-index-postgresql:latest`
+<1> Reference the right {data_index_ref} image to match with the type of Database, in this case `{sonataflow_dataindex_postgresql_imagename}:{operator_version}`
 <2> Provide the database connection properties.
 <3> When `KOGITO_DATA_INDEX_QUARKUS_PROFILE` is not present, the {data_index_ref} is configured to use Kafka eventing.
 <4> To initialize the database schema at start using flyway.
@@ -223,7 +223,7 @@ spec:
       name: data-index-service-postgresql
     uri: /jobs <7>
 ----
-<1> Reference the right {data_index_ref} image to match with the type of Database, in this case `quay.io/kiegroup/kogito-data-index-postgresql:latest`
+<1> Reference the right {data_index_ref} image to match with the type of Database, in this case `{sonataflow_dataindex_postgresql_imagename}:{operator_version}`
 <2> Provide the database connection properties
 <3> KOGITO_DATA_INDEX_QUARKUS_PROFILE: http-events-support to use the http-connector with Knative eventing.
 <4> To initialize the database schema at start using flyway

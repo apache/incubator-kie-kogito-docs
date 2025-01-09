@@ -57,7 +57,7 @@ kubectl patch sonataflowplatform <name> --patch  'spec:\n    build:\n    config:
 [#customize-base-build]
 === Customize the base build Dockerfile
 
-The operator uses the `ConfigMap` named `sonataflow-operator-builder-config` in the operator's installation namespace ({operator_installation_namespace}) to configure and run the workflow build process. 
+The operator uses the `ConfigMap` named `{sonataflow_builder_configmap_name}` in the operator's installation namespace ({operator_installation_namespace}) to configure and run the workflow build process. 
 You can change the `Dockerfile` entry in this `ConfigMap` to tailor the Dockerfile to your needs. Just be aware that this can break the build process.
 
 .Example of the sonataflow-operator-builder-config `ConfigMap`
@@ -66,7 +66,7 @@ You can change the `Dockerfile` entry in this `ConfigMap` to tailor the Dockerfi
 apiVersion: v1
 data:
   DEFAULT_WORKFLOW_EXTENSION: .sw.json
-  Dockerfile: "FROM quay.io/kiegroup/kogito-swf-builder-nightly:latest AS builder\n\n#
+  Dockerfile: "FROM {sonataflow_builder_imagename}:{operator_version} AS builder\n\n#
     variables that can be overridden by the builder\n# To add a Quarkus extension
     to your application\nARG QUARKUS_EXTENSIONS\n# Args to pass to the Quarkus CLI
     add extension command\nARG QUARKUS_ADD_EXTENSION_ARGS\n# Additional java/mvn arguments
@@ -83,8 +83,8 @@ data:
     -Djava.util.logging.manager=org.jboss.logmanager.LogManager\"\nENV JAVA_APP_JAR=\"/deployments/quarkus-run.jar\"\n"
 kind: ConfigMap
 metadata:
-  name: sonataflow-operator-builder-config
-  namespace: sonataflow-operator-system
+  name: {sonataflow_builder_configmap_name}
+  namespace: {operator_installation_namespace}
 ----
 
 [WARNING]
@@ -355,7 +355,7 @@ spec:
       strategyOptions:
         KanikoBuildCacheEnabled: "true"
       registry:
-        address: quay.io/kiegroup <1>
+        address: {container_image_registry_base} <1>
         secret: regcred <2>
 ----
 
@@ -429,7 +429,7 @@ If you are running on OpenShift, you have access to the Red Hat's supported regi
 
 [source,bash,subs="attributes+"]
 ----
-kubectl edit cm/sonataflow-operator-builder-config -n {operator_installation_namespace}
+kubectl edit cm/{sonataflow_builder_configmap_name} -n {operator_installation_namespace}
 ----
 
 In your editor, change the first line in the `Dockerfile` entry where it reads `FROM quay.io/kiegroup/kogito-swf-builder-nightly:latest` to the desired image.
