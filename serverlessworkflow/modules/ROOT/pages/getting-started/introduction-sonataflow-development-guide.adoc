@@ -52,6 +52,27 @@ kn workflow run
 
 You can use any editor to develop your workflow to suit your use case. We recommend getting familiar with xref:../core/cncf-serverless-workflow-specification-support.adoc[] and guides in `Core` chapter first. 
 
+.Executing a workflow
+. To test your running workflow project, access the Swagger UI on `localhost:8080/q/swagger-ui` to examine available endpoints.
+. In order to execute the workflow once, run: 
+[source,bash]
+----
+curl -X 'POST' \
+  'localhost:8080/hello' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "workflowdata": {}
+}'
+----
+. You should see a similar response:
++
+[source,bash]
+----
+{"id": "<UUID>", "workflowdata" : {"message":"Hello World"}}
+----
+
+
 To deploy the finished project to kubernetes cluster, proceed to the next section.
 
 [[proc-deploying-app-with-kn-cli]]
