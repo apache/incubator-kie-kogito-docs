@@ -1,4 +1,4 @@
-= {product_name} plug-in for Knative CLI
+= {product_name} plugin for Knative CLI
 
 :compat-mode!:
 // Metadata:
@@ -7,28 +7,22 @@
 // links
 :apple_support_url: https://support.apple.com/guide/mac-help/mh40616/mac
 
-{product_name} provides a plug-in named `kn-workflow` for Knative CLI, which provides command line features that help you develop a local workflow project quickly. 
+{product_name} provides a workflow plugin for Knative CLI, which provides command line interface that helps you develop & deploy your workflow projects. 
 
-This document describes how you can install and use the `kn-workflow` plug-in in {product_name}.
-
+This document describes how you can work with the {product_name} workflow plugin.
 You can also find brief introduction for some of the commands that the plugin provides.
 
 [[proc-install-sw-plugin-kn-cli]]
-== Installing the {product_name} plug-in for Knative CLI
+== Installing the {product_name} plugin for Knative CLI
 
-You can use the {product_name} plug-in to set up your local workflow project quickly using Knative CLI. 
+You can use the {product_name} plugin to set up your local workflow project quickly using Knative CLI. 
 
 .Prerequisites
-* link:{java_install_url}[Java] {java_min_version} is installed.
-* link:{maven_install_url}[Maven] {maven_min_version} or later is installed.
-* (Optional) link:{docker_install_url}[Docker] is installed.
-* (Optional) link:{podman_install_url}[Podman] is installed.
-* link:{kubectl_install_url}[Kubernetes CLI] is installed.
 * link:{kn_cli_install_url}[Knative CLI] is installed.
 
 .Procedure
-. Download the latest binary file, suitable for your environment, from the link:{kie_tools_releases_page_url}[KIE Tooling Releases] page.
-. Install the `kn workflow` command as a plug-in of the Knative CLI using the following steps:
+. Download the latest binary file, suitable for your environment, from the Apache KIE link:{kie_tools_releases_page_url}[download] page for releases.
+. Install the `kn workflow` command as a plugin of the Knative CLI using the following steps:
 +
 --
 .. Rename the downloaded binary as follows:
@@ -41,14 +35,16 @@ mv kn-workflow-linux-amd64 kn-workflow
 +
 [WARNING]
 ==== 
-On Mac, some systems might block the application to run due to Apple enforcing policies. To fix this problem, check the *Security & Privacy* section in the *System Preferences* -> *General* tab to approve the application to run. For more information, see link:{apple_support_url}[Apple support article: Open a Mac app from an unidentified developer].
+On Mac, some systems might block the application to run due to Apple enforcing policies. To fix this problem, check the *Security & Privacy* section in the *System Preferences* -> *General* tab to approve the application to run. 
+For more information, see the link:{apple_support_url}[support article from Apple with more details].
 ====
 .. Copy the `kn-workflow` binary file to `/usr/local/bin`.
-.. Run the following command to verify that `kn-workflow` plug-in is installed successfully:
+.. Run the following command to verify that `kn-workflow` plugin is installed successfully:
 +
 `kn plugin list`
+.. You should see a following line `kn-workflow : /usr/local/bin/kn-workflow` in the output.
 
-After installing the plug-in, you can use `kn workflow` to run the related subcommands.
+After installing the plugin, you can use `kn workflow` to run the related subcommands.
 --
 
 . Use the `workflow` subcommand in Knative CLI as follows:
@@ -61,68 +57,33 @@ kn workflow
 kn-workflow
 ----
 
-.Example output
+.Workflow plugin provides bulit-in documentation for each command, display it by adding `--help` after the command
+[source,terminal]
+----
+$ kn workflow --help
+----
+
+.See the documentation of `run` command
 [source,text]
 ----
-  Manage SonataFlow projects
-
-	Currently, SonataFlow targets use cases with a single Serverless Workflow main
-	file definition (i.e. workflow.sw.{json|yaml|yml}).
-
-	Additionally, you can define the configurable parameters of your application in the
-	"application.properties" file (inside the root project directory).
-	You can also store your spec files (i.e., OpenAPI files) inside the "specs" folder,
-    schemas file inside "schemas" folder and also subflows inside "subflows" folder.
-
-	A SonataFlow project, as the following structure by default:
-
-	Workflow project root
-		/specs (optional)
-		/schemas (optional)
-		/subflows (optional)
-		workflow.sw.{json|yaml|yml} (mandatory)
-
-	
-
-Usage:
-  kn workflow [command]
-
-Aliases:
-  kn workflow, kn-workflow
-
-Available Commands:
-  completion   Generate the autocompletion script for the specified shell
-  create       Creates a new SonataFlow project
-  deploy       Deploy a SonataFlow project on Kubernetes via SonataFlow Operator
-  gen-manifest GenerateOperator manifests
-  help         Help about any command
-  quarkus      Manage SonataFlow projects built in Quarkus
-  run          Run a SonataFlow project in development mode
-  undeploy     Undeploy a SonataFlow project on Kubernetes via SonataFlow Operator
-  version      Show the version
-
-Flags:
-  -h, --help      help for kn workflow
-  -v, --version   version for kn workflow
-
-Use "kn workflow [command] --help" for more information about a command.
+$ kn workflow run --help
 ----
 --
 
 [[proc-create-sw-project-kn-cli]]
 == Creating a workflow project using Knative CLI
 
-After installing the {product_name} plug-in, you can use the `create` command with `kn workflow` to scaffold a new {product_name} project in your current directory.
+After installing the {product_name} plugin, you can use the `create` command with `kn workflow` to scaffold a new {product_name} project in your current directory.
 
 The `create` command sets up {product_name} project containing a minimal "hello world" `workflow.sw.json` file in your `./<project-name>` directory.
 
 .Prerequisites
-* {product_name} plug-in for Knative CLI is installed.
+* {product_name} plugin for Knative CLI is installed.
 +
-For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plug-in for Knative CLI>>.
+For more information about installing the plugin, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plugin for Knative CLI>>.
 
 .Procedure
-. You can use the following command to create a new project:
+. You can use the following commands to create a new project:
 +
 --
 .Creates a project named `new-project`
@@ -139,27 +100,30 @@ By default, the generated project is named as `new-project`. You can overwrite t
 kn workflow create --name my-project
 ----
 --
-
++
 This will scaffold a directory named `my-project` with a simple workflow in JSON format. You can overwrite the format of the workflow to YAML by using the `[--yaml-workflow]` flag as follows:
-
++
 .Create a project named `my-project` with default workflow in YAML format
 [source,shell]
 ----
 kn workflow create --name my-project --yaml-workflow
 ----
---
+
 
 [[proc-build-sw-project-kn-cli]]
 == Running a workflow project using Knative CLI
 
 After creating your workflow project, you can use the `run` command with `kn workflow` to build & run your workflow project. You must be in the root folder of your workflow project.
 
-This plugin will build your project and start a {product_name} container image that will be mapped to your local folder. 
+The plugin will build your project and start a {product_name} container image in your configured container runtime, that will be mapped to your local folder. A development UI with management console 
+is provided for your to test your workflows functionality.
 
 .Prerequisites
-* {product_name} plug-in for Knative CLI is installed.
+* {product_name} plugin for Knative CLI is installed.
 +
-For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plug-in for Knative CLI>>.
+For more information about installing the plugin, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plugin for Knative CLI>>.
+
+* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
 
 * A workflow project is created.
 +
@@ -186,7 +150,9 @@ By default, the development image is using port `8080`. You can map it to a diff
 ----
 kn workflow run --port 8081
 ----
---
+
+
+For more options with `run` command use `[-h|--help]`. 
 
 [[proc-gen-manifests-sw-project-kn-cli]]
 == Generating a list of Operator manifests using Knative CLI
@@ -196,9 +162,9 @@ After creating your workflow project, you can use the `gen-manifest` command wit
 This will screate a new file in `./manifests` directory in your project.
 
 .Prerequisites
-* {product_name} plug-in for Knative CLI is installed.
+* {product_name} plugin for Knative CLI is installed.
 +
-For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plug-in for Knative CLI>>.
+For more information about installing the plugin, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plugin for Knative CLI>>.
 
 * A workflow project is created.
 +
@@ -235,15 +201,17 @@ For more options with `gen-manifest` command use `[-h|--help]`.
 You can use the `deploy` command combined with `kn workflow` to deploy your workflow project. You must be in the root folder of your workflow project. 
 
 .Prerequisites
-* {product_name} plug-in for Knative CLI is installed.
+* {product_name} plugin for Knative CLI is installed.
 +
-For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plug-in for Knative CLI>>.
+For more information about installing the plugin, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plugin for Knative CLI>>.
 
 * A workflow project is created.
 +
 For more information about creating a workflow project, see <<proc-create-sw-project-kn-cli, Creating workflow project using Knative CLI>>.
 
 * You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
+
+* You are logged into your kubernetes cluster or started one locally according to the xref:getting-started/preparing-environment.adoc#proc-starting-cluster-fo-local-development[starting cluster for local development] guide.
 
 * You have installed {operator_name} in your kubernetes cluster according to xref:cloud/operator/install-serverless-operator.adoc[operator installation] guide.
 
@@ -266,16 +234,46 @@ You can use the `kubectl` command line if you want to use a complex deployment s
 ====
 --
 
+For more options with `deploy` command use `[-h|--help]`. 
+
+[[proc-undeploy-sw-project-kn-cli]]
+== Undeploying a workflow project using Knative CLI
+
+You can use the `undeploy` command combined with `kn workflow` to undeploy your workflow project. You must be in the root folder of your workflow project. 
+
+.Prerequisites
+* {product_name} plugin for Knative CLI is installed.
++
+For more information about installing the plugin, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plugin for Knative CLI>>.
+
+* A workflow project is deplyed in your cluster.
++
+For more information about creating a workflow project, see <<proc-create-sw-project-kn-cli, Creating workflow project using Knative CLI>>.
+
+.Procedure
+. Enter the following command to deploy your workflow project:
++
+--
+.Undeploy a workflow project, you must specify a namespace
+[source,shell]
+----
+kn workflow undeploy --namespace <your_namespace>
+----
+--
+
+For more options with `undeploy` command use `[-h|--help]`. 
+
 [[proc-create-quarkus-sw-project-kn-cli]]
 == Creating a Quarkus Workflow project using Knative CLI
 
-After installing the {product_name} plug-in, you can use the `quarkus create` command with `kn workflow` to scaffold a new Quarkus Workflow project in your current directory.
+After installing the {product_name} plugin, you can use the `quarkus create` command with `kn workflow` to scaffold a new Quarkus Workflow project in your current directory.
 
 The `quarkus create` command sets up a {product_name} Quarkus project containing minimal extensions to build a workflow project. Also, the generated workflow project contains a "hello world" `workflow.sw.json` file in your `./<project-name>/src/main/resources` directory.
 
 .Prerequisites
-* {product_name} plug-in for Knative CLI is installed.
-For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plug-in for Knative CLI>>.
+* {product_name} plugin for Knative CLI is installed.
+For more information about installing the plugin, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plugin for Knative CLI>>.
+* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-advanced-local-environment-setup[advanced environment setup] guide.
 ifeval::["{kogito_version_redhat}" != ""]
 * You followed the steps in xref:use-cases/advanced-developer-use-cases/getting-started/create-your-first-workflow-service.adoc#proc-configuring-maven-rhbq[Configuring your Maven project to Red Hat build of Quarkus and OpenShift Serverless Logic]
 endif::[]
@@ -324,10 +322,10 @@ After creating your workflow project, you can use the `quarkus build` command wi
 The process of building your workflow project produces a `knative.yml` file in the `./target/kubernetes` folder. If your workflow contains events, then the building process also generates a `kogito.yml` file.
 
 .Prerequisites
-* {product_name} plug-in for Knative CLI is installed.
+* {product_name} plugin for Knative CLI is installed.
 +
-For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plug-in for Knative CLI>>.
-
+For more information about installing the plugin, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plugin for Knative CLI>>.
+* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-advanced-local-environment-setup[advanced environment setup] guide.
 * A workflow project is created.
 +
 For more information about creating a workflow project, see <<proc-create-sw-project-kn-cli, Creating workflow project using Knative CLI>>.
@@ -439,9 +437,9 @@ For more options with `quarkus build` command use `[-h|--help]`.
 You can use the `quarkus deploy` command combined with `kn workflow` to deploy your workflow project in your current directory. However, before deploying the project, you must build your workflow project as the build process produces deployment files, such as `knative.yml` and `kogito.yml` (In case of events) in the `./target/kubernetes` folder.
 
 .Prerequisites
-* {product_name} plug-in for Knative CLI is installed.
+* {product_name} plugin for Knative CLI is installed.
 +
-For more information about installing the plug-in, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plug-in for Knative CLI>>.
+For more information about installing the plugin, see <<proc-install-sw-plugin-kn-cli, Installing the {product_name} plugin for Knative CLI>>.
 
 * A workflow project is created.
 +
@@ -451,7 +449,11 @@ For more information about created a workflow project, see <<proc-create-sw-proj
 +
 For more information about building your workflow project, see <<proc-build-sw-project-kn-cli, Building workflow project using Knative CLI>>.
 
-* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
+* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-advanced-local-environment-setup[advanced environment setup] guide.
+
+* You are logged into your kubernetes cluster or started one locally according to the xref:getting-started/preparing-environment.adoc#proc-starting-cluster-fo-local-development[starting cluster for local development] guide.
+
+* You have installed {operator_name} in your kubernetes cluster according to xref:cloud/operator/install-serverless-operator.adoc[operator installation] guide.
 
 .Procedure
 . Enter the following command to deploy your workflow project:
@@ -475,9 +477,11 @@ Also, ensure that you have access to your cluster and your cluster can access th
 
 [NOTE]
 ====
-You can use the `kubectl` command line if you want to use a complex deployment setup for your workflow project.
+You can use the `kubectl` or other command line tools if you want to use a complex deployment setup for your workflow project.
 ====
 --
+
+For more options with `quarkus deploy` command use `[-h|--help]`. 
 
 
 == Additional resources
