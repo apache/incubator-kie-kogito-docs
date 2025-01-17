@@ -1,0 +1,155 @@
+= Deploying {product_name} Management Console on Kubernetes
+:compat-mode!:
+// Metadata:
+:description: Deploying Management Console on Kubernetes
+:keywords: kogito, workflow, quarkus, serverless, kn, oc, openshift, sonataflow
+:table-caption: Data Set
+// envs for common content
+:management_console: SonataFlow Management Console
+:management_console_prefix: sonataflow-management-console
+:command_line_tool: kubectl
+
+
+This document describes how to deploy the {product_name} Management Console on Kubernetes
+
+The SonataFlow Management Console is a web interface designed to manage and monitor workflows. It allows users to initiate workflows, trigger Cloud Events, and monitor their execution.
+
+.Prerequisites
+* Your xref:cloud/operator/build-and-deploy-workflows.adoc[{product_name} application] is deployed and ready to use.
+* A Kubernetes or OpenShift cluster with admin privileges and {command_line_tool} installed.
+* (Optional) xref:security/orchestrating-third-party-services-with-oauth2.adoc[Keycloak server] is installed.
+
+== Set up Kubernetes and deploy your SonataFlow application
+
+The SonataFlow Management Console relies on the underlying services of the SonataFlow application, including the Data Index service. The Data Index provides data from workflow executions, enabling the Management Console to display workflow information. 
+
+Ensure that your Data Index service is deployed and accessible before deploying the Management Console.
+
+.See also:
+. xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-openshift.adoc[Deploying your SonataFlow application on OpenShift ]
+. xref:cloud/operator/supporting-services.adoc[Data Index installation with the Operator]
+
+== (Optional) Deploy Keycloak for production
+
+_If you already have Keycloak deployment or server available you can skip this section._
+
+For production environments, deploy Keycloak to handle authentication or choose your own OAuth2 server. You can refer to the SonataFlow Keycloak documentation xref:security/orchestrating-third-party-services-with-oauth2.adoc[here].
+
+== Deploy {management_console}
+
+Create the deployment for the SonataFlow Management Console by applying the following YAML definition:
+
+.Example configuration in `{management_console_prefix}-deployment.yaml`
+[source,yaml,subs="attributes+"]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {management_console_prefix}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {management_console_prefix}
+  template:
+    metadata:
+      labels:
+        app: {management_console_prefix}
+    spec:
+      containers:
+        - name: {management_console_prefix}
+          image: {sonataflow_management_console_imagename}:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          env:
+            - name: SONATAFLOW_MANAGEMENT_CONSOLE_KOGITO_ENV_MODE
+              value: DEV <1>
+            - name: SONATAFLOW_MANAGEMENT_CONSOLE_DATA_INDEX_ENDPOINT
+              value: publicly.accesible.url.of.data-index-service/graphql <2>
+----
+<1> (Optional) Environment mode: "PROD" or "DEV". PROD enables Keycloak integration.
+<2> The URL to the Data Index Deployment created xref:use-cases/advanced-developer-use-cases/deployments/deploying-on-openshift.adoc[here]. +
+Please note it's required the Data Index URL to be exposed.
+
+.Apply {management_console} Deployment
+[source,shell,subs="attributes+"]
+----
+{command_line_tool} apply -f {management_console_prefix}-deployment.yaml
+----
+
+== Create the Service
+
+Once the deployment is created, expose it through a service. Create a service definition by applying the following YAML:
+
+.Example configuration in `{management_console_prefix}-service.yaml`
+[source,yaml,subs="attributes+"]
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: {management_console_prefix}-service
+spec:
+  selector:
+    app: {management_console_prefix}
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+----
+
+.Apply {management_console} Service
+[source,shell,subs="attributes+"]
+----
+{command_line_tool} apply -f {management_console_prefix}-service.yaml
+----
+This will create a service exposing the SonataFlow Management Console.
+
+== Create the Route (OpenShift only)
+
+Finally, expose the service with a route, so that it can be accessed externally.
+
+Create the route by applying the following YAML:
+
+.Example configuration in `{management_console_prefix}-route.yaml`
+[source,yaml,subs="attributes+"]
+----
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {management_console_prefix}-route
+spec:
+  to:
+    kind: Service
+    name: {management_console_prefix}-service
+  port:
+    targetPort: http
+----
+
+.Apply {management_console} Route
+[source,shell,subs="attributes+"]
+----
+{command_line_tool} apply -f {management_console_prefix}-route.yaml
+----
+
+== Create the Ingress (Kubernetes only)
+
+For Kubernetes you can expose the SonataFlow Management Console using an Ingress.
+
+To create an Ingress, refer to the official Kubernetes documentation here: link:https://kubernetes.io/docs/concepts/services-networking/ingress/[Kubernetes Ingress Guide].
+
+
+== Optional: Keycloak authentication for Production
+
+In a production environment, you can integrate the SonataFlow Management Console with a Keycloak server for authentication or any OAuth2 server.
+
+Set the following environment variables in your deployment:
+
+* `SONATAFLOW_MANAGEMENT_CONSOLE_DATA_INDEX_ENDPOINT="PROD"`
+* `KOGITO_CONSOLES_KEYCLOAK_HEALTH_CHECK_URL` – The Keycloak realm’s health check URL.
+* `KOGITO_CONSOLES_KEYCLOAK_URL` – The Keycloak server URL.
+
+include::../../pages/_common-content/report-issue.adoc[]
