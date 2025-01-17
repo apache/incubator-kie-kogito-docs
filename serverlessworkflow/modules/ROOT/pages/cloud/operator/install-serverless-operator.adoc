@@ -5,13 +5,14 @@
 :keywords: kogito, sonataflow, workflow, serverless, operator, kubernetes, minikube, openshift, containers
 // links
 
+:kubernetes_version: {kubernetes_version}
 :openshift_operator_install_url: https://docs.openshift.com/container-platform/4.13/operators/admin/olm-adding-operators-to-cluster.html
 :openshift_operator_uninstall_url: https://docs.openshift.com/container-platform/4.13/operators/admin/olm-deleting-operators-from-cluster.html
 :kubernetes_operator_install_url: https://operatorhub.io/how-to-install-an-operator
 :kubernetes_operator_uninstall_url: https://olm.operatorframework.io/docs/tasks/uninstall-operator/
 :operatorhub_url: https://operatorhub.io/
 
-This guide describes how to install the {operator_name} in a Kubernetes or OpenShift cluster. The operator is in an xref:cloud/operator/known-issues.adoc[early development stage] (community only) and has been tested on OpenShift {openshift_version_min}+, Kubernetes {kubernetes_version}+, and link:{minikube_url}[Minikube].
+This guide describes how to install the {operator_name} in a Kubernetes or OpenShift cluster. The operator is in an xref:cloud/operator/known-issues.adoc[early development stage] (community only) and has been tested on OpenShift {openshift_version_min}+ , Kubernetes {kubernetes_version}+ , {minikube_url}[Minikube] and {kind_install_url}[Kind].
 
 .Prerequisites
 * A Kubernetes or OpenShift cluster with admin privileges and `kubectl` installed. 
@@ -64,7 +65,9 @@ To install the {product_name} Operator, you can use the following command:
 ----
 kubectl create -f {kogito_operator_repository_rawcontent_url}/{operator_version}/operator.yaml
 ----
+
 Replace `<version>` with specific version if needed:
+[source,shell,subs="attributes+"]
 ----
 kubectl create -f {kogito_operator_repository_rawcontent_url}/<version>/operator.yaml
 ----
@@ -120,8 +123,14 @@ To uninstall the correct version of the operator, first you must get the current
 .Getting the operator version
 [source,shell,subs="attributes+"]
 ----
-kubectl get deployment {operator_controller_manager_deployment_name} -n sonataflow-operator-system -o jsonpath="{.spec.template.spec.containers[?(@.name=='manager')].image}"
+kubectl get deployment {operator_controller_manager_deployment_name} \
+    -n sonataflow-operator-system \
+    -o jsonpath="{.spec.template.spec.containers[?(@.name=='manager')].image}"
+----
 
+Expected output:
+[source,shell,subs="attributes+"]
+----
 {sonataflow_operator_imagename}:{operator_version}
 ----
 
