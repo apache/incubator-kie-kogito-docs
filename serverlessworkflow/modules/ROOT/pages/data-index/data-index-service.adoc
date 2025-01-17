@@ -4,7 +4,6 @@
 :description: Data Index Service use as an independent service that allow to index and query audit data in {product_name}
 :keywords:  workflow, serverless, data, dataindex, data-index, index, service, standalone
 // External pages
-:distributions_url: https://quay.io/organization/kiegroup
 :dev_services_url: https://quarkus.io/guides/dev-services
 :test_containers_url: https://www.testcontainers.org/
 :kubernetes_configmap_url: https://kubernetes.io/docs/concepts/configuration/configmap/
@@ -19,9 +18,7 @@ The goal is to configure the container to allow to process ProcessInstances and 
 
 [#data-index-service-distributions]
 === {data_index_ref} distributions
-{data_index_ref} service can be deployed referencing directly a distributed {data_index_ref} image. Here there are the different {data_index_ref} image distributions that can be found in link:{distributions_url}[Quay.io/kiegroup]:
-
-image::data-index/data-index-distributions.png[Image of data-index different available distributions]
+{data_index_ref} service can be deployed referencing directly a distributed {data_index_ref} image. There are the different {data_index_ref} image distributions that can be found in link:{images_distributions_url}[here].
 
 === {data_index_ref} standalone service deployment
 
@@ -81,7 +78,7 @@ Here you can see in example, how the {data_index_ref} resource definition can be
       QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: update
 ----
 
-<1> Reference the right {data_index_ref} image to match with the type of Database, in this case `quay.io/kiegroup/kogito-data-index-postgresql:latest`
+<1> Reference the right {data_index_ref} image to match with the type of Database, in this case `{sonataflow_dataindex_postgresql_imagename}:{operator_version}`
 <2> Provide the database connection properties.
 <3> When `KOGITO_DATA_INDEX_QUARKUS_PROFILE` is not present, the {data_index_ref} is configured to use Kafka eventing.
 <4> To initialize the database schema at start using flyway.
@@ -223,7 +220,7 @@ spec:
       name: data-index-service-postgresql
     uri: /jobs <7>
 ----
-<1> Reference the right {data_index_ref} image to match with the type of Database, in this case `quay.io/kiegroup/kogito-data-index-postgresql:latest`
+<1> Reference the right {data_index_ref} image to match with the type of Database, in this case `{sonataflow_dataindex_postgresql_imagename}:{operator_version}`
 <2> Provide the database connection properties
 <3> KOGITO_DATA_INDEX_QUARKUS_PROFILE: http-events-support to use the http-connector with Knative eventing.
 <4> To initialize the database schema at start using flyway

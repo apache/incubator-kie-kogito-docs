@@ -62,31 +62,31 @@ To install the {product_name} Operator, you can use the following command:
 .Install {product_name} Operator on Kubernetes
 [source,shell,subs="attributes+"]
 ----
-kubectl create -f https://raw.githubusercontent.com/apache/incubator-kie-kogito-serverless-operator/{operator_version}/operator.yaml
+kubectl create -f {kogito_operator_repository_rawcontent_url}/{operator_version}/operator.yaml
 ----
-Replace `main` with specific version if needed:
+Replace `<version>` with specific version if needed:
 ----
-kubectl create -f https://raw.githubusercontent.com/kiegroup/kogito-serverless-operator/<version>/operator.yaml
+kubectl create -f {kogito_operator_repository_rawcontent_url}/<version>/operator.yaml
 ----
-`<version>` could be `1.44.1` for instance.
+`<version>` could be `{product_version_long}` for instance.
 
 You can follow the deployment of the {product_name} Operator:
 
 .Watch the {product_name} Operator pod
 [source,shell,subs="attributes+"]
 ----
-kubectl get pod -n sonataflow-operator-system --watch
+kubectl get pod -n {operator_installation_namespace} --watch
 ----
 
 A successful installation should have an output like this:
 
 .Successful Installation Output
-[source]
+[source,subs="attributes+"]
 ----
 NAME                                                     READY   STATUS              RESTARTS   AGE
-sonataflow-operator-controller-manager-948547ffd-sr2j2   0/2     ContainerCreating   0          6s
-sonataflow-operator-controller-manager-948547ffd-sr2j2   1/2     Running             0          7s
-sonataflow-operator-controller-manager-948547ffd-sr2j2   2/2     Running             0          20s
+{operator_controller_manager_deployment_name}-948547ffd-sr2j2   0/2     ContainerCreating   0          6s
+{operator_controller_manager_deployment_name}-948547ffd-sr2j2   1/2     Running             0          7s
+{operator_controller_manager_deployment_name}-948547ffd-sr2j2   2/2     Running             0          20s
 ----
 
 You can also follow the operator’s log:
@@ -94,7 +94,7 @@ You can also follow the operator’s log:
 .Watch the {product_name} Operator pod logs
 [source,shell,subs="attributes+"]
 ----
-kubectl logs deployment/sonataflow-operator-controller-manager -n sonataflow-operator-system -f
+kubectl logs deployment/{operator_controller_manager_deployment_name} -n {operator_installation_namespace} -f
 ----
 
 Once the operator is running, it will watch for instances of the {product_name} Custom Resources (CR). Using CRs, you can configure your {product_name} environment and define Workflows and builds to be handled by the operator.
@@ -120,15 +120,15 @@ To uninstall the correct version of the operator, first you must get the current
 .Getting the operator version
 [source,shell,subs="attributes+"]
 ----
-kubectl get deployment sonataflow-operator-controller-manager -n sonataflow-operator-system -o jsonpath="{.spec.template.spec.containers[?(@.name=='manager')].image}"
+kubectl get deployment {operator_controller_manager_deployment_name} -n sonataflow-operator-system -o jsonpath="{.spec.template.spec.containers[?(@.name=='manager')].image}"
 
-quay.io/kiegroup/kogito-serverless-operator-nightly:latest
+{sonataflow_operator_imagename}:{operator_version}
 ----
 
 .Uninstalling the operator
 [source,shell,subs="attributes+"]
 ----
-kubectl delete -f https://raw.githubusercontent.com/apache/incubator-kie-kogito-serverless-operator/<version>.x/operator.yaml
+kubectl delete -f {kogito_operator_repository_rawcontent_url}/<version>/operator.yaml
 ----
 
 [TIP]

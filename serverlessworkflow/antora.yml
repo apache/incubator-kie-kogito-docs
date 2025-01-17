@@ -33,7 +33,9 @@ asciidoc:
     product_name: SonataFlow
     operator_name: SonataFlow Operator
     operator_installation_namespace: sonataflow-operator-system
+    sonataflow_vscode_extension_name: KIE Serverless Workflow Editor
     operator_controller_config: sonataflow-operator-controllers-config
+    operator_controller_manager_deployment_name: sonataflow-operator-controller-manager
     quarkus_platform: io.quarkus.platform
     kogito_sw_ga: kogito-quarkus-serverless-workflow
     data_index_ref: Data Index
@@ -43,16 +45,19 @@ asciidoc:
     operator_openshift_catalog: sonataflow-operator
     operator_k8s_keyword: sonataflow
     operator_k8s_subscription: my-sonataflow-operator
-    kogito_devservices_imagename: quay.io/kiegroup/kogito-data-index-ephemeral-nightly
-    sonataflow_devmode_imagename: quay.io/kiegroup/kogito-swf-devmode-nightly
-    sonataflow_builder_imagename: quay.io/kiegroup/kogito-swf-builder-nightly
+    container_image_registry_base: docker.io
+    sonataflow_operator_imagename: docker.io/apache/incubator-kie-sonataflow-operator
+    sonataflow_devmode_imagename: docker.io/apache/incubator-kie-sonataflow-devmode
+    sonataflow_builder_imagename: docker.io/apache/incubator-kie-sonataflow-builder
+    sonataflow_builder_configmap_name: sonataflow-operator-builder-config
+    sonataflow_dataindex_postgresql_imagename: docker.io/apache/incubator-kie-kogito-data-index-postgresql
+    sonataflow_dataindex_ephemeral_imagename:  docker.io/apache/incubator-kie-kogito-data-index-ephemeral
     sonataflow_devmode_devui_url: /q/dev-ui/org.apache.kie.sonataflow.sonataflow-quarkus-devui/
     serverless_logic_web_tools_name: Serverless Logic Web Tools
     serverless_workflow_vscode_extension_name: KIE Serverless Workflow Editor
     kie_kogito_examples_repo_name: incubator-kie-kogito-examples
 
     # Jobs service image and links
-    jobs_service_image_allinone_url: https://hub.docker.com/r/apache/incubator-kie-kogito-jobs-service-allinone
     jobs_service_image_allinone: docker.io/apache/incubator-kie-kogito-jobs-service-allinone
     jobs_service_image_ephemeral: docker.io/apache/incubator-kie-kogito-jobs-ephemeral
     jobs_service_image_ephemeral_name: incubator-kie-kogito-jobs-service-ephemeral
@@ -77,12 +82,15 @@ asciidoc:
     docker_min_version: 20.10.7
     docker_compose_min_version: 1.27.2
     kubernetes_version: 1.26
-    openshift_version_min: 4.12
-    openshift_version_max: 4.15
-    knative_version: 1.13
-    knative_serving_version: 1.13
-    knative_eventing_version: 1.13
+    openshift_version_min: 4.13
+    openshift_version_max: 4.17
+    knative_version: 1.15
+    knative_serving_version: 1.15
+    knative_eventing_version: 1.15
+    apache_kie_latest_version: 10.0.0
     kogito_version: 999-SNAPSHOT
+    product_version_short: 10.0
+    product_version_long: 10.0.0
     # only used in downstream
     operator_version: main
 
@@ -99,7 +107,10 @@ asciidoc:
     #
     # URLs 
     #
+    images_distributions_url: https://kie.apache.org/docs/start/download#container-images
+    apple_support_url: https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac
     kogito_examples_repository_url: https://github.com/apache/incubator-kie-kogito-examples
+    kogito_operator_repository_rawcontent_url: https://raw.githubusercontent.com/apache/incubator-kie-kogito-serverless-operator
     kogito_sw_examples_url: https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-workflow-examples
     kogito_sw_operator_examples_url: https://github.com/apache/incubator-kie-kogito-examples/tree/main/serverless-operator-examples
     kogito_examples_url: https://github.com/apache/incubator-kie-kogito-examples.git
@@ -116,6 +127,7 @@ asciidoc:
     open_api_spec_url: https://spec.openapis.org/oas/v3.1.0.html
     open_api_swagger_spec_url: https://swagger.io/docs/specification
     quarkus_openapi_gen_url: https://github.com/quarkiverse/quarkus-openapi-generator
+    kn_workflow_plugin_releases_url: https://kie.apache.org/docs/start/download#sonataflow-knative-plugin
     kie_tools_releases_page_url: https://github.com/apache/incubator-kie-tools/releases
     quarkus_guides_base_url: https://quarkus.io/guides
     quarkus_guides_kafka_url: https://quarkus.io/guides/kafka

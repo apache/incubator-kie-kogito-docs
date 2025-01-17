@@ -1,0 +1,51 @@
+= Installing the Knative Workflow Plugin
+:compat-mode!:
+// Metadata:
+:description: Install the operator on Kubernetes clusters
+:keywords: kogito, sonataflow, workflow, serverless, operator, kubernetes, minikube, openshift, containers
+// links
+
+*Prerequisites*
+
+* You have first installed the link:{kn_cli_install_url}[Knative CLI].
+* link:{docker_install_url}[Docker] or {podman_install_url}[Podman] is installed.
+
+[[proc-install-sw-plugin-kn-cli]]
+== Installing the {product_name} plug-in for Knative CLI
+
+You can use the {product_name} plug-in to set up your local workflow project quickly using Knative CLI. 
+
+.Procedure
+. Download the latest binary file, suitable for your environment, from the link:{kn_workflow_plugin_releases_url}[download] page.
+. Install the `kn workflow` command as a plug-in of the Knative CLI using the following steps:
++
+--
+.. Rename the downloaded binary as follows:
++
+`mv kn-workflow-linux-amd64 kn-workflow`
++
+.. Make the binary file executable as follows:
++
+`chmod +x kn-workflow`
++
+[WARNING]
+==== 
+On Mac, some systems might block the application to run due to Apple enforcing policies. To fix this problem, check the *Security & Privacy* section in the *System Preferences* -> *General* tab to approve the application to run. For more information, see link:{apple_support_url}[Apple support article: Open a Mac app from an unidentified developer].
+====
+.. Copy the `kn-workflow` binary file to `/usr/local/bin`.
+.. Run the following command to verify that `kn-workflow` plug-in is installed successfully:
++
+`kn plugin list`
+--
+
+To verify that the installation was successful, you can execute the following command:
+[source,shell]
+----
+kn workflow version
+----
+
+output:
+[source,shell,subs="attributes+"]
+----
+{product_version_long}
+----
