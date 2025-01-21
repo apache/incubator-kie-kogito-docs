@@ -1,0 +1,169 @@
+= Introduction to {product_name} development
+
+This guide showcases the {product_name} Workflow CLI plugin and Apache KIE Serverless Workflow Visual Studio code extension to create, run & deploy {product_name} projects on your local environment and walks you trhought the recommended development loop of workflow applications.
+
+.Prerequisites
+* You have set up your environment according to the xref:getting-started/preparing-environment.adoc#proc-minimal-local-environment-setup[minimal environment setup] guide.
+
+
+[[proc-creating-app-with-kn-cli]]
+== Creating a workflow project with KN CLI
+
+Use the `create` command with kn workflow to scaffold a new SonataFlow project.
+
+.Procedure
+. Navigate to your development directory and create your project.
+[source,bash]
++
+----
+kn workflow create -n my-sonataflow-project
+----
+. This will create a folder with name `my-sonataflow-project` and a sample workflow `workflow.sw.json`
+[source,bash]
++
+----
+cd ./my-sonataflow-project
+----
+. Open the folder in Visual Studio Code and examine or  the created `workflow.sw.json` using the editor provided by the extension. 
+[source,bash]
++
+----
+code workflow.sw.json
+----
+
+Now you can run the project and execute the workflow.
+
+[[proc-running-app-with-kn-cli]]
+== Running a workflow project with KN CLI
+
+Use the `run` command with kn workflow to build and run the {product_name} project locally in development mode.
+
+.Procedure
+. Run the project.
++
+[source,bash]
+----
+kn workflow run
+----
+* The Development UI will be accessible at `localhost:8080/q/dev`
+* You can now work on your project. Any changes will be picked up by the hot reload feature.
+* See xref:testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-workflow-instances-page.adoc[Workflow instances] guide on how to run workflows via Development UI.
+* Once you are done developing your project navigate to the terminal that is running the `kn workflow run` command and hit `Ctrl+C` to stop the development environment.
+
+You can use any editor to develop your workflow to suit your use case. We recommend getting familiar with xref:../core/cncf-serverless-workflow-specification-support.adoc[] and guides in `Core` chapter first. 
+
+.Executing a workflow
+. To test your running workflow project, access the Swagger UI on `localhost:8080/q/swagger-ui` to examine available endpoints.
+. In order to execute the workflow once, run: 
+[source,bash]
+----
+curl -X 'POST' \
+  'localhost:8080/hello' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "workflowdata": {}
+}'
+----
+. You should see a similar response:
++
+[source,bash]
+----
+{"id": "<UUID>", "workflowdata" : {"message":"Hello World"}}
+----
+
+
+To deploy the finished project to kubernetes cluster, proceed to the next section.
+
+[[proc-deploying-app-with-kn-cli]]
+== Deploying a workflow project with KN CLI
+
+.Prerequisites
+* You are logged into your kubernetes cluster or started one locally according to the xref:getting-started/preparing-environment.adoc#proc-starting-cluster-fo-local-development[starting cluster for local development] guide.
+* You have installed {operator_name} in your kubernetes cluster according to xref:cloud/operator/install-serverless-operator.adoc[operator installation] guide.
+
+Use the `deploy` command with kn workflow to deploy the {product_name} project into your local cluster.
+
+.Procedure
+. Create a namespace for your application
++
+[source,bash]
+----
+kubectl create namespace my-sf-application
+----
+. Deploy the workflow to the cluster in the default `dev` mode. The plugin uses settings located in `./<home>/.kube/config` to access the cluster.
++
+[source,bash]
+----
+kn workflow deploy --namespace my-sf-application
+----
+* In a separate bash instance create a port mapping:
++
+[tabs]
+====
+Openshift::
++
+--
+[source,shell]
+----
+oc get route svc/hello --namespace my-sf-application
+----
+* On openshift the route is generated for you in `dev` mode deployments. Use the URL of the generated route to access your workflow instances using the Developement interface.
+** <RETURNED_URL>{sonataflow_devmode_devui_url}workflows
+--
+Minikube::
++
+--
+[source,shell]
+----
+minikube service hello --namespace my-sf-application --url
+----
+* Use this URL to access your workflow instances using the Developer UI
+** <RETURNED_URL>{sonataflow_devmode_devui_url}workflows
+--
+Kind::
++
+--
+[source,shell]
+----
+# Execute
+kubectl get services -n my-sf-application
+
+# You should see output like this, note the ports
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)            AGE
+hello        ClusterIP   10.96.0.1    <none>        <RANDOM_PORT>/80   39s
+
+# Execute
+kubectl port-forward service/hello <RANDOM_PORT>:80 -n my-sf-application
+
+----
+--
+====
+
+* To update the image, run the `deploy` again, note that this may take some time. You can also direcly edit the `Sonataflow` resource in the cluster. In `dev` mode, the operator will update the deployment with the changes.
+. To stop the deployment, use the `undeploy` command:
++
+[source,bash]
+----
+kn workflow undeploy --namespace my-sf-application
+----
+
+[[proc-testing-application]]
+== Testing your workflow application
+
+To test your workflow application you can use any capable REST client out there. All that is needed is the URL of your deployed workflow project, which is showcase in section above,
+You can also use the management console provided as part of the development interface.
+Please see the additional resources to proceed.
+
+== Additional resources
+
+* xref:testing-and-troubleshooting/quarkus-dev-ui-extension/quarkus-dev-ui-overview.adoc[]
+* xref:getting-started/getting-familiar-with-our-tooling.adoc[]
+* xref:service-orchestration/orchestration-of-openapi-based-services.adoc[]
+* xref:cloud/operator/developing-workflows.adoc[]
+
+include::../../pages/_common-content/report-issue.adoc[]
+
+ifeval::["{kogito_version_redhat}" != ""]
+include::../../pages/_common-content/downstream-project-setup-instructions.adoc[]
+endif::[]
