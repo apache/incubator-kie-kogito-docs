@@ -26,7 +26,7 @@ import re
 import shutil
 from pathlib import Path
 
-pattern = re.compile("(data-version=\")((\d+\.)(\d+\.)(\*|\d+)\.Final)")
+pattern = re.compile("(data-version=\")((\d+\.)(\d+\.)(\*|\d+))")
 found = False
 base_path = "build/site/serverlessworkflow"
 index_file = Path(base_path + "/latest/index.html").resolve()
