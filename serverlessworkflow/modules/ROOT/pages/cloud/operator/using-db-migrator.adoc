@@ -29,7 +29,7 @@ In this mode, the {product_name} Operator makes no migration attempt.
 == Usage scenarios with examples
 
 === Specify database information at persistence level instead of service level
-You will use SonataFlowPlatform CR's spec->persistence->postgresql to specify database to be used by Data Index and Jobs Service. And specify the database migration mode to use under spec->services->dataIndex or jobService->persistence->dbMigrationStrategy with value such as job, service or none.
+You will use SonataFlowPlatform CR's `.spec.persistence.postgresql` to specify the database to be used by the Data Index and Jobs Service. Then, specify the database migration mode to use under `.spec.services.dataIndex.persistence.dbMigrationStrategy` or `.spec.services.jobService.persistence.dbMigrationStrategy` with a value such as job, service, or none.
 In this mode the Data Index and Jobs Service will make use of one common database.
 
 [source, yaml]
