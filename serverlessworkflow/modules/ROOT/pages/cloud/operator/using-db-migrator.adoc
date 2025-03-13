@@ -1,0 +1,111 @@
+= Using Database Migration Capabilities
+:compat-mode!:
+// Metadata:
+:description: Workflows monitoring configuration
+:keywords: kogito, sonataflow, workflow, operator, kubernetes, database migrator
+
+This document describes how to use {product_name} Operator's jobs based database migration capabilities for Data Index and Jobs Service components, along with two other modes: service based database migration and none. 
+
+The term database migration refers to either initializing a given Data Index or Jobs Service database to the schema needed by them or applying data or schema updates as new versions are released.
+
+[IMPORTANT]
+====
+Currently, the {product_name} Operator supports PostgreSQL database. More database types are expected to be supported in future. 
+====
+
+[#use-db-migrator]
+== Database Migrator overview
+The database migrator capability works in conjunction with {product_name} Operator with following modes.
+
+=== Jobs based database migration
+In this mode, the {product_name} Operator creates a Kubernetes Job and uses the database migrator component to migrate configured databases. You would typically use this mode when running in non-development scenarios such as Production environments, where there could be an existing database for use by Data Index and/or Jobs Service.
+
+=== Service based database migration
+In this mode, the {product_name} Operator does not create a Kubernetes Job and hence does not use the database migrator component to migrate configured databases. In this mode, thus the Data Index or Jobs Service are responsible to migrate the configured databases. You would typically use this mode when running in development scenarios such as local environments, where you are testing scenarios with clean state everytime you deploy and run.
+
+=== None mode
+In this mode, the {product_name} Operator makes no migration attempt.
+
+== Usage scenarios with examples
+
+=== Specify database information at persistence level instead of service level
+You will use SonataFlowPlatform CR's spec->persistence->postgresql to specify database to be used by Data Index and Jobs Service. And specify the database migration mode to use under spec->services->dataIndex or jobService->persistence->dbMigrationStrategy with value such as job, service or none.
+In this mode the Data Index and Jobs Service will make use of one common database.
+
+[source, yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  build:
+    config:
+      strategyOptions:
+        KanikoBuildCacheEnabled: "true"
+  persistence:
+    postgresql:
+      secretRef:
+        name: postgres-secrets
+        userKey: POSTGRES_USER
+        passwordKey: POSTGRES_PASSWORD
+      serviceRef:
+        name: postgres
+        databaseName: sonataflow        
+  services:
+    dataIndex:
+      enabled: true
+      persistence:
+        # job=job based db migration, service=service based db migration, none=no db migration
+        dbMigrationStrategy: job 
+    jobService:
+      enabled: true
+      persistence:
+        # job=job based db migration, service=service based db migration, none=no db migration
+        dbMigrationStrategy: job
+----
+
+=== Specify database information at service level
+You will use SonataFlowPlatform CR's spec->services->dataIndex or jobService->persistence to specify database information as shown in the example. As earlier, the dbMigrationStrategy can be used with value such as job, service or none.
+
+[source, yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  build:
+    config:
+      strategyOptions:
+        KanikoBuildCacheEnabled: "true"
+  services:
+    dataIndex:
+      enabled: true
+      persistence:
+        # job=job based db migration, service=service based db migration, none=no db migration
+        dbMigrationStrategy: job
+        postgresql:
+          jdbcUrl: jdbc:postgresql://postgres:5432/sonataflow?currentSchema=data-index-service
+          secretRef:
+            name: postgres-secrets
+            userKey: POSTGRES_USER
+            passwordKey: POSTGRES_PASSWORD
+    jobService:
+      enabled: true
+      persistence:
+        # job=job based db migration, service=service based db migration, none=no db migration
+        dbMigrationStrategy: job
+        postgresql:
+          jdbcUrl: jdbc:postgresql://postgres:5432/sonataflow?currentSchema=jobs-service
+          secretRef:
+            name: postgres-secrets
+            userKey: POSTGRES_USER
+            passwordKey: POSTGRES_PASSWORD
+----
+
+== Additional resources
+
+* xref:cloud/operator/using-persistence.adoc[Using persistence in {product_name} workflows]
+
+include::../../../pages/_common-content/report-issue.adoc[]
