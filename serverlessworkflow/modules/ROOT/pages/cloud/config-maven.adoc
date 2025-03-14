@@ -1,0 +1,115 @@
+// Note: This section can grow over time to add more Maven-related configuration and guides
+= Adding a custom Maven Mirror to {product_name} images
+:compat-mode!:
+// Metadata:
+:description: Adding a custom maven mirror to images
+:keywords: maven, mirror, central, sonatype
+// links
+:maven_mirror_guide: https://maven.apache.org/guides/mini/guide-mirror-settings.html
+
+This document describes how to configure the internal Maven settings on {product_name} images so that the maven process can access a custom mirror registry.
+
+By default either the {product_name} Builder and Devmode images have all the required Java libraries to run. In some scenarios, such as adding a custom Quarkus Extension, the internal system will require to 
+access the Maven Central registry. 
+
+In case you are running under restricted network access, you may point the container to access an internal mirror instead. See more information about this procedure on the link:{maven_mirror_guide}[Guide to Mirror Settings] on the Maven documentation.
+
+== Configuring the Maven Mirror on the Operator
+
+=== Adding a Maven Mirror when building workflows
+
+You may edit either the `SonataFlowBuild` or `SonataFlowPlatform` custom resources and add the variable `MAVEN_MIRROR_URL`.
+
+.Maven Mirror configuration example on SonataFlowBuild
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowBuild
+metadata:
+  name: my-workflow
+spec:
+  # supreessed for brevity
+  envs:
+    - name: MAVEN_MIRROR_URL
+      value: http://my.company.registry.local
+----
+
+Changing the `SonataFlowBuild` it will only impact the given workflow instance it represents. In this case, a workflow instance in the same namespace with the name `my-workflow`.
+
+To change the Maven mirror for all build instances for the `preview` profile, you have to change the given `SonataFlowPlatform` within the same namespace.
+
+.Maven Mirror configuration example on SonataFlowPlatform
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: my-platform
+spec:
+  build:
+    template:
+      envs:
+        - name: MAVEN_MIRROR_URL
+          value: http://my.company.registry.local
+----
+
+When a workflow builder instance runs, it will use this information to configure the internal Maven settings file to use this URL as the default mirror to external locations, such as the Maven Central repository.
+
+For more information about building workflows with the operator see xref:cloud/operator/build-and-deploy-workflows.adoc[].
+
+=== Adding a Maven Mirror when deploying on Development Mode
+
+When deploying workflows in `devmode`, you may also add the Maven Mirror to the `SonataFlow` custom resource.
+
+.Maven Mirror configuration example on SonataFlow 
+[source,yaml,subs="attributes+"]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: greeting
+  annotations:
+    sonataflow.org/description: Greeting example on k8s!
+    sonataflow.org/version: 0.0.1
+    sonataflow.org/profile: dev
+spec:  
+  podTemplate:
+    container:
+      envs:
+        - name: MAVEN_MIRROR_URL
+          value: http://my.company.registry.local
+  flow: #supreessed for brevity
+----
+
+[IMPORTANT]
+====
+Only workflows deployed with `dev` profile can use Maven Mirrors. Other deployment models only execute compiled code which won't need to connect to a Maven registry to run.
+====
+
+To know more about running workflows in development mode, see xref:cloud/operator/developing-workflows.adoc[].
+
+== Configuring the Maven Mirror on a custom image
+
+When building workflows in an external system using the {product_name} Builder image, you may set this environment variable preferrebly in your build context. Alternatively, you may also set it in your custom container file.
+
+.Custom Container File with Maven Mirror set as an environment variable
+[source,Dockerfile,subs="attributes+"]
+----
+FROM {sonataflow_builder_imagename}:{operator_version} AS builder
+
+# Content supressed for brevity
+
+# The Maven Mirror URL set as an env var during the build process.
+ENV MAVEN_MIRROR_URL=http://my.company.registry.local
+----
+
+.Custom Container File with Maven Mirror set as an argument
+[source,Dockerfile,subs="attributes+"]
+----
+FROM {sonataflow_builder_imagename}:{operator_version} AS builder
+
+# Content supressed for brevity
+
+# The Maven Mirror URL will be passed as an argument to the build process.
+ARG MAVEN_MIRROR_URL
+----
