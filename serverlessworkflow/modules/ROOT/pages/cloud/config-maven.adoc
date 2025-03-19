@@ -27,14 +27,21 @@ apiVersion: sonataflow.org/v1alpha08
 kind: SonataFlowBuild
 metadata:
   name: my-workflow
+  annotations:
+    sonataflow.org/restartBuild: true <1>
 spec:
   # supreessed for brevity
   envs:
-    - name: MAVEN_MIRROR_URL
-      value: http://my.company.registry.local
+    - name: MAVEN_MIRROR_URL <2>
+      value: http://my.company.registry.local 
 ----
 
+1. Annotation to force the existing build to trigger a new execution
+2. The environment variable required to configure the maven URL
+
 Changing the `SonataFlowBuild` it will only impact the given workflow instance it represents. In this case, a workflow instance in the same namespace with the name `my-workflow`.
+
+For more information about restarting the build see xref:cloud/operator/build-and-deploy-workflows.adoc#restarting-build[Restarting a Build].
 
 To change the Maven mirror for all build instances for the `preview` profile, you have to change the given `SonataFlowPlatform` within the same namespace.
 
@@ -49,9 +56,11 @@ spec:
   build:
     template:
       envs:
-        - name: MAVEN_MIRROR_URL
+        - name: MAVEN_MIRROR_URL <1>
           value: http://my.company.registry.local
 ----
+
+1. The environment variable required to configure the maven URL
 
 When a workflow builder instance runs, it will use this information to configure the internal Maven settings file to use this URL as the default mirror to external locations, such as the Maven Central repository.
 
@@ -75,11 +84,13 @@ metadata:
 spec:  
   podTemplate:
     container:
-      envs:
-        - name: MAVEN_MIRROR_URL
+      env:
+        - name: MAVEN_MIRROR_URL <1>
           value: http://my.company.registry.local
   flow: #supreessed for brevity
 ----
+
+1. The environment variable required to configure the maven URL
 
 [IMPORTANT]
 ====
