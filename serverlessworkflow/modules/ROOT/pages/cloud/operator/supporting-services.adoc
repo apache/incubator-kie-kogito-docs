@@ -104,6 +104,27 @@ The ephemeral deployment of a service requires no additional configurations than
 The PostgreSQL persistence of a service is supported by a PostgreSQL server instance that you must previously install on the cluster.
 The administration of that instance is totally independent of the {operator_name} scope, and to connect a supporting service with it, you must only configure the correct database connection parameters.
 
+==== {product_name} Operator Database Migrator capabilities
+The {product_name} Operator offers out of the box database migration features, which help in configuring the databases for use by Data Index and/or Jobs Service. 
+
+The term database migration refers to either initializing a given Data Index or Jobs Service database to the schema needed by them or applying data or schema updates as new versions are released.
+
+{product_name} Operator offers jobs based database migration capabilities along with two other modes: service based database migration and none.
+
+The {product_name} Operator offered database migration modes are described as follows.
+
+.Jobs based database migration
+In this mode, the {product_name} Operator creates a Kubernetes Job and uses the database migrator component to migrate configured databases. You would typically use this mode when running in non-development scenarios such as Production environments, where there could be an existing database for use by Data Index and/or Jobs Service.
+
+.Service based database migration
+In this mode, the {product_name} Operator does not create a Kubernetes Job and hence does not use the database migrator component to migrate configured databases. In this mode, thus the Data Index or Jobs Service are responsible to migrate the configured databases. You would typically use this mode when running in development scenarios such as local environments, where you are testing scenarios with clean state everytime you deploy and run.
+
+.None mode
+In this mode, the {product_name} Operator makes no migration attempt.
+
+
+=== Overview of PostgreSQL persistence configuration
+
 The following `SonataFlowPlatform` CR fragment shows the configuration options that you must use:
 
 .PostgreSQL persistence configuration
@@ -119,17 +140,19 @@ spec:
     dataIndex:
       enabled: true
       persistence:
+        # job=job based db migration, service=service based db migration, none=no db migration
+        dbMigrationStrategy: job <1>     
         postgresql:
           serviceRef:
-            name: postgres-example <1>
-            namespace: postgres-example-namespace <2>
-            databaseName: example-database <3>
-            databaseSchema: data-index-schema <4>
-            port: 1234 <5>
+            name: postgres-example <2>
+            namespace: postgres-example-namespace <3>
+            databaseName: example-database <4>
+            databaseSchema: data-index-schema <5>
+            port: 1234 <6>
           secretRef:
-            name: postgres-secrets-example <6>
-            userKey: POSTGRESQL_USER <7>
-            passwordKey: POSTGRESQL_PASSWORD <8>
+            name: postgres-secrets-example <7>
+            userKey: POSTGRESQL_USER <8>
+            passwordKey: POSTGRESQL_PASSWORD <9>
     jobService:
       enabled: true
       persistence:
@@ -137,16 +160,16 @@ spec:
         # Specific database configuration for the Job Service
         # might be included here.
 ----
-
-<1> Name of the Kubernetes Service to connect with the PostgreSQL database server.
-<2> (Optional) Kubernetes namespace containing the PostgreSQL Service. Defaults to the `SonataFlowPlatform's` local namespace.
-<3> Name of the PostgreSQL database to store the supporting service data.
-<4> (Optional) Name of the PostgreSQL database schema to store the supporting service data.
+<1> (Optional) Database migration approach to be used by {product_name} Operator. Defaults to a value of `service`.
+<2> Name of the Kubernetes Service to connect with the PostgreSQL database server.
+<3> (Optional) Kubernetes namespace containing the PostgreSQL Service. Defaults to the `SonataFlowPlatform's` local namespace.
+<4> Name of the PostgreSQL database to store the supporting service data.
+<5> (Optional) Name of the PostgreSQL database schema to store the supporting service data.
 Defaults to the `SonataFlowPlatform's` `name`, suffixed with `-data-index-service` or `-jobs-service`. For example, `sonataflow-platform-example-data-index-service`.
-<5> (Optional) Port number to connect with the PostgreSQL Service. Defaults to 5432.
-<6> Name of the link:{k8n_secrets_url}[Kubernetes Secret] containing the username and password to connect with the database.
-<7> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the username to connect with the database.
-<8> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the password to connect with the database.
+<6> (Optional) Port number to connect with the PostgreSQL Service. Defaults to 5432.
+<7> Name of the link:{k8n_secrets_url}[Kubernetes Secret] containing the username and password to connect with the database.
+<8> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the username to connect with the database.
+<9> Name of the link:{k8n_secrets_url}[Kubernetes Secret] `key` containing the password to connect with the database.
 
 [NOTE]
 ====
@@ -159,6 +182,85 @@ To create the secrets for the example above you can use a command like this:
 [source,bash]
 ----
 kubectl create secret generic postgres-secrets-example  --from-literal=POSTGRESQL_USER=<user> --from-literal=POSTGRESQL_PASSWORD=<password> -n postgres-example-namespace
+----
+
+[#common-persistence-scenarios]
+=== Persistence examples with most common scenarios
+
+==== Specify database information at persistence level instead of service level
+You will use SonataFlowPlatform CR's `.spec.persistence.postgresql` to specify the database to be used by the Data Index and Jobs Service. Then, specify the database migration mode to use under `.spec.services.dataIndex.persistence.dbMigrationStrategy` or `.spec.services.jobService.persistence.dbMigrationStrategy` with a value such as job, service, or none.
+In this mode the Data Index and Jobs Service will make use of one common database.
+
+[source, yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  build:
+    config:
+      strategyOptions:
+        KanikoBuildCacheEnabled: "true"
+  persistence:
+    postgresql:
+      secretRef:
+        name: postgres-secrets
+        userKey: POSTGRES_USER
+        passwordKey: POSTGRES_PASSWORD
+      serviceRef:
+        name: postgres
+        databaseName: sonataflow        
+  services:
+    dataIndex:
+      enabled: true
+      persistence:
+        # job=job based db migration, service=service based db migration, none=no db migration
+        dbMigrationStrategy: job 
+    jobService:
+      enabled: true
+      persistence:
+        # job=job based db migration, service=service based db migration, none=no db migration
+        dbMigrationStrategy: job
+----
+
+==== Specify database information at service level
+You will use SonataFlowPlatform CR's `.spec.services.dataIndex` or `.spec.services.jobService.persistence` to specify database information as shown in the example. As earlier, the `dbMigrationStrategy` can be used with a value such as job, service, or none.
+
+[source, yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform
+spec:
+  build:
+    config:
+      strategyOptions:
+        KanikoBuildCacheEnabled: "true"
+  services:
+    dataIndex:
+      enabled: true
+      persistence:
+        # job=job based db migration, service=service based db migration, none=no db migration
+        dbMigrationStrategy: job
+        postgresql:
+          jdbcUrl: jdbc:postgresql://postgres:5432/sonataflow?currentSchema=data-index-service
+          secretRef:
+            name: postgres-secrets
+            userKey: POSTGRES_USER
+            passwordKey: POSTGRES_PASSWORD
+    jobService:
+      enabled: true
+      persistence:
+        # job=job based db migration, service=service based db migration, none=no db migration
+        dbMigrationStrategy: job
+        postgresql:
+          jdbcUrl: jdbc:postgresql://postgres:5432/sonataflow?currentSchema=jobs-service
+          secretRef:
+            name: postgres-secrets
+            userKey: POSTGRES_USER
+            passwordKey: POSTGRES_PASSWORD
 ----
 
 
