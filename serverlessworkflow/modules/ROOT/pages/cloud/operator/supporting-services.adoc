@@ -105,36 +105,36 @@ The term database migration refers to either initializing a given Data Index or 
 
 The database migration strategy must be configured individually for each supporting service, by using the optional  `dataIndex.persistence.dbMigrationStrategy` and `jobService.persistence.dbMigrationStrategy` fields respectively.
 
-You can use any of the following database migration strategies: `job`, `service` and `none`. When not configured, the default value is `service`.
+You can use any of the following database migration strategies: `job`, `service`, and `none`. When not configured, the default value is `service`.
 
 [NOTE]
 ====
-Currently, the database migration is only supported when you use the PostgreSQL persistence configuration.
+Currently, database migration is only supported when using the PostgreSQL persistence configuration.
 ====
 
 ==== Job based database migration strategy
 
-When you configure the `job` based strategy, the {product_name} Operator decouples the database migration by using a dedicated Kubernetes Job that manages all the migration procedure.
+When you configure the `job` based strategy, the {product_name} Operator decouples the database migration by using a dedicated Kubernetes Job that manages the entire migration process.
 
-That Job, executes prior to the supporting services deployment, and thus, ensures that a given service is started only if the corresponding migration was successful.
+That Job executes before the supporting services deployment, and thus, ensures that a given service is started only if the corresponding migration was successful.
 
 You would typically use this strategy in production environments.
 
 ==== Service based database migration strategy
 
-When you configure the `service` based strategy, the database migration is managed by each of the supporting services, and is executed as part of the service is starting sequence.
-In worst scenarios, a service could start with failures.
+When you configure the `service` based strategy, the database migration is managed by each supporting service and is executed as part of the service's startup sequence.
+In worst-case scenarios, a service could start with failures.
 
 ==== None migration strategy
 
 When you configure the `none` strategy, no Operator nor service migration attempt is executed.
 
-You would typically use this strategy in environments where all the database migrations are executed by a database administrator.
+You would typically use this strategy in environments where a database administrator executes all the database migrations.
 
 [#postgresql-persistence-configuration]
 === PostgreSQL persistence configuration
 
-The PostgreSQL persistence of a service is supported by a PostgreSQL server instance that you must previously install on the cluster.
+The PostgreSQL persistence of a service is supported by a PostgreSQL server instance that you must have previously installed on the cluster.
 The administration of that instance is totally independent of the {operator_name} scope, and to connect a supporting service with it, you must only configure the correct database connection parameters.
 
 The following `SonataFlowPlatform` CR fragment shows the configuration options that you must use:
@@ -202,7 +202,7 @@ kubectl create secret generic postgres-secrets-example  --from-literal=POSTGRESQ
 
 To configure a common PostgreSQL service and database for the supporting services, you must use the field `spec.persistence.postgresql` in the `SonataFlowPlatform` CR.
 
-This information signals the {operator_name} to automatically configure the supporting services to connect to that database.
+This information signals the {operator_name} to configure the supporting services to connect to that database.
 
 Additionally, workflows deployed in that namespace, with the `preview` or `gitops` profile, that don’t provide a custom persistence configuration, will connect to that database too, xref:cloud/operator/using-persistence.adoc#configuring-persistence-using-the-sonataflowplatform-cr[see].
 
@@ -210,7 +210,7 @@ And, similarly to the workflow's persistence, the following rules apply:
 
 * If a supporting service has a configured persistence, for example, the field `services.dataIndex.persistence.postgresql` is configured. That configuration will apply.
 
-* If a supporting service has no configured persistence, for example, the field `services.dataIndex.persistence.postgresql` is not set at all, the persistence configuration will be taken from the current platform.
+* If a supporting service has no configured persistence, for example, if the `services.dataIndex.persistence.postgresql` field is not set, the persistence configuration will be taken from the current platform.
 
 * Additionally, if a supporting service requires a particular database migration strategy, you must use the respective `dataIndex.persistence.dbMigrationStrategy` and `jobService.persistence.dbMigrationStrategy` fields, <<#database-migration-configuration, see>>.
 
