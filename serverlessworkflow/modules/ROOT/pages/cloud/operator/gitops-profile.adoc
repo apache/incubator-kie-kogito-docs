@@ -75,7 +75,21 @@ ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
 <3> Build the workflow application
 <4> Base runtime image
 <5> Copy built application components to deployment directories
-
+.Procedure
+. Ensure that your current directory contains the `Dockerfile` and `workflow.sw.yaml` you want to build.
+[source,bash]
++
+----
+ls
+# Example Output
+workflow.sw.yaml  Dockerfile
+----
+. Execute the container build, by running following command:
+[source,bash]
++
+----
+docker build -t  your-registry/my-workflow .
+----
 == Pushing to Container Registry
 
 Push the built container image to your registry:
