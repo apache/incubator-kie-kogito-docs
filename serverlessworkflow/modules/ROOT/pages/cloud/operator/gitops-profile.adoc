@@ -1,0 +1,140 @@
+= GitOps Profile
+:compat-mode!:
+// Metadata:
+:description: Using GitOps profile for deploying SonataFlow workflows in production environments
+:keywords: sonataflow, workflow, serverless, operator, kubernetes, gitops, cicd
+// Links:
+:rh_jdk17_url: https://catalog.redhat.com/software/containers/ubi9/openjdk-17/61ee7c26ed74b2ffb22b07f6
+
+This document describes how to use the GitOps profile for deploying {product_name} workflows in production environments.
+
+== Recommended for Production
+
+Using the GitOps profile is recommended for production environments. It provides complete control over workflow image builds, enabling compliance, security, and seamless integration into your existing CI/CD pipelines.
+
+== Workflow Image Structure
+
+The GitOps profile uses container images based on the link:{rh_jdk17_url}[Red Hat OpenJDK 17 UBI 9] runtime. You can review its documentation for detailed information about the image architecture.
+
+The table below highlights important paths in the container image file system.
+
+.Important file system paths
+[cols="1,1"]
+|===
+|Path | Description
+
+|`/deployments`
+|Application deployment directory containing Quarkus application components
+
+|`/deployments/lib`
+|Directory for application libraries
+
+|`/deployments/app`
+|Directory for application-specific resources
+
+|`/deployments/quarkus`
+|Quarkus-specific configuration files
+
+|===
+
+== Building Workflow Container Images
+
+Below is an example Dockerfile illustrating how to build a container image using the GitOps profile.
+
+.Example Dockerfile
+[source,dockerfile,subs="attributes+"]
+----
+FROM {sonataflow_builder_imagename}:{operator_version} AS builder <1>
+
+ARG QUARKUS_EXTENSIONS
+ARG QUARKUS_ADD_EXTENSION_ARGS
+ARG MAVEN_ARGS_APPEND
+
+COPY --chown=1001 . ./resources <2>
+
+RUN /home/kogito/launch/build-app.sh ./resources <3>
+
+FROM registry.access.redhat.com/ubi9/openjdk-17-runtime:latest <4>
+
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
+
+COPY --from=builder --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/lib/ /deployments/lib/ <5>
+COPY --from=builder --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/*.jar /deployments/
+COPY --from=builder --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/app/ /deployments/app/
+COPY --from=builder --chown=185 /home/kogito/serverless-workflow-project/target/quarkus-app/quarkus/ /deployments/quarkus/
+
+EXPOSE 8080
+USER 185
+ENV AB_JOLOKIA_OFF=""
+ENV JAVA_OPTS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
+----
+
+<1> Base builder image
+<2> Copy workflow resources
+<3> Build the workflow application
+<4> Base runtime image
+<5> Copy built application components to deployment directories
+
+.Procedure
+. Ensure that your current directory contains the `Dockerfile` and `workflow.sw.yaml` you want to build.
+[source,bash]
++
+----
+ls
+# Example Output
+workflow.sw.yaml  Dockerfile
+----
+. Execute the container build, by running following command:
+[source,bash]
++
+----
+docker build -t  your-registry/my-workflow .
+----
+
+== Pushing to Container Registry
+
+Push the built container image to your registry:
+
+[source,shell]
+----
+docker push your-registry/my-workflow:tag
+----
+
+== Deploying the Workflow
+
+Configure your SonataFlow Custom Resource to use the built container image:
+
+[source,yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  annotations:
+    sonataflow.org/profile: gitops
+  name: my-workflow
+spec:
+  flow: # Your workflow as in the *.sw.json or *.sw.yaml file that was used to build the image
+  podTemplate:
+    container:
+      image: your-registry/my-workflow:tag
+----
+
+Apply your custom resource to deploy:
+
+[source,shell]
+----
+kubectl apply -f my-workflow.yaml
+----
+
+[IMPORTANT]
+====
+Ensure that the `.spec.flow` definition matches the workflow definition used when building the application, as the {product_name} operator matches the flow definition with the provided workflow files during deployment.
+====
+
+== Additional resources
+
+* xref:cloud/operator/referencing-resource-files.adoc[]
+* xref:cloud/operator/customize-podspec.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
