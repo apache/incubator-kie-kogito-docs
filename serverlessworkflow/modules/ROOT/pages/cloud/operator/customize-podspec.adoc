@@ -11,100 +11,92 @@
 :knative_serving_initcontainer: https://knative.dev/docs/serving/configuration/feature-flags/#kubernetes-init-containers
 :kubernetes_init_containers: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
 
-This document describes how to customize the pod specification definition in the `SonataFlow` custom resource.
+This document describes how to customize the pod specification (`PodSpec`) in a SonataFlow custom resource to meet runtime requirements in Kubernetes and OpenShift, such as adding volumes, setting resource limits, or using a custom container image.
 
-Sometimes you may have a specific requirement to deploy containers on Kubernetes or OpenShift such as setting link:{k8s_resources_limits_url}[Resource Limits].
+If you're looking to understand how the operator builds and manages workflow lifecycles (e.g., live updates or immutable builds), refer to xref:cloud/operator/deployment-profile.adoc[Deployment Profiles].
 
-{operator_name} enables custom link:{k8s_podspec_api_url}[PodSpec] definitions when deploying a `SonataFlow` instance by setting the `.spec.podTemplate` attribute. For example:
+== Overview
 
-.Setting PodSpec Resources Limits example
+The `.spec.podTemplate` attribute allows you to define a custom link:{k8s_podspec_api_url}[PodSpec] for the deployed workflow instance. This enables fine-grained control over how the workflow runs inside the container.
+
+Use `.spec.podTemplate.container` to customize the default workflow container (named `workflow`). This field is not part of the standard PodSpec, but was introduced by the operator to simplify configuration.
+
+== Example: Setting Resource Limits
+
 [source,yaml,subs="attributes+"]
 ----
-apiVersion: sonataflow.org/v1alpha08
-kind: SonataFlow
-metadata:
-  name: simple
-  annotations:
-    sonataflow.org/description: Simple example on k8s!
-    sonataflow.org/version: 0.0.1
 spec:
-  podTemplate: <1>
-    container: <2>
-      resources: <3>
+  podTemplate:
+    container:
+      resources:
         limits:
           cpu: "250m"
           memory: "128Mi"
-  flow:
-    start: HelloWorld
-    states:
-      - name: HelloWorld
-        type: inject
-        data:
-          message: Hello World
-        end: true
 ----
 
-<1> The `PodSpec` template definition
-<2> The default workflow service container 
-<3> Resources configuration
+== Customizing the Workflow Container
 
-The `.spec.podTemplate` attribute has the majority of fields defined in the default link:{k8s_podspec_api_url}[Kubernetes PodSpec API]. The same Kubernetes API validation rules applies to these fields.
+You can customize the workflow container via `.spec.podTemplate.container` with fields like:
 
-The `.spec.podTemplate.container` is a special attribute that you won't find in the default Kubernetes API. The reason is to avoid misconfiguration when users require to change the specific container where the workflow application is deployed.
+- `resources`
+- `image`
+- `env`
+- `command` and `args`
 
-== Deployment Model
+Avoid using the main `containers` array to redefine the `workflow` container — the operator will ignore conflicting names.
 
-By default, the {operator_name} deploys a `SonataFlow` instance in a regular Kubernetes Deployment object. Although it's possible to change this behavior and deploy the workflow instance as a link:{knative_serving_service_url}[Knative Serving Service] instead.
+== Adding Additional Containers and Volumes
 
-To change the deployment to Knative, set the `.spec.podTemplate.deploymentModel` attribute to `knative`. For example:
+You may add:
 
-.Setting PodSpec Resources Limits example
-[source,yaml,subs="attributes+"]
-----
-apiVersion: sonataflow.org/v1alpha08
-kind: SonataFlow
-metadata:
-  name: simple
-  annotations:
-    sonataflow.org/description: Simple example on k8s!
-    sonataflow.org/version: 0.0.1
-    sonataflow.org/version: preview  
-spec:
-  podTemplate: 
-    deploymentModel: knative <1>
-  flow:
-    start: HelloWorld
-    states:
-      - name: HelloWorld
-        type: inject
-        data:
-          message: Hello World
-        end: true
-----
-
-<1> The `deploymentModel` attribute
-
-After changing the deployment model to `knative`, the `SonataFlow` instance will be deployed as a Knative Serving Service.
+- `containers` (sidecars)
+- `initContainers`
+- `volumes`
+- `volumeMounts` (on sidecars or initContainers)
 
 [IMPORTANT]
 ====
-It's not possible to deploy a `SonataFlow` instance as a Knative Service in dev profile. In this profile, this attribute is ignored by the operator.
+You cannot override volumes or mount paths controlled by the operator. See <<customization-exceptions>>.
 ====
 
-Note that not every use case leverage a Knative deployment. Long-running workflow instances, for example, that calls services that might take too long to respond, might not be an ideal deployment model. Opt to use Knative deployments for workflows that won't take too long to run. 
+[[deployment-model]]
+== Deployment Model
 
-The exception are workflows that have callback states. In this case, you must configure xref:cloud/operator/using-persistence.adoc[persistence]. This is required because once the workflow waits for the event to resume the execution, Knative will kill the pod. Since the workflow has persistence, it will resume the execution once it receives the callback event.
+By default, the SonataFlow Operator deploys workflow instances using a standard Kubernetes `Deployment`. You can opt into using a serverless model via Knative Serving.
 
-Knative **does not support** link:{kubernetes_init_containers}[`initContainers`] by default. If your workflow requires it, you must first enable the extension in the Knative installation. See more information on the link:{knative_serving_initcontainer}[Knative documentation].
+To enable Knative deployment:
 
+[source,yaml]
+----
+spec:
+  podTemplate:
+    deploymentModel: knative <1>
+----
+
+<1> Valid values: `kubernetes` (default), `knative`
+
+After enabling this option, the workflow will be deployed as a Knative `Service`.
+
+[IMPORTANT]
+====
+The `deploymentModel: knative` is only honored in the `preview` and `gitops` profiles. It is ignored when using the `dev` profile.
+====
+
+Use Knative when:
+- You need scale-to-zero or autoscaling based on HTTP traffic.
+- The workflow is short-lived or event-driven.
+- You have persistence enabled for workflows with callbacks or long waits.
+
+See: 
+- xref:cloud/operator/deployment-profile.adoc[Deployment Profiles]
+- xref:cloud/operator/using-persistence.adoc[]
+- link:{knative_serving_initcontainer}[Knative InitContainer support]
+
+[#customization-exceptions]
 == Customization Exceptions
 
-Besides customizing the default container, you can add more `containers`, `initContainers`, or `volumes` to the pod. There are a few exceptions listed below:
+Some paths and volumes are managed by the operator and **must not be overridden**:
 
-1. The `containers` array can't have a container named `workflow`. If you set a container with this name, it will be ignored by the operator. Instead, use `.spec.podTemplate.container` to modify the workflow container.
-2. There are a few file system paths controlled by the operator within the container where it mounts important files. These volumes can't be overrided, it will be ignored by the operatror. See the table below:
-+
-.List of immutable volumes
 [cols="1,1,2,1"]
 |===
 |Volume | Type | Path | Profile
@@ -116,7 +108,7 @@ Besides customizing the default container, you can add more `containers`, `initC
 
 | workflow-properties
 | `ConfigMap`
-| `$\{PROJECT_ROOT\}/src/main/resources/application.properties`, `$\{PROJECT_ROOT\}/src/main/resources/application-dev.properties`
+| `$\{PROJECT_ROOT\}/src/main/resources/application.properties`, `application-dev.properties`
 | dev
 
 | resources
@@ -128,98 +120,31 @@ Besides customizing the default container, you can add more `containers`, `initC
 
 [IMPORTANT]
 ====
-In dev profile, all the SonataFlow `.spec.resources` objects are mounted in the `resources` projected volume listed in this table. Do not mount anything else in this path.
+In the `dev` profile, all `.spec.resources` are mounted in the `resources` projected volume. Avoid mounting anything else at that path.
 ====
 
-[#operator-profiles]
-== About {operator_name} Profiles
+== Using a Custom Image
 
-Profiles are a way to change the runtime and deployment behavior of workflows. You can change the `SonataFlow` custom resource profile using `annotations`. For example:
+You may override the workflow container image using:
 
-.Example of a SonataFlow CR with a profile annotation
-[source,yaml,subs="attributes+"]
+[source,yaml]
 ----
-apiVersion: sonataflow.org/v1alpha08
-kind: SonataFlow
-metadata:
-  name: simple
-  annotations:
-    sonataflow.org/profile: preview <1>
-    sonataflow.org/version: 0.0.1
 spec:
-  flow:
-    start: HelloWorld
-    states:
-      - name: HelloWorld
-        type: inject
-        data:
-          message: Hello World
-        end: true
+  podTemplate:
+    container:
+      image: quay.io/myorg/myworkflow:latest
 ----
 
-<1> Preview profile defined in the `sonataflow.org/profile` annotation. This is the default profile.
+When this is set, the operator assumes you're using the **gitops** deployment profile and won't attempt to build or update the image automatically.
 
-The {operator_name} supports three different profiles:
+For more information, see xref:cloud/operator/deployment-profile.adoc#custom-image-default-container[].
 
-1. `dev`: The workflow will be deployed as a mutable container that will react upon any changes on the `SonataFlow` custom resource immediatelly. Ideal for scenarios where the flow definition is under active development and testing in the cluster context. See xref:cloud/operator/developing-workflows.adoc[].
-2. `preview`: The operator will rely on an internal build system to build an immutable container based on the flow definition. Every change to the `SonataFlow` will kick a new build. Use this profile to evaluate the workflow behavior in the cluster or if you have a simple use case where you don't need any complex build customizations. See xref:cloud/operator/build-and-deploy-workflows.adoc[]
-// TODO: missing tekton/argocd guide https://issues.redhat.com/browse/KOGITO-7278
-3. `gitops`: Ideal for production use cases. This profile is automatically defined by the operator when the `SonataFlow` CR is deployed with a custom `.spec.podTemplate.container.image`. In this scenario, the user is responsible to build the workflow application and provide the image to the operator. 
+== Additional Resources
 
-There's a correlation on the operator profile and the internal runtime workflow Quarkus application. See the table below.
-
-.Correlation of the operator and Quarkus profiles
-[cols="1,1,2"]
-|===
-|Operator Profile | Quarkus Profile | Description
-
-| dev
-| dev
-| Suitable for testing only. The configuration file managed by the operator is `application-dev.properties`
-
-| preview
-| prod
-| Suitable for quick evaluation and use of the internal builder system. The configuration file managed by the operator is `application-prod.properties`
-
-| gitops
-| prod
-| Workflow image externally built by another system. The configuration file managed by the operator is `application-prod.properties`
-
-|===
-
-For more information about configuring workflows see xref:cloud/operator/configuring-workflows.adoc[].
-
-[#custom-image-default-container]
-=== Setting a custom image in the default container
-
-When setting the attribute `.spec.podTemplate.container.image` the operator understands that the workflow already have an image built and the user is responsible for the build and image maintainence. That means that the operator won't try to upgrade this image in the future or do any reconciliation changes to it.
-
-=== Setting a custom image in devmode
-
-In xref:cloud/operator/developing-workflows.adoc[development profile], it's expected that the image is based on the default `{sonataflow_devmode_imagename}:{operator_version}`. 
-
-=== Setting a custom image in preview
-
-When xref:cloud/operator/build-and-deploy-workflows.adoc[building workflows], you can opt in to have the operator to handle the build process for you. However, in more complex scenarios it's expected that the user owns and controls the build process. For this reason, when overriding the image the operator won't build the workflow. The operator will try to deploy the workflow using the given image. 
-
-In this scenario, the `.spec.resources` attribute is ignored since it's only used during the build process in the production profile. 
-
-[IMPORTANT]
-====
-xref:cloud/operator/known-issues.adoc[In the roadmap] you will find that we plan to consider the `.spec.resources` attribute when the image is specified in the default container.
-====
-
-It's advised that the SonataFlow `.spec.flow` definition and the workflow built within the image corresponds to the same workflow. If these definitions don't match you may experience poor management and configuration. The {operator_name} uses the `.spec.flow` attribute to configure the application, service discovery, and service binding with other deployments within the topology.
-
-[IMPORTANT]
-====
-xref:cloud/operator/known-issues.adoc[It's on the roadmap] to add integrity check to the built images provided to the operator by customizing the default container.
-====
-
-== Additional resources
-
+* xref:cloud/operator/deployment-profile.adoc[]
 * xref:cloud/operator/developing-workflows.adoc[]
 * xref:cloud/operator/build-and-deploy-workflows.adoc[]
 * xref:cloud/operator/building-custom-images.adoc[]
+* xref:cloud/operator/using-persistence.adoc[]
 
 include::../../../pages/_common-content/report-issue.adoc[]
