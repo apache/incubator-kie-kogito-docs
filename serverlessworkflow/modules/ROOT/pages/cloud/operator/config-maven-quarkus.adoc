@@ -1,13 +1,14 @@
 // Note: This section can grow over time to add more Maven-related configuration and guides
-= Adding a custom Maven Mirror to {product_name} images
+= Configuring Maven Mirrors and Quarkus Registry for {product_name} Images
 :compat-mode!:
 // Metadata:
 :description: Adding a custom maven mirror to images
 :keywords: maven, mirror, central, sonatype
 // links
 :maven_mirror_guide: https://maven.apache.org/guides/mini/guide-mirror-settings.html
+:quarkus_registry_guide: https://quarkus.io/guides/extension-registry-user
 
-This document describes how to configure the internal Maven settings on {product_name} images so that the maven process can access a custom mirror registry.
+This guide explains how to configure Maven mirrors and Quarkus extension registries to support restricted or offline environments when building and running workflows.
 
 By default either the {product_name} Builder and Devmode images have all the required Java libraries to run. In some scenarios, such as adding a custom Quarkus Extension, the internal system will require to 
 access the Maven Central registry. 
@@ -30,7 +31,7 @@ metadata:
   annotations:
     sonataflow.org/restartBuild: true <1>
 spec:
-  # supreessed for brevity
+  # suppressed for brevity
   envs:
     - name: MAVEN_MIRROR_URL <2>
       value: http://my.company.registry.local 
@@ -87,7 +88,7 @@ spec:
       env:
         - name: MAVEN_MIRROR_URL <1>
           value: http://my.company.registry.local
-  flow: #supreessed for brevity
+  flow: #suppressed for brevity
 ----
 
 1. The environment variable required to configure the maven URL
@@ -101,7 +102,7 @@ To know more about running workflows in development mode, see xref:cloud/operato
 
 == Configuring the Maven Mirror on a custom image
 
-When building workflows in an external system using the {product_name} Builder image, you may set this environment variable preferrebly in your build context. Alternatively, you may also set it in your custom container file.
+When building workflows in an external system using the {product_name} Builder image, you may set this environment variable preferably in your build context. Alternatively, you may also set it in your custom container file.
 
 .Custom Container File with Maven Mirror set as an environment variable
 [source,Dockerfile,subs="attributes+"]
@@ -124,3 +125,64 @@ FROM {sonataflow_builder_imagename}:{operator_version} AS builder
 # The Maven Mirror URL will be passed as an argument to the build process.
 ARG MAVEN_MIRROR_URL
 ----
+
+== Quarkus Registry Support in Builder and Devmode Images
+
+{product_name}'s builder and devmode images support offline builds by preloading the link:{quarkus_registry_guide}[Quarkus extension registry]. This enhancement allows adding Quarkus extensions without accessing the public `registry.quarkus.io`, which is particularly beneficial in air-gapped or restricted environments.
+
+[IMPORTANT]
+====
+The extension should be accessible through your Maven mirror, the images are **not** prepackaged with all extensions in the registry.
+====
+
+=== Overriding the Quarkus Registry Configuration
+
+To customize the Quarkus registry behavior, you can provide your own `.quarkus/config.yaml` file and specify its path using the `QUARKUS_REGISTRY_CONFIG_PATH` environment variable.
+
+.Custom container file overriding the default Quarkus Registry configuration file
+[source,Dockerfile,subs="attributes+"]
+----
+FROM {sonataflow_builder_imagename}:{operator_version} AS builder
+
+# Optional: Add Quarkus extensions
+ARG QUARKUS_EXTENSIONS
+ARG QUARKUS_ADD_EXTENSION_ARGS
+ARG MAVEN_ARGS_APPEND
+
+# Copy application source
+COPY --chown=1001 . ./resources
+
+# Provide a custom Quarkus registry configuration using a path inside the container context
+ENV QUARKUS_REGISTRY_CONFIG_PATH=./resources/.quarkus/config.yaml
+
+RUN /home/kogito/launch/build-app.sh ./resources
+----
+
+In this example, the `.quarkus/config.yaml` file is placed within the `resources` directory of your project. The `build-app.sh` script will detect the  `QUARKUS_REGISTRY_CONFIG_PATH` environment variable and copy the specified configuration file to the appropriate location inside the container.
+
+Overriding the Quarkus registry configuration file is particularly useful when you have a local registry mirror or need to connect to other registry such as `registry.quarkus.redhat.com`.
+
+[NOTE]
+====
+If `QUARKUS_REGISTRY_CONFIG_PATH` is not set, the builder will fall back to the default registry configuration shipped with the image.
+====
+
+=== Verifying Offline Builds
+
+To ensure that your build process does not access the external Quarkus registry, you can run Maven in offline mode and monitor network activity:
+
+[source,shell,subs="attributes+"]
+----
+mvn -o clean install | grep registry.quarkus.io
+----
+
+If the build is correctly configured for offline mode, there should be no output from the `grep` command, indicating that `registry.quarkus.io` was not accessed.
+
+== Additional Resources
+
+* xref:cloud/operator/deployment-profile.adoc[]
+* xref:cloud/operator/developing-workflows.adoc[]
+* xref:cloud/operator/build-and-deploy-workflows.adoc[]
+* xref:cloud/operator/building-custom-images.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
