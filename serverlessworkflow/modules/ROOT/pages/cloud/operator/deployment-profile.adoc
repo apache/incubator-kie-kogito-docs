@@ -1,0 +1,149 @@
+= Deployment Profiles
+:compat-mode!:
+// Metadata:
+:description: Overview of deployment profiles for SonataFlow workflows
+:keywords: sonataflow, workflow, serverless, operator, kubernetes, gitops, devmode, preview
+
+This document introduces the three deployment profiles supported by the {product_name} Operator—`dev`, `preview`, and `gitops`. These profiles influence how the operator builds and manages workflow deployments, especially regarding image lifecycle, live updates, and reconciliation behavior.
+
+[NOTE]
+====
+Deployment *profiles* define how the workflow is built and managed by the operator.
+
+If you're looking to customize how the workflow is deployed as a Kubernetes Deployment or a Knative Service, see xref:cloud/operator/customize-podspec.adoc#deployment-model[Deployment Model].
+====
+
+[#gitops-profile]
+== GitOps Profile
+
+The `gitops` profile provides full control over workflow images. In this model, you build your workflow container externally (e.g., CI/CD pipeline) and specify the image in the SonataFlow custom resource:
+
+[source,yaml]
+----
+spec:
+  podTemplate:
+    container:
+      image: quay.io/acme/myworkflow:latest
+----
+
+When this field is set, the operator automatically assumes the `gitops` profile and will not build or mutate the image.
+
+Use this profile when:
+
+* You want full control over the build process
+* You need to satisfy production requirements like auditability, security, and compliance
+* You're integrating SonataFlow into existing GitOps-based workflows (e.g., ArgoCD, Tekton)
+
+xref:cloud/operator/gitops-profile.adoc[Read more about the GitOps Profile].
+
+[#preview-profile]
+== Preview Profile
+
+The `preview` profile lets the operator handle workflow builds using an internal build pipeline. Any changes to the `.spec.flow` will trigger a rebuild and a new immutable container image.
+
+This profile is ideal for:
+
+* Pre-production staging and demonstration environments
+* Quick validation of workflow logic without managing the build pipeline
+
+Key characteristics:
+
+* The operator uses `application-prod.properties`
+* Images are automatically built and managed
+* Supports setting `deploymentModel: knative` (see xref:cloud/operator/customize-podspec.adoc#deployment-model[Deployment Models])
+
+xref:cloud/operator/build-and-deploy-workflows.adoc[Read more about the Preview Profile].
+
+[#dev-profile]
+== Development Profile
+
+The `dev` profile supports rapid iteration and live updates directly from the cluster. Changes to the custom resource take effect almost immediately without triggering a new container image build.
+
+This profile is ideal for:
+
+* Live development and testing of workflows
+* Quick iterations without a build process
+* Extending workflows using the base developer image
+
+Key characteristics:
+
+* Uses `application-dev.properties`
+* Automatically reloads the flow without rebuilding the container
+* The image must be based on `{sonataflow_devmode_imagename}:{operator_version}`
+
+xref:cloud/operator/developing-workflows.adoc[Read more about the Development Profile].
+
+[#choosing-profile]
+== Choosing the Right Profile
+
+[cols="1,1", options="header"]
+|===
+|Use Case |Profile
+
+|Full control of build and deployment
+|`gitops`
+
+|Internal automated build and deploy
+|`preview`
+
+|Fast iteration during development
+|`dev`
+|===
+
+
+== Switching Between Profiles
+
+To select a deployment profile, annotate your SonataFlow custom resource:
+
+[source,yaml]
+----
+metadata:
+  annotations:
+    sonataflow.org/profile: preview
+----
+
+Valid values: `dev`, `preview`, `gitops`.
+
+NOTE: Setting `.spec.podTemplate.container.image` will override this annotation and automatically activate the `gitops` profile.
+
+== Profile Implications for Customization
+
+Your selected profile impacts how the operator treats certain configuration aspects:
+
+[cols="1,1,1,1,1", options="header"]
+|===
+|Profile |Image Build |Reconciliation |`.spec.resources` |Supports Knative
+
+|`dev`
+|Live reload
+|Auto-updates
+|Mounted in dev volume
+|❌ Ignored
+
+|`preview`
+|Internal build
+|Rebuilt on change
+|Used during build
+|✅
+
+|`gitops`
+|User-supplied
+|No rebuild
+|Ignored
+|✅
+|===
+
+
+[NOTE]
+====
+For pod-level customization, including using `initContainers`, setting resource limits, and configuring deployment model (`knative` vs. `kubernetes`), see xref:cloud/operator/customize-podspec.adoc[].
+====
+
+== Related Topics
+
+* xref:cloud/operator/customize-podspec.adoc[Customize the PodSpec Definition]
+* xref:cloud/operator/developing-workflows.adoc[]
+* xref:cloud/operator/build-and-deploy-workflows.adoc[]
+* xref:cloud/operator/building-custom-images.adoc[]
+
+include::../../../pages/_common-content/report-issue.adoc[]
