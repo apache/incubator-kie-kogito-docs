@@ -14,6 +14,15 @@ For example, when doing xref:service-orchestration/orchestration-of-openapi-base
 
 If these files are not in a remote location that can be accessed via the HTTP protocol, you must describe in the `SonataFlow` CR where to find them within the cluster. This is done via link:{kubernetes_configmap_url}[`ConfigMaps`].
 
+[IMPORTANT]
+====
+The `.spec.resources` section is **ignored in the `preview` profile**.
+
+To use referenced external files like OpenAPI specs or schemas, make sure your workflow is running under a supported profile such as `dev` or `gitops`.
+
+See more in xref:cloud/operator/deployment-profile.adoc#_profile_implications_for_customization[Deployment Profile Implications].
+====
+
 == Creating ConfigMaps with Workflow referencing additional files
 
 .Prerequisites
@@ -55,7 +64,7 @@ spec:
     end: true
 ----
 
-<1> The workflow defines an input schema
+<1> The workflow defines an input schema  
 <2> The workflow requires an OpenAPI specification file to make a REST invocation
 
 The `Hello Service` workflow in the example offers two options. You can either create two `ConfigMaps`, each for one file, to have a clear separation of concerns or group them into one.
@@ -77,7 +86,7 @@ Replace `<workflow-namespace>` with the namespace where you are going to deploy 
 
 You should have a `ConfigMap` with two data entries similar to this one:
 
-.Example of a ConfigMap containing the data for the worflow
+.Example of a ConfigMap containing the data for the workflow
 [source,yaml,subs="attributes+"]
 ----
 kind: ConfigMap
@@ -92,6 +101,11 @@ data:
 ----
 
 Now you can add reference to this `ConfigMap` into your `SonataFlow` CR:
+
+[NOTE]
+====
+The following example only works in profiles that support `.spec.resources`, such as `dev` or `gitops`. It **does not work** under the `preview` profile.
+====
 
 .SonataFlow CR referencing a ConfigMap resource
 [source,yaml,subs="attributes+"]
@@ -127,8 +141,8 @@ spec:
     end: true
 ----
 
-<1> Introduced a new attribute `.spec.resources` where you can bind the `ConfigMap` to the `SonataFlow` CR
-<2> The name of the `ConfigMap` in the same namespace
+<1> Introduced a new attribute `.spec.resources` where you can bind the `ConfigMap` to the `SonataFlow` CR  
+<2> The name of the `ConfigMap` in the same namespace  
 <3> The path where we want to reference these files
 
 Note that the `workflowPath` is `specs`. This is the path where you want to reference the files within the `ConfigMap` in the workflow definition.
