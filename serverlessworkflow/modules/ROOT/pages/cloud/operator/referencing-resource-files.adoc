@@ -16,9 +16,9 @@ If these files are not in a remote location that can be accessed via the HTTP pr
 
 [IMPORTANT]
 ====
-The `.spec.resources` section is **ignored in the `preview` profile**.
+The `.spec.resources` section is **ignored in the `gitops` profile**.
 
-To use referenced external files like OpenAPI specs or schemas, make sure your workflow is running under a supported profile such as `dev` or `gitops`.
+To use referenced external files like OpenAPI specs or schemas, make sure your workflow is running under a supported profile such as `dev` or `preview`.
 
 See more in xref:cloud/operator/deployment-profile.adoc#_profile_implications_for_customization[Deployment Profile Implications].
 ====
@@ -104,7 +104,7 @@ Now you can add reference to this `ConfigMap` into your `SonataFlow` CR:
 
 [NOTE]
 ====
-The following example only works in profiles that support `.spec.resources`, such as `dev` or `gitops`. It **does not work** under the `preview` profile.
+The following example only works in profiles that support `.spec.resources`, such as `dev` or `preview`. It **does not work** under the `gitops` profile.
 ====
 
 .SonataFlow CR referencing a ConfigMap resource
