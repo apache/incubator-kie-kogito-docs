@@ -109,6 +109,21 @@ mp.messaging.outgoing.kogito_outgoing_stream.connector=smallrye-kafka
 mp.messaging.outgoing.kogito_outgoing_stream.topic=decisions
 mp.messaging.outgoing.kogito_outgoing_stream.value.serializer=org.apache.kafka.common.serialization.StringSerializer
 ----
+
+.Example property configuration with custom default channel names
+[source,properties]
+----
+kogito.addon.messaging.incoming.defaultName=incoming_channel
+kogito.addon.messaging.outgoing.defaultName=outgoing_channel
+
+mp.messaging.incoming.incoming_channel.connector=smallrye-kafka
+mp.messaging.incoming.incoming_channel.value.deserializer=org.apache.kafka.common.serialization.ByteArrayDeserializer
+mp.messaging.incoming.incoming_channel.topic=incoming-events
+
+mp.messaging.outgoing.outgoing_channel.connector=smallrye-kafka
+mp.messaging.outgoing.outgoing_channel.value.serializer=org.apache.kafka.common.serialization.StringSerializer
+mp.messaging.outgoing.outgoing_channel.topic=outgoing-events
+----
 --
 
 == OnOverflow handling
