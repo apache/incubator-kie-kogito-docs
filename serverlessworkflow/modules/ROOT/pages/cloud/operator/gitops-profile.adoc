@@ -24,7 +24,7 @@ The table below highlights important paths in the container image file system.
 |Path | Description
 
 |`/deployments`
-|Application deployment directory containing Quarkus application components
+|Application deployment directory containing Quarkus application components. Must be accessible and have write access for the operator's user.
 
 |`/deployments/lib`
 |Directory for application libraries
@@ -33,7 +33,10 @@ The table below highlights important paths in the container image file system.
 |Directory for application-specific resources
 
 |`/deployments/quarkus`
-|Quarkus-specific configuration files
+|Quarkus-specific manifest files
+
+|`/deployments/config`
+|Workflow Application properties. This path is used by the operator to mount managed and user properties, which must be accessible, and the application should be able to read them at runtime.
 
 |===
 
