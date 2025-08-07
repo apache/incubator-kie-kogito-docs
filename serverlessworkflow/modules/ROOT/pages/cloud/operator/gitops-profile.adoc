@@ -36,7 +36,7 @@ The table below highlights important paths in the container image file system.
 |Quarkus-specific manifest files
 
 |`/deployments/config`
-|Workflow Application properties. This path is used by the operator to mount managed and user properties, which must be accessible, and the application should be able to read them at runtime.
+|Workflow Application properties. This path is used by the operator to mount managed and user properties, which must be accessible, and the application should be able to read them at runtime. The image shouldn't create this path upfront; it will be created by the Kubernetes config map controller.
 
 |===
 
