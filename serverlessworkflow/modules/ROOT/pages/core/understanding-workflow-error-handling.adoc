@@ -183,6 +183,27 @@ The `finish` state in the `serverless-workflow-error-quarkus` example applicatio
     }
 ----
 
+== Workflow error status 
+
+As per {spec_version} version of the specification, there is no standard way to set a process instance in error. To do that in {product_name}, users can use a custom metadata key called `errorMessage` which will contain either the error message to be associated to the process instance or an expression that returns the error message to associated to the process instance
+
+This example sets the process instance in error when number is odd.
+
+[source, json]
+----
+  "states": [
+    {
+      "name": "checkEven",
+      "type": "operation",
+      "actions": [],
+      "end" : true,
+      "metadata": {
+         "errorMessage": "if .number % 2 != 0 then \"Is Odd number!!!!\" else null end"
+       } 
+    }
+  ]
+----
+
 == Additional resources
 
 * xref:getting-started/introduction-sonataflow-development-guide[]
