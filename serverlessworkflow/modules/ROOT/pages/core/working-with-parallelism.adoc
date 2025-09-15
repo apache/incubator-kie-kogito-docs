@@ -13,12 +13,14 @@ The testing procedure described in this document is based on the `serverless-wor
 {product_name} serializes the execution of parallel tasks. Therefore, the word "parallel" does not indicate simultaneous execution, but it means that there is no logical dependency between the execution of branches. An inactive branch can start or resume the execution of a task without waiting for an active branch to be completed, in case the latter suspends the execution (for example, wait for an event reception).
 ====
 
-The `serverless-workflow-service-calls-quarkus` example application is a workflow that concatenates three strings and returns a result. The concatenation in the example application is done in parallel, which includes one branch per three strings.
+The `serverless-workflow-service-calls-quarkus` example application is a workflow calculates the double and the half of a given number. 
 
 [[proc-parallel-creating-the-workflow]]
 == Creating a parallel workflow
 
 You can create a workflow, which performs a series of parallel tasks. 
+
+You can define the `"completionType": "atLeast"` to run only some branches in parallel workflow, instead of defining `"completionType": "allOf"`. When you define `"completionType": "atLeast"`, you also need to define the minimum number of branches that you want to run by defining the `"numCompleted":` property.
 
 .Prerequisites
 
@@ -31,42 +33,37 @@ include::../../pages/_common-content/getting-started-requirement.adoc[]
 +
 --
 .Example content for `parallel.sw.json` file
-[source,json,subs="attributes+"]
+[source,json]
 ----
 {
   "id": "parallel",
   "version": "1.0",
-  "specVersion": "{spec_version}",
+  "specVersion": "0.8",
   "name": "Welcome to the Parallel dimension",
   "description": "Testing parallelism",
   "start": "Parallel",
   "functions": [
     {
-      "name": "concatA",
+      "name": "half",
       "type": "expression",
-      "operation": ".result|=.+\"A\"" <1>
+      "operation": "{half:.number/2}"
     },
     {
-      "name": "concatB",
+      "name": "double",
       "type": "expression",
-      "operation": ".result|=.+\"B\"" <2>
-    },
-    {
-      "name": "concatC",
-      "type": "expression",
-      "operation": ".result|=.+\"C\"" <3>
+      "operation": "{double:.number*2}"
     }
   ],
   "states": [
     {
       "name": "Parallel",
-      "type": "parallel", <4>
-      "branches": [ <5>
+      "type": "parallel",
+      "branches": [
         {
           "name": "branchA",
           "actions": [
             {
-              "functionRef": "concatA" <6>
+              "functionRef": "half"
             }
           ]
         },
@@ -74,38 +71,18 @@ include::../../pages/_common-content/getting-started-requirement.adoc[]
           "name": "branchB",
           "actions": [
             {
-              "functionRef": "concatB" <7>
-            }
-          ]
-        },
-        {
-          "name": "branchC",
-          "actions": [
-            {
-              "functionRef": "concatC" <8>
+              "functionRef": "double"
             }
           ]
         }
       ],
-      "completionType": "allOf", <9>
-      "end": {
-        "terminate": true
-      }
+      "numCompleted": "2",
+      "completionType": "atLeast",
+      "end": true
     }
   ]
 }
 ----
-
-<1> Function that concatenates the string `A`.
-<2> Function that concatenates the string `B`.
-<3> Function that concatenates the string `C`.
-<4> Defines the type of the state as `parallel`.
-<5> Defines the branches that run in parallel.
-<6> Defines the function that runs in `branchA`.
-<7> Defines the function that runs in `branchB`.
-<8> Defines the function that runs in `branchC`.
-<9> Defines the completion type of the parallel state as `allOf`. This means that the parallel state is completed when all the branches are completed.
---
 
 [[proc-parallel-run-workflow]]
 == Running a parallel workflow
@@ -139,134 +116,14 @@ curl -X 'POST' \
   'http://localhost:8080/parallel' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
-  -d '{}'
+  -d '{"number":2}'
 ----
 
 .Example response
 [source,json]
 ----
-{"id":"358f97ba-f0f9-4f25-86cc-4b35e85c2406","workflowdata":{"result":"ABC"}}
+{"id":"358f97ba-f0f9-4f25-86cc-4b35e85c2406","workflowdata":{"half":"1","double":4}}
 ----
-
-[NOTE]
-====
-The `"result":"ABC"` in the previous example response might be different in each request since the branches are running in parallel and the execution order of the branches is unpredictable.
-====
-
-Note that the parallel workflow data shows the concatenated string as result.
---
-
-[[proc-parallel-run-branches]]
-=== Running some branches in parallel workflow
-
-You can define the `"completionType": "atLeast"` to run only some branches in parallel workflow, instead of defining `"completionType": "allOf"`. When you define `"completionType": "atLeast"`, you also need to define the minimum number of branches that you want to run by defining the `"numCompleted":` property.
-
-.Prerequisites
-
-* A parallel workflow is created. 
-+
-For more information, see <<proc-parallel-creating-the-workflow, Creating a parallel workflow>>.
-
-.Procedure
-. Change the `completionType` property to `"atLeast"` and add the `"numCompleted": 2` property to the parallel state.
-+
---
-.Example parallel workflow
-[source,json,subs="attributes+"]
-----
-{
-  "id": "parallel",
-  "version": "1.0",
-  "specVersion": "{spec_version}",
-  "name": "Welcome to the Parallel dimension",
-  "description": "Testing parallelism",
-  "start": "Parallel",
-  "functions": [
-    {
-      "name": "concatA",
-      "type": "expression",
-      "operation": ".result|=.+\"A\""
-    },
-    {
-      "name": "concatB",
-      "type": "expression",
-      "operation": ".result|=.+\"B\""
-    },
-    {
-      "name": "concatC",
-      "type": "expression",
-      "operation": ".result|=.+\"C\""
-    }
-  ],
-  "states": [
-    {
-      "name": "Parallel",
-      "type": "parallel",
-      "branches": [
-        {
-          "name": "branchA",
-          "actions": [
-            {
-              "functionRef": "concatA"
-            }
-          ]
-        },
-        {
-          "name": "branchB",
-          "actions": [
-            {
-              "functionRef": "concatB"
-            }
-          ]
-        },
-        {
-          "name": "branchC",
-          "actions": [
-            {
-              "functionRef": "concatC"
-            }
-          ]
-        }
-      ],
-      "completionType": "atLeast", <1>
-      "numCompleted": "2", <2>
-      "end": {
-        "terminate": true
-      }
-    }
-  ]
-}
-----
-<1> Defines the completion type of the parallel state as `atLeast`.
-<2> Defines the minimum number of branches that you want to run. This means that the parallel state is completed when at least two branches are completed.
---
-
-. To run the created parallel workflow, send a request to the `/parallel` endpoint as shown in the following example:
-+
---
-.Example request
-[source,shell]
-----
-curl -X 'POST' \
-  'http://localhost:8080/parallel' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{}'
-----
-
-.Example response
-[source,shell]
-----
-{"id":"3da62df1-c4e7-48c9-a3e4-7f63872c92f4","workflowdata":{"result":"BC"}}
-----
-
-[NOTE]
-====
-The `"result":"BC"` in the response might be different in each request.
-====
-
-The parallel workflow data shows the concatenated string as result, but in this case, the workflow concatenates only two letters.
---
 
 == Additional resources
 
