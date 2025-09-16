@@ -1,0 +1,90 @@
+<svg viewBox="0 0 1100 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Token Exchange sequence</title>
+  <desc id="desc">Sequence including cache check, token exchange, and proactive refresh between Client, Workflow, OIDC Client Filter (with Token Cache), Identity Provider and Downstream Service</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333" />
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; font-size: 16px; fill: #222; }
+      .title { font-weight: bold; }
+      .lane { fill: #f8f9fa; stroke: #d0d7de; }
+      .lifeline { stroke: #c0c7cf; stroke-dasharray: 4 4; }
+      .arrow { stroke: #333; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <!-- Participant positions -->
+  <g transform="translate(0,0)">
+    <!-- X positions: 100, 300, 500, 700, 900 -->
+    <g transform="translate(100,20)">
+      <rect class="lane" x="-70" y="0" width="140" height="30" rx="4"/>
+      <text class="title" x="0" y="20" text-anchor="middle">Client</text>
+      <line class="lifeline" x1="0" y1="40" x2="0" y2="560"/>
+    </g>
+    <g transform="translate(300,20)">
+      <rect class="lane" x="-90" y="0" width="180" height="30" rx="4"/>
+      <text class="title" x="0" y="20" text-anchor="middle">Workflow</text>
+      <line class="lifeline" x1="0" y1="40" x2="0" y2="560"/>
+    </g>
+    <g transform="translate(500,20)">
+      <rect class="lane" x="-120" y="0" width="240" height="30" rx="4"/>
+      <text class="title" x="0" y="20" text-anchor="middle">OIDC Client Filter</text>
+      <line class="lifeline" x1="0" y1="40" x2="0" y2="560"/>
+    </g>
+    <g transform="translate(700,20)">
+      <rect class="lane" x="-120" y="0" width="240" height="30" rx="4"/>
+      <text class="title" x="0" y="20" text-anchor="middle">Identity Provider</text>
+      <line class="lifeline" x1="0" y1="40" x2="0" y2="560"/>
+    </g>
+    <g transform="translate(900,20)">
+      <rect class="lane" x="-120" y="0" width="240" height="30" rx="4"/>
+      <text class="title" x="0" y="20" text-anchor="middle">Downstream Service</text>
+      <line class="lifeline" x1="0" y1="40" x2="0" y2="560"/>
+    </g>
+  </g>
+
+  <!-- Messages -->
+  <!-- 1: Client -> Workflow -->
+  <line class="arrow" x1="100" y1="110" x2="300" y2="110"/>
+  <text x="200" y="100" text-anchor="middle">1) POST /workflow</text>
+  <text x="200" y="125" text-anchor="middle">Authorization: Bearer user_access_token</text>
+
+  <!-- 2: Workflow -> OIDC Client Filter -->
+  <line class="arrow" x1="300" y1="160" x2="500" y2="160"/>
+  <text x="400" y="150" text-anchor="middle">2) Invoke OpenAPI client</text>
+
+  <!-- 3: OIDC Client Filter self-message: cache check -->
+  <path class="arrow" d="M 500 200 h 80 v 20 h -80" />
+  <text x="540" y="195" text-anchor="middle">3) Check cache (reuse if valid)</text>
+
+  <!-- 4: OIDC Client Filter -> Identity Provider (if miss/near expiry) -->
+  <line class="arrow" x1="500" y1="250" x2="700" y2="250"/>
+  <text x="600" y="240" text-anchor="middle">4) Token Exchange</text>
+  <text x="600" y="265" text-anchor="middle">grant_type=token-exchange, subject_token=user_access_token, audience=downstream-api</text>
+
+  <!-- 5: Identity Provider -> OIDC Client Filter -->
+  <line class="arrow" x1="700" y1="300" x2="500" y2="300"/>
+  <text x="600" y="290" text-anchor="middle">5) access_token (aud=downstream-api)</text>
+
+  <!-- 6: OIDC Client Filter -> Downstream Service -->
+  <line class="arrow" x1="500" y1="350" x2="900" y2="350"/>
+  <text x="700" y="340" text-anchor="middle">6) GET /secured</text>
+  <text x="700" y="365" text-anchor="middle">Authorization: Bearer exchanged_access_token</text>
+
+  <!-- 7: Downstream Service -> OIDC Client Filter -->
+  <line class="arrow" x1="900" y1="400" x2="500" y2="400"/>
+  <text x="700" y="390" text-anchor="middle">7) 200 OK</text>
+
+  <!-- 8: OIDC Client Filter -> Workflow -->
+  <line class="arrow" x1="500" y1="450" x2="300" y2="450"/>
+  <text x="400" y="440" text-anchor="middle">8) 200 OK</text>
+
+  <!-- 9: Workflow -> Client -->
+  <line class="arrow" x1="300" y1="500" x2="100" y2="500"/>
+  <text x="200" y="490" text-anchor="middle">9) Result</text>
+
+  <!-- 10: Proactive refresh (background) -->
+  <line class="arrow" x1="500" y1="540" x2="700" y2="540" style="stroke-dasharray:5 5"/>
+  <text x="600" y="530" text-anchor="middle">10) Proactive refresh (background monitor)</text>
+</svg>
