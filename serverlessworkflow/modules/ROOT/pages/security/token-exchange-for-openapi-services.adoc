@@ -1,0 +1,310 @@
+= Token Exchange for OpenAPI services in {product_name}
+:compat-mode!:
+// Metadata:
+:description: OAuth 2.0 Token Exchange for OpenAPI service invocations
+:keywords: kogito, workflow, serverless, OAuth2, OIDC, token exchange
+// Referenced documentation pages.
+:orchestration-of-openapi-based-services: xref:service-orchestration/orchestration-of-openapi-based-services.adoc
+:configuring-openapi-services-endpoints: xref:service-orchestration/configuring-openapi-services-endpoints.adoc
+:authentication-support-for-openapi-services: xref:security/authention-support-for-openapi-services.adoc
+
+This guide shows how to configure OAuth 2.0 Token Exchange when invoking OpenAPI-secured services from workflows.
+
+For general OpenAPI orchestration and authentication, see:
+
+* {orchestration-of-openapi-based-services}[Orchestrating the OpenAPI services]
+* {configuring-openapi-services-endpoints}[Configuring the OpenAPI services endpoints]
+* {authentication-support-for-openapi-services}[Authentication for OpenAPI services]
+
+
+== When to use Token Exchange
+
+Use Token Exchange if:
+
+* You must avoid forwarding the original end-user token to third-party services.
+* You have long running workflow which may cause token invalidity (expiration).
+
+If you only need to forward the original token, see token propagation in {authentication-support-for-openapi-services}#ref-authorization-token-propagation[Authorization token propagation].
+
+== How Token Exchange works
+
+At a high level, Token Exchange lets the workflow swap the incoming bearer token for a new token tailored to the downstream service.
+The Quarkus OIDC Client Filter performs the exchange transparently before the OpenAPI client call. See link:https://quarkus.io/guides/security-openid-connect-client[Quarkus OIDC Client Filter] for more details.
+
+.Flow overview
+[%autowidth,cols="1,5"]
+|===
+|Step |Description
+
+|1 |Client calls the workflow REST endpoint and sends `Authorization: Bearer <user-access-token>`.
+|2 |The OpenAPI client (generated for a secured operation) is invoked by the workflow.
+|3 |The credential provider checks the cache for a valid exchanged token for this process instance and auth name; if found and not near expiry, it is reused.
+|4 |If no valid token is found, the OIDC Client Filter detects the `oauth2` security scheme and requests a Token Exchange at the IdP, using the incoming token as the subject token and the configured audience.
+|5 |The Identity Provider returns the exchanged access token (for example, audience `downstream-api`), which is cached with its expiry.
+|6 |The OpenAPI client calls the downstream service with `Authorization: Bearer <exchanged-token>`.
+|7 |Downstream service responds; workflow proceeds and returns the result to the client.
+|8 |Proactive refresh: a background monitor refreshes cached tokens nearing expiration based on `sonataflow.security.auth.<auth_name>.token-exchange.proactive-refresh-seconds` and `sonataflow.security.auth.token-exchange.monitor-rate-seconds`.
+|===
+
+.Sequence diagram
+link:images/security/token-exchange-sequence.svg[image:security/token-exchange-sequence.svg[width=100%],role="diagram"]
+
+== Requirements
+
+* Quarkus OIDC Client Filter extension in the workflow service:
+
+[source,xml]
+----
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-oidc-client-filter</artifactId>
+</dependency>
+----
+
+* The OpenAPI operation is secured with an `oauth2` security scheme (the OIDC client name is derived from the scheme name).
+
+* Quarkus add-on to enable token exchange and caching in your runtime:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie</groupId>
+  <artifactId>kie-addons-quarkus-token-exchange</artifactId>
+</dependency>
+----
+
+Those extensions should be passed to the internal builder when building the workflow image, see xref:cloud/operator/build-and-deploy-workflows.adoc#passing-build-arguments-to-internal-workflow-builder[Passing arguments to the internal builder]
+
+== Example OpenAPI security
+
+[source, yaml]
+----
+openapi: 3.0.3
+paths:
+  /secured:
+    get:
+      operationId: callService
+      responses:
+        "200":
+          description: OK
+      security:
+        - service-oauth: [ ]
+components:
+  securitySchemes:
+    service-oauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          authorizationUrl: https://idp.example.com/realms/acme/protocol/openid-connect/auth
+          tokenUrl: https://idp.example.com/realms/acme/protocol/openid-connect/token
+          scopes: {}
+----
+
+The security scheme name `service-oauth` determines the OIDC client name (sanitized to `service_oauth`) used by the client filter.
+
+
+== Caching and persistence of exchanged tokens
+
+The Token Exchange feature introduces a caching mechanism with proactive refresh and optional database persistence.
+
+=== What is loaded by default
+
+Without extra configuration, the add-on provides:
+
+* In-memory cache using Caffeine with per-token expiration.
+* Proactive refresh handled by a background monitor.
+
+Enable the feature per auth scheme name and optionally tune refresh/monitor:
+
+[source,properties]
+----
+# Enable Token Exchange for a specific auth name (matches the OpenAPI oauth2 scheme name after sanitization)
+sonataflow.security.auth.service_oauth.token-exchange.enabled=true
+
+# Seconds before token expiration to proactively refresh the cached token (default ~300)
+sonataflow.security.auth.service_oauth.token-exchange.proactive-refresh-seconds=300
+
+# Global monitor rate (seconds) for the cache refresh/cleanup
+sonataflow.security.auth.token-exchange.monitor-rate-seconds=60
+
+# To ensure the incoming `Authorization` header is available when a workflow waits and later resumes (or after service restarts), enable header persistence:
+kogito.persistence.headers.enabled=true
+----
+
+
+=== Persist exchanged tokens (override default)
+
+By default, the cache metadata is kept in-memory. To persist exchanged tokens, include the JDBC token persistence extension which provides a CDI `TokenCacheRepository` backed by a JDBC `DataSource`:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.kie</groupId>
+  <artifactId>kogito-quarkus-serverless-workflow-jdbc-token-persistence</artifactId>
+</dependency>
+----
+
+The extension should be passed to the internal builder when building the workflow image, see xref:cloud/operator/build-and-deploy-workflows.adoc#passing-build-arguments-to-internal-workflow-builder[Passing arguments to the internal builder]
+
+
+You can also provide your own implementation by producing a CDI bean of type `org.kie.kogito.addons.quarkus.token.exchange.persistence.TokenCacheRepository`. When present, it overrides the default in-memory repository.
+
+=== How caching works
+
+* The OpenAPI credential provider computes a cache key per request (process instance, auth name, subject token, audience) and checks the cache.
+* On miss, it exchanges the token via the configured OIDC client and stores the result alongside expiration/refresh metadata.
+* An expiry policy evicts tokens at their individual expiration time; an eviction handler coordinates proactive refresh.
+
+== Configuration
+
+Configure the OIDC client and enable Token Exchange per OpenAPI security scheme. The client filter will obtain the incoming bearer token and exchange it for a new token before invoking the OpenAPI client generated for the secured operation.
+
+[source,properties]
+----
+# 1) Generated client package and base URL (example)
+#    Replace 'service_api_yaml' with your OpenAPI file id (sanitized filename)
+quarkus.rest-client.service_api_yaml.url=http://localhost:8480
+
+# 2) Enable Token Exchange for the OpenAPI oauth2 scheme defined as 'service-oauth'
+#    (sanitized auth name is 'service_oauth')
+# see Configuration reference for more possible properties
+sonataflow.security.auth.service_oauth.token-exchange.enabled=true
+
+# 3) OIDC client for the service-oauth scheme (normalized to service_oauth)
+# Should be updated with your own values
+quarkus.oidc-client.service_oauth.discovery-enabled=false
+quarkus.oidc-client.service_oauth.auth-server-url=https://idp.example.com/realms/acme/protocol/openid-connect/auth
+quarkus.oidc-client.service_oauth.token-path=https://idp.example.com/realms/acme/protocol/openid-connect/token
+quarkus.oidc-client.service_oauth.client-id=kogito-app
+quarkus.oidc-client.service_oauth.grant.type=exchange
+quarkus.oidc-client.service_oauth.credentials.client-secret.method=basic
+quarkus.oidc-client.service_oauth.credentials.client-secret.value=secret
+----
+
+[NOTE]
+====
+* The incoming request to the workflow must include `Authorization: Bearer <user-access-token>` so the client filter can perform the exchange.
+* If you also need token propagation (forward the incoming token), configure it per service and auth name. For the example above:
+** `quarkus.openapi-generator.service_api_yaml.auth.service_oauth.token-propagation=true`
+* If both exchange and propagation are enables for the same scheme, token propagation takes precedence a no exchange will be performed. 
+This behaviour is brought by the openapi-generator library with custom `CredentialsProvider` implementations.
+====
+
+=== Configuration reference
+
+.Summary of configurable properties
+[cols="35%,45%,10%,10%", options="header"]
+|===
+|Property key |Usage |Default |Mandatory
+
+|`sonataflow.security.auth.<auth_name>.token-exchange.enabled`
+|Enable OAuth2 token exchange for the oauth2 security scheme `<auth_name>` (sanitized from OpenAPI scheme name, for example `service_oauth`).
+|`false`
+|No
+
+|`sonataflow.security.auth.<auth_name>.token-exchange.proactive-refresh-seconds`
+|Seconds before token expiration to proactively refresh the cached exchanged token.
+|`300`
+|No
+
+|`sonataflow.security.auth.token-exchange.monitor-rate-seconds`
+|Global schedule period (seconds) for cache refresh/cleanup across all auth names.
+|`60`
+|No
+
+|`quarkus.oidc-client.<auth_name>.auth-server-url`
+|OIDC authorization server URL for the token endpoint (from your IdP).
+|n/a
+|Conditional
+
+|`quarkus.oidc-client.<auth_name>.token-path`
+|Token endpoint path or full URL.
+|n/a
+|Conditional
+
+|`quarkus.oidc-client.<auth_name>.discovery-enabled`
+|Use OIDC discovery. Set to `false` when configuring URLs explicitly.
+|`true`
+|No
+
+|`quarkus.oidc-client.<auth_name>.client-id`
+|OIDC client identifier used for exchange.
+|n/a
+|Yes
+
+|`quarkus.oidc-client.<auth_name>.grant.type`
+|Must be set to `exchange` to enable OAuth2 Token Exchange.
+|n/a
+|Yes
+
+|`quarkus.oidc-client.<auth_name>.credentials.client-secret.method`
+|Client secret authentication method used by the OIDC client.
+|`basic`
+|No
+
+|`quarkus.oidc-client.<auth_name>.credentials.client-secret.value`
+|Client secret value used by the OIDC client.
+|n/a
+|Conditional
+
+|`quarkus.openapi-generator.<service_id>.auth.<auth_name>.token-propagation`
+|Propagate the incoming token to downstream calls for service `<service_id>` and auth `<auth_name>` (optional, separate from exchange).
+|`false`
+|No
+
+|`quarkus.openapi-generator.<service_id>.auth.<auth_name>.header-name`
+|Header to read the incoming token from when propagating.
+|`Authorization`
+|No
+
+|`kogito.persistence.headers.enabled`
+|Persist inbound HTTP headers with the workflow instance so the `Authorization` header is available across wait/resume and restarts (recommended when using token exchange/propagation).
+|`false`
+|No
+
+|`quarkus.rest-client.<service_id>.url`
+|Base URL for generated REST client calls.
+|n/a
+|Yes
+|===
+
+[NOTE]
+====
+"Conditional" means the property is required only in certain setups:
+
+* For `quarkus.oidc-client.<auth_name>.auth-server-url` and `quarkus.oidc-client.<auth_name>.token-path`:
+** If `discovery-enabled=true`, the client discovers endpoints from the issuer, so `token-path` is not required.
+** If `discovery-enabled=false`, you must provide `token-path` and an authorization server URL. Some environments allow `token-path` as an absolute URL, otherwise set both.
+* For `quarkus.oidc-client.<auth_name>.credentials.client-secret.value`: required only when the client uses a secret-based authentication method (for example, `client-secret-basic` or `client-secret-post`). Not required for public clients or when using non-secret methods such as mTLS or `private_key_jwt`.
+
+References:
+
+* Quarkus OIDC Client: https://quarkus.io/guides/security-openid-connect-client
+* OIDC Client Filter (REST Client): https://quarkus.io/guides/security-openid-connect-client#rest-client-oidc-client-filter
+* Quarkus OpenAPI Generator: https://docs.quarkiverse.io/quarkus-openapi-generator/dev/client.html
+* Quarkus OIDC Client Filter: https://quarkus.io/guides/security-openid-connect-client
+====
+
+== Workflow invocation example
+
+Send the user’s token to the workflow; the OpenAPI call secured by `service-oauth` will use the exchanged token automatically:
+
+[source,bash]
+----
+curl -X POST \
+  http://localhost:8080/my_workflow \
+  -H "Authorization: Bearer $USER_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"input":"value"}'
+----
+
+== Interaction with OpenAPI configuration
+
+* Security scheme names in the OpenAPI file are global. All operations secured by `service-oauth` will use the same OIDC client and Token Exchange configuration.
+* You can still use the standard OpenAPI Generator properties for codegen and base URLs as usual.
+
+== Additional resources
+
+* {authentication-support-for-openapi-services}[Authentication for OpenAPI services]
+* {orchestration-of-openapi-based-services}[Orchestrating the OpenAPI services]
+* link:https://www.keycloak.org/securing-apps/token-exchange[Keycloak Token Exchange]
