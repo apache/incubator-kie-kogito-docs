@@ -60,7 +60,7 @@ Here you can see in example, how the {data_index_ref} resource definition can be
 ----
   data-index:
     container_name: data-index
-    image: quay.io/kiegroup/kogito-data-index-postgresql:latest <1>
+    image: {sonataflow_dataindex_postgresql_imagename}:{operator_version} <1>
     ports:
       - "8180:8080"
     depends_on:
@@ -154,7 +154,7 @@ spec:
     spec:
       containers:
         - name: data-index-service-postgresql
-          image: quay.io/kiegroup/kogito-data-index-postgresql:latest <1>
+          image: {sonataflow_dataindex_postgresql_imagename}:{operator_version} <1>
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
