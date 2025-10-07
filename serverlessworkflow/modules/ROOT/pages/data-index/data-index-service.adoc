@@ -56,11 +56,11 @@ For this purpose, it is important to make sure the following addons are included
 Here you can see in example, how the {data_index_ref} resource definition can be deployed as part of a docker-compose definition
 
 .Example of `DataIndex` resource in a docker-compose deployment using Kafka eventing:
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
   data-index:
     container_name: data-index
-    image: quay.io/kiegroup/kogito-data-index-postgresql:latest <1>
+    image: {sonataflow_dataindex_postgresql_imagename}:{operator_version} <1>
     ports:
       - "8180:8080"
     depends_on:
@@ -114,7 +114,7 @@ More details about customizing Quarkus generated images can be found in {quarkus
 This deployment definition resource shows how the {data_index_ref} service configured and deployed can connect with an existing PostgreSQL database and to consume Knative events.
 
 .Example `DataIndex` resource with PostgreSQL persistence and Knative eventing in a kubernetes environment :
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: v1
 kind: Service
@@ -154,7 +154,7 @@ spec:
     spec:
       containers:
         - name: data-index-service-postgresql
-          image: quay.io/kiegroup/kogito-data-index-postgresql:latest <1>
+          image: {sonataflow_dataindex_postgresql_imagename}:{operator_version} <1>
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
