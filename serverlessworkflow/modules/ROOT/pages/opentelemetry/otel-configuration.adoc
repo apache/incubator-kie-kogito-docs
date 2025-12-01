@@ -1,0 +1,402 @@
+= Configuring OpenTelemetry in {product_name}
+
+:compat-mode!:
+// Metadata:
+:description: Configuration guide for OpenTelemetry integration
+:keywords: kogito, workflow, serverless, opentelemetry, configuration, properties
+// Referenced documentation pages.
+:otel-core-concepts: xref:opentelemetry/otel-core-concepts.adoc
+
+This document describes how to configure OpenTelemetry for your {product_name} workflow applications.
+
+== Prerequisites
+
+Before configuring OpenTelemetry, ensure you have:
+
+* A {product_name} project set up
+* Understanding of {otel-core-concepts}[OpenTelemetry core concepts]
+* Access to an OpenTelemetry backend (Jaeger, Zipkin, OTLP endpoint, etc.)
+
+== Dependencies
+
+To enable OpenTelemetry in your {product_name} application, add the following dependency to your project:
+
+.Maven dependency
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.kie.sonataflow</groupId>
+    <artifactId>sonataflow-addons-quarkus-opentelemetry</artifactId>
+</dependency>
+----
+
+.Gradle dependency
+[source,gradle]
+----
+implementation 'org.apache.kie.sonataflow:sonataflow-addons-quarkus-opentelemetry'
+----
+
+[NOTE]
+====
+The OpenTelemetry extension is built on top of the Quarkus OpenTelemetry extension. Ensure your project includes the necessary Quarkus OpenTelemetry dependencies as well.
+====
+
+== Basic Configuration
+
+Configure OpenTelemetry by setting properties in your `src/main/resources/application.properties` file.
+
+=== Essential Configuration Properties
+
+.Basic OpenTelemetry configuration
+[source,properties]
+----
+# Enable OpenTelemetry
+quarkus.otel.enabled=true
+
+# Configure the service name
+quarkus.otel.service.name=my-workflow-service
+
+# Configure the OpenTelemetry exporter
+quarkus.otel.exporter.otlp.endpoint=http://localhost:4317
+----
+
+=== SonataFlow OpenTelemetry Properties
+
+The following table shows the configuration properties for {product_name} OpenTelemetry integration:
+
+.SonataFlow OpenTelemetry configuration properties
+[cols="30%,40%,15%,15%", options="header"]
+|===
+|Property |Description |Type |Default Value
+
+|`sonataflow.otel.enabled`
+|Enables or disables OpenTelemetry integration for SonataFlow
+|boolean
+|`true`
+
+|`sonataflow.otel.service-name`
+|Sets the service name for OpenTelemetry traces
+|string
+|`${quarkus.application.name:kogito-workflow-service}`
+
+|`sonataflow.otel.service-version`
+|Sets the service version for OpenTelemetry traces
+|string
+|`${quarkus.application.version:unknown}`
+
+|`sonataflow.otel.spans.enabled`
+|Enables or disables automatic span creation for workflow execution
+|boolean
+|`true`
+
+|`sonataflow.otel.events.enabled`
+|Enables or disables automatic event creation for workflow lifecycle events
+|boolean
+|`true`
+
+|===
+
+.Example SonataFlow OpenTelemetry configuration
+[source,properties]
+----
+# Enable SonataFlow OpenTelemetry integration
+sonataflow.otel.enabled=true
+
+# Set service identification
+sonataflow.otel.service-name=my-workflow-service
+sonataflow.otel.service-version=1.0.0
+
+# Enable span and event generation
+sonataflow.otel.spans.enabled=true
+sonataflow.otel.events.enabled=true
+----
+
+== Advanced Configuration
+
+
+=== Span Attributes and Metadata
+
+==== Standard Span Attributes
+
+All spans automatically include standard OpenTelemetry and Kogito-specific attributes:
+
+.Standard Span Attributes
+[cols="30%,50%,20%", options="header"]
+|===
+|Attribute |Description |Example Value
+
+|`service.name`
+|Name of the service
+|`payment-workflow`
+
+|`service.version`
+|Version of the service
+|`1.2.3`
+
+|`sonataflow.process.id`
+|Workflow definition ID
+|`payment-process`
+
+|`sonataflow.process.instance.id`
+|Unique workflow instance ID
+|`12345-67890-abcdef`
+
+|`sonataflow.process.version`
+|Workflow definition version
+|`1.0`
+
+|`sonataflow.process.instance.node`
+|Current workflow node name
+|`validate-payment`
+
+|`sonataflow.process.instance.state`
+|Current process instance state
+|`PENDING`, `ACTIVE`, `COMPLETED`, `ABORTED`, `SUSPENDED`, `ERROR`, `UNKNOWN`
+
+|`sonataflow.transaction.id`
+|Transaction ID for request correlation (from `X-TRANSACTION-ID` header)
+|`txn-12345`
+
+|`sonataflow.tracker.*`
+|Custom tracker attributes from `X-TRACKER-*` headers (e.g., `sonataflow.tracker.customer.id`)
+|`customer-456`
+
+|===
+
+==== Function Call Attributes
+
+For function call spans, additional attributes are included:
+
+.Function Call Span Attributes
+[cols="30%,50%,20%", options="header"]
+|===
+|Attribute |Description |Example Value
+
+|`sonataflow.function.name`
+|Name of the function being called
+|`validatePayment`
+
+|`sonataflow.function.type`
+|Type of function (rest, expression, etc.)
+|`rest`
+
+|`http.method`
+|HTTP method for REST calls
+|`POST`
+
+|`http.url`
+|Full URL for external calls
+|`https://api.payment.com/validate`
+
+|`http.status_code`
+|HTTP response status code
+|`200`
+
+|===
+
+==== OpenTelemetry Events
+
+SonataFlow automatically generates OpenTelemetry events for workflow lifecycle moments:
+
+.OpenTelemetry Event Attributes
+[cols="30%,50%,20%", options="header"]
+|===
+|Attribute |Description |Example Value
+
+|`process.instance.id`
+|Process instance identifier for events
+|`12345-67890-abcdef`
+
+|`trigger`
+|What triggered the event
+|`http`
+
+|`reference.id`
+|Reference ID (usually transaction ID)
+|`txn-12345`
+
+|`outcome`
+|Process outcome for completion events
+|`COMPLETED`, `ERROR`
+
+|`duration.ms`
+|Duration in milliseconds
+|`2500`
+
+|`error.message`
+|Error message for error events
+|`Payment validation failed`
+
+|`error.type`
+|Type of error that occurred
+|`ValidationException`
+
+|===
+
+.Event Names Generated
+[cols="40%,60%", options="header"]
+|===
+|Event Name |When Generated
+
+|`node.started`
+|When a workflow node begins execution
+
+|`node.completed`
+|When a workflow node completes successfully
+
+|`process.instance.start`
+|When a process instance starts
+
+|`process.instance.complete`
+|When a process instance completes successfully
+
+|`process.instance.error`
+|When a process instance encounters an error
+
+|`log.message`
+|For enhanced log entries with process context
+
+|===
+
+.Additional Log Event Attributes (for log.message events)
+[cols="30%,50%,20%", options="header"]
+|===
+|Attribute |Description |Example Value
+
+|`level`
+|Log level of the message
+|`INFO`, `ERROR`, `WARN`
+
+|`logger`
+|Logger name that generated the message
+|`org.kie.kogito.workflow`
+
+|`message`
+|The actual log message content
+|`Processing payment for order 12345`
+
+|`thread.name`
+|Name of the thread that logged the message
+|`vert.x-eventloop-thread-1`
+
+|`thread.id`
+|ID of the thread that logged the message
+|`23`
+
+|===
+
+
+=== Sampling Configuration
+
+Sampling configuration is handled by the Quarkus OpenTelemetry extension. For detailed sampling options and configuration, refer to the link:https://quarkus.io/guides/opentelemetry#sampling[Quarkus OpenTelemetry Sampling Documentation].
+
+== Backend-Specific Configuration
+
+=== Jaeger Configuration
+
+.Jaeger configuration
+[source,properties]
+----
+# Configure Jaeger endpoint
+quarkus.otel.exporter.otlp.endpoint=http://jaeger-collector:14250
+
+----
+
+=== Zipkin Configuration
+
+.Zipkin configuration
+[source,properties]
+----
+# Configure Zipkin endpoint
+quarkus.otel.exporter.zipkin.endpoint=http://zipkin:9411/api/v2/spans
+----
+
+=== OTLP Configuration
+
+.OTLP configuration
+[source,properties]
+----
+# Configure OTLP gRPC (default) endpoint
+quarkus.otel.exporter.otlp.endpoint=http://otel-collector:4317
+
+# OR Configure OTLP HTTP endpoint
+quarkus.otel.exporter.otlp.endpoint=http://otel-collector:4318
+quarkus.otel.exporter.otlp.protocol=http/protobuf
+----
+
+== Environment-Specific Configuration
+
+=== Development Environment
+
+.Development configuration
+[source,properties]
+----
+%dev.quarkus.otel.enabled=true
+%dev.quarkus.otel.service.name=workflow-dev
+%dev.quarkus.otel.exporter.otlp.endpoint=http://localhost:4317
+%dev.sonataflow.otel.enabled=true
+%dev.sonataflow.otel.spans.enabled=true
+%dev.sonataflow.otel.events.enabled=true
+----
+
+=== Production Environment
+
+.Production configuration
+[source,properties]
+----
+%prod.quarkus.otel.enabled=true
+%prod.quarkus.otel.service.name=workflow-prod
+%prod.quarkus.otel.exporter.otlp.endpoint=${OTEL_EXPORTER_OTLP_ENDPOINT}
+%prod.quarkus.otel.traces.sampler=parentbased_traceidratio
+%prod.quarkus.otel.traces.sampler.arg=0.05
+%prod.sonataflow.otel.enabled=true
+----
+
+== Resource Attributes
+
+Configure resource attributes to provide metadata about your service:
+
+.Resource attributes configuration
+[source,properties]
+----
+# Service metadata
+quarkus.otel.service.name=payment-workflow
+quarkus.otel.service.version=1.2.3
+quarkus.otel.service.namespace=finance
+
+# Deployment information
+quarkus.otel.resource.attributes=deployment.environment=production,team=payments,region=us-east-1
+----
+
+
+== Troubleshooting
+
+=== Common Configuration Issues
+
+1. **Missing traces**: Verify `quarkus.otel.enabled=true` and `sonataflow.otel.enabled=true` with correct exporter endpoint
+2. **Context not propagated**: Check that HTTP headers `X-TRANSACTION-ID` and `X-TRACKER-*` are being set correctly
+3. **High overhead**: Reduce sampling rate and set `sonataflow.otel.events.enabled=false` if events are not needed
+4. **Log correlation missing**: Ensure process instance context is being properly restored from headers and MDC is configured
+
+=== Debug Configuration
+
+Enable debug logging to troubleshoot configuration issues:
+
+.Debug logging configuration
+[source,properties]
+----
+# Enable OpenTelemetry debug logging
+quarkus.log.category."io.opentelemetry".level=DEBUG
+quarkus.log.category."org.kie.kogito.quarkus.serverless.workflow.opentelemetry".level=DEBUG
+----
+
+== Next Steps
+
+* Explore {otel-core-concepts}[OpenTelemetry core concepts] for detailed information about spans and attributes
+
+== Additional Resources
+
+* link:https://quarkus.io/guides/opentelemetry[Quarkus OpenTelemetry Guide]
+* link:https://opentelemetry.io/docs/instrumentation/java/[OpenTelemetry Java Documentation]
+
+include::../../pages/_common-content/report-issue.adoc[]
