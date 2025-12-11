@@ -566,7 +566,8 @@ The following example shows the declaration of a `rest` function:
 * `post` is the HTTP method. 
 * `/numbers/\{multiplier}/multiplyByAndSum` is the relative endpoint. 
 
-When using the relative endpoints you must specify the host as a property. The format of the host property is `kogito.sw.functions.<function_name>.host`. Therefore, in this example, `kogito.sw.functions.multiplyAllByAndSum.host` is the host property key. You might override the default port (80) if needed by specifying `kogito.sw.functions.multiplyAllAndSum.port` property. 
+When using the relative endpoints you must specify the host as a property (note that if you specify the full URI as operation, then you do not need to do that. But, since  target server host might change between deployments, it is better to reuse the same workflow definition and specify the variant data as properties). The format of the host property is `kogito.sw.functions.<function_name>.host`. Therefore, in this example, `kogito.sw.functions.multiplyAllByAndSum.host` is the host property key. You might override the default port (80) if needed by specifying `kogito.sw.functions.multiplyAllAndSum.port` property.
+You can also specify the protocol if using something different than the http default. For example, if the endpoint use SSL, you must add `kogito.sw.functions.multiplyAllAndSum.protocol=https`
 
 This particular endpoint expects as body a JSON object whose field `numbers` is an array of integers, multiplies each item in the array by `multiplier` and returns the sum of all the multiplied items. Therefore, to invoke it, assuming the input array is stored in the workflow model as property `inputNumbers`, you should write:
 
