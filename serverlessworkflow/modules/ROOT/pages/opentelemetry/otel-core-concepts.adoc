@@ -123,17 +123,25 @@ public class CustomObservabilityExtension implements ContextExtension {
 
 === Trace Structure
 
-Each workflow execution generates a trace hierarchy:
+Each workflow execution generates a flat trace structure where all workflow state spans are siblings under the HTTP request span:
 
 ```
-Workflow Instance Trace
-├── State Transition Spans
-│   ├── Function Call Spans
-│   ├── External Service Spans
-│   └── Event Processing Spans
-├── Error Handling Spans
-└── Completion Spans
+HTTP Request Span (Parent)
+├── Start (infrastructure node)
+├── ChooseOnLanguage (workflow state)
+├── GreetPerson (workflow state)
+├── ExecuteSubflow (workflow state)
+├── SubflowState1 (subflow state - flat sibling)
+├── SubflowState2 (subflow state - flat sibling)
+└── End (infrastructure node)
 ```
+
+This flat hierarchy approach offers several benefits:
+
+* **Simplified Analysis**: All workflow states are immediately visible at the same level
+* **Consistent Structure**: Both main workflow and subflow spans follow the same flat pattern
+* **Reduced Complexity**: No deeply nested span trees that can be difficult to navigate
+* **Clear Timeline**: Easy to visualize the chronological order of state execution
 
 === Span Attributes
 
@@ -156,8 +164,8 @@ Standard attributes automatically included in spans:
 |`sonataflow.process.version`
 |Version of the workflow definition
 
-|`sonataflow.process.instance.node`
-|Name of the current workflow node being executed
+|`sonataflow.workflow.state`
+|Name of the current workflow state being executed
 
 |`sonataflow.transaction.id`
 |Transaction ID for request correlation

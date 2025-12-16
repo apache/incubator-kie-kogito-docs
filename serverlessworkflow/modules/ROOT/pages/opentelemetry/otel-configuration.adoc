@@ -145,9 +145,9 @@ All spans automatically include standard OpenTelemetry and Kogito-specific attri
 |Workflow definition version
 |`1.0`
 
-|`sonataflow.process.instance.node`
-|Current workflow node name
-|`validate-payment`
+|`sonataflow.workflow.state`
+|Current workflow state name
+|`ValidatePayment`
 
 |`sonataflow.process.instance.state`
 |Current process instance state
@@ -196,83 +196,138 @@ For function call spans, additional attributes are included:
 
 ==== OpenTelemetry Events
 
-SonataFlow automatically generates OpenTelemetry events for workflow lifecycle moments:
+SonataFlow automatically generates OpenTelemetry events at key points in the workflow lifecycle. These events provide detailed insights into process execution and are created without any additional configuration when `sonataflow.otel.events.enabled=true`.
 
-.OpenTelemetry Event Attributes
+The following lifecycle events are automatically generated:
+
+* *Process Instance Events*: `process.instance.start`, `process.instance.complete`, `process.instance.error` - Generated when a workflow instance starts, completes successfully, or encounters an error
+* *State Events*: `state.started`, `state.completed` - Generated when individual workflow states and infrastructure nodes begin and complete execution
+* *Log Events*: `log.message` - Generated for enhanced log entries with process context
+
+===== Process Instance Events
+
+====== `process.instance.start` Event
+
+Generated when a workflow process starts execution (only added to the "Start" node span).
+
+.`process.instance.start` Event Attributes
 [cols="30%,50%,20%", options="header"]
 |===
 |Attribute |Description |Example Value
 
 |`process.instance.id`
-|Process instance identifier for events
+|Unique ID of the process instance
 |`12345-67890-abcdef`
 
 |`trigger`
-|What triggered the event
+|What triggered the process start
 |`http`
 
 |`reference.id`
-|Reference ID (usually transaction ID)
+|Transaction ID or correlation identifier
 |`txn-12345`
 
+|===
+
+====== `process.instance.complete` Event
+
+Generated when a workflow process completes (successfully or with error).
+
+.`process.instance.complete` Event Attributes
+[cols="30%,50%,20%", options="header"]
+|===
+|Attribute |Description |Example Value
+
+|`process.instance.id`
+|Unique ID of the process instance
+|`12345-67890-abcdef`
+
 |`outcome`
-|Process outcome for completion events
-|`COMPLETED`, `ERROR`
+|Process completion state
+|`COMPLETED`, `ERROR`, `ABORTED`, `SUSPENDED`
 
 |`duration.ms`
-|Duration in milliseconds
+|Total execution time in milliseconds
 |`2500`
 
+|===
+
+====== `process.instance.error` Event
+
+Generated when a workflow encounters an error during execution.
+
+.`process.instance.error` Event Attributes
+[cols="30%,50%,20%", options="header"]
+|===
+|Attribute |Description |Example Value
+
+|`process.instance.id`
+|Unique ID of the process instance
+|`12345-67890-abcdef`
+
 |`error.message`
-|Error message for error events
+|Error description from exception or process error variable
 |`Payment validation failed`
 
 |`error.type`
-|Type of error that occurred
+|Exception class name or error type
 |`ValidationException`
 
 |===
 
-.Event Names Generated
-[cols="40%,60%", options="header"]
+===== State Execution Events
+
+====== `state.started` Event
+
+Generated for each workflow state and infrastructure node when execution begins.
+
+.`state.started` Event Attributes
+[cols="30%,50%,20%", options="header"]
 |===
-|Event Name |When Generated
+|Attribute |Description |Example Value
 
-|`node.started`
-|When a workflow node begins execution
-
-|`node.completed`
-|When a workflow node completes successfully
-
-|`process.instance.start`
-|When a process instance starts
-
-|`process.instance.complete`
-|When a process instance completes successfully
-
-|`process.instance.error`
-|When a process instance encounters an error
-
-|`log.message`
-|For enhanced log entries with process context
+|`event.description`
+|Description of the state event
+|`State execution started: ValidatePayment`
 
 |===
 
-.Additional Log Event Attributes (for log.message events)
+====== `state.completed` Event
+
+Generated for each workflow state and infrastructure node when execution completes.
+
+.`state.completed` Event Attributes
+[cols="30%,50%,20%", options="header"]
+|===
+|Attribute |Description |Example Value
+
+|`event.description`
+|Description of the state event
+|`State execution completed: ValidatePayment`
+
+|===
+
+===== Log Events
+
+====== `log.message` Event
+
+Generated for application logs captured during workflow execution when a valid span is active.
+
+.`log.message` Event Attributes
 [cols="30%,50%,20%", options="header"]
 |===
 |Attribute |Description |Example Value
 
 |`level`
-|Log level of the message
-|`INFO`, `ERROR`, `WARN`
+|Log level name of the message
+|`INFO`, `ERROR`, `WARN`, `DEBUG`
 
 |`logger`
-|Logger name that generated the message
+|Logger name/class that generated the message
 |`org.kie.kogito.workflow`
 
 |`message`
-|The actual log message content
+|The formatted log message content
 |`Processing payment for order 12345`
 
 |`thread.name`
@@ -285,6 +340,45 @@ SonataFlow automatically generates OpenTelemetry events for workflow lifecycle m
 
 |===
 
+===== Event Generation Summary
+
+The following table summarizes when each event type is generated:
+
+.Event Generation Timeline
+[cols="25%,35%,40%", options="header"]
+|===
+|Event Type |When Generated |Special Notes
+
+|`process.instance.start`
+|At workflow process start
+|Only added to "Start" node span
+
+|`state.started`
+|Before each state execution
+|Generated for all workflow states and infrastructure nodes
+
+|`state.completed`
+|After each state execution
+|Generated for all workflow states and infrastructure nodes
+
+|`process.instance.complete`
+|At workflow process completion
+|Added to "End" node span or last active span
+
+|`process.instance.error`
+|When workflow encounters an error
+|Added when process state is ERROR
+
+|`log.message`
+|During application logging
+|Only when valid span is active
+
+|===
+
+[NOTE]
+====
+All events are automatically generated when `sonataflow.otel.events.enabled=true` (default). No workflow definition changes are required - events are added transparently during execution.
+====
 
 === Sampling Configuration
 
