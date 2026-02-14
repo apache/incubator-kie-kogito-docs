@@ -1,0 +1,228 @@
+= Workflow Scaling and Disruption Protection
+
+:compat-mode!:
+// Metadata:
+:description: Workflow scaling and disruption protection
+:keywords: kogito, sonataflow, workflow, serverless, operator, kubernetes, autoscaling, disruption
+
+This document describes the different alternatives for scaling a workflow and how to configure horizontal pod autoscaling and pod disruption budgets.
+
+[#workflow-scaling]
+== Scaling a Workflow
+
+The `SonataFlow` CRD exposes the Kubernetes `scale` subresource, which enables users and controllers (such as Horizontal Pod Autoscalers) to scale workflows using the standard Kubernetes API.
+
+Below you can see different options for scaling an `example-workflow` workflow.
+
+.Example workflow
+[source, yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: example-workflow
+  namespace: example-workflow-namespace
+  annotations:
+    sonataflow.org/description: Example Workflow
+    sonataflow.org/version: 0.0.1
+    sonataflow.org/profile: preview
+spec:
+  flow:
+    # Only a fragment of the workflow is shown for simplicity
+    start: ExampleStartState
+----
+
+[NOTE]
+====
+Workflows deployed with the `dev` profile are intended for development purposes and are not designed to be scaled.
+====
+
+=== Querying the workflow scale subresource
+
+To query the workflow `scale` subresource you can use the following command:
+
+[source,shell]
+----
+kubectl get --subresource=scale example-workflow -n example-workflow-namespace -o yaml
+----
+
+You must get an output similar to the following:
+
+[source,terminal]
+----
+apiVersion: autoscaling/v1
+kind: Scale
+metadata:
+  creationTimestamp: "2026-02-12T12:48:46Z"
+  name: example-workflow
+  namespace: example-workflow-namespace
+  resourceVersion: "38397"
+  uid: de53b549-dcb5-4b46-bb4e-9a576341e099
+spec:
+  replicas: 1 <1>
+status:
+  replicas: 1 <2>
+  selector: app=example-workflow,app.kubernetes.io/component=serverless-workflow,app.kubernetes.io/instance=example-workflow,app.kubernetes.io/managed-by=sonataflow-operator,app.kubernetes.io/name=example-workflow,app.kubernetes.io/version=main,sonataflow.org/workflow-app=example-workflow,sonataflow.org/workflow-namespace=example-workflow-namespace <3>
+----
+
+<1> Number of configured replicas.
+<2> Number of currently available replicas.
+<3> Selector to query the observed Pods.
+
+=== Scaling the workflow
+
+To scale the workflow you can use any of the following alternatives:
+
+.Example of workflow scaling using the kubectl scale command
+[source, bash]
+----
+kubectl scale workflow example-workflow -n example-workflow-namespace --replicas=3
+----
+
+You must get an output similar to the following:
+
+[source, terminal]
+----
+sonataflow.sonataflow.org/example-workflow scaled
+----
+
+.Example of workflow scaling by configuring the `SonataFlow` CR
+[source, yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: example-workflow
+  namespace: example-workflow-namespace
+  annotations:
+    sonataflow.org/description: Example Workflow
+    sonataflow.org/version: 0.0.1
+    sonataflow.org/profile: preview
+spec:
+  podTemplate:
+    replicas: 3 <1>
+  flow:
+    # Only a fragment of the workflow is shown for simplicity
+    start: ExampleStartState
+----
+
+<1> Use the field `spec.podTemplate.replicas` to configure the number of replicas.
+
+[source, bash]
+----
+kubectl apply -f example-workflow.yaml -n example-workflow-namespace
+----
+
+You must get an output similar to the following:
+
+[source, terminal]
+----
+sonataflow.sonataflow.org/example-workflow configured
+----
+
+.Example of workflow scaling by patching the field `spec.podTemplate.replicas`
+[source, bash]
+----
+kubectl patch workflow example-workflow -n example-workflow-namespace \
+  --type merge \
+  -p '{
+    "spec": {
+      "podTemplate": {
+        "replicas": 3
+      }
+    }
+  }'
+----
+
+You must get an output similar to the following:
+
+[source, terminal]
+----
+sonataflow.sonataflow.org/example-workflow patched
+----
+
+
+[#workflow-horizontal-pod-autoscaling]
+== Horizontal Pod Autoscaling configuration
+
+Before configuring a `HorizontalPodAutoscaler` for a workflow, ensure that the resources you want the scaler to use as metrics are defined in the `SonataFlow` CR.
+
+The following example shows how to configure such resources:
+
+.Example of resources configuration in the `SonataFlow` CR
+[source, yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: example-workflow
+  namespace: example-workflow-namespace
+  annotations:
+    sonataflow.org/description: Example Workflow
+    sonataflow.org/version: 0.0.1
+    sonataflow.org/profile: preview
+spec:
+  podTemplate:
+    container: <1>
+      resources:
+        requests:
+          cpu: 100m <2>
+          memory: 256Mi <3>
+        limits:
+          cpu: 500m
+          memory: 512Mi
+
+  flow:
+    # Only a fragment of the workflow is shown for simplicity
+    start: ExampleStartState
+----
+
+<1> The field `spec.podTemplate.container` supports most of the standard `PodSpec` configurations. For more information xref:cloud/operator/customize-podspec.adoc[see].
+<2> Example of `cpu` request resource configuration.
+<3> Example of `memory` request resource configuration.
+
+[NOTE]
+====
+`HorizontalPodAutoscalers` use the request resources for the metrics calculations. The resource limits in the example are only illustrative and are not used for scaling.
+====
+
+The following example shows how to configure a `HorizontalPodAutoscaler`:
+
+.Example of `HorizontalPodAutoscaler` configuration
+[source, yaml]
+----
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: example-autoscaler
+spec:
+  scaleTargetRef: <1>
+    apiVersion: sonataflow.org/v1alpha08
+    kind: SonataFlow
+    name: example-workflow
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu <2>
+        target:
+          type: Utilization
+          averageUtilization: 70
+----
+<1> Refer the target workflow by configuring the `apiVersion`, `kind` and `name`.
+<2> Example of a metric based on the cpu resource utilization.
+
+[IMPORTANT]
+====
+Workflows deployed with `spec.podTemplate.deploymentModel: knative` cannot be scaled via a `HorizontalPodAutoscaler`, since Knative Serving controls the number of replicas automatically.
+====
+
+For more information on configuring `HorizonalPodAutoscalers` you can refer to the Kubernetes documentation
+
+== Additional resources
+
+* xref:cloud/operator/using-persistence.adoc[Workflow Persistence]
+* xref:cloud/operator/supporting-services.adoc[Deploying Supporting Services]
+
+include::../../../pages/_common-content/report-issue.adoc[]
