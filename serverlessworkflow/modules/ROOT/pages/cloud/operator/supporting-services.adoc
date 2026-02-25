@@ -476,6 +476,81 @@ NAME                                          TYPE          RESOURCE            
 sonataflow-platform-example-jobs-service-sb   SinkBinding   sinkbindings.sources.knative.dev   broker:example-broker   True
 ----
 
+== Configuring Scaling and Disruption Protection
+
+=== Configuring Auto Scaling
+
+Currently, only the Data Index supports auto-scaling configuration.
+
+To configure the auto-scaling, you must create an external `HorizonalPodAutoscaler` that targets the given Data Index service `Deployment`.
+
+When the {operator_name} detects a `HorizontalPodAutoscaler` in the namespace targeting the Data Index `Deployment`, replica management is delegated to the HPA controller. If the `HorizontalPodAutoscaler` is removed, the {operator_name} controller resumes control of replica management.
+
+To calculate the Data Index `Deployment` name, you must follow this rule:
+
+* Concatenate the name of the `SonataFlowPlatform`, with the suffix `-data-index-service`.
+For the example below, the calculated name is: `sonataflow-platform-example-data-index-service`.
+
+.SonataFlowPlatform CR  example
+[source,yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlowPlatform
+metadata:
+  name: sonataflow-platform-example
+  namespace: example-namespace
+spec:
+  services:
+    dataIndex:
+      enabled: true
+    jobService:
+      enabled: true
+# Only a fragment of the SonataFlowPlatform is shown for simplicity
+----
+
+The following example shows a `HorizontalPodAutoscaler` configuration for the `sonataflow-platform-example-data-index-service` `Deployment`:
+
+.Example of HorizontalPodAutoscaler configuration that targets a Data Index `Deployment`
+[source,yaml]
+----
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: data-index-example-autoscaler <1>
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sonataflow-platform-example-data-index-service <2>
+  minReplicas: 3
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu <3>
+        target:
+          type: Utilization
+          averageUtilization: 70
+----
+<1> Any name of your choice.
+<2> The calculated name of the Data Index `Deployment`. The other fields of the `scaleTargetRef` configuration remains un changed.
+<3> Example of a metric based on the cpu resource utilization.
+
+To configure the `HorizontalPodAutoscaler` metrics, you can use any of the resources automatically configured by the {operator_name}. Alternatively, to modify the default values <<advanced_supporting_services_configuration,see>>.
+
+.Default values configured by the {operator_name} for the Data Index `Deployment`
+[source, yaml]
+----
+    - resources:
+        limits:
+          cpu: 200m
+          memory: 1Gi
+        requests:
+          cpu: 100m
+          memory: 1Gi
+----
+
+[#advanced_supporting_services_configuration]
 == Advanced Supporting Services Configurations
 
 To configure the advanced options for any of the supporting services you must use the `podTemplate` field respectively, for example `dataIndex.podTemplate`:
@@ -499,14 +574,25 @@ spec:
             - name: ANY_ADVANCED_CONFIG_PROPERTY
               value: any-value
           image: <4>
-        initContainers: <5>
+          resources:
+            limits:
+              cpu: <5>
+              memory: <6>
+            requests:
+              cpu: <7>
+              memory: <8>
+        initContainers: <9>
 ----
 
 <1> Number of replicas. Defaults to 1. In the case of the jobService this value is always overridden to 1 by the operator, since that service is a singleton service.
 <2> Holds the particular configurations for the container that will execute the given supporting service.
 <3> Standard Kubernetes `env` configuration. This can be useful in cases where you need to fine tune any of the supporting services properties.
 <4> Standard Kubernetes `image` configuration. This can be useful in cases where you need to use an updated image for any of the supporting services.
-<5> Standard Kubernetes `initContainers` for the Pod that executes the supporting service.
+<5> Standard Kubernetes `cpu` limit configuration. Defaults to 200m.
+<6> Standard Kubernetes `memory` limit configuration. Defaults to 1Gi.
+<7> Standard Kubernetes `cpu` request configuration. Defaults to 100m.
+<8> Standard Kubernetes `memory` request configuration. Defaults to 1Gi.
+<9> Standard Kubernetes `initContainers` for the Pod that executes the supporting service.
 
 [NOTE]
 ====
