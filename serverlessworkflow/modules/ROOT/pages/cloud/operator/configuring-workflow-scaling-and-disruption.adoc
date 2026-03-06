@@ -12,7 +12,7 @@ This document describes the different alternatives for scaling a workflow and ho
 
 The `SonataFlow` CRD exposes the Kubernetes `scale` subresource, which enables users and controllers (such as Horizontal Pod Autoscalers) to scale workflows using the standard Kubernetes API.
 
-Below you can see different options for scaling an `example-workflow` workflow.
+Below you can see different options for scaling an `example-workflow` workflow:
 
 .Example workflow
 [source, yaml]
@@ -145,7 +145,14 @@ sonataflow.sonataflow.org/example-workflow patched
 [#workflow-horizontal-pod-autoscaling]
 == Horizontal Pod Autoscaling configuration
 
-Before configuring a `HorizontalPodAutoscaler` for a workflow, ensure that the resources you want the scaler to use as metrics are defined in the `SonataFlow` CR.
+
+By using a `HorizontalPodAutoscaler` (HPA), you can configure how a Kubernetes workload resource scales based on a set of metrics (for example, CPU or memory usage).
+
+Workload resources that support autoscaling expose the `scale` subresource, which allows Kubernetes to adjust the number of replicas dynamically.
+
+When you configure a HPA for a workflow, the {operator_name} automatically manages the coordination between the workflow `scale` subresource and the associated Kubernetes `Deployment`. Making the workflow pods scaling accordingly.
+
+Before configuring a HPA for a workflow, ensure that the resources to be used as scaling metrics are properly defined in the `SonataFlow` CR.
 
 The following example shows how to configure such resources:
 
@@ -183,7 +190,7 @@ spec:
 
 [NOTE]
 ====
-`HorizontalPodAutoscalers` use the request resources for the metrics calculations. The resource limits in the example are only illustrative and are not used for scaling.
+`HorizontalPodAutoscalers` use the requests resources for the metrics calculations. The resource limits in the example are only illustrative and are not used for scaling.
 ====
 
 The following example shows how to configure a `HorizontalPodAutoscaler`:
@@ -200,8 +207,8 @@ spec:
     apiVersion: sonataflow.org/v1alpha08
     kind: SonataFlow
     name: example-workflow
-  minReplicas: 3
-  maxReplicas: 10
+  minReplicas: 2
+  maxReplicas: 5
   metrics:
     - type: Resource
       resource:
@@ -215,10 +222,132 @@ spec:
 
 [IMPORTANT]
 ====
-Workflows deployed with `spec.podTemplate.deploymentModel: knative` cannot be scaled via a `HorizontalPodAutoscaler`, since Knative Serving controls the number of replicas automatically.
+Workflows deployed with `spec.podTemplate.deploymentModel: knative` cannot be scaled using a HorizontalPodAutoscaler, because Knative Serving automatically manages the number of replicas.
+Additionally, workflows deployed using the `dev` profile are not designed to scale.
 ====
 
 For more information on configuring `HorizonalPodAutoscalers` you can refer to the Kubernetes documentation
+
+
+[#workflow-pod-disruption-budget-configuration]
+== Pod Disruption Budget configuration
+
+By using a `PodDisruptionBudget` (PDB), you can configure the required availability of a workflow during a voluntary disruption, such as a node drain, in the cluster.
+
+A PDB limits the number of pods that can be unavailable simultaneously during such disruptions, ensuring that the workflow maintains the desired level of availability.
+
+In general, any tool that needs to guarantee availability should respect the PDB by using the Kubernetes Eviction API instead of directly deleting pods or deployments. The Eviction API ensures that disruption constraints defined by the PDB are honored.
+
+For more information, see the Kubernetes documentation on PodDisruptionBudgets.
+
+The {product_name} Operator can automatically generate a `PodDisruptionBudget` for a workflow based on the `SonataFlow` CR configuration.
+
+To configure a PDB for a workflow, you must use the field `spec.podTemplate.podDisruptionBudget`:
+
+.Available fields for the PDB configuration for a workflow
+[source, yaml]
+----
+spec:
+  podTemplate:
+    podDisruptionBudget:
+      minAvailable: <1>
+      maxUnavailable: <2>
+----
+
+<1> Configures the number of pods that must still be available after the eviction. This value can be either an absolute number or a percentage, for example `2` or `50%`.
+<2> Configures the number of pods that can be unavailable after the eviction. This value can be either an absolute number or a percentage, for example `1` or `50%`.
+
+[NOTE]
+====
+The `minAvailable` and `maxUnavailable` fields are mutually exclusive. You must configure only one of these fields.
+If both fields are specified, the `minAvailable` value takes precedence.
+
+The semantics of these fields are aligned with the corresponding fields in the Kubernetes PodDisruptionBudget. For more information you can refer to the Kubernetes documentation.
+====
+
+**PodDisruptionBudget generation rules**
+
+To generate the PDB, the {operator_name} applies the following rules in order:
+
+. The PDB is generated only if the workflow has the field `spec.podTemplate.podDisruptionBudget` properly configured.
+. The PDB is generated only if the workflow has `spec.podTemplate.replicas` configured with a value greater than 1.
+. If the workflow has a configured HorizontalPodAutoscaler (HPA), the HPA `spec.minReplicas` value takes precedence over the `workflow spec.podTemplate.replicas`.
+. When an HPA is configured, the PDB is generated only if the HPA `spec.minReplicas` value is greater than 1.
+. If the workflow is scaled to zero (that is, `spec.podTemplate.replicas = 0`), no PDB is generated.
+
+[NOTE]
+====
+If any of the above conditions change after a PDB has been generated, for example, if the workflow is rescaled to 1, the previously generated PDB is automatically deleted.
+====
+
+[IMPORTANT]
+====
+Workflows deployed with `spec.podTemplate.deploymentModel: knative` cannot be scaled using a HorizontalPodAutoscaler, because Knative Serving automatically manages the number of replicas. And thus, a PDB cannot reliably enforce minimum availability.
+Additionally, workflows deployed using the `dev` profile are not designed to scale.
+====
+
+The following example shows how to configure a `PodDisruptionBudget` for a workflow:
+
+.Example of PDB configuration for a workflow
+[source, yaml]
+----
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: example-workflow
+  namespace: example-workflow-namespace
+  annotations:
+    sonataflow.org/description: Example Workflow
+    sonataflow.org/version: 0.0.1
+    sonataflow.org/profile: preview
+spec:
+  podTemplate:
+    replicas: 2 <1>
+    podDisruptionBudget:
+      minAvailable: 1 <2>
+  flow:
+    # Only a fragment of the workflow is shown for simplicity
+    start: ExampleStartState
+----
+
+<1> The workflow runs with `2` replicas.
+<2> The generated PDB ensures that `1` pod must remain available during a disruption.
+
+Given this configuration, the {operator_name} generates the following PDB for the workflow (some fields are omitted for simplicity):
+
+.Example of the generated PDB for a workflow
+[source,yaml]
+----
+kind: PodDisruptionBudget
+apiVersion: policy/v1
+metadata:
+  name: example-workflow <1>
+  namespace: example-workflow-namespace <2>
+  ownerReferences: <3>
+    - apiVersion: sonataflow.org/v1alpha08
+      kind: SonataFlow
+      name: example-workflow
+      uid: 5b7f96d4-1ddf-45f7-af38-555d93339cca
+      controller: true
+      blockOwnerDeletion: true
+spec:
+  minAvailable: 1 <4>
+  selector: <5>
+    matchLabels:
+      app: example-workflow
+      app.kubernetes.io/component: serverless-workflow
+      app.kubernetes.io/instance: example-workflow
+      app.kubernetes.io/managed-by: sonataflow-operator
+      app.kubernetes.io/name: example-workflow
+      sonataflow.org/workflow-app: example-workflow
+      sonataflow.org/workflow-namespace: example-workflow-namespace
+----
+
+<1> The generated PDB has the same name as the workflow.
+<2> The generated PDB is created in the same namespace as the workflow.
+<3> The `example-workflow` is configured as PDB's owner.
+<4> The PDB `minAvailable` available replicas are configured with the value of the field `spec.podTemplate.podDisruptionBudget.minAvailable` in the `example-workflow` CR.
+<5> The PDB selector is configured to target the `example-workflow` Pods.
 
 == Additional resources
 
