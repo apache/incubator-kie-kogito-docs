@@ -1,0 +1,112 @@
+:page-partial:
+
+== Workflow identifiers
+
+To ensure proper functionality across all deployment variants, ranging from standalone Java workflow applications, to deployments managed by the {operator_name}, workflow identifiers must comply with RFC 1123 DNS label standards.
+
+In practice, this means that a workflow identifier must:
+
+* Contain only:
+** Lowercase letters (a–z)
+** Digits (0–9)
+** Hyphens (-)
+** Start with a lowercase letter or digit
+** End with a lowercase letter or digit
+
+Identifiers that do not meet these requirements may lead to deployment or runtime issues.
+
+The following examples demonstrate valid workflow identifiers:
+
+.Valid workflow identifiers
+[source,text]
+----
+order-processing
+invoice123
+customer-onboarding-flow
+flow-01
+----
+
+
+.Invalid workflow identifiers
+[source,text]
+----
+OrderProcessing (uppercase letters not allowed)
+order_processing (underscores not allowed)
+-orderflow (cannot start with a hyphen)
+orderflow- (cannot end with a hyphen)
+----
+
+Additionally, you must be sure that the workflow identifier is consistent across all the configurations used to build and deploy your workflow.
+This is particularly important when you work with {operator_name} driven deployments that uses the `gitops` profile.
+
+The following example shows a `yaml` workflow definition used to build a workflow image for a `gitops` profile deployment, and the corresponding `SonataFlow` CR configuration:
+
+.Example of a valid workflow `id` configuration for a yaml workflow definition
+[source,yaml]
+----
+id: hello-world <1>
+version: "1.0" <2>
+specVersion: 0.8.0 <3>
+name: Hello World <4>
+description: An example workflow to say Hello World <5>
+start: HelloWorld
+  # rest of the workflow definition omitted to shorten the example
+----
+<1> The workflow `id` must be a valid RFC 1123 DNS label name.
+<2> The workflow version.
+<3> The CNCF Serverless Workflow specification version.
+<4> Optional human-readable name.
+<5> Optional workflow description.
+
+[IMPORTANT]
+====
+Although the CNCF Serverless Workflow specification allows you to define a workflow version, and this attribute can be set in your workflow definition, the current {product_name} ecosystem does not support multiple versions of a workflow that share the same `id`.
+Be sure that you have read <<workflow_versioning, workflow version support and recommended versioning approach>>.
+====
+
+.Example of a valid workflow configuration for the `gitops` profile
+
+[source,yaml]
+----
+apiVersion: sonataflow.org/v1alpha08 <1>
+kind: SonataFlow
+metadata:
+  name: hello-world <2>
+  annotations:
+    sonataflow.org/name: Hello World <3>
+    sonataflow.org/description: An example workflow to say Hello World <4>
+    sonataflow.org/version: 1.0 <5>
+    sonataflow.org/profile: gitops
+spec:
+  podTemplate:
+    container:
+      image: "quay.io/my-workflows/hello-world:1.0"
+  flow:
+    start: HelloWorld
+    # rest of the workflow definition omitted to shorten the example
+----
+
+<1> The `SonataFlow` CR apiVersion infers the CNCF specification version. Currently, the only supported version is 0.8.0.
+<2> The `SonataFlow` CR Kubernetes `name` represents the workflow `id`, and must be configured with the same value used in the workflow `yaml` or `json` file.
+<3> Use the `sonataflow.org/name` annotation to configure the optional human-readable workflow name configured in the workflow `yaml` or `json` file if any.
+<4> Use the `sonataflow.org/description` annotation to configure the optional human-readable workflow description configured in the workflow `yaml` or `json` file if any.
+<5> The `sonataflow.org/version` annotation must be configured with the same value used as `version` in the workflow `yaml` or `json` file.
+
+[#workflow_versioning]
+== Workflow version support and recommended versioning approach
+
+Although the CNCF Serverless Workflow specification allows you to define a workflow version, and this attribute can be set in your workflow definition, the current {product_name} ecosystem does not support multiple versions of a workflow that share the same id.
+
+Each workflow `id` must be unique across deployments, regardless of the configured `version`.
+Deploying multiple workflows with the same `id` and different versions is not supported and can result in unexpected behavior.
+
+If you need to introduce a new version of an existing workflow, you must assign a new workflow `id`.
+Reusing the same `id` with different versions is not supported.
+
+It is recommended to use a consistent naming convention that links related versions of the same workflow.
+For example:
+
+* `hello-world-v1`, implements and deploys version 1.0
+* `hello-world-v2`, implements and deploys version 2.0
+
+This approach ensures clarity and avoids conflicts when managing multiple iterations of a workflow.
