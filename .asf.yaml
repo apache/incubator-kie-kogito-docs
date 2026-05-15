@@ -17,7 +17,20 @@ github:
     - persistence
     - data-index
     - jobs-service
-  ghp_branch:  gh-pages
-  ghp_path:    /
+  ghp_branch: gh-pages
+  ghp_path: /
   features:
     issues: true
+  rulesets:
+    - name: "Default Branch Protection"
+      type: branch
+      branches:
+        includes:
+          - "~DEFAULT_BRANCH"
+          - "release/*"
+          - "rel/*"
+        excludes: []
+      bypass_teams:
+        - root
+      restrict_deletion: true
+      restrict_force_push: true
