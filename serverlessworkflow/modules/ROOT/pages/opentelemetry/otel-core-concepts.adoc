@@ -1,0 +1,191 @@
+= OpenTelemetry core concepts in {product_name}
+
+:compat-mode!:
+// Metadata:
+:description: Core concepts and components of OpenTelemetry integration
+:keywords: kogito, workflow, serverless, opentelemetry, observability, tracing, concepts
+// Referenced documentation pages.
+:otel-configuration: xref:opentelemetry/otel-configuration.adoc
+
+This document describes the core concepts and components that enable OpenTelemetry observability in {product_name} workflow applications.
+
+== Overview
+
+OpenTelemetry integration in {product_name} provides a comprehensive observability solution that addresses the unique challenges of workflow execution monitoring. The implementation focuses on process instance aware context management that provides proper context isolation and enhanced observability across the runtime.
+
+The key benefits include:
+
+* **Context Isolation**: Proper separation of observability data between concurrent workflow instances
+* **Enhanced Tracing**: Detailed tracing of workflow execution paths and external service calls
+* **Standards Compliance**: Full compliance with OpenTelemetry specifications
+
+== Core Components
+
+=== Process Instance Context Management
+
+The OpenTelemetry extension implements a comprehensive process instance aware context management system built on SLF4J MDC (Mapped Diagnostic Context). This system provides:
+
+* **Thread-safe context management**: Automatic context isolation across different execution threads
+* **Process instance correlation**: All log entries and traces are automatically correlated with their respective process instances
+* **Extensible architecture**: Support for multiple observability frameworks through a generic extension framework
+* **Context restoration**: Automatic context restoration from HTTP headers during request processing
+
+The context management uses a decorator pattern that wraps existing process instance lock strategies, ensuring all operations within a process instance execution maintain proper correlation without affecting core process execution logic.
+
+Key context attributes include:
+
+* **Transaction ID**: Unique identifier for request correlation (propagated via `X-TRANSACTION-ID` header)
+* **Tracker Attributes**: Custom business context (propagated via `X-TRACKER-*` headers)
+* **Process Instance ID**: Unique identifier for the specific workflow execution
+* **Process ID**: Identifier for the workflow definition
+* **Process Version**: Version of the workflow definition
+
+=== Context Propagation
+
+The system automatically propagates process context across:
+
+* **Asynchronous Operations**: Context is maintained during async workflow state transitions using context-aware lock strategies
+* **External Service Calls**: Process metadata is automatically included in outbound HTTP headers
+* **Thread Boundaries**: Context isolation is preserved across different execution threads through MDC management
+* **Event Processing**: CloudEvents maintain proper process correlation with automatic context restoration
+* **Logging Integration**: All log entries are automatically enriched with process instance context for enhanced observability
+
+
+== Integration Architecture
+
+The OpenTelemetry extension integrates seamlessly with the {product_name} runtime architecture:
+
+.OpenTelemetry Integration Points
+[source,text]
+----
+Workflow Engine
+    ├── Process Context Manager
+    │   ├── Context Creation
+    │   ├── Context Propagation
+    │   └── Context Cleanup
+    ├── Tracing Instrumentation
+    │   ├── Span Creation
+    │   ├── Attribute Management
+    │   └── Span Lifecycle
+    └── External Service Integration
+        ├── HTTP Header Injection
+        ├── Context Correlation
+        └── Response Processing
+----
+
+=== Automatic Instrumentation
+
+The extension provides automatic instrumentation for:
+
+* **Workflow State Transitions**: Each state change is traced with appropriate metadata
+* **Function Calls**: Both internal and external function invocations are instrumented
+* **Event Handling**: Event consumption and production are traced
+* **Error Handling**: Exception and error conditions are properly recorded
+
+=== Manual Instrumentation Support
+
+For advanced scenarios, the extension supports manual instrumentation through:
+
+* **Custom Spans**: Create application-specific spans for detailed monitoring
+* **Custom Attributes**: Add domain-specific metadata to traces
+* **Metrics Collection**: Implement custom metrics for business logic monitoring
+* **Baggage Management**: Propagate custom context data across service boundaries
+
+=== Context Extension Framework
+
+The extension provides a generic framework for integrating multiple observability systems through the `ContextExtension` interface. This architecture allows:
+
+* **Multiple observability providers**: Register different observability frameworks simultaneously
+* **Custom MDC keys**: Each extension can register its own MDC keys for context correlation
+* **Framework independence**: Core process execution remains independent of specific observability implementations
+* **Extension lifecycle management**: Automatic registration and cleanup of context extensions
+
+.Context Extension Implementation Example
+[source,java]
+----
+@ApplicationScoped
+public class CustomObservabilityExtension implements ContextExtension {
+
+    @Override
+    public Set<String> preservedMdcKeys() {
+        return Set.of("custom.correlation.id", "custom.trace.id");
+    }
+
+    @Override
+    public void enhanceContext(ProcessInstanceContext context) {
+        // Custom context enhancement logic
+        MDC.put("custom.correlation.id", generateCorrelationId());
+    }
+}
+----
+
+== Data Model
+
+=== Trace Structure
+
+Each workflow execution generates a flat trace structure where all workflow state spans are siblings under the HTTP request span:
+
+```
+HTTP Request Span (Parent)
+├── Start (infrastructure node)
+├── ChooseOnLanguage (workflow state)
+├── GreetPerson (workflow state)
+├── ExecuteSubflow (workflow state)
+├── SubflowState1 (subflow state - flat sibling)
+├── SubflowState2 (subflow state - flat sibling)
+└── End (infrastructure node)
+```
+
+This flat hierarchy approach offers several benefits:
+
+* **Simplified Analysis**: All workflow states are immediately visible at the same level
+* **Consistent Structure**: Both main workflow and subflow spans follow the same flat pattern
+* **Reduced Complexity**: No deeply nested span trees that can be difficult to navigate
+* **Clear Timeline**: Easy to visualize the chronological order of state execution
+
+=== Span Attributes
+
+Standard attributes automatically included in spans:
+
+.Standard Span Attributes
+[cols="30%,70%", options="header"]
+|===
+|Attribute |Description
+
+|`sonataflow.process.id`
+|The workflow definition identifier
+
+|`sonataflow.process.instance.id`
+|Unique identifier for the workflow execution instance
+
+|`sonataflow.process.instance.state`
+|Current state of the process instance (ACTIVE, COMPLETED, ERROR, etc.)
+
+|`sonataflow.process.version`
+|Version of the workflow definition
+
+|`sonataflow.workflow.state`
+|Name of the current workflow state being executed
+
+|`sonataflow.transaction.id`
+|Transaction ID for request correlation
+
+|`sonataflow.tracker.*`
+|Custom tracker attributes (e.g., sonataflow.tracker.customer.id)
+
+|===
+
+== Span Attributes and Metadata
+
+For detailed information about span attributes, events, and metadata structure, see the {otel-configuration}#_span_attributes_and_metadata[Span Attributes and Metadata] section in the configuration guide.
+
+== Next Steps
+
+* {otel-configuration}[Configure OpenTelemetry] for your workflow application
+
+== Additional Resources
+
+* link:https://opentelemetry.io/docs/concepts/[OpenTelemetry Concepts]
+* link:https://opentelemetry.io/docs/specs/[OpenTelemetry Specifications]
+
+include::../../pages/_common-content/report-issue.adoc[]
